@@ -1,0 +1,22 @@
+<h1>Listing genbank_files</h1>
+
+<table>
+  <tr>
+    <th>Escell clone</th>
+    <th>Targeting vector</th>
+  </tr>
+
+<% @genbank_files.each do |genbank_file| %>
+  <tr>
+    <td><%=h genbank_file.escell_clone %></td>
+    <td><%=h genbank_file.targeting_vector %></td>
+    <td><%= link_to 'Show', genbank_file %></td>
+    <td><%= link_to 'Edit', edit_genbank_file_path(genbank_file) %></td>
+    <td><%= link_to 'Destroy', genbank_file, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New genbank_file', new_genbank_file_path %>

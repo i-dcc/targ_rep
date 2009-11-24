@@ -1,0 +1,16 @@
+<h1>Editing pipeline</h1>
+
+<% form_for(@pipeline) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+  </p>
+  <p>
+    <%= f.submit 'Update' %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @pipeline %> |
+<%= link_to 'Back', pipelines_path %>

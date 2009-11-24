@@ -1,0 +1,23 @@
+<p>
+  <b>Name:</b>
+  <%=h @targeting_vector.name %>
+</p>
+
+<p>
+  <b>Parental cell line:</b>
+  <%=h @targeting_vector.parental_cell_line %>
+</p>
+
+<p>
+  <b>Created by:</b>
+  <%=h @targeting_vector.created_by %>
+</p>
+
+<p>
+  <b>Updated by:</b>
+  <%=h @targeting_vector.updated_by %>
+</p>
+
+
+<%= link_to 'Edit', edit_targeting_vector_path(@targeting_vector) %> |
+<%= link_to 'Back', targeting_vectors_path %>

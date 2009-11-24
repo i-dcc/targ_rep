@@ -1,0 +1,27 @@
+<h1>Listing targeting_vectors</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>References</th>
+    <th>Parental cell line</th>
+    <th>Created by</th>
+    <th>Updated by</th>
+  </tr>
+
+<% @targeting_vectors.each do |targeting_vector| %>
+  <tr>
+    <td><%=h targeting_vector.name %></td>
+    <td><%=h targeting_vector.parental_cell_line %></td>
+    <td><%=h targeting_vector.created_by %></td>
+    <td><%=h targeting_vector.updated_by %></td>
+    <td><%= link_to 'Show', targeting_vector %></td>
+    <td><%= link_to 'Edit', edit_targeting_vector_path(targeting_vector) %></td>
+    <td><%= link_to 'Destroy', targeting_vector, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New targeting_vector', new_targeting_vector_path %>

@@ -1,0 +1,29 @@
+<% unless form.error_messages.empty? %>
+  <div class="error">
+    <%= form.error_messages %>
+  </div>
+<% end %>
+
+<p>
+  <%= form.label :username %><br />
+  <%= form.text_field :username, :class => :text %>
+</p>
+
+<p>
+  <%= form.label :email %><br />
+  <%= form.text_field :email, :class => :text %>
+</p>
+
+<p>
+  <%= form.label :password, form.object.new_record? ? nil : "Change password" %><br />
+  <%= form.password_field :password, :class => :text %>
+</p>
+
+<p>
+  <%= form.label :password_confirmation %><br />
+  <%= form.password_field :password_confirmation, :class => :text %>
+</p>
+
+<p>
+  <%= form.check_box :is_admin %><%= form.label :is_admin %><br />
+</p>

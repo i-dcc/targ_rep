@@ -1,0 +1,13 @@
+<h2>Edit Account</h2>
+ 
+<% form_for @user, :url => users_path do |f| %>
+  <%= render :partial => "form", :object => f %>
+  <p>
+    <button type="submit" class="button positive">
+      <%= image_tag "led-icons/accept.png", :alt => "" %> Update
+    </button> 
+    <a href="<%= users_path() %>" class="button negative">
+      <%= image_tag "led-icons/cross.png", :alt => "" %> Back
+    </a>
+  </p>
+<% end %>

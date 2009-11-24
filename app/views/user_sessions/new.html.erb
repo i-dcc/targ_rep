@@ -1,0 +1,29 @@
+<h2>Login</h2>
+ 
+<% form_for @user_session, :url => user_session_path do |f| %>
+  <% unless f.error_messages.empty? %>
+    <div class="error">
+      <%= f.error_messages %>
+    </div>
+  <% end %>
+
+  <p>
+    <%= f.label :login %><br />
+    <%= f.text_field :login, :class => :text %>
+  </p>
+  
+  <p>
+    <%= f.label :password %><br />
+    <%= f.password_field :password, :class => :text %>
+  </p>
+  
+  <p>
+    <%= f.check_box :remember_me %><%= f.label :remember_me %><br />
+  </p>
+  
+  <p>
+    <button type="submit" class="button positive">
+      <%= image_tag "led-icons/accept.png", :alt => "" %> Login
+    </button>
+  </p>
+<% end %>

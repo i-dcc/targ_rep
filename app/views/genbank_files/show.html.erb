@@ -1,0 +1,13 @@
+<p>
+  <b>Escell clone:</b>
+  <%=h @genbank_file.escell_clone %>
+</p>
+
+<p>
+  <b>Targeting vector:</b>
+  <%=h @genbank_file.targeting_vector %>
+</p>
+
+
+<%= link_to 'Edit', edit_genbank_file_path(@genbank_file) %> |
+<%= link_to 'Back', genbank_files_path %>

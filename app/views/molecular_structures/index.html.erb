@@ -1,0 +1,42 @@
+<h1>Listing molecular_structures</h1>
+
+<table>
+  <tr>
+    <th>Assembly</th>
+    <th>Chromosome</th>
+    <th>Strand</th>
+    <th>Mgi accession</th>
+    <th>Homology arm start</th>
+    <th>Homology arm end</th>
+    <th>Loxp start</th>
+    <th>Loxp end</th>
+    <th>Cassette start</th>
+    <th>Cassette end</th>
+    <th>Created by</th>
+    <th>Updated by</th>
+  </tr>
+
+<% @molecular_structures.each do |molecular_structure| %>
+  <tr>
+    <td><%=h molecular_structure.assembly %></td>
+    <td><%=h molecular_structure.chromosome %></td>
+    <td><%=h molecular_structure.strand %></td>
+    <td><%=h molecular_structure.mgi_accession_id %></td>
+    <td><%=h molecular_structure.homology_arm_start %></td>
+    <td><%=h molecular_structure.homology_arm_end %></td>
+    <td><%=h molecular_structure.loxp_start %></td>
+    <td><%=h molecular_structure.loxp_end %></td>
+    <td><%=h molecular_structure.cassette_start %></td>
+    <td><%=h molecular_structure.cassette_end %></td>
+    <td><%=h molecular_structure.created_by %></td>
+    <td><%=h molecular_structure.updated_by %></td>
+    <td><%= link_to 'Show', molecular_structure %></td>
+    <td><%= link_to 'Edit', edit_molecular_structure_path(molecular_structure) %></td>
+    <td><%= link_to 'Destroy', molecular_structure, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New molecular_structure', new_molecular_structure_path %>

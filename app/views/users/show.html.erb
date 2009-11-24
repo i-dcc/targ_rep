@@ -1,0 +1,31 @@
+<h2><%=h @user.username %></h2>
+
+<div class="span-12">
+  <fieldset id="account_details">
+    <legend>Account Details</legend>
+    <p>
+      <b>Username:</b>
+      <%=h @user.username %>
+    </p>
+    <p>
+      <b>E-Mail:</b>
+      <%=h @user.email %>
+    </p>
+
+    <p>
+      <b>Creation date:</b>
+      <%=h @user.created_at %>
+    </p>
+    
+    <p>
+      <b>Last login at:</b>
+      <%=h @user.last_login_at %>
+    </p>
+  </fieldset>
+</div>
+
+<div class="clear"></div>
+
+<a href="<%= edit_user_path(@user) %>" class="button">
+  <%= image_tag "famfamfam/pencil.png", :alt => "" %> Edit
+</a>

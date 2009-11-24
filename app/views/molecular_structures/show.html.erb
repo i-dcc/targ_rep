@@ -1,0 +1,63 @@
+<p>
+  <b>Assembly:</b>
+  <%=h @molecular_structure.assembly %>
+</p>
+
+<p>
+  <b>Chromosome:</b>
+  <%=h @molecular_structure.chromosome %>
+</p>
+
+<p>
+  <b>Strand:</b>
+  <%=h @molecular_structure.strand %>
+</p>
+
+<p>
+  <b>Mgi accession:</b>
+  <%=h @molecular_structure.mgi_accession_id %>
+</p>
+
+<p>
+  <b>Homology arm start:</b>
+  <%=h @molecular_structure.homology_arm_start %>
+</p>
+
+<p>
+  <b>Homology arm end:</b>
+  <%=h @molecular_structure.homology_arm_end %>
+</p>
+
+<p>
+  <b>Loxp start:</b>
+  <%=h @molecular_structure.loxp_start %>
+</p>
+
+<p>
+  <b>Loxp end:</b>
+  <%=h @molecular_structure.loxp_end %>
+</p>
+
+<p>
+  <b>Cassette start:</b>
+  <%=h @molecular_structure.cassette_start %>
+</p>
+
+<p>
+  <b>Cassette end:</b>
+  <%=h @molecular_structure.cassette_end %>
+</p>
+
+<p>
+  <b>Created by:</b>
+  <%=h @molecular_structure.created_by %>
+</p>
+
+<p>
+  <b>Updated by:</b>
+  <%=h @molecular_structure.updated_by %>
+</p>
+
+
+<%= link_to 'Edit', edit_molecular_structure_path(@molecular_structure) %> |
+<%= link_to 'Back', molecular_structures_path %>
