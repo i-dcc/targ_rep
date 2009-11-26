@@ -6,7 +6,9 @@ class ApplicationController < ActionController::Base
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
 
   # Scrub sensitive parameters from your log
-  filter_parameter_logging :password
+  filter_parameter_logging :password, :password_confirmation
+  
+  before_filter :current_user
   
   private
   def current_user_session

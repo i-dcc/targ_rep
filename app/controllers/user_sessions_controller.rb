@@ -4,15 +4,13 @@ class UserSessionsController < ApplicationController
   end
 
   def create
-    @user_session = UserSession.new(params[:user_session])
-
-    respond_to do |format|
-      if @user_session.save
-        flash[:notice] = 'Successfully logged in.'
-        redirect_to root_url
-      else
-        render :action => "new"
-      end
+    @user_session = UserSession.new( params[:user_session] )
+  
+    if @user_session.save
+      flash[:notice] = 'Successfully logged in.'
+      redirect_to root_url
+    else
+      render :action => "new"
     end
   end
   

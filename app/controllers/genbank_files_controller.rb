@@ -1,5 +1,5 @@
 class GenbankFilesController < ApplicationController
-  before_filter :require_user
+  before_filter :require_user, :only => [:create, :update, :destroy]
   before_filter :find_genbank_file, :only => [:show, :edit, :update, :destroy]
   
   # GET /genbank_files
@@ -16,10 +16,6 @@ class GenbankFilesController < ApplicationController
   # GET /genbank_files/1
   # GET /genbank_files/1.xml
   def show
-    respond_to do |format|
-      format.html # show.html.erb
-      format.xml  { render :xml => @genbank_file }
-    end
   end
 
   # GET /genbank_files/new

@@ -1,5 +1,5 @@
 class EsCellsController < ApplicationController
-  before_filter :require_user
+  before_filter :require_user, :only => [:create, :update, :destroy]
   before_filter :find_escell, :only => [:show, :edit, :update, :destroy]
   
   # GET /es_cells
@@ -16,10 +16,6 @@ class EsCellsController < ApplicationController
   # GET /es_cells/1
   # GET /es_cells/1.xml
   def show
-    respond_to do |format|
-      format.html # show.html.erb
-      format.xml  { render :xml => @es_cell }
-    end
   end
 
   # GET /es_cells/new

@@ -1,0 +1,201 @@
+/* @override http://localhost:3000/stylesheets/style.css?1254236036 */
+
+body {
+  font-family: "Lucida Grande", Lucida, Verdana, sans-serif;
+}
+
+#header {
+  padding: 15px 0 0;
+  margin-bottom: 1px;
+}
+
+#navigation {
+  background-color: #5898d0;
+  margin-bottom: 1px;
+}
+
+#content {
+  padding-top: 15px;
+}
+
+#footer {
+  border-top: 2px solid #5898d0;
+  font-size: 0.8em;
+  padding: 15px 0 0;
+}
+
+#userbox {
+  padding-top: 15px;
+}
+
+#userbox-inner {
+  -webkit-border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: #eaf2f5;
+  padding: 10px;
+  text-align: center;
+}
+
+#userbox-inner a {
+  color: #376598;
+  text-decoration: none;
+}
+
+#userbox-inner a:hover {
+  text-decoration: underline;
+}
+
+/* Fix for SilkSprite */
+
+.ss_sprite {
+  padding-bottom: 4px;
+}
+
+/* Layout */
+
+div.clear {
+  clear: both;
+  height: 10px;
+  padding-bottom: 15px;
+}
+
+/* Headings */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-weight: bold;
+  font-style: italic;
+}
+
+#header h1 a {
+  color: #003169;
+  text-decoration: none;
+}
+
+/* Navigation */
+
+#navigation ul {
+  background: url(../images/bg_thead.png) repeat-x;
+  margin: 0px;
+  padding: 0px;
+  line-height: 29px;
+  white-space: nowrap;
+}
+
+#navigation li {
+  background: url(../images/bg_th.png) no-repeat right bottom;
+  list-style-type: none;
+  display: inline;
+}
+
+#navigation li a {
+  font-weight: bold;
+  text-decoration: none;
+  padding: 7px 14px 7px 10px;
+  color: #333;
+}
+
+#navigation li.current a,
+#navigation li a:hover {
+  font-weight: bold;
+  color:#5898D0;
+}
+
+/* Forms */
+
+.fieldWithErrors,
+.fieldWithErrors input {
+  color: #c00;
+}
+
+.fieldWithErrors input {
+  background-color: #fbe3e4;
+  border-color: #fbc2c4;
+}
+
+#errorExplanation h2 {
+  font-weight: bold;
+  font-size: 16px;
+  color: #973629;
+}
+
+/* Table */
+
+table {
+  border-collapse:collapse;
+  border: 1px solid #ccc;
+}
+
+thead {
+  background: #c3d9ff url(../images/bg_thead.png) repeat-x left bottom;
+  color: #fff;
+}
+
+thead th {
+  background: url(../images/bg_th.png) no-repeat right bottom;
+  padding-left: 10px;
+}
+
+thead th.last {
+  background: none;
+}
+
+tbody tr:hover td {
+  background-color: #fdfecc;
+}
+
+tbody tr {
+  border-bottom: 1px solid #ccc;
+}
+
+tbody td {
+  padding: 4px 8px;
+}
+
+table.no-border,
+table.no-border tr,
+table.no-border td {
+  border: none;
+}
+
+table input[type="text"] {
+  width: 120px;
+}
+
+/* Pagination */
+
+div.pagination a {
+  padding: 2px 5px;
+  text-decoration: none;
+  border: 1px solid #ccc;
+  color: #222;
+}
+
+div.pagination a:hover {
+  background: #c3d9ff;
+  color: #fff;
+}
+
+div.pagination a.next_page, div.pagination a.prev_page {
+  text-decoration: underline;
+  border: 0;
+  padding: 0;
+  color: #009;
+}
+
+div.pagination a.next_page:hover, div.pagination a.prev_page:hover {
+  background: none;
+  color: #222;
+}
+
+div.pagination span.current{
+  font-weight:bold;
+  padding: 2px 5px;
+  border: 1px solid #ccc;
+  background: #c3d9ff;
+  color: #666;
+}
+
+div.pagination .disabled {
+  color: #ccc;
+}

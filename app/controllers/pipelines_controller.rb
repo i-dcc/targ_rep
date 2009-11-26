@@ -1,4 +1,7 @@
 class PipelinesController < ApplicationController
+  before_filter :require_user, :only => [:create, :update, :destroy]
+  before_filter :find_pipeline, :only => [:show, :edit, :update, :destroy]
+  
   # GET /pipelines
   # GET /pipelines.xml
   def index
@@ -13,12 +16,6 @@ class PipelinesController < ApplicationController
   # GET /pipelines/1
   # GET /pipelines/1.xml
   def show
-    @pipeline = Pipeline.find(params[:id])
-
-    respond_to do |format|
-      format.html # show.html.erb
-      format.xml  { render :xml => @pipeline }
-    end
   end
 
   # GET /pipelines/new
@@ -34,7 +31,6 @@ class PipelinesController < ApplicationController
 
   # GET /pipelines/1/edit
   def edit
-    @pipeline = Pipeline.find(params[:id])
   end
 
   # POST /pipelines
@@ -57,8 +53,6 @@ class PipelinesController < ApplicationController
   # PUT /pipelines/1
   # PUT /pipelines/1.xml
   def update
-    @pipeline = Pipeline.find(params[:id])
-
     respond_to do |format|
       if @pipeline.update_attributes(params[:pipeline])
         flash[:notice] = 'Pipeline was successfully updated.'
@@ -74,12 +68,16 @@ class PipelinesController < ApplicationController
   # DELETE /pipelines/1
   # DELETE /pipelines/1.xml
   def destroy
-    @pipeline = Pipeline.find(params[:id])
     @pipeline.destroy
 
     respond_to do |format|
       format.html { redirect_to(pipelines_url) }
       format.xml  { head :ok }
     end
+  end
+  
+  private
+  def find_pipeline
+    @pipeline = Pipeline.find(params[:id])
   end
 end

@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
-  before_filter :require_user, :only => [:index, :show, :edit, :update]
-  before_filter :require_admin, :only => [:new]
+  # before_filter :require_user, :only => [:index, :show, :edit, :update]
+  # before_filter :require_admin, :only => [:new]
   
   before_filter :find_user, :only => [:show, :edit, :update]
 

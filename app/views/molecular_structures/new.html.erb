@@ -1,59 +1,17 @@
-<h1>New molecular_structure</h1>
+<h2>Create an allele</h2>
 
-<% form_for(@molecular_structure) do |f| %>
-  <%= f.error_messages %>
-
-  <p>
-    <%= f.label :assembly %><br />
-    <%= f.text_field :assembly %>
-  </p>
-  <p>
-    <%= f.label :chromosome %><br />
-    <%= f.text_field :chromosome %>
-  </p>
-  <p>
-    <%= f.label :strand %><br />
-    <%= f.text_field :strand %>
-  </p>
-  <p>
-    <%= f.label :mgi_accession_id %><br />
-    <%= f.text_field :mgi_accession_id %>
-  </p>
-  <p>
-    <%= f.label :homology_arm_start %><br />
-    <%= f.text_field :homology_arm_start %>
-  </p>
-  <p>
-    <%= f.label :homology_arm_end %><br />
-    <%= f.text_field :homology_arm_end %>
-  </p>
-  <p>
-    <%= f.label :loxp_start %><br />
-    <%= f.text_field :loxp_start %>
-  </p>
-  <p>
-    <%= f.label :loxp_end %><br />
-    <%= f.text_field :loxp_end %>
-  </p>
-  <p>
-    <%= f.label :cassette_start %><br />
-    <%= f.text_field :cassette_start %>
-  </p>
-  <p>
-    <%= f.label :cassette_end %><br />
-    <%= f.text_field :cassette_end %>
-  </p>
-  <p>
-    <%= f.label :created_by %><br />
-    <%= f.text_field :created_by %>
-  </p>
-  <p>
-    <%= f.label :updated_by %><br />
-    <%= f.text_field :updated_by %>
-  </p>
-  <p>
-    <%= f.submit 'Create' %>
-  </p>
+<% form_for @molecular_structure do |f| %>
+  <%= render :partial => 'form', :locals =>
+    { :f => f, :molecular_structure => @molecular_structure } %>
+  
+  <div id="buttons" class="span-24 last">
+    <p>
+      <button type="submit" class="button positive">
+        <%= image_tag "led-icons/accept.png", :alt => "" %> Create
+      </button>
+      <a href="<%= url_for(molecular_structures_path) %>" class="button negative">
+        <%= image_tag "led-icons/cross.png", :alt => "" %> Cancel
+      </a>
+    </p>
+  </div>
 <% end %>
-
-<%= link_to 'Back', molecular_structures_path %>

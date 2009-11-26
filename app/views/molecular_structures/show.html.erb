@@ -1,63 +1,184 @@
-<p>
-  <b>Assembly:</b>
-  <%=h @molecular_structure.assembly %>
-</p>
+<h2><%=h @molecular_structure.allele_symbol_superscript %> | <%=h @molecular_structure.mgi_accession_id %></h2>
 
-<p>
-  <b>Chromosome:</b>
-  <%=h @molecular_structure.chromosome %>
-</p>
+<div class="span-12">
+  <p>
+    <strong>Allele Symbol Superscript:</strong> 
+    <%=h @molecular_structure.allele_symbol_superscript %>
+  </p>
+</div>
 
-<p>
-  <b>Strand:</b>
-  <%=h @molecular_structure.strand %>
-</p>
+<div class="span-12 last">
+  <p>
+    <strong>MGI Accession ID:</strong> 
+    <%=h @molecular_structure.mgi_accession_id %>
+  </p>
+</div>
 
-<p>
-  <b>Mgi accession:</b>
-  <%=h @molecular_structure.mgi_accession_id %>
-</p>
+<div class="span-12">
+  <fieldset id="genomic_position">
+    <legend>Genomic Position</legend>
+    <p>
+      <strong>Assembly:</strong>
+      <%=h @molecular_structure.assembly %>
+    </p>
+    <p>
+      <strong>Chromosome:</strong>
+      <%=h @molecular_structure.chromosome %>
+    </p>
+    <p>
+      <strong>Strand</strong>
+      <%=h @molecular_structure.strand %>
+    </p>
+  </fieldset>
+  
+  <fieldset id="design_details">
+    <legend>Design Details</legend>
+    <p>
+      <strong>Design type:</strong>
+      <%=h @molecular_structure.design_type %>
+    </p>
+    <p>
+      <strong>Design subtype:</strong>
+      <%=h @molecular_structure.design_subtype %><br />
+      <em><%=h @molecular_structure.subtype_description %></em>
+    </p>
+    <p>
+      <strong>Cassette:</strong>
+      <%=h @molecular_structure.cassette %>
+    </p>
+    <p>
+      <strong>Backbone:</strong>
+      <%=h @molecular_structure.backbone %>
+    </p>
+  </fieldset>
+</div>
 
-<p>
-  <b>Homology arm start:</b>
-  <%=h @molecular_structure.homology_arm_start %>
-</p>
+<div class="span-12 last">
+  <fieldset id="molecular_structure" class="">
+    <legend>Molecular Structure</legend>
+    <table>
+      <thead>
+        <th>Feature</th>
+        <th>Start</th>
+        <th class="last">End</th>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Homology Arm</td>
+          <td><%=h @molecular_structure.homology_arm_start %></td>
+          <td><%=h @molecular_structure.homology_arm_end %></td>
+        </tr>
+        <tr class="even">
+          <td>Cassette</td>
+          <td><%=h @molecular_structure.cassette_start %></td>
+          <td><%=h @molecular_structure.cassette_end %></td>
+        </tr>
+        <tr>
+          <td>LoxP</td>
+          <td><%=h @molecular_structure.loxp_start %></td>
+          <td><%=h @molecular_structure.loxp_end %></td>
+        </tr>
+      </tbody>
+    </table>
+  </fieldset>
+</div>
 
-<p>
-  <b>Homology arm end:</b>
-  <%=h @molecular_structure.homology_arm_end %>
-</p>
+<div class="span-24 last">
+  <fieldset id="targeting_vectors">
+    <legend>Targeting Vectors</legend>
+    
+    <table>
+      <thead>
+        <th>Pipeline</th>
+        <th>IKMC Project ID</th>
+        <th>Name</th>
+        <th>Intermediate Vector</th>
+        <th class="last">Parental Cell Line</th>
+      </thead>
+      <tbody id="targeting_vectors">
+        <% @molecular_structure.targeting_vectors.each do |targ_vec| %>
+        <tr class="targeting_vector <%= cycle("odd", "even") %>">
+          <td><%= targ_vec.pipeline.name %></td>
+          <td><%= targ_vec.ikmc_project_id %></td>
+          <td><%= targ_vec.name %></td>
+          <td><%= targ_vec.intermediate_vector %></td>
+          <td><%= targ_vec.parental_cell_line %></td>
+        </tr>
+        <% end -%>
+      </tbody>
+    </table>    
+  </fieldset>
+</div>
 
-<p>
-  <b>Loxp start:</b>
-  <%=h @molecular_structure.loxp_start %>
-</p>
+<div class="span-24">
+  <a href="<%= edit_molecular_structure_path(@molecular_structure) %>" class="button">
+    <%= image_tag "famfamfam/pencil.png", :alt => "" %> Edit
+  </a>
+  <a href="<%= url_for(molecular_structures_path) %>" class="button negative">
+    <%= image_tag "led-icons/cross.png", :alt => "" %> Back
+  </a>
+</div>
 
-<p>
-  <b>Loxp end:</b>
-  <%=h @molecular_structure.loxp_end %>
-</p>
+<div class="clear"></div>
 
-<p>
-  <b>Cassette start:</b>
-  <%=h @molecular_structure.cassette_start %>
-</p>
+<h3>Products for this allele</h3>
+<div class="span-24">
+  <% if !@molecular_structure.es_cells.empty? %>
+    <table>
+      <thead>
+        <th>ES Cell Clone</th>
+        <th>Created by</th>
+        <th>Updated by</th>
+        <th class="last">Action</th>
+      </thead>
+      <tbody>
+        <% @molecular_structure.es_cells.each do |es_cell| %>
+          <tr class="<%= cycle("odd", "even") %>">
+            <td><%=h es_cell.name %></td>
+            <td><%=h es_cell.created_by.username %></td>
+            <td><%=h es_cell.updated_by.username %></td>
+            <td>
+              <%= link_to 'delete', product, :confirm => 'Are you sure?', :method => :delete, :class => "ss_sprite ss_cross" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p><em>No product related to this allele.</em></p>
+  <% end %>
+</div>
 
-<p>
-  <b>Cassette end:</b>
-  <%=h @molecular_structure.cassette_end %>
-</p>
+<div class="clear"></div>
 
-<p>
-  <b>Created by:</b>
-  <%=h @molecular_structure.created_by %>
-</p>
-
-<p>
-  <b>Updated by:</b>
-  <%=h @molecular_structure.updated_by %>
-</p>
-
-
-<%= link_to 'Edit', edit_molecular_structure_path(@molecular_structure) %> |
-<%= link_to 'Back', molecular_structures_path %>
+<h3>Molecular Structure History</h3>
+<div class="span-24">
+  <table>
+    <thead>
+      <th>Version</th>
+      <th>Allele Symbol Superscript</th>
+      <th>Chromosome</th>
+      <th>Strand</th>
+      <th>Cassette</th>
+      <th>Backbone</th>
+      <th>Homology Arm</th>
+      <th>Cassette</th>
+      <th class="last">LoxP</th>
+    </thead>
+    <tbody>
+      <% for revision in @molecular_structure.revisions %>
+        <tr class="<%= cycle("odd", "even") %>">
+          <td><%= revision.version %></td>
+          <td><%= revision.allele_symbol_superscript %></td>
+          <td><%= revision.chromosome %></td>
+          <td><%= revision.strand %></td>
+          <td><%= revision.cassette %></td>
+          <td><%= revision.backbone %></td>
+          <td><%= revision.homology_arm_start%> -> <%= revision.homology_arm_end %></td>
+          <td><%= revision.cassette_start%> -> <%= revision.cassette_end %></td>
+          <td><%= revision.loxp_start%> -> <%= revision.loxp_end %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

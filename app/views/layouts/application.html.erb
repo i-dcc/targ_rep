@@ -37,15 +37,14 @@
       <div id="navigation" class="span-24">
         <ul>
           <li><%= link_to "Home", root_path %></li>
+          <li><%= link_to "Alleles", molecular_structures_path %></li>
         </ul>
       </div>
       
       <div id="content" class="span-24">
         <% [:error, :notice, :success].each do |status| %>
           <% if flash[status] %>
-            <div class="<%= status %>">
-              <%= flash[status] %>
-            </div>
+            <div class="<%= status %>"><%= flash[status] %></div>
           <% end %>
         <% end %>
         <%= yield %>

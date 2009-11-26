@@ -1,0 +1,17 @@
+<% new_or_existing = es_cell.new_record? ? 'new' : 'existing' %>
+<% prefix = "targ_vec[#{new_or_existing}_es_cell_attributes][]"%>
+
+<% fields_for prefix, es_cell do |f| -%>
+  <fieldset id="es_cells">
+    <legend>ES Cell Clones</legend>
+    <%= f.label :name, "Name:" %>
+    <%= f.text_field :name, :class => :text %> <a href="#">remove</a>
+    <br />
+    <%= f.label :name, "Name:" %>
+    <%= f.text_field :name, :class => :text %> <a href="#">remove</a>
+    <br />
+    <a href="<%= url_for(targeting_vectors_path) %>" class="button positive">
+      <%= image_tag "led-icons/add.png", :alt => "" %> Add a clone
+    </a>
+  </fieldset>
+<% end -%>

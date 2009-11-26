@@ -1,60 +1,14 @@
-<h1>Editing molecular_structure</h1>
+<h2><%=h @molecular_structure.allele_symbol_superscript %> | <%=h @molecular_structure.mgi_accession_id %></h2>
 
-<% form_for(@molecular_structure) do |f| %>
-  <%= f.error_messages %>
-
+<% form_for @molecular_structure do |f| %>
+  <%= render :partial => 'form', :locals =>
+    { :f => f, :molecular_structure => @molecular_structure } %>
   <p>
-    <%= f.label :assembly %><br />
-    <%= f.text_field :assembly %>
-  </p>
-  <p>
-    <%= f.label :chromosome %><br />
-    <%= f.text_field :chromosome %>
-  </p>
-  <p>
-    <%= f.label :strand %><br />
-    <%= f.text_field :strand %>
-  </p>
-  <p>
-    <%= f.label :mgi_accession_id %><br />
-    <%= f.text_field :mgi_accession_id %>
-  </p>
-  <p>
-    <%= f.label :homology_arm_start %><br />
-    <%= f.text_field :homology_arm_start %>
-  </p>
-  <p>
-    <%= f.label :homology_arm_end %><br />
-    <%= f.text_field :homology_arm_end %>
-  </p>
-  <p>
-    <%= f.label :loxp_start %><br />
-    <%= f.text_field :loxp_start %>
-  </p>
-  <p>
-    <%= f.label :loxp_end %><br />
-    <%= f.text_field :loxp_end %>
-  </p>
-  <p>
-    <%= f.label :cassette_start %><br />
-    <%= f.text_field :cassette_start %>
-  </p>
-  <p>
-    <%= f.label :cassette_end %><br />
-    <%= f.text_field :cassette_end %>
-  </p>
-  <p>
-    <%= f.label :created_by %><br />
-    <%= f.text_field :created_by %>
-  </p>
-  <p>
-    <%= f.label :updated_by %><br />
-    <%= f.text_field :updated_by %>
-  </p>
-  <p>
-    <%= f.submit 'Update' %>
+    <button type="submit" class="button positive">
+      <%= image_tag "led-icons/accept.png", :alt => "" %> Update
+    </button> 
+    <a href="<%= molecular_structure_path(@molecular_structure) %>" class="button negative">
+      <%= image_tag "led-icons/cross.png", :alt => "" %> Back
+    </a>
   </p>
 <% end %>
-
-<%= link_to 'Show', @molecular_structure %> |
-<%= link_to 'Back', molecular_structures_path %>

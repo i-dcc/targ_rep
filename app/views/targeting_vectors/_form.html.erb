@@ -1,0 +1,121 @@
+<% unless f.error_messages.empty? %>
+  <div class="error"><%= f.error_messages %></div>
+<% end %>
+
+<% prefix = "targeting_vector[molecular_structure]" %>
+
+<% fields_for prefix, @molecular_structure do |mol_struct_form| %>
+  <div class="span-12">
+    <p>
+      <%= mol_struct_form.label :allele_symbol_superscript, "Allele Symbol Superscript" %><br />
+      <%= mol_struct_form.text_field :allele_symbol_superscript, :class => :title %>
+    </p>
+  </div>
+  
+  <div class="span-12 last">
+    <p>
+      <%= mol_struct_form.label :mgi_accession_id, "MGI Accession ID" %><br />
+      <%= mol_struct_form.text_field :mgi_accession_id, :class => :title %>
+    </p>
+  </div>
+<% end -%>
+
+<div class="span-12">
+  <fieldset id="project_details">
+    <legend>Project details</legend>
+    <p>
+      <%= f.label :pipeline, "Pipeline" %><br />
+      <%= collection_select(:targeting_vector, :pipeline_id, Pipeline.find(:all, :order => "name"), :id, :name ) %>
+    </p>
+    <p>
+      <%= f.label :ikmc_project_id, "IKMC Project ID" %><br />
+      <%= f.text_field :ikmc_project_id, :class => :text %>
+    </p>
+  </fieldset>
+</div>
+
+<% fields_for prefix, @molecular_structure do |mol_struct_form| %>
+<div class="span-12 last">
+  <fieldset>
+    <legend>Genomic Position</legend>
+    <p>
+      <%= mol_struct_form.label :chromosome %><br />
+      <% chromosomes = ("1".."19").to_a + ['X', 'Y', 'MT'] %>
+      <%= select( prefix, :chromosome, chromosomes ) %> 
+    </p>
+    <p>
+      <%= mol_struct_form.label :strand %><br />
+      <%= select( prefix, :strand, ["+","-"] ) %>
+    </p>
+    <p>
+      <%= mol_struct_form.label :assembly, "Assembly" %><br />
+      <%= mol_struct_form.text_field :assembly, :class => :text %>
+    </p>
+  </fieldset>
+</div>
+
+<div class="span-12">
+  <fieldset>
+    <legend>Design Details</legend>
+    <p>
+      <%= mol_struct_form.label :design_type, "Design Type" %><br />
+      <%= select( prefix, :design_type, ["Knock Out","Deletion"] ) %>
+    </p>
+    <p>
+      <%= mol_struct_form.label :design_subtype, "Design Subtype" %><br />
+      <%= mol_struct_form.text_field :design_subtype, :class => :text %>
+    </p>
+    <p>
+      <%= mol_struct_form.label :homology_arm_start, "Homology Arm Start" %><br />
+      <%= mol_struct_form.text_field :homology_arm_start, :class => :text %>
+    </p>
+    <p>
+      <%= mol_struct_form.label :homology_arm_end, "Homology Arm End" %><br />
+      <%= mol_struct_form.text_field :homology_arm_end, :class => :text %>
+    </p>
+    <p>
+      <%= mol_struct_form.label :cassette_start, "Cassette Start" %><br />
+      <%= mol_struct_form.text_field :cassette_start, :class => :text %>
+    </p>
+    <p>
+      <%= mol_struct_form.label :cassette_end, "Cassette End" %><br />
+      <%= mol_struct_form.text_field :cassette_end, :class => :text %>
+    </p>
+    <p>
+      <%= mol_struct_form.label :loxp_start, "LoxP Start" %><br />
+      <%= mol_struct_form.text_field :loxp_start, :class => :text %>
+    </p>
+    <p>
+      <%= mol_struct_form.label :loxp_end, "LoxP End" %><br />
+      <%= mol_struct_form.text_field :loxp_end, :class => :text %>
+    </p>
+  </fieldset>
+</div>
+<% end -%>
+
+
+<div class="span-12 last">
+  <fieldset>
+    <legend>Allele Details</legend>
+    
+    <% fields_for prefix, @molecular_structure do |mol_struct_form| %>
+      <p>
+        <%= mol_struct_form.label :cassette %><br />
+        <%= mol_struct_form.text_field :cassette, :class => :text %>
+      </p>
+      <p>
+        <%= mol_struct_form.label :backbone %><br />
+        <%= mol_struct_form.text_field :backbone, :class => :text %>
+      </p>
+    <% end -%>
+    
+    <p>
+      <%= f.label :intermediate_vector, "Intermediate Vector" %><br />
+      <%= f.text_field :intermediate_vector, :class => :text %>
+    </p>
+    <p>
+      <%= f.label :name, "Targeting Vector" %><br />
+      <%= f.text_field :name, :class => :text %>
+    </p>
+  </fieldset>
+</div>

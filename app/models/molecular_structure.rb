@@ -1,5 +1,5 @@
 class MolecularStructure < ActiveRecord::Base
-
+  
   # === List of columns ===
   #   id                        : integer 
   #   genbank_file_id           : integer 
@@ -24,7 +24,7 @@ class MolecularStructure < ActiveRecord::Base
   #   created_at                : datetime 
   #   updated_at                : datetime 
   # =======================
-
+  
   acts_as_audited
   
   # Associations
@@ -143,6 +143,31 @@ class MolecularStructure < ActiveRecord::Base
           errors.add(:loxp_start, "has to be blank for this design type")
           errors.add(:loxp_end,   "has to be blank for this design type")
         end
+      end
+    end
+    
+    def create_targeting_vectors=(targeting_vector_list)
+      targeting_vector_list.each do |targeting_vector_hash|
+        targeting_vectors.build(targeting_vector_hash)
+      end
+    end
+    
+    after_update :save_targeting_vectors
+    
+    def update_targeting_vectors=(targeting_vector_list)
+      targeting_vectors.reject(&:new_record?).each do |targ_vec|
+        targ_vec_hash = targeting_vector_list[targ_vec.id.to_s]
+        if targ_vec_hash
+          targ_vec.attributes = targ_vec_hash
+        else
+          targ_vec.delete()
+        end
+      end
+    end
+    
+    def save_targeting_vectors
+      targeting_vectors.each do |targ_vec|
+        targ_vec.save(false)
       end
     end
 end

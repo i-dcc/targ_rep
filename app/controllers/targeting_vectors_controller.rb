@@ -1,4 +1,7 @@
 class TargetingVectorsController < ApplicationController
+  before_filter :require_user, :only => [:create, :update, :destroy]
+  before_filter :find_targ_vec, :only => [:show, :edit, :update, :destroy]
+  
   # GET /targeting_vectors
   # GET /targeting_vectors.xml
   def index
@@ -13,12 +16,6 @@ class TargetingVectorsController < ApplicationController
   # GET /targeting_vectors/1
   # GET /targeting_vectors/1.xml
   def show
-    @targeting_vector = TargetingVector.find(params[:id])
-
-    respond_to do |format|
-      format.html # show.html.erb
-      format.xml  { render :xml => @targeting_vector }
-    end
   end
 
   # GET /targeting_vectors/new
@@ -34,7 +31,6 @@ class TargetingVectorsController < ApplicationController
 
   # GET /targeting_vectors/1/edit
   def edit
-    @targeting_vector = TargetingVector.find(params[:id])
   end
 
   # POST /targeting_vectors
@@ -57,8 +53,6 @@ class TargetingVectorsController < ApplicationController
   # PUT /targeting_vectors/1
   # PUT /targeting_vectors/1.xml
   def update
-    @targeting_vector = TargetingVector.find(params[:id])
-
     respond_to do |format|
       if @targeting_vector.update_attributes(params[:targeting_vector])
         flash[:notice] = 'TargetingVector was successfully updated.'
@@ -74,12 +68,16 @@ class TargetingVectorsController < ApplicationController
   # DELETE /targeting_vectors/1
   # DELETE /targeting_vectors/1.xml
   def destroy
-    @targeting_vector = TargetingVector.find(params[:id])
     @targeting_vector.destroy
 
     respond_to do |format|
       format.html { redirect_to(targeting_vectors_url) }
       format.xml  { head :ok }
     end
+  end
+  
+  private
+  def find_targ_vec
+    @targeting_vector = TargetingVector.find(params[:id])
   end
 end

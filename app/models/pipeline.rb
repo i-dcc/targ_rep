@@ -11,6 +11,8 @@ class Pipeline < ActiveRecord::Base
   has_many :targeting_vectors, 
     :class_name => "TargetingVector",
     :foreign_key => "pipeline_id"
+    
+  has_many :molecular_structures, :through => "targeting_vectors"
   
   # Unique constraints
   validates_uniqueness_of :name

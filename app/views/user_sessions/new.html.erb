@@ -1,6 +1,6 @@
 <h2>Login</h2>
  
-<% form_for @user_session, :url => user_session_path do |f| %>
+<% form_for @user_session, :url => user_sessions_path do |f| %>
   <% unless f.error_messages.empty? %>
     <div class="error">
       <%= f.error_messages %>
@@ -8,8 +8,8 @@
   <% end %>
 
   <p>
-    <%= f.label :login %><br />
-    <%= f.text_field :login, :class => :text %>
+    <%= f.label :username %><br />
+    <%= f.text_field :username, :class => :text %>
   </p>
   
   <p>

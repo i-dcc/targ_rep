@@ -43,8 +43,7 @@ class TargetingVector < ActiveRecord::Base
   validates_associated  :pipeline
   validates_associated  :molecular_structure
 
-  validates_presence_of :pipeline_id,            :on => :create
-  validates_presence_of :molecular_structure_id, :on => :create
-  validates_presence_of :ikmc_project_id,        :on => :create
-  validates_presence_of :name,                   :on => :create
+  validates_presence_of :pipeline_id,     :on => :create
+  validates_presence_of :ikmc_project_id, :on => :create
+  validates_presence_of :name,            :on => :create
 end

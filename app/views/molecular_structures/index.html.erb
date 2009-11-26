@@ -1,42 +1,104 @@
-<h1>Listing molecular_structures</h1>
+<%
+  selected_pipeline = ""
+  pipelines = [""]
+  Pipeline.all.each do |p|
+    pipelines.push(p.name)
+    if params[:pipeline] == p.name
+      selected_pipeline = p.name
+    end
+  end
+-%>
 
-<table>
-  <tr>
-    <th>Assembly</th>
-    <th>Chromosome</th>
-    <th>Strand</th>
-    <th>Mgi accession</th>
-    <th>Homology arm start</th>
-    <th>Homology arm end</th>
-    <th>Loxp start</th>
-    <th>Loxp end</th>
-    <th>Cassette start</th>
-    <th>Cassette end</th>
-    <th>Created by</th>
-    <th>Updated by</th>
-  </tr>
+<div class="span-14">
+  <h2>
+    Alleles 
+    <% if params[:pipeline] and !params[:pipeline].empty? %>
+      (<%= params[:pipeline] %>)
+    <% end %>
+  </h2>
+</div>
 
-<% @molecular_structures.each do |molecular_structure| %>
-  <tr>
-    <td><%=h molecular_structure.assembly %></td>
-    <td><%=h molecular_structure.chromosome %></td>
-    <td><%=h molecular_structure.strand %></td>
-    <td><%=h molecular_structure.mgi_accession_id %></td>
-    <td><%=h molecular_structure.homology_arm_start %></td>
-    <td><%=h molecular_structure.homology_arm_end %></td>
-    <td><%=h molecular_structure.loxp_start %></td>
-    <td><%=h molecular_structure.loxp_end %></td>
-    <td><%=h molecular_structure.cassette_start %></td>
-    <td><%=h molecular_structure.cassette_end %></td>
-    <td><%=h molecular_structure.created_by %></td>
-    <td><%=h molecular_structure.updated_by %></td>
-    <td><%= link_to 'Show', molecular_structure %></td>
-    <td><%= link_to 'Edit', edit_molecular_structure_path(molecular_structure) %></td>
-    <td><%= link_to 'Destroy', molecular_structure, :confirm => 'Are you sure?', :method => :delete %></td>
-  </tr>
-<% end %>
-</table>
+<div class="span-10 last" style="text-align:right">
+  <% form_tag molecular_structures_path, :method => 'get' do %>
+    <label>Filter alleles by pipeline:</label> 
+    <%= select_tag "pipeline", options_for_select( pipelines, selected_pipeline ), :onchange => "this.form.submit()" %>
+    <%= submit_tag "Filter", :name => nil %>
+    <div class="small">
+      <%= link_to_function 'advanced search' , "$('advanced-search').toggle()" %>
+    </div>
+  <% end -%>
+</div>
 
-<br />
+<div id="advanced-search" class="span-24">
+  <fieldset>
+    <legend>Advanced Search</legend>
+    <% form_tag molecular_structures_path, :method => 'get' do %>
+      <table class="no-border">
+        <tr>
+          <td style="text-align:right">Pipeline</td>
+          <td><%= select_tag "pipeline", options_for_select( pipelines, params[:pipeline] ) %></td>
+          <td style="text-align:right">Allele Symbol Superscript</td>
+          <td><%= text_field_tag :allele_symbol_superscript, params[:allele_symbol_superscript] %></td>
+          <td style="text-align:right">MGI Accession ID</td>
+          <td><%= text_field_tag :mgi_accession_id, params[:mgi_accession_id] %></td>
+        </tr>
+        <tr>
+          <td style="text-align:right">Cassette</td>
+          <td><%= text_field_tag :cassette, params[:cassette] %></td>
+          <td style="text-align:right">Backbone</td>
+          <td><%= text_field_tag :backbone, params[:backbone] %></td>
+          <td style="text-align:right">ES Cell Clone</td>
+          <td><%= text_field_tag :escell_clone, params[:escell_clone] %></td>
+        </tr>
+      </table>
+      <%= submit_tag "Search", :name => nil %>
+    <% end -%>
+  </fieldset>
+</div>
 
-<%= link_to 'New molecular_structure', new_molecular_structure_path %>
+<div class="span-24">
+  <table>
+    <thead>
+      <tr>
+        <th>MGI Accession ID</th>
+        <th>Allele Symbol Superscript</th>
+        <th>Design Type</th>
+        <th>Cassette</th>
+        <th>Backbone</th>
+        <th class="last"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @molecular_structures.each do |mol_struct| %>
+        <tr class="<%= cycle("even", "odd") %>">
+          <td><%= mol_struct.mgi_accession_id %></td>
+          <td><%= mol_struct.allele_symbol_superscript %></td>
+          <td><%= mol_struct.design_type %></td>
+          <td><%= mol_struct.cassette %></td>
+          <td><%= mol_struct.backbone %></td>
+          <td>
+            <%= link_to 'view', mol_struct, :class => "ss_sprite ss_magnifier" %>
+            <% if @current_user and ( ( @current_user == mol_struct.created_by ) or @current_user.is_admin ) %>
+              <%= link_to 'edit', edit_molecular_structure_path(mol_struct), :class => "ss_sprite ss_pencil" %>
+              <%= link_to 'delete', mol_struct, :confirm => 'Are you sure?', :method => :delete, :class => "ss_sprite ss_cross" %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <%= will_paginate @molecular_structures %>
+
+  <div class="clear"></div>
+
+  <% if @current_user %>
+  <a href="<%= url_for(new_molecular_structure_path) %>" class="button positive">
+    <%= image_tag "led-icons/add.png", :alt => "" %> New Allele
+  </a>
+  <% end %>
+</div>
+
+<script type="text/javascript" charset="utf-8">
+  Event.observe(window, 'load', function() { $('advanced-search').hide() })
+</script>

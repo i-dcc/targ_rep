@@ -6,11 +6,10 @@ class WelcomeController < ApplicationController
     @counts = {}
     @pipelines.each do |pipeline|
       @counts[pipeline.name] = { 
-        :alleles  => pipeline.alleles.count,
-        :products => pipeline.products.count
+        :alleles  => pipeline.targeting_vectors.count
       }
       @allele_count = @allele_count + @counts[pipeline.name][:alleles]
-      @product_count = @product_count + @counts[pipeline.name][:products]
+      # @product_count = @product_count + @counts[pipeline.name][:products]
     end
   end
 end
