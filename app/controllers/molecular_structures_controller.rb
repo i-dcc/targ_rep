@@ -42,7 +42,7 @@ class MolecularStructuresController < ApplicationController
     respond_to do |format|
       if @molecular_structure.save
         flash[:notice] = 'Allele successfully created.'
-        format.html { redirect_to(molecular_structures_path) }
+        format.html { redirect_to(@molecular_structure) }
         format.xml  { render :xml => @molecular_structure, :status => :created, :location => @molecular_structure }
       else
         format.html { render :action => "new" }

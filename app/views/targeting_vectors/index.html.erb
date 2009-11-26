@@ -1,104 +1,24 @@
-<%
-  selected_pipeline = ""
-  pipelines = [""]
-  Pipeline.all.each do |p|
-    pipelines.push(p.name)
-    if params[:pipeline] == p.name
-      selected_pipeline = p.name
-    end
-  end
--%>
-
-<div class="span-14">
-  <h2>
-    Alleles 
-    <% if params[:pipeline] and !params[:pipeline].empty? %>
-      (<%= params[:pipeline] %>)
-    <% end %>
-  </h2>
-</div>
-
-<div class="span-10 last" style="text-align:right">
-  <% form_tag molecular_structures_path, :method => 'get' do %>
-    <label>Filter alleles by pipeline:</label> 
-    <%= select_tag "pipeline", options_for_select( pipelines, selected_pipeline ), :onchange => "this.form.submit()" %>
-    <%= submit_tag "Filter", :name => nil %>
-    <div class="small">
-      <%= link_to_function 'advanced search' , "$('advanced-search').toggle()" %>
-    </div>
-  <% end -%>
-</div>
-
-<div id="advanced-search" class="span-24">
-  <fieldset>
-    <legend>Advanced Search</legend>
-    <% form_tag targeting_vectors_path, :method => 'get' do %>
-      <table class="no-border">
-        <tr>
-          <td style="text-align:right">Pipeline</td>
-          <td><%= select_tag "pipeline", options_for_select( pipelines, params[:pipeline] ) %></td>
-          <td style="text-align:right">Allele Symbol Superscript</td>
-          <td><%= text_field_tag :allele_symbol_superscript, params[:allele_symbol_superscript] %></td>
-          <td style="text-align:right">MGI Accession ID</td>
-          <td><%= text_field_tag :mgi_accession_id, params[:mgi_accession_id] %></td>
-        </tr>
-        <tr>
-          <td style="text-align:right">Cassette</td>
-          <td><%= text_field_tag :cassette, params[:cassette] %></td>
-          <td style="text-align:right">Backbone</td>
-          <td><%= text_field_tag :backbone, params[:backbone] %></td>
-          <td style="text-align:right">ES Cell Clone</td>
-          <td><%= text_field_tag :escell_clone, params[:escell_clone] %></td>
-        </tr>
-      </table>
-      <%= submit_tag "Search", :name => nil %>
-    <% end -%>
-  </fieldset>
-</div>
-
 <div class="span-24">
   <table>
     <thead>
       <tr>
+        <th>Pipeline</th>
         <th>IKMC Project ID</th>
-        <th>MGI Accession ID</th>
-        <th>Allele Symbol Superscript</th>
         <th>Targeting Vector</th>
-        <th>Cassette</th>
-        <th>Backbone</th>
-        <th class="last"></th>
+        <th class="last">Intermediate Vector</th>
       </tr>
     </thead>
     <tbody>
       <% @targeting_vectors.each do |targ_vec| %>
         <tr class="<%= cycle("even", "odd") %>">
+          <td><%= targ_vec.pipeline.name %></td>
           <td><%= targ_vec.ikmc_project_id %></td>
-          <td><%= targ_vec.mgi_accession_id %></td>
-          <td><%= targ_vec.allele_symbol_superscript %></td>
-          <td><%= targ_vec.targeting_vector %></td>
-          <td><%= targ_vec.cassette %></td>
-          <td><%= targ_vec.backbone %></td>
-          <td>
-            <%= link_to 'view', targ_vec, :class => "ss_sprite ss_magnifier" %>
-            <% if @current_user and ( ( @current_user == targ_vec.created_by ) or @current_user.is_admin ) %>
-              <%= link_to 'edit', edit_targeting_vectors_path(targ_vec), :class => "ss_sprite ss_pencil" %>
-              <%= link_to 'delete', targ_vec, :confirm => 'Are you sure?', :method => :delete, :class => "ss_sprite ss_cross" %>
-            <% end %>
-          </td>
+          <td><%= targ_vec.name %></td>
+          <td><%= targ_vec.intermediate_vector %></td>
         </tr>
       <% end %>
     </tbody>
   </table>
-
-  <%= will_paginate @targeting_vectors %>
-
-  <div class="clear"></div>
-
-  <% if @current_user %>
-  <a href="<%= url_for(new_targeting_vector_path) %>" class="button positive">
-    <%= image_tag "led-icons/add.png", :alt => "" %> New Allele
-  </a>
-  <% end %>
 </div>
 
 <script type="text/javascript" charset="utf-8">
