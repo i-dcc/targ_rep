@@ -1,8 +1,7 @@
 class MolecularStructure < ActiveRecord::Base
-  
+
   # === List of columns ===
   #   id                        : integer 
-  #   genbank_file_id           : integer 
   #   assembly                  : string 
   #   chromosome                : string 
   #   strand                    : string 
@@ -31,9 +30,21 @@ class MolecularStructure < ActiveRecord::Base
   belongs_to :created_by, :class_name => "User", :foreign_key => "created_by"
   belongs_to :updated_by, :class_name => "User", :foreign_key => "updated_by"
   
+  has_one :genbank_file,
+    :class_name => "GenbankFile",
+    :foreign_key => "molecular_structure_id"
+  
+  # Helper for handling creation/update of associated genbank_file in the
+  # molecular_structure's form
+  accepts_nested_attributes_for :genbank_file
+  
   has_many :targeting_vectors,
     :class_name => "TargetingVector",
     :foreign_key => "molecular_structure_id"
+  
+  # Helper for handling creation/update of associated targeting vectors in the
+  # molecular_structure's form
+  accepts_nested_attributes_for :targeting_vectors, :allow_destroy => true
   
   has_many :es_cells,
     :class_name => "EsCell",
@@ -143,31 +154,6 @@ class MolecularStructure < ActiveRecord::Base
           errors.add(:loxp_start, "has to be blank for this design type")
           errors.add(:loxp_end,   "has to be blank for this design type")
         end
-      end
-    end
-    
-    def create_targeting_vectors=(targeting_vector_list)
-      targeting_vector_list.each do |targeting_vector_hash|
-        targeting_vectors.build(targeting_vector_hash)
-      end
-    end
-    
-    after_update :save_targeting_vectors
-    
-    def update_targeting_vectors=(targeting_vector_list)
-      targeting_vectors.reject(&:new_record?).each do |targ_vec|
-        targ_vec_hash = targeting_vector_list[targ_vec.id.to_s]
-        if targ_vec_hash
-          targ_vec.attributes = targ_vec_hash
-        else
-          targ_vec.delete()
-        end
-      end
-    end
-    
-    def save_targeting_vectors
-      targeting_vectors.each do |targ_vec|
-        targ_vec.save(false)
       end
     end
 end

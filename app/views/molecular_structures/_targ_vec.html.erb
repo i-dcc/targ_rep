@@ -1,14 +1,10 @@
-<% create_or_update = targ_vec.new_record? ? 'create' : 'update' %>
-<% pipeline_list = Pipeline.all.map { |p| [p.name, p.id] } %>
-<% prefix = "molecular_structure[#{create_or_update}_targeting_vectors][]"%>
+<% pipeline_list = Pipeline.find(:all, :order => "name").collect {|p| [ p.name, p.id ] } %>
 
-<% fields_for prefix, targ_vec do |f| -%>
 <tr class="targeting_vector">
   <td><%= f.select :pipeline_id, pipeline_list %></td>
   <td><%= f.text_field :ikmc_project_id %></td>
   <td><%= f.text_field :name %></td>
   <td><%= f.text_field :intermediate_vector %></td>
   <td><%= f.text_field :parental_cell_line %></td>
-  <td><%= link_to_function "remove", "$(this).up('.targeting_vector').remove()"%></td>
+  <td><%= remove_targ_vec_link(f) %></td>
 </tr>
-<% end -%>

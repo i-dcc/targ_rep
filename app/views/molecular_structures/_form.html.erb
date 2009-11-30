@@ -91,27 +91,40 @@
   </fieldset>
 </div>
 
+
+<!-- Genbank files handling. -->
+
+<% f.fields_for :genbank_file do |genbank_form| -%>
+  <div class="span-12">
+    <label>Targeting Vectors Genbank File</label>
+    <%= genbank_form.text_area :targeting_vector, :class => :text %>
+  </div>
+
+  <div class="span-12 last">
+    <label>ES Cell Clones Genbank File</label>
+    <%= genbank_form.text_area :escell_clone, :class => :text %>
+  </div>
+<% end -%>
+
+
+<!-- Targeting vectors handling. -->
+
 <div class="span-24 last">
-  <fieldset>
-    <legend>Targeting Vectors</legend>
-    <p>
-      <%= add_targ_vec_link "Add a targeting vector" %>
-    </p>
-    <table>
-      <thead>
-        <th>Pipeline</th>
-        <th>IKMC Project ID</th>
-        <th>Name</th>
-        <th>Intermediate Vector</th>
-        <th>Parental Cell Line</th>
-        <th></th>
-      </thead>
-      <tbody id="targeting_vectors">
-        <%= render :partial => 'targ_vec', :collection => @molecular_structure.targeting_vectors %>
-      </tbody>
-    </table>
-    <p>
-      <%= add_targ_vec_link "Add a targeting vector" %>
-    </p>
-  </fieldset>
+  <h3>Targeting Vectors</h3>
+  <table id="tree_table">
+    <thead>
+      <th>Pipeline</th>
+      <th>IKMC Project ID</th>
+      <th>Name</th>
+      <th>Intermediate Vector</th>
+      <th>Parental Cell Line</th>
+      <th class="last"></th>
+    </thead>
+    <tbody id="targeting_vectors">
+      <% f.fields_for :targeting_vectors do |targ_vec_form| %>
+        <%= render :partial => 'targ_vec', :locals => { :f => targ_vec_form } %>
+      <% end -%>
+    </tbody>
+  </table>
+  <p><%= add_targ_vec_link(f) %></p>
 </div>

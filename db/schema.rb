@@ -41,14 +41,16 @@ ActiveRecord::Schema.define(:version => 20091119090007) do
   add_index "es_cells", ["targeting_vector_id"], :name => "targeting_vector_id"
 
   create_table "genbank_files", :force => true do |t|
+    t.integer  "molecular_structure_id", :null => false
     t.text     "escell_clone"
     t.text     "targeting_vector"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
+  add_index "genbank_files", ["molecular_structure_id"], :name => "molecular_structure_id"
+
   create_table "molecular_structures", :force => true do |t|
-    t.integer  "genbank_file_id"
     t.string   "assembly",                  :default => "NCBIM37", :null => false
     t.string   "chromosome",                                       :null => false
     t.string   "strand",                                           :null => false
@@ -70,8 +72,6 @@ ActiveRecord::Schema.define(:version => 20091119090007) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-
-  add_index "molecular_structures", ["genbank_file_id"], :name => "genbank_file_id"
 
   create_table "pipelines", :force => true do |t|
     t.string   "name",       :null => false
@@ -110,7 +110,7 @@ ActiveRecord::Schema.define(:version => 20091119090007) do
   add_foreign_key "es_cells", "molecular_structures", :column => "molecular_structure_id", :name => "es_cells_ibfk_1", :dependent => :delete
   add_foreign_key "es_cells", "targeting_vectors", :column => "targeting_vector_id", :name => "es_cells_ibfk_2", :dependent => :delete
 
-  add_foreign_key "molecular_structures", "genbank_files", :column => "genbank_file_id", :name => "molecular_structures_ibfk_1", :dependent => :delete
+  add_foreign_key "genbank_files", "molecular_structures", :column => "molecular_structure_id", :name => "genbank_files_ibfk_1", :dependent => :delete
 
   add_foreign_key "targeting_vectors", "molecular_structures", :column => "molecular_structure_id", :name => "targeting_vectors_ibfk_2", :dependent => :delete
   add_foreign_key "targeting_vectors", "pipelines", :column => "pipeline_id", :name => "targeting_vectors_ibfk_1", :dependent => :delete

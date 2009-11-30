@@ -81,32 +81,48 @@
       </tbody>
     </table>
   </fieldset>
+  
+  <fieldset id="genbank_files">
+    <legend>Genbank Files</legend>
+    <p>
+      <strong>Targeting Vector Genbank File:</strong>
+      <a href="<%= targeting_vector_genbank_file_url(:id => @molecular_structure.id) %>" target="_blank" class="ss_sprite ss_magnifier">view</a>
+    </p>
+    <p>
+      <strong>ES Cell Clone Genbank File:</strong>
+      <a href="<%= escell_clone_genbank_file_url(:id => @molecular_structure.id) %>" target="_blank" class="ss_sprite ss_magnifier">view</a>
+    </p>
+  </fieldset>
 </div>
 
 <div class="span-24 last">
   <fieldset id="targeting_vectors">
     <legend>Targeting Vectors</legend>
     
-    <table>
-      <thead>
-        <th>Pipeline</th>
-        <th>IKMC Project ID</th>
-        <th>Name</th>
-        <th>Intermediate Vector</th>
-        <th class="last">Parental Cell Line</th>
-      </thead>
-      <tbody id="targeting_vectors">
-        <% @molecular_structure.targeting_vectors.each do |targ_vec| %>
-        <tr class="targeting_vector <%= cycle("odd", "even") %>">
-          <td><%= targ_vec.pipeline.name %></td>
-          <td><%= targ_vec.ikmc_project_id %></td>
-          <td><%= targ_vec.name %></td>
-          <td><%= targ_vec.intermediate_vector %></td>
-          <td><%= targ_vec.parental_cell_line %></td>
-        </tr>
-        <% end -%>
-      </tbody>
-    </table>    
+    <% unless @molecular_structure.targeting_vectors.empty? %>
+      <table>
+        <thead>
+          <th>Pipeline</th>
+          <th>IKMC Project ID</th>
+          <th>Name</th>
+          <th>Intermediate Vector</th>
+          <th class="last">Parental Cell Line</th>
+        </thead>
+        <tbody id="targeting_vectors">
+          <% @molecular_structure.targeting_vectors.each do |targ_vec| %>
+          <tr class="targeting_vector <%= cycle("odd", "even") %>">
+            <td><%= targ_vec.pipeline.name %></td>
+            <td><%= targ_vec.ikmc_project_id %></td>
+            <td><%= targ_vec.name %></td>
+            <td><%= targ_vec.intermediate_vector %></td>
+            <td><%= targ_vec.parental_cell_line %></td>
+          </tr>
+          <% end -%>
+        </tbody>
+      </table>
+    <% else %>
+      <p>No targeting vectors</p>
+    <% end -%>
   </fieldset>
 </div>
 

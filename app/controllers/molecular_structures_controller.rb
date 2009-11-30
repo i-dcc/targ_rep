@@ -1,6 +1,11 @@
 class MolecularStructuresController < ApplicationController
   before_filter :require_user, :only => [:create, :update, :destroy]
-  before_filter :find_mol_struct, :only => [:show, :edit, :update, :destroy]
+  before_filter :find_mol_struct, 
+    :only => [
+      :show, :edit, :update, :destroy, 
+      :get_escell_clone_genbank_file,
+      :get_targeting_vector_genbank_file
+    ]
   
   # GET /molecular_structures
   # GET /molecular_structures.xml
@@ -23,6 +28,7 @@ class MolecularStructuresController < ApplicationController
   def new
     @molecular_structure = MolecularStructure.new
     @molecular_structure.targeting_vectors.build
+    @molecular_structure.genbank_file = GenbankFile.new
 
     respond_to do |format|
       format.html # new.html.erb
@@ -79,6 +85,18 @@ class MolecularStructuresController < ApplicationController
     end
   end
   
+  #--- Custom controllers
+  # FIXME: Ugly way of retrieving genbank files. Use nice routing instead
+  # GET /molecular_structures/1/escell-clone-genbank-file/
+  def get_escell_clone_genbank_file
+    render :inline => "<pre><%= @molecular_structure.genbank_file.escell_clone %></pre>"
+  end
+
+  # GET /molecular_structures/1/targeting-vector-genbank-file/
+  def get_targeting_vector_genbank_file
+    render :inline => "<pre><%= @molecular_structure.genbank_file.targeting_vector %></pre>"
+  end
+
   private
   def find_mol_struct
     @molecular_structure = MolecularStructure.find(params[:id])

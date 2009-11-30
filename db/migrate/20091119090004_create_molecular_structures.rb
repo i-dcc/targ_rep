@@ -1,9 +1,6 @@
 class CreateMolecularStructures < ActiveRecord::Migration
   def self.up
     create_table :molecular_structures do |t|
-      t.foreign_key :genbank_files,     :dependent => :delete
-      t.integer     :genbank_file_id
-      
       t.string    :assembly,            :null => false, :default => "NCBIM37"
       t.string    :chromosome,          :null => false
       t.string    :strand,              :null => false
