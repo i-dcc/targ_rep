@@ -38,6 +38,9 @@ class MolecularStructuresController < ApplicationController
 
   # GET /molecular_structures/1/edit
   def edit
+    if @molecular_structure.genbank_file.nil?
+      @molecular_structure.genbank_file = GenbankFile.new
+    end
   end
 
   # POST /molecular_structures
@@ -60,8 +63,6 @@ class MolecularStructuresController < ApplicationController
   # PUT /molecular_structures/1
   # PUT /molecular_structures/1.xml
   def update
-    params[:molecular_structure][:update_targeting_vectors] ||= {}
-    
     respond_to do |format|
       if @molecular_structure.update_attributes(params[:molecular_structure])
         flash[:notice] = 'Allele successfully updated.'

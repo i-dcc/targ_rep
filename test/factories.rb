@@ -148,4 +148,6 @@ end
 Factory.define :genbank_file do |f|
   f.sequence(:escell_clone)       { |n| "ES Cell clone file #{n}" }
   f.sequence(:targeting_vector)   { |n| "Targeting vector file #{n}" }
+  
+  f.association :molecular_structure
 end

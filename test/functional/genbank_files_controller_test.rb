@@ -19,7 +19,12 @@ class GenbankFilesControllerTest < ActionController::TestCase
 
   test "should create genbank_file" do
     assert_difference('GenbankFile.count') do
-      post :create, :genbank_file => Factory.attributes_for( :genbank_file )
+      attrs = Factory.attributes_for( :genbank_file )
+      post :create, :genbank_file => {
+        :escell_clone           => attrs[:escell_clone],
+        :targeting_vector       => attrs[:targeting_vector],
+        :molecular_structure_id => GenbankFile.find(:first).molecular_structure_id
+      }
     end
 
     assert_redirected_to genbank_file_path(assigns(:genbank_file))
@@ -36,7 +41,7 @@ class GenbankFilesControllerTest < ActionController::TestCase
   end
 
   test "should update genbank_file" do
-    put :update, :id => GenbankFile.find(:first).to_param, :genbank_file => { }
+    put :update, :id => GenbankFile.find(:first).to_param, :genbank_file => Factory.attributes_for( :genbank_file )
     assert_redirected_to genbank_file_path(assigns(:genbank_file))
   end
 

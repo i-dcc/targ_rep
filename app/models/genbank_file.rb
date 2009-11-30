@@ -8,5 +8,12 @@ class GenbankFile < ActiveRecord::Base
   #   created_at             : datetime 
   #   updated_at             : datetime 
   # =======================
-
+  
+  # Associations
+  belongs_to :molecular_structure,
+    :class_name => "MolecularStructure",
+    :foreign_key => "molecular_structure_id"
+  
+  # Data validation
+  validates_associated  :molecular_structure
 end
