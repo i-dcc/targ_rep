@@ -9,12 +9,10 @@ class EsCellsControllerTest < ActionController::TestCase
   test "should get index" do
     get :index
     assert_response :success
-    assert_not_nil assigns(:es_cells)
   end
 
-  test "should get new" do
-    get :new
-    assert_response :success
+  test "should not get new" do
+    assert_raise(ActionController::UnknownAction) { get :new }
   end
 
   test "should create es_cell" do
@@ -26,7 +24,7 @@ class EsCellsControllerTest < ActionController::TestCase
       }
     end
 
-    assert_redirected_to es_cell_path(assigns(:es_cell))
+    assert_response :success
   end
 
   test "should show es_cell" do
@@ -34,21 +32,19 @@ class EsCellsControllerTest < ActionController::TestCase
     assert_response :success
   end
 
-  test "should get edit" do
-    get :edit, :id => EsCell.find(:first).id
-    assert_response :success
+  test "should not get edit" do
+    assert_raise(ActionController::UnknownAction) { get :edit }
   end
 
   test "should update es_cell" do
     put :update, :id => EsCell.find(:first).id, :es_cell => Factory.attributes_for( :es_cell )
-    assert_redirected_to es_cell_path(assigns(:es_cell))
+    assert_response :success
   end
 
   test "should destroy es_cell" do
     assert_difference('EsCell.count', -1) do
       delete :destroy, :id => EsCell.find(:first).id
     end
-
-    assert_redirected_to es_cells_path
+    assert_response :success
   end
 end

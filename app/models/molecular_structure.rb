@@ -50,6 +50,10 @@ class MolecularStructure < ActiveRecord::Base
     :class_name => "EsCell",
     :foreign_key => "molecular_structure_id"
   
+  # Helper for handling creation/update of associated es cells in the
+  # molecular_structure's form
+  accepts_nested_attributes_for :es_cells, :allow_destroy => true
+  
   # Unique constraint
   validates_uniqueness_of :mgi_accession_id,
     :scope => [

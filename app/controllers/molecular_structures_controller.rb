@@ -28,6 +28,7 @@ class MolecularStructuresController < ApplicationController
   def new
     @molecular_structure = MolecularStructure.new
     @molecular_structure.targeting_vectors.build
+    @molecular_structure.es_cells.build
     @molecular_structure.genbank_file = GenbankFile.new
 
     respond_to do |format|

@@ -15,7 +15,7 @@
 </div>
 
 <div class="span-12">
-  <fieldset id="genomic_position">
+  <fieldset>
     <legend>Genomic Position</legend>
     <p>
       <strong>Assembly:</strong>
@@ -31,7 +31,7 @@
     </p>
   </fieldset>
   
-  <fieldset id="design_details">
+  <fieldset>
     <legend>Design Details</legend>
     <p>
       <strong>Design type:</strong>
@@ -54,7 +54,7 @@
 </div>
 
 <div class="span-12 last">
-  <fieldset id="molecular_structure" class="">
+  <fieldset>
     <legend>Molecular Structure</legend>
     <table>
       <thead>
@@ -96,7 +96,7 @@
 </div>
 
 <div class="span-24 last">
-  <fieldset id="targeting_vectors">
+  <fieldset>
     <legend>Targeting Vectors</legend>
     
     <% unless @molecular_structure.targeting_vectors.empty? %>
@@ -108,9 +108,9 @@
           <th>Intermediate Vector</th>
           <th class="last">Parental Cell Line</th>
         </thead>
-        <tbody id="targeting_vectors">
+        <tbody>
           <% @molecular_structure.targeting_vectors.each do |targ_vec| %>
-          <tr class="targeting_vector <%= cycle("odd", "even") %>">
+          <tr class="<%= cycle("odd", "even") %>">
             <td><%= targ_vec.pipeline.name %></td>
             <td><%= targ_vec.ikmc_project_id %></td>
             <td><%= targ_vec.name %></td>
@@ -126,6 +126,31 @@
   </fieldset>
 </div>
 
+<div class="span-24 last">
+  <fieldset>
+    <legend>ES Cells</legend>
+    
+    <% unless @molecular_structure.es_cells.empty? %>
+      <table>
+        <thead>
+          <th>Targeting Vector</th>
+          <th class="last">ES Cell</th>
+        </thead>
+        <tbody>
+          <% @molecular_structure.es_cells.each do |es_cell| %>
+          <tr class="<%= cycle("odd", "even") %>">
+            <td><%= es_cell.targeting_vector.name %></td>
+            <td><%= es_cell.name %></td>
+          </tr>
+          <% end -%>
+        </tbody>
+      </table>
+    <% else %>
+      <p>No ES Cells</p>
+    <% end -%>
+  </fieldset>
+</div>
+
 <div class="span-24">
   <a href="<%= edit_molecular_structure_path(@molecular_structure) %>" class="button">
     <%= image_tag "famfamfam/pencil.png", :alt => "" %> Edit
@@ -137,37 +162,7 @@
 
 <div class="clear"></div>
 
-<h3>Products for this allele</h3>
-<div class="span-24">
-  <% if !@molecular_structure.es_cells.empty? %>
-    <table>
-      <thead>
-        <th>ES Cell Clone</th>
-        <th>Created by</th>
-        <th>Updated by</th>
-        <th class="last">Action</th>
-      </thead>
-      <tbody>
-        <% @molecular_structure.es_cells.each do |es_cell| %>
-          <tr class="<%= cycle("odd", "even") %>">
-            <td><%=h es_cell.name %></td>
-            <td><%=h es_cell.created_by.username %></td>
-            <td><%=h es_cell.updated_by.username %></td>
-            <td>
-              <%= link_to 'delete', product, :confirm => 'Are you sure?', :method => :delete, :class => "ss_sprite ss_cross" %>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  <% else %>
-    <p><em>No product related to this allele.</em></p>
-  <% end %>
-</div>
-
-<div class="clear"></div>
-
-<h3>Molecular Structure History</h3>
+<h3>History</h3>
 <div class="span-24">
   <table>
     <thead>

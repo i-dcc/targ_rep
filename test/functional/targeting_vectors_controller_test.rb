@@ -5,16 +5,19 @@ class TargetingVectorsControllerTest < ActionController::TestCase
     UserSession.create Factory.build( :user )
     Factory.create( :targeting_vector )
   end
-  
+
+  should "not get edit" do
+    assert_raise(ActionController::UnknownAction) { get :edit }
+  end
+
+  should "not get new" do
+    assert_raise(ActionController::UnknownAction) { get :new }
+  end
+
   should "get index" do
     get :index
     assert_response :success
     assert_not_nil assigns(:targeting_vectors)
-  end
-
-  should "get new" do
-    get :new
-    assert_response :success
   end
 
   should "create targeting vector" do
@@ -29,8 +32,7 @@ class TargetingVectorsControllerTest < ActionController::TestCase
         :molecular_structure_id => TargetingVector.find(:first).molecular_structure_id
       }
     end
-
-    assert_redirected_to targeting_vector_path(assigns(:targeting_vector))
+    assert_response :success
   end
 
   should "show targeting_vector" do
@@ -38,21 +40,15 @@ class TargetingVectorsControllerTest < ActionController::TestCase
     assert_response :success
   end
 
-  should "get edit" do
-    get :edit, :id => TargetingVector.find(:first).to_param
-    assert_response :success
-  end
-
   should "update targeting_vector" do
     put :update, :id => TargetingVector.find(:first).to_param, :targeting_vector => Factory.attributes_for( :targeting_vector )
-    assert_redirected_to targeting_vector_path(assigns(:targeting_vector))
+    assert_response :success
   end
 
   should "destroy targeting_vector" do
     assert_difference('TargetingVector.count', -1) do
       delete :destroy, :id => TargetingVector.find(:first).to_param
     end
-
-    assert_redirected_to targeting_vectors_path
+    assert_response :success
   end
 end

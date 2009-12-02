@@ -35,4 +35,12 @@ class EsCell < ActiveRecord::Base
   validates_presence_of :molecular_structure_id,  :on => :create
   validates_presence_of :targeting_vector_id,     :on => :create
   validates_presence_of :name,                    :on => :create
+  
+  def targeting_vector_name
+    targeting_vector.name if targeting_vector
+  end
+  
+  def targeting_vector_name=(name)
+    self.targeting_vector = TargetingVector.find_by_name(name) unless name.blank?
+  end
 end

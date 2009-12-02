@@ -32,6 +32,10 @@ class TargetingVector < ActiveRecord::Base
     :class_name => "EsCell",
     :foreign_key => "targeting_vector_id"
   
+  # Helper for handling creation/update of associated es_cell in the
+  # targeting_vector's form
+  accepts_nested_attributes_for :es_cells, :allow_destroy => true
+
   has_one :genbank_file,
     :class_name => "GenbankFile",
     :foreign_key => "genbank_file_id"
@@ -46,4 +50,6 @@ class TargetingVector < ActiveRecord::Base
   validates_presence_of :pipeline_id,     :on => :create
   validates_presence_of :ikmc_project_id, :on => :create
   validates_presence_of :name,            :on => :create
+
+  TargetingVector.include_root_in_json = false
 end

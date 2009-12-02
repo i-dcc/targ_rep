@@ -111,7 +111,7 @@
 
 <div class="span-24 last">
   <h3>Targeting Vectors</h3>
-  <table id="tree_table">
+  <table>
     <thead>
       <th>Pipeline</th>
       <th>IKMC Project ID</th>
@@ -127,4 +127,24 @@
     </tbody>
   </table>
   <p><%= add_targ_vec_link(f) %></p>
+</div>
+
+
+<!-- ES Cells handling. -->
+
+<div class="span-24 last">
+  <h3>ES Cells</h3>
+  <table>
+    <thead>
+      <th>Targeting Vector</th>
+      <th>ES Cell</th>
+      <th class="last"></th>
+    </thead>
+    <tbody id="es_cells">
+      <% f.fields_for :es_cells do |es_cell_form| %>
+        <%= render :partial => 'es_cell', :locals => { :f => es_cell_form }%>
+      <% end -%>
+    </tbody>
+  </table>
+  <p><%= add_es_cell_link(f) %></p>
 </div>

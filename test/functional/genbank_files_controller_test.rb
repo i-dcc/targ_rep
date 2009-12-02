@@ -6,15 +6,16 @@ class GenbankFilesControllerTest < ActionController::TestCase
     Factory.create( :genbank_file )
   end
   
-  test "should get index" do
-    get :index
-    assert_response :success
-    assert_not_nil assigns(:genbank_files)
+  test "should not get index" do
+    assert_raise(ActionController::UnknownAction) { get :index }
   end
 
-  test "should get new" do
-    get :new
-    assert_response :success
+  test "should not get new" do
+    assert_raise(ActionController::UnknownAction) { get :new }
+  end
+
+  test "should not get edit" do
+    assert_raise(ActionController::UnknownAction) { get :edit }
   end
 
   test "should create genbank_file" do
@@ -26,8 +27,7 @@ class GenbankFilesControllerTest < ActionController::TestCase
         :molecular_structure_id => GenbankFile.find(:first).molecular_structure_id
       }
     end
-
-    assert_redirected_to genbank_file_path(assigns(:genbank_file))
+    assert_response :success
   end
 
   test "should show genbank_file" do
@@ -35,21 +35,15 @@ class GenbankFilesControllerTest < ActionController::TestCase
     assert_response :success
   end
 
-  test "should get edit" do
-    get :edit, :id => GenbankFile.find(:first).to_param
-    assert_response :success
-  end
-
   test "should update genbank_file" do
     put :update, :id => GenbankFile.find(:first).to_param, :genbank_file => Factory.attributes_for( :genbank_file )
-    assert_redirected_to genbank_file_path(assigns(:genbank_file))
+    assert_response :success
   end
 
   test "should destroy genbank_file" do
     assert_difference('GenbankFile.count', -1) do
       delete :destroy, :id => GenbankFile.find(:first).to_param
     end
-
-    assert_redirected_to genbank_files_path
+    assert_response :success
   end
 end

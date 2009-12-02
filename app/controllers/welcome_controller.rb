@@ -1,15 +1,16 @@
 class WelcomeController < ApplicationController
   def index
     @pipelines = Pipeline.find(:all)
-    @allele_count = 0
+    @molecular_structure_count = 0
     @product_count = 0
     @counts = {}
     @pipelines.each do |pipeline|
-      @counts[pipeline.name] = { 
-        :alleles  => pipeline.targeting_vectors.count
+      @counts[pipeline.name] = {
+        :molecular_structures  => pipeline.molecular_structures.count,
+        :products => pipeline.es_cells.count
       }
-      @allele_count = @allele_count + @counts[pipeline.name][:alleles]
-      # @product_count = @product_count + @counts[pipeline.name][:products]
+      @molecular_structure_count += @counts[pipeline.name][:molecular_structures]
+      @product_count += @counts[pipeline.name][:products]
     end
   end
 end

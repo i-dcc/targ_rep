@@ -1,0 +1,5 @@
+<ul>
+  <% @targeting_vectors.each do |targ_vec| %>
+    <li class="<%= cycle("odd", "even") %>"><%= targ_vec.name %></li>
+  <% end -%>
+</ul>
