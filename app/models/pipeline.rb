@@ -20,4 +20,6 @@ class Pipeline < ActiveRecord::Base
   
   # Data validation
   validates_presence_of :name, :on => :create
+  
+  Pipeline.include_root_in_json = false
 end

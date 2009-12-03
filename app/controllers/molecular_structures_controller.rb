@@ -9,32 +9,34 @@ class MolecularStructuresController < ApplicationController
   
   # GET /molecular_structures
   # GET /molecular_structures.xml
+  # GET /molecular_structures.json
   def index
     @molecular_structures = MolecularStructure.all.paginate(:page => params[:page])
 
     respond_to do |format|
       format.html # index.html.erb
-      format.xml  { render :xml => @molecular_structures }
+      format.xml  { render :xml   => @molecular_structures }
+      format.json { render :json  => @molecular_structures }
     end
   end
 
   # GET /molecular_structures/1
   # GET /molecular_structures/1.xml
+  # GET /molecular_structures/1.json
   def show
+    respond_to do |format|
+      format.html # show.html.erb
+      format.xml  { render :xml   => @molecular_structure }
+      format.json { render :json  => @molecular_structure }
+    end
   end
 
   # GET /molecular_structures/new
-  # GET /molecular_structures/new.xml
   def new
     @molecular_structure = MolecularStructure.new
+    @molecular_structure.genbank_file = GenbankFile.new
     @molecular_structure.targeting_vectors.build
     @molecular_structure.es_cells.build
-    @molecular_structure.genbank_file = GenbankFile.new
-
-    respond_to do |format|
-      format.html # new.html.erb
-      format.xml  { render :xml => @molecular_structure }
-    end
   end
 
   # GET /molecular_structures/1/edit
@@ -53,10 +55,12 @@ class MolecularStructuresController < ApplicationController
       if @molecular_structure.save
         flash[:notice] = 'Allele successfully created.'
         format.html { redirect_to(@molecular_structure) }
-        format.xml  { render :xml => @molecular_structure, :status => :created, :location => @molecular_structure }
+        format.xml  { render :xml  => @molecular_structure, :status => :created, :location => @molecular_structure }
+        format.json { render :json => @molecular_structure, :status => :created, :location => @molecular_structure }
       else
         format.html { render :action => "new" }
-        format.xml  { render :xml => @molecular_structure.errors, :status => :unprocessable_entity }
+        format.xml  { render :xml  => @molecular_structure.errors, :status => :unprocessable_entity }
+        format.xml  { render :json => @molecular_structure.errors, :status => :unprocessable_entity }
       end
     end
   end
@@ -69,9 +73,11 @@ class MolecularStructuresController < ApplicationController
         flash[:notice] = 'Allele successfully updated.'
         format.html { redirect_to(@molecular_structure) }
         format.xml  { head :ok }
+        format.json { head :ok }
       else
         format.html { render :action => "edit" }
-        format.xml  { render :xml => @molecular_structure.errors, :status => :unprocessable_entity }
+        format.xml  { render :xml   => @molecular_structure.errors, :status => :unprocessable_entity }
+        format.json { render :json  => @molecular_structure.errors, :status => :unprocessable_entity }
       end
     end
   end
@@ -84,6 +90,7 @@ class MolecularStructuresController < ApplicationController
     respond_to do |format|
       format.html { redirect_to(molecular_structures_url) }
       format.xml  { head :ok }
+      format.json { head :ok }
     end
   end
   

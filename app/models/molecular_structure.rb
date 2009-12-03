@@ -107,6 +107,45 @@ class MolecularStructure < ActiveRecord::Base
   
   validate :has_right_features
   
+  public
+    def to_json( options = {} )
+      MolecularStructure.include_root_in_json = false
+      options.update(
+        :include => {
+          :es_cells => { :except => [
+              :molecular_structure_id,
+              :created_at, :updated_at,
+              :created_by, :updated_by
+          ]},
+          :targeting_vectors => { :except => [
+              :molecular_structure_id,
+              :created_at, :updated_at,
+              :created_by, :updated_by
+          ]}
+        }
+      )
+      super( options )
+    end
+
+    def to_xml( options = {} )
+      options.update(
+        :skip_types => true,
+        :include => {
+          :es_cells => { :except => [
+              :molecular_structure_id,
+              :created_at, :updated_at,
+              :created_by, :updated_by
+          ]},
+          :targeting_vectors => { :except => [
+              :molecular_structure_id,
+              :created_at, :updated_at,
+              :created_by, :updated_by
+          ]}
+        }
+      )
+      super( options )
+    end
+
   protected
     def has_right_features
       case strand

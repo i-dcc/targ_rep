@@ -43,4 +43,26 @@ class EsCell < ActiveRecord::Base
   def targeting_vector_name=(name)
     self.targeting_vector = TargetingVector.find_by_name(name) unless name.blank?
   end
+
+  public
+    def to_json( options = {} )
+      EsCell.include_root_in_json = false
+      options.update(
+        :include => {
+          :created_by => { :only => [:id, :username] },
+          :updated_by => { :only => [:id, :username] }
+        }
+      )
+      super( options )
+    end
+
+    def xml( options = {} )
+      options.update(
+        :skip_types => true,
+        :include => {
+          :created_by => { :only => [:id, :username] },
+          :updated_by => { :only => [:id, :username] }
+        }
+      )
+    end
 end

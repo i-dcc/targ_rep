@@ -16,4 +16,6 @@ class GenbankFile < ActiveRecord::Base
   
   # Data validation
   validates_associated  :molecular_structure
+  
+  GenbankFile.include_root_in_json = false
 end
