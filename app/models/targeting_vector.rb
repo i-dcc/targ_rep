@@ -52,5 +52,25 @@ class TargetingVector < ActiveRecord::Base
   validates_presence_of :ikmc_project_id,         :on => :create
   validates_presence_of :name,                    :on => :create
 
-  TargetingVector.include_root_in_json = false
+  public
+    def to_json( options = {} )
+      TargetingVector.include_root_in_json = false
+      options.update(
+        :include => {
+          :created_by => { :only => [:id, :username] },
+          :updated_by => { :only => [:id, :username] }
+        }
+      )
+      super( options )
+    end
+
+    def xml( options = {} )
+      options.update(
+        :skip_types => true,
+        :include => {
+          :created_by => { :only => [:id, :username] },
+          :updated_by => { :only => [:id, :username] }
+        }
+      )
+    end
 end

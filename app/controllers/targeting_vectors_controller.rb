@@ -32,30 +32,62 @@ class TargetingVectorsController < ApplicationController
   def create
     targ_vec_hash = params[:targeting_vector]
     
-    respond_to do |format|
-      # Create molecular structure if details are given in params
-      if targ_vec_hash[:molecular_structure]
-        @molecular_structure = MolecularStructure.new(targ_vec_hash[:molecular_structure])
-        targ_vec_hash.delete(:molecular_structure)
-        
-        if @molecular_structure.save          
-          targ_vec_hash.update({ 
-            :molecular_structure_id => @molecular_structure.id
-          })
-        else
-          targ_vec_hash.update({ 
-            :molecular_structure_id => nil
-          })
-        end
-      end
+    errors = []
+    
+    #
+    # Basic checks
+    #
+    
+    if targ_vec_hash.include? :molecular_structure and targ_vec_hash.include? :molecular_structure_id
+      errors << { "Targeting vector is invalid" =>
+        "should have only one molecular structure representation (id or hash)"
+      }
+      targ_vec_hash.delete( :molecular_structure )
+    
+    elsif !targ_vec_hash.include? :molecular_structure and !targ_vec_hash.include? :molecular_structure_id
+      errors << { "Targeting vector is invalid" =>
+        "should have at least one molecular structure representation (id or hash)"
+      }
+    end
+    
+    
+    #
+    # Create molecular structure
+    #
+    
+    if targ_vec_hash.include? :molecular_structure
+      mol_struct = MolecularStructure.new( targ_vec_hash[:molecular_structure] )
       
-      # Create targeting vector - expecting a molecular_structure_id anyway
-      @targeting_vector = TargetingVector.new( targ_vec_hash )
-      if @targeting_vector.save
-        _success(format)
+      if mol_struct.save
+        targ_vec_hash.delete( :molecular_structure )
+        targ_vec_hash.update( { :molecular_structure_id => mol_struct.id } )
       else
-        @molecular_structure.delete if @molecular_structure
-        _error(format)
+        errors << { "Molecular Structure is invalid" => mol_struct.errors }
+      end
+    end
+    
+    
+    #
+    # Create targeting vector
+    #
+    
+    if errors.empty?
+      # If molecular_structure_id should be in targ_vec_hash anyway
+      @targeting_vector = TargetingVector.new( targ_vec_hash )
+      
+      unless @targeting_vector.save
+        mol_struct.delete if mol_struct
+        errors << { "Targeting Vector is invalid" => @targeting_vector.errors }
+      end
+    end
+    
+    respond_to do |format|
+      if errors.empty?
+        format.xml  { render :xml  => @targeting_vector, :status => :created, :location => @targeting_vector }
+        format.json { render :json => @targeting_vector, :status => :created, :location => @targeting_vector }
+      else
+        format.xml  { render :xml  => errors, :status => 400, :location => @targeting_vector }
+        format.json { render :json => errors, :status => 400, :location => @targeting_vector }
       end
     end
   end
@@ -68,7 +100,8 @@ class TargetingVectorsController < ApplicationController
         format.xml  { head :ok }
         format.json { head :ok }
       else
-        _error(format)
+        format.xml  { render :xml  => @targeting_vector.errors, :status => :unprocessable_entity }
+        format.json { render :json => @targeting_vector.errors, :status => :unprocessable_entity }
       end
     end
   end
@@ -87,15 +120,5 @@ class TargetingVectorsController < ApplicationController
   private
     def find_targ_vec
       @targeting_vector = TargetingVector.find(params[:id])
-    end
-
-    def _success(format)
-      format.xml  { render :xml  => @targeting_vector, :status => :created, :location => @targeting_vector }
-      format.json { render :json => @targeting_vector, :status => :created, :location => @targeting_vector }
-    end
-    
-    def _error(format)
-      format.xml  { render :xml  => @targeting_vector.errors, :status => :unprocessable_entity }
-      format.json { render :json => @targeting_vector.errors, :status => :unprocessable_entity }
     end
 end

@@ -5,7 +5,7 @@ class CreateEsCells < ActiveRecord::Migration
       t.integer       :molecular_structure_id,  :null => false
       
       t.foreign_key   :targeting_vector,        :dependent => :delete
-      t.integer       :targeting_vector_id,     :null => false
+      t.integer       :targeting_vector_id
       
       t.string        :name
       

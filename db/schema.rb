@@ -29,7 +29,7 @@ ActiveRecord::Schema.define(:version => 20091119090007) do
 
   create_table "es_cells", :force => true do |t|
     t.integer  "molecular_structure_id", :null => false
-    t.integer  "targeting_vector_id",    :null => false
+    t.integer  "targeting_vector_id"
     t.string   "name"
     t.integer  "created_by"
     t.integer  "updated_by"

@@ -33,7 +33,6 @@ class EsCell < ActiveRecord::Base
   validates_associated  :targeting_vector
   
   validates_presence_of :molecular_structure_id,  :on => :create
-  validates_presence_of :targeting_vector_id,     :on => :create
   validates_presence_of :name,                    :on => :create
   
   def targeting_vector_name

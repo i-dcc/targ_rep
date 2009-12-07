@@ -110,20 +110,30 @@ class MolecularStructure < ActiveRecord::Base
   public
     def to_json( options = {} )
       MolecularStructure.include_root_in_json = false
-      options.update(
-        :include => {
-          :es_cells => { :except => [
-              :molecular_structure_id,
-              :created_at, :updated_at,
-              :created_by, :updated_by
-          ]},
-          :targeting_vectors => { :except => [
-              :molecular_structure_id,
-              :created_at, :updated_at,
-              :created_by, :updated_by
-          ]}
-        }
-      )
+      unless options[:only] or options[:only].include? :es_cells
+        options.update(
+          :include => {
+            :es_cells => { :except => [
+                :molecular_structure_id,
+                :created_at, :updated_at,
+                :created_by, :updated_by
+            ]}
+          }
+        )
+      end
+      
+      unless options[:only] or options[:only].include? :targeting_vectors
+        options.update(
+          :include => {
+            :targeting_vectors => { :except => [
+                :molecular_structure_id,
+                :created_at, :updated_at,
+                :created_by, :updated_by
+            ]}
+          }
+        )
+      end
+      
       super( options )
     end
 
