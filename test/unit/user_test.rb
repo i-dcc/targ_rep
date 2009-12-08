@@ -4,7 +4,7 @@ class UserTest < Test::Unit::TestCase
   context "User" do
     context "with valid attributes" do
       should "be saved" do
-        User.first.delete
+        User.first.delete if User.first
         user = Factory.build( :user )
         assert( user.valid?, "User does not validate a valid entry")
         assert( user.save, "User does not save a valid entry")

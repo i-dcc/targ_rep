@@ -14,6 +14,7 @@ class UsersControllerTest < ActionController::TestCase
   should "get new" do
     get :new
     assert_response :success
+    assert_template :new
   end
 
   should "create user" do
@@ -21,21 +22,23 @@ class UsersControllerTest < ActionController::TestCase
       post :create, :user => Factory.attributes_for( :user )
     end
 
-    assert_redirected_to user_path(assigns(:user))
+    assert_redirected_to user_path( assigns(:user) )
   end
 
   should "show user" do
-    get :show, :id => User.find(:first).to_param
+    UserSession.create( User.first )
+    get :show
     assert_response :success
   end
 
   should "get edit" do
-    get :edit, :id => User.find(:first).to_param
+    get :edit, :id => User.first.id
     assert_response :success
   end
 
   should "update user" do
-    put :update, :id => User.find(:first).to_param, :user => { }
-    assert_redirected_to user_path(assigns(:user))
+    UserSession.create(User.first)
+    put :update, :user => { }
+    assert_redirected_to user_path( User.first )
   end
 end

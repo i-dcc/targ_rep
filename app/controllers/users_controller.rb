@@ -1,8 +1,7 @@
 class UsersController < ApplicationController
-  # before_filter :require_user, :only => [:index, :show, :edit, :update]
-  # before_filter :require_admin, :only => [:new]
-  
-  before_filter :find_user, :only => [:show, :edit, :update]
+  before_filter :require_user,  :only => [:index, :show, :edit, :update]
+  before_filter :require_admin, :only => [:new, :create, :destroy]
+  before_filter :find_user,     :only => [:show, :edit, :update]
 
   def index
     @users = User.all
@@ -18,7 +17,7 @@ class UsersController < ApplicationController
   end
 
   def create
-    @user = User.new(params[:user])
+    @user = User.new( params[:user] )
     if @user.save
       flash[:success] = "Registration successful"
       redirect_back_or_default user_path( @user )
@@ -28,7 +27,7 @@ class UsersController < ApplicationController
   end
 
   def update
-    if @user.update_attributes(params[:user])
+    if @user.update_attributes( params[:user] )
       flash[:success] = "Update successful"
       redirect_to user_path( @user )
     else
@@ -46,7 +45,9 @@ class UsersController < ApplicationController
     def find_user # makes our views "cleaner" and more consistent
       if params[:id]
         if @current_user.is_admin
-          @user = User.find(params[:id])
+          @user = User.find( params[:id] )
+        elsif params[:id] == current_user.id
+          @user = current_user
         else
           flash[:error] = "Access restricted - you need to be admin"
           redirect_to root_url

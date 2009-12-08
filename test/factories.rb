@@ -3,11 +3,12 @@
 ##
 
 Factory.define :user do |u|
- u.sequence(:username)     { |n| "bob#{n}" }
- u.sequence(:email)        { |n| "bob#{n}@bobsworld.com" }
- u.password                "secret"
- u.password_confirmation   { |u| u.password }
- u.is_admin                false
+ u.sequence(:username)            { |n| "bob#{n}" }
+ u.sequence(:email)               { |n| "bob#{n}@bobsworld.com" }
+ u.password                       "secret"
+ u.password_confirmation          { |u| u.password }
+ u.sequence(:persistence_token)   { |n| "token_#{n}" }
+ u.is_admin                       false
 end
 
 Factory.define :invalid_user, :class => User do |u|
