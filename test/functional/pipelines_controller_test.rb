@@ -6,41 +6,55 @@ class PipelinesControllerTest < ActionController::TestCase
     Factory.create( :pipeline )
   end
 
-  test "should get index" do
+  should "get index" do
     get :index
     assert_response :success
     assert_not_nil assigns(:pipelines)
   end
 
-  test "should get new" do
+  should "get new" do
     get :new
     assert_response :success
   end
 
-  test "should create pipeline" do
+  should "create pipeline" do
     assert_difference('Pipeline.count') do
       post :create, :pipeline => Factory.attributes_for( :pipeline )
     end
 
     assert_redirected_to pipeline_path(assigns(:pipeline))
   end
+  
+  should "not create pipeline" do
+    assert_no_difference('Pipeline.count') do
+      post :create, :pipeline => Factory.attributes_for( :invalid_pipeline )
+    end
+  end
 
-  test "should show pipeline" do
+  should "show pipeline" do
     get :show, :id => Pipeline.find(:first).to_param
     assert_response :success
   end
 
-  test "should get edit" do
+  should "get edit" do
     get :edit, :id => Pipeline.find(:first).to_param
     assert_response :success
   end
 
-  test "should update pipeline" do
-    put :update, :id => Pipeline.find(:first).to_param, :pipeline => { }
+  should "update pipeline" do
+    put :update, :id => Pipeline.first.id, 
+      :pipeline => Factory.attributes_for( :pipeline )
     assert_redirected_to pipeline_path(assigns(:pipeline))
   end
+  
+  should "not update pipeline" do
+    put :update, :id => Pipeline.first.id,
+      :pipeline => {
+        :name => nil
+      }
+  end
 
-  test "should destroy pipeline" do
+  should "destroy pipeline" do
     assert_difference('Pipeline.count', -1) do
       delete :destroy, :id => Pipeline.find(:first).to_param
     end

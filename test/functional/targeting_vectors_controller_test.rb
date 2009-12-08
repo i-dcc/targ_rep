@@ -150,8 +150,31 @@ class TargetingVectorsControllerTest < ActionController::TestCase
   end
   
   should "update targeting_vector" do
-    put :update, :id => TargetingVector.find(:first).to_param, :targeting_vector => Factory.attributes_for( :targeting_vector )
+    attrs = Factory.attributes_for( :targeting_vector )
+    put :update, :id => TargetingVector.first.id,
+      :targeting_vector => {
+        :ikmc_project_id     => attrs[:ikmc_project_id],
+        :name                => attrs[:name],
+        :intermediate_vector => attrs[:intermediate_vector],
+        :parental_cell_line  => attrs[:parental_cell_line]
+      }
     assert_response :success
+  end
+
+  should "not update targeting vector" do
+    another_targ_vec = Factory.create( :targeting_vector )
+
+    put :update, :id => TargetingVector.first.id, :targeting_vector => {
+      :pipeline_id  => another_targ_vec.pipeline.id,
+      :name         => another_targ_vec.name
+    }
+    assert_response :unprocessable_entity
+    
+    put :update, :id => TargetingVector.first.id, :targeting_vector => {
+      :pipeline_id            => nil,
+      :molecular_structure_id => nil
+    }
+    assert_response :unprocessable_entity
   end
   
   should "destroy targeting_vector" do

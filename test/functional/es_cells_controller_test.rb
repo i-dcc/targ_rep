@@ -420,6 +420,15 @@ class EsCellsControllerTest < ActionController::TestCase
     put :update, :id => EsCell.find(:first).id, :es_cell => Factory.attributes_for( :es_cell )
     assert_response :success
   end
+  
+  should "not update es_cell" do
+    another_escell = Factory.create( :es_cell )
+    
+    put :update, :id => EsCell.first.id, :es_cell => {
+      :name => another_escell.name
+    }
+    assert_response :unprocessable_entity
+  end
 
   should "destroy es_cell" do
     assert_difference('EsCell.count', -1) do

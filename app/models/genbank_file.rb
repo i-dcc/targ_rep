@@ -15,7 +15,9 @@ class GenbankFile < ActiveRecord::Base
     :foreign_key => "molecular_structure_id"
   
   # Data validation
-  validates_associated  :molecular_structure
+  validates_associated :molecular_structure
+  
+  validates_presence_of :molecular_structure_id
   
   GenbankFile.include_root_in_json = false
 end

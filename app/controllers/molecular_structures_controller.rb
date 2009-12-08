@@ -54,11 +54,14 @@ class MolecularStructuresController < ApplicationController
     respond_to do |format|
       if @molecular_structure.save
         flash[:notice] = 'Allele successfully created.'
-        format.html { redirect_to(@molecular_structure) }
+        format.html { redirect_to @molecular_structure }
         format.xml  { render :xml  => @molecular_structure, :status => :created, :location => @molecular_structure }
         format.json { render :json => @molecular_structure, :status => :created, :location => @molecular_structure }
       else
-        format.html { render :action => "new" }
+        format.html { 
+          @molecular_structure.genbank_file = GenbankFile.new
+          render :action => "new" 
+        }
         format.xml  { render :xml  => @molecular_structure.errors, :status => :unprocessable_entity }
         format.xml  { render :json => @molecular_structure.errors, :status => :unprocessable_entity }
       end
@@ -71,11 +74,16 @@ class MolecularStructuresController < ApplicationController
     respond_to do |format|
       if @molecular_structure.update_attributes(params[:molecular_structure])
         flash[:notice] = 'Allele successfully updated.'
-        format.html { redirect_to(@molecular_structure) }
+        format.html { redirect_to @molecular_structure }
         format.xml  { head :ok }
         format.json { head :ok }
       else
-        format.html { render :action => "edit" }
+        format.html {
+          if @molecular_structure.genbank_file.nil?
+            @molecular_structure.genbank_file = GenbankFile.new
+          end
+          render :action => "edit"
+        }
         format.xml  { render :xml   => @molecular_structure.errors, :status => :unprocessable_entity }
         format.json { render :json  => @molecular_structure.errors, :status => :unprocessable_entity }
       end

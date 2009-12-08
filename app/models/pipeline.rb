@@ -19,7 +19,7 @@ class Pipeline < ActiveRecord::Base
   validates_uniqueness_of :name
   
   # Data validation
-  validates_presence_of :name, :on => :create
+  validates_presence_of :name
   
   Pipeline.include_root_in_json = false
 end

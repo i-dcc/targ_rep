@@ -41,36 +41,31 @@ class MolecularStructureTest < ActiveSupport::TestCase
     context "with empty attributes" do
       mol_struct = Factory.build( :invalid_molecular_structure )
       should "not be saved" do
-        assert( !mol_struct.valid?, "Molecular structure validates an empty entry" )
-        assert( !mol_struct.save, "Molecular structure validates the creation of an empty entry" )
+        assert( !mol_struct.save, "Molecular structure saves an empty entry" )
       end
     end
     
     context "with wrong MGI" do
       mol_struct = Factory.build( :molecular_structure, :mgi_accession_id => 'WRONG MGI' )
       should "not be saved" do
-        assert( !mol_struct.valid?, "Molecular structure validates a wrong MGI accession ID" )
+        assert( !mol_struct.save, "Molecular structure is saved with a wrong MGI accession ID" )
       end
     end
     
     context "with wrong strand" do
       mol_struct = Factory.build( :molecular_structure, :strand => 'WRONG STRAND' )
       should "not be saved" do
-        assert( !mol_struct.valid?, "Molecular structure validates a wrong strand" )
+        assert( !mol_struct.save, "Molecular structure is saved with a wrong strand" )
       end
     end
     
     context "with wrong chromosome" do
       mol_struct = Factory.build( :molecular_structure, :chromosome => 'WRONG CHROMOSOME' )
       should "not be saved" do
-        assert( !mol_struct.valid?, "Molecular structure validates a wrong chromosome" )
+        assert( !mol_struct.save, "Molecular structure is saved with a wrong chromosome" )
       end
     end
     
-    
-    ##
-    ## Homology arm tests
-    ##    
     context "with wrong homology arm position" do
       setup do
         # Wrong start and end positions for the given strand
@@ -99,19 +94,15 @@ class MolecularStructureTest < ActiveSupport::TestCase
       end
       
       should "not be saved" do
-        assert( !@wrong_position1.valid?, "Homology arm start cannot be greater than LoxP end on strand '+'" )
-        assert( !@wrong_position2.valid?, "Homology arm end cannot be greater than LoxP start on strand '-'" )
-        assert( !@wrong_position3.valid?, "Homology arm cannot overlap other features (strand '+')" )
-        assert( !@wrong_position4.valid?, "Homology arm cannot overlap other features (strand '-')" )
+        assert( !@wrong_position1.save, "Homology arm start cannot be greater than LoxP end on strand '+'" )
+        assert( !@wrong_position2.save, "Homology arm end cannot be greater than LoxP start on strand '-'" )
+        assert( !@wrong_position3.save, "Homology arm cannot overlap other features (strand '+')" )
+        assert( !@wrong_position4.save, "Homology arm cannot overlap other features (strand '-')" )
       end
     end
     
-    
-    ##
-    ## Cassette tests
-    ##
     context "with wrong cassette position" do
-      setup do
+      should "not be saved" do
         # Wrong start and end positions for the given strand
         @wrong_position1  = Factory.build( :molecular_structure, {
                               :strand         => '+',
@@ -135,20 +126,14 @@ class MolecularStructureTest < ActiveSupport::TestCase
                               :cassette_start     => 170,
                               :cassette_end       => 5
                             })
-      end
-      
-      should "not be saved" do
-        assert( !@wrong_position1.valid?, "Cassette start cannot be greater than LoxP end on strand '+'" )
-        assert( !@wrong_position2.valid?, "Cassette end cannot be greater than LoxP start on strand '-'" )
-        assert( !@wrong_position3.valid?, "Cassette cannot overlap other features (strand '+')" )
-        assert( !@wrong_position4.valid?, "Cassette cannot overlap other features (strand '-')" )
+        
+        assert( !@wrong_position1.save, "Cassette start cannot be greater than LoxP end on strand '+'" )
+        assert( !@wrong_position2.save, "Cassette end cannot be greater than LoxP start on strand '-'" )
+        assert( !@wrong_position3.save, "Cassette cannot overlap other features (strand '+')" )
+        assert( !@wrong_position4.save, "Cassette cannot overlap other features (strand '-')" )
       end
     end
     
-    
-    ##
-    ## LoxP tests
-    ##
     context "with wrong LoxP position" do
       setup do
         # Wrong start and end positions for the given strand
@@ -177,10 +162,10 @@ class MolecularStructureTest < ActiveSupport::TestCase
       end
       
       should "not be saved" do
-        assert( !@wrong_position1.valid?, "LoxP start cannot be greater than LoxP end (strand '+')" )
-        assert( !@wrong_position2.valid?, "LoxP end cannot be greater than LoxP start (strand '-')" )
-        assert( !@wrong_position3.valid?, "LoxP site cannot overlap other features (strand '+')" )
-        assert( !@wrong_position4.valid?, "LoxP site cannot overlap other features (strand '-')" )
+        assert( !@wrong_position1.save, "LoxP start cannot be greater than LoxP end (strand '+')" )
+        assert( !@wrong_position2.save, "LoxP end cannot be greater than LoxP start (strand '-')" )
+        assert( !@wrong_position3.save, "LoxP site cannot overlap other features (strand '+')" )
+        assert( !@wrong_position4.save, "LoxP site cannot overlap other features (strand '-')" )
       end
     end
     
@@ -192,7 +177,7 @@ class MolecularStructureTest < ActiveSupport::TestCase
                       :loxp_end           => 130
                     })
       should "not be saved" do
-        assert( !mol_struct.valid?, "Molecular structure validates presence of LoxP for design 'Deletion'" )
+        assert( !mol_struct.save, "Molecular structure validates presence of LoxP for design 'Deletion'" )
       end
     end
   end

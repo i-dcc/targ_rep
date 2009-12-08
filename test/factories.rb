@@ -151,3 +151,6 @@ Factory.define :genbank_file do |f|
   
   f.association :molecular_structure
 end
+
+Factory.define :invalid_genbank_file, :class => GenbankFile do |f|
+end

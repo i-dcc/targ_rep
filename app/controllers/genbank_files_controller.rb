@@ -3,21 +3,26 @@ class GenbankFilesController < ApplicationController
   before_filter :find_genbank_file, :only => [:show, :update, :destroy]
   
   # GET /genbank_files/1.xml
+  # GET /genbank_files/1.json
   def show
     respond_to do |format|
-      format.xml  { render :xml => @genbank_file }
+      format.xml  { render :xml  => @genbank_file }
+      format.json { render :json => @genbank_file }
     end
   end
 
   # POST /genbank_files.xml
+  # POST /genbank_files.json
   def create
     @genbank_file = GenbankFile.new(params[:genbank_file])
 
     respond_to do |format|
       if @genbank_file.save
-        format.xml  { render :xml => @genbank_file, :status => :created, :location => @genbank_file }
+        format.xml  { render :xml  => @genbank_file, :status => :created, :location => @genbank_file }
+        format.json { render :json => @genbank_file, :status => :created, :location => @genbank_file }
       else
-        format.xml  { render :xml => @genbank_file.errors, :status => :unprocessable_entity }
+        format.xml  { render :xml  => @genbank_file.errors, :status => :unprocessable_entity }
+        format.json { render :json => @genbank_file.errors, :status => :unprocessable_entity }
       end
     end
   end
@@ -27,19 +32,22 @@ class GenbankFilesController < ApplicationController
     respond_to do |format|
       if @genbank_file.update_attributes(params[:genbank_file])
         format.xml  { head :ok }
+        format.json { head :ok }
       else
-        format.xml  { render :xml => @genbank_file.errors, :status => :unprocessable_entity }
+        format.xml  { render :xml  => @genbank_file.errors, :status => :unprocessable_entity }
+        format.json { render :json => @genbank_file.errors, :status => :unprocessable_entity }
       end
     end
   end
 
-  # DELETE /genbank_files/1
   # DELETE /genbank_files/1.xml
+  # DELETE /genbank_files/1.json
   def destroy
     @genbank_file.destroy
 
     respond_to do |format|
       format.xml  { head :ok }
+      format.json { head :ok }
     end
   end
 
