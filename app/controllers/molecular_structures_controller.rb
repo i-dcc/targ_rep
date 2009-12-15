@@ -48,22 +48,75 @@ class MolecularStructuresController < ApplicationController
 
   # POST /molecular_structures
   # POST /molecular_structures.xml
+  # POST /molecular_structures.json
+  # For the ``nested`` attribute appended to the hash, have a look here:
+  # http://github.com/dazoakley/targ_rep2/issues#issue/1
   def create
-    @molecular_structure = MolecularStructure.new(params[:molecular_structure])
-
+    mol_struct_params = params[:molecular_structure]
+    
+    # start: web service interface
+    
+    # accepts_nested_attributes_for expect <child_model>_attributes key
+    # in params hash to create children objects.
+    
+    # Move es_cells Array to es_cells_attributes Array
+    if mol_struct_params.include? :es_cells
+      mol_struct_params[:es_cells].each { |attrs| attrs[:nested] = true }
+      mol_struct_params[:es_cells_attributes] = mol_struct_params[:es_cells].dup
+      mol_struct_params.delete(:es_cells)
+    elsif !mol_struct_params.include? :es_cells_attributes
+      mol_struct_params[:es_cells_attributes] = []
+    end
+    
+    # Move targeting_vectors Array to targeting_vectors_attributes Array
+    if mol_struct_params.include? :targeting_vectors
+      mol_struct_params[:targeting_vectors].each do |attrs|
+        attrs.update({ :nested => true })
+        
+        # Copy es_cells Array related to this Targeting Vector
+        # into the es_cells_attributes Array created above.
+        # es_cell hash will contain targeting_vector_name so that it can be
+        # related to the proper targeting_vector later - once it gets an ID.
+        if attrs.include? :es_cells
+          attrs[:es_cells].each do |es_cell_attr|
+            es_cell_attr.update({
+              :nested => true,
+              :targeting_vector_name => attrs[:name]
+            })
+            mol_struct_params[:es_cells_attributes].push( es_cell_attr )
+          end
+          attrs.delete( :es_cells )
+        end
+      end
+      mol_struct_params[:targeting_vectors_attributes] = mol_struct_params[:targeting_vectors].dup
+      mol_struct_params.delete(:targeting_vectors)
+    end
+    
+    # Move genbank_file hash to genbank_file_attributes hash
+    if mol_struct_params.include? :genbank_file
+      mol_struct_params[:genbank_file][:nested] = true
+      mol_struct_params[:genbank_file_attributes] = mol_struct_params[:genbank_file].dup
+      mol_struct_params.delete(:genbank_file)
+    end
+    # end: web service interface
+    
+    @molecular_structure = MolecularStructure.new( mol_struct_params )
     respond_to do |format|
       if @molecular_structure.save
-        flash[:notice] = 'Allele successfully created.'
-        format.html { redirect_to @molecular_structure }
+        update_links_escell_to_targ_vec( @molecular_structure.id, mol_struct_params )
+        format.html {
+          flash[:notice] = 'Allele successfully created.'
+          redirect_to @molecular_structure
+        }
         format.xml  { render :xml  => @molecular_structure, :status => :created, :location => @molecular_structure }
         format.json { render :json => @molecular_structure, :status => :created, :location => @molecular_structure }
       else
-        format.html { 
+        format.html {
           @molecular_structure.genbank_file = GenbankFile.new
-          render :action => "new" 
+          render :action => "new"
         }
         format.xml  { render :xml  => @molecular_structure.errors, :status => :unprocessable_entity }
-        format.xml  { render :json => @molecular_structure.errors, :status => :unprocessable_entity }
+        format.json { render :json => @molecular_structure.errors, :status => :unprocessable_entity }
       end
     end
   end
@@ -73,8 +126,10 @@ class MolecularStructuresController < ApplicationController
   def update
     respond_to do |format|
       if @molecular_structure.update_attributes(params[:molecular_structure])
-        flash[:notice] = 'Allele successfully updated.'
-        format.html { redirect_to @molecular_structure }
+        format.html {
+          update_links_escell_to_targ_vec( @molecular_structure.id, params[:molecular_structure] )
+          flash[:notice] = 'Allele successfully updated.'
+          redirect_to @molecular_structure }
         format.xml  { head :ok }
         format.json { head :ok }
       else
@@ -117,5 +172,46 @@ class MolecularStructuresController < ApplicationController
   private
   def find_mol_struct
     @molecular_structure = MolecularStructure.find(params[:id])
+  end
+  
+  # When trying to create a new targeting vector and link it at the
+  # same time to an ES Cell via its name, it won't work properly.
+  # Following is a fix to this problem - specific to HTML pages
+  def update_links_escell_to_targ_vec( mol_struct_id, params )
+    return unless params.include? :es_cells_attributes
+    
+    es_cells_attrs = []
+    if params[:es_cells_attributes].is_a? Array
+      params[:es_cells_attributes].each do |attrs|
+        es_cells_attrs.push( attrs )
+      end
+    else
+      params[:es_cells_attributes].each do |key, attrs|
+        es_cells_attrs.push( attrs )
+      end
+    end
+      
+    es_cells_attrs.each do |attrs|
+      if attrs.include? :targeting_vector_name
+        # Find ES Cell
+        if attrs.include? :id
+          es_cell = EsCell.find attrs[:id]
+        else
+          search = EsCell.search
+          search.name_like = attrs[:name]
+          search.molecular_structure_id_is = mol_struct_id
+          es_cell = search.first
+        end
+        
+        # If ES Cell is not related to a targeting vector though a
+        # targeting vector name has been provided, let's find the targ
+        # vector and link it to the ES Cell
+        if es_cell and es_cell.targeting_vector.nil?
+          search = TargetingVector.name_is(attrs[:targeting_vector_name])
+          es_cell.targeting_vector = search.first
+          es_cell.save
+        end
+      end
+    end
   end
 end

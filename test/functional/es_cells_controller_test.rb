@@ -408,8 +408,16 @@ class EsCellsControllerTest < ActionController::TestCase
   end
   
   should "show es_cell" do
-    get :show, :id => EsCell.find(:first).id
-    assert_response :success
+    es_cell_id = EsCell.find(:first).id
+    
+    get :show, :format => "html", :id => es_cell_id
+    assert_response 406, "Controller should not allow HTML display"
+    
+    get :show, :format => "json", :id => es_cell_id
+    assert_response :success, "Controller does not allow JSON display"
+    
+    get :show, :format => "xml", :id => es_cell_id
+    assert_response :success, "Controller does not allow XML display"
   end
 
   should "not get edit" do

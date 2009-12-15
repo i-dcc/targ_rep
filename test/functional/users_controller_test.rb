@@ -24,6 +24,13 @@ class UsersControllerTest < ActionController::TestCase
 
     assert_redirected_to user_path( assigns(:user) )
   end
+  
+  should "not create user" do
+    assert_no_difference('User.count') do
+      post :create, :user => Factory.attributes_for( :invalid_user )
+    end
+    assert_template :new
+  end
 
   should "show user" do
     UserSession.create( User.first )
@@ -40,5 +47,12 @@ class UsersControllerTest < ActionController::TestCase
     UserSession.create(User.first)
     put :update, :user => { }
     assert_redirected_to user_path( User.first )
+  end
+  
+  should "not update user" do
+    new_user = Factory.create( :user )
+    UserSession.create(User.first)
+    put :update, :user => { :username => new_user.username }
+    assert_template :edit
   end
 end

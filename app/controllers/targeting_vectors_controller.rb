@@ -50,7 +50,6 @@ class TargetingVectorsController < ApplicationController
       }
     end
     
-    
     #
     # Create molecular structure
     #
@@ -66,13 +65,12 @@ class TargetingVectorsController < ApplicationController
       end
     end
     
-    
     #
     # Create targeting vector
     #
     
     if errors.empty?
-      # If molecular_structure_id should be in targ_vec_hash anyway
+      # molecular_structure_id should be in targ_vec_hash anyway
       @targeting_vector = TargetingVector.new( targ_vec_hash )
       
       unless @targeting_vector.save

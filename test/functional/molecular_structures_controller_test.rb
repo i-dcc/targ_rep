@@ -16,6 +16,89 @@ class MolecularStructuresControllerTest < ActionController::TestCase
     get :new
     assert_response :success
   end
+  
+  should "create molecular structure, targeting vector and es_cell" do
+    mol_struct    = Factory.attributes_for( :molecular_structure )
+    targ_vec1     = Factory.build( :targeting_vector )
+    targ_vec2     = Factory.build( :targeting_vector )
+    genbank_file  = Factory.build( :genbank_file )
+    
+    mol_struct_count  = MolecularStructure.all.count
+    targ_vec_count    = TargetingVector.all.count
+    es_cell_count     = EsCell.all.count
+    unlinked_es_cells = EsCell.targeting_vector_id_null.count
+    linked_es_cells   = EsCell.targeting_vector_id_not_null.count
+    
+    post :create, :molecular_structure => {
+      :allele_symbol_superscript  => mol_struct[:allele_symbol_superscript],
+      :assembly                   => mol_struct[:assembly],
+      :mgi_accession_id           => mol_struct[:mgi_accession_id],
+      :chromosome                 => mol_struct[:chromosome],
+      :strand                     => mol_struct[:strand],
+      :design_type                => mol_struct[:design_type],
+      :homology_arm_start         => mol_struct[:homology_arm_start],
+      :homology_arm_end           => mol_struct[:homology_arm_end],
+      :cassette_start             => mol_struct[:cassette_start],
+      :cassette_end               => mol_struct[:cassette_end],
+      
+      :targeting_vectors => [
+        # Targeting vector 1 with its ES cells
+        {
+          :pipeline_id         => targ_vec1[:pipeline_id],
+          :ikmc_project_id     => targ_vec1[:ikmc_project_id],
+          :name                => targ_vec1[:name],
+          :intermediate_vector => targ_vec1[:intermediate_vector],
+          :parental_cell_line  => targ_vec1[:parental_cell_line],
+          :es_cells => [
+            Factory.attributes_for( :es_cell ),
+            Factory.attributes_for( :es_cell ),
+            Factory.attributes_for( :es_cell )
+          ]
+        },
+        
+        # Targeting vector 2 without ES Cells
+        {
+          :pipeline_id         => targ_vec2[:pipeline_id],
+          :ikmc_project_id     => targ_vec2[:ikmc_project_id],
+          :name                => targ_vec2[:name],
+          :intermediate_vector => targ_vec2[:intermediate_vector],
+          :parental_cell_line  => targ_vec2[:parental_cell_line]          
+        }
+      ],
+      
+      # ES Cells only related to molecular structure
+      :es_cells => [
+        { :name => Factory.attributes_for( :es_cell )[:name] },
+        { :name => Factory.attributes_for( :es_cell )[:name] },
+        { :name => Factory.attributes_for( :es_cell )[:name] }
+      ],
+      
+      :genbank_file => {
+        :escell_clone     => genbank_file[:escell_clone],
+        :targeting_vector => genbank_file[:targeting_vector]
+      }
+    }
+    assert_equal(
+      mol_struct_count + 1, MolecularStructure.all.count,
+      "Controller should have created 1 valid molecular structure."
+    )
+    assert_equal(
+      targ_vec_count + 2, TargetingVector.all.count,
+      "Controller should have created 2 valid targeting vectors."
+    )
+    assert_equal(
+      es_cell_count + 6, EsCell.all.count,
+      "Controller should have created 6 valid ES cells."
+    )
+    assert_equal(
+      unlinked_es_cells + 3, EsCell.targeting_vector_id_null.count,
+      "Controller should have create 3 more ES cells not linked to a targeting vector"
+    )
+    assert_equal(
+      linked_es_cells + 3, EsCell.targeting_vector_id_not_null.count,
+      "Controller should have create 3 more ES cells linked to a targeting vector"
+    )
+  end
 
   should "create molecular structure" do
     assert_difference('MolecularStructure.count') do
@@ -35,8 +118,16 @@ class MolecularStructuresControllerTest < ActionController::TestCase
   end
 
   should "show molecular structure" do
-    get :show, :id => MolecularStructure.find(:first).to_param
-    assert_response :success
+    mol_struct_id = MolecularStructure.find(:first).id
+    
+    get :show, :format => "html", :id => mol_struct_id
+    assert_response :success, "Controller should allow HTML display"
+    
+    get :show, :format => "json", :id => mol_struct_id
+    assert_response :success, "Controller should allow JSON display"
+    
+    get :show, :format => "xml", :id => mol_struct_id
+    assert_response :success, "Controller should allow XML display"
   end
 
   should "get edit" do

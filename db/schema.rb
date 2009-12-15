@@ -107,12 +107,12 @@ ActiveRecord::Schema.define(:version => 20091119090007) do
     t.datetime "updated_at"
   end
 
-  add_foreign_key "es_cells", "molecular_structures", :column => "molecular_structure_id", :name => "es_cells_ibfk_1", :dependent => :delete
-  add_foreign_key "es_cells", "targeting_vectors", :column => "targeting_vector_id", :name => "es_cells_ibfk_2", :dependent => :delete
+  add_foreign_key "es_cells", "molecular_structures", :name => "es_cells_ibfk_1", :dependent => :delete
+  add_foreign_key "es_cells", "targeting_vectors", :name => "es_cells_ibfk_2", :dependent => :delete
 
-  add_foreign_key "genbank_files", "molecular_structures", :column => "molecular_structure_id", :name => "genbank_files_ibfk_1", :dependent => :delete
+  add_foreign_key "genbank_files", "molecular_structures", :name => "genbank_files_ibfk_1", :dependent => :delete
 
-  add_foreign_key "targeting_vectors", "molecular_structures", :column => "molecular_structure_id", :name => "targeting_vectors_ibfk_2", :dependent => :delete
-  add_foreign_key "targeting_vectors", "pipelines", :column => "pipeline_id", :name => "targeting_vectors_ibfk_1", :dependent => :delete
+  add_foreign_key "targeting_vectors", "molecular_structures", :name => "targeting_vectors_ibfk_2", :dependent => :delete
+  add_foreign_key "targeting_vectors", "pipelines", :name => "targeting_vectors_ibfk_1", :dependent => :delete
 
 end

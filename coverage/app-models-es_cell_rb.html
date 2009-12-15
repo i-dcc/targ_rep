@@ -28,17 +28,17 @@
         <tbody>
           <tr>
             <td class="left_align"><a href="app-models-es_cell_rb.html">app/models/es_cell.rb</a></td>
-            <td class='right_align'><tt>67</tt></td>
-            <td class='right_align'><tt>42</tt></td>
-            <td class="left_align"><div class="percent_graph_legend"><tt class=''>70.15%</tt></div>
+            <td class='right_align'><tt>71</tt></td>
+            <td class='right_align'><tt>43</tt></td>
+            <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
           <div class="percent_graph">
-            <div class="covered" style="width:70px"></div>
-            <div class="uncovered" style="width:30px"></div>
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
           </div></td>
-            <td class="left_align"><div class="percent_graph_legend"><tt class=''>52.38%</tt></div>
+            <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
           <div class="percent_graph">
-            <div class="covered" style="width:52px"></div>
-            <div class="uncovered" style="width:48px"></div>
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
           </div></td>
           </tr>
         </tbody>
@@ -177,121 +177,121 @@
           
           
           <tr class="inferred">
-            <td><pre><a name="line21">21</a>     :class_name =&gt; 'MolecularStructure',</pre></td>
+            <td><pre><a name="line21">21</a>     # :inverse_of   =&gt; :es_cells,</pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line22">22</a>     :foreign_key =&gt; 'molecular_structure_id'</pre></td>
+            <td><pre><a name="line22">22</a>     :class_name   =&gt; 'MolecularStructure',</pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line23">23</a> </pre></td>
+            <td><pre><a name="line23">23</a>     :foreign_key  =&gt; 'molecular_structure_id'</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line24">24</a> </pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line24">24</a>   belongs_to :targeting_vector,</pre></td>
+            <td><pre><a name="line25">25</a>   belongs_to :targeting_vector,  </pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line25">25</a>     :class_name =&gt; 'TargetingVector',</pre></td>
+            <td><pre><a name="line26">26</a>     # :inverse_of   =&gt; :es_cells,</pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line26">26</a>     :foreign_key =&gt; 'targeting_vector_id'</pre></td>
+            <td><pre><a name="line27">27</a>     :class_name   =&gt; 'TargetingVector',</pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line27">27</a> </pre></td>
+            <td><pre><a name="line28">28</a>     :foreign_key  =&gt; 'targeting_vector_id'</pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line28">28</a>   # Unique constraint</pre></td>
+            <td><pre><a name="line29">29</a> </pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line30">30</a>   # Unique constraint</pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line29">29</a>   validates_uniqueness_of :name</pre></td>
+            <td><pre><a name="line31">31</a>   validates_uniqueness_of :name</pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line30">30</a>   </pre></td>
+            <td><pre><a name="line32">32</a>   </pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line31">31</a>   # Data validation</pre></td>
+            <td><pre><a name="line33">33</a>   # Data validation</pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line32">32</a>   validates_associated  :molecular_structure</pre></td>
+            <td><pre><a name="line34">34</a>   validates_associated  :molecular_structure</pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line33">33</a>   validates_associated  :targeting_vector</pre></td>
+            <td><pre><a name="line35">35</a>   validates_associated  :targeting_vector</pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line34">34</a>   </pre></td>
+            <td><pre><a name="line36">36</a>   </pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line35">35</a>   validates_presence_of :molecular_structure_id,  :on =&gt; :save</pre></td>
+            <td><pre><a name="line37">37</a>   validates_presence_of :molecular_structure_id,  :on =&gt; :save, :unless =&gt; :nested</pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line36">36</a>   validates_presence_of :name,                    :on =&gt; :create</pre></td>
+            <td><pre><a name="line38">38</a>   validates_presence_of :name,                    :on =&gt; :create</pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line37">37</a>   </pre></td>
+            <td><pre><a name="line39">39</a>   </pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line38">38</a>   def targeting_vector_name</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="marked">
-            <td><pre><a name="line39">39</a>     targeting_vector.name if targeting_vector</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="inferred">
-            <td><pre><a name="line40">40</a>   end</pre></td>
+            <td><pre><a name="line40">40</a>   attr_accessor :nested</pre></td>
           </tr>
         
           
@@ -303,163 +303,187 @@
           
           
           <tr class="marked">
-            <td><pre><a name="line42">42</a>   def targeting_vector_name=(name)</pre></td>
+            <td><pre><a name="line42">42</a>   def targeting_vector_name</pre></td>
           </tr>
         
           
           
-          <tr class="uncovered">
-            <td><pre><a name="line43">43</a>     self.targeting_vector = TargetingVector.find_by_name(name) unless name.blank?</pre></td>
+          <tr class="marked">
+            <td><pre><a name="line43">43</a>     targeting_vector.name if targeting_vector</pre></td>
           </tr>
         
           
           
-          <tr class="uncovered">
+          <tr class="inferred">
             <td><pre><a name="line44">44</a>   end</pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line45">45</a> </pre></td>
+            <td><pre><a name="line45">45</a>   </pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line46">46</a>   public</pre></td>
+            <td><pre><a name="line46">46</a>   def targeting_vector_name=(name)</pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line47">47</a>     def to_json( options = {} )</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="uncovered">
-            <td><pre><a name="line48">48</a>       EsCell.include_root_in_json = false</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="uncovered">
-            <td><pre><a name="line49">49</a>       options.update(</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="uncovered">
-            <td><pre><a name="line50">50</a>         :include =&gt; {</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="uncovered">
-            <td><pre><a name="line51">51</a>           :created_by =&gt; { :only =&gt; [:id, :username] },</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="uncovered">
-            <td><pre><a name="line52">52</a>           :updated_by =&gt; { :only =&gt; [:id, :username] }</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="uncovered">
-            <td><pre><a name="line53">53</a>         }</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="uncovered">
-            <td><pre><a name="line54">54</a>       )</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="uncovered">
-            <td><pre><a name="line55">55</a>       super( options )</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="uncovered">
-            <td><pre><a name="line56">56</a>     end</pre></td>
+            <td><pre><a name="line47">47</a>     self.targeting_vector = TargetingVector.find_by_name(name) unless name.blank?</pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line57">57</a> </pre></td>
+            <td><pre><a name="line48">48</a>   end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line49">49</a> </pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line58">58</a>     def xml( options = {} )</pre></td>
+            <td><pre><a name="line50">50</a>   public</pre></td>
           </tr>
         
           
           
-          <tr class="uncovered">
-            <td><pre><a name="line59">59</a>       options.update(</pre></td>
+          <tr class="marked">
+            <td><pre><a name="line51">51</a>     def to_json( options = {} )</pre></td>
           </tr>
         
           
           
-          <tr class="uncovered">
-            <td><pre><a name="line60">60</a>         :skip_types =&gt; true,</pre></td>
+          <tr class="marked">
+            <td><pre><a name="line52">52</a>       EsCell.include_root_in_json = false</pre></td>
           </tr>
         
           
           
-          <tr class="uncovered">
-            <td><pre><a name="line61">61</a>         :include =&gt; {</pre></td>
+          <tr class="marked">
+            <td><pre><a name="line53">53</a>       options.update(</pre></td>
           </tr>
         
           
           
-          <tr class="uncovered">
-            <td><pre><a name="line62">62</a>           :created_by =&gt; { :only =&gt; [:id, :username] },</pre></td>
+          <tr class="inferred">
+            <td><pre><a name="line54">54</a>         :include =&gt; {</pre></td>
           </tr>
         
           
           
-          <tr class="uncovered">
-            <td><pre><a name="line63">63</a>           :updated_by =&gt; { :only =&gt; [:id, :username] }</pre></td>
+          <tr class="inferred">
+            <td><pre><a name="line55">55</a>           :created_by =&gt; { :only =&gt; [:id, :username] },</pre></td>
           </tr>
         
           
           
-          <tr class="uncovered">
-            <td><pre><a name="line64">64</a>         }</pre></td>
+          <tr class="inferred">
+            <td><pre><a name="line56">56</a>           :updated_by =&gt; { :only =&gt; [:id, :username] }</pre></td>
           </tr>
         
           
           
-          <tr class="uncovered">
-            <td><pre><a name="line65">65</a>       )</pre></td>
+          <tr class="inferred">
+            <td><pre><a name="line57">57</a>         }</pre></td>
           </tr>
         
           
           
-          <tr class="uncovered">
-            <td><pre><a name="line66">66</a>     end</pre></td>
+          <tr class="inferred">
+            <td><pre><a name="line58">58</a>       )</pre></td>
           </tr>
         
           
           
-          <tr class="uncovered">
-            <td><pre><a name="line67">67</a> end</pre></td>
+          <tr class="marked">
+            <td><pre><a name="line59">59</a>       super( options )</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line60">60</a>     end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line61">61</a> </pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line62">62</a>     def to_xml( options = {} )</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line63">63</a>       options.update(</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line64">64</a>         :skip_types =&gt; true,</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line65">65</a>         :include =&gt; {</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line66">66</a>           :created_by =&gt; { :only =&gt; [:id, :username] },</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line67">67</a>           :updated_by =&gt; { :only =&gt; [:id, :username] }</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line68">68</a>         }</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line69">69</a>       )</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line70">70</a>     end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line71">71</a> end</pre></td>
           </tr>
         
       </tbody>
     </table>
 
-    <p>Generated on Tue Dec 08 13:34:56 +0000 2009 with <a href="http://github.com/relevance/rcov">rcov 0.9.6</a></p>
+    <p>Generated on Tue Dec 15 15:27:29 +0000 2009 with <a href="http://github.com/relevance/rcov">rcov 0.9.6</a></p>
 
   </body>
 </html>

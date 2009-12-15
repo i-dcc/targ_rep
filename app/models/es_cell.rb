@@ -32,8 +32,10 @@ class EsCell < ActiveRecord::Base
   validates_associated  :molecular_structure
   validates_associated  :targeting_vector
   
-  validates_presence_of :molecular_structure_id,  :on => :save
+  validates_presence_of :molecular_structure_id,  :on => :save, :unless => :nested
   validates_presence_of :name,                    :on => :create
+  
+  attr_accessor :nested
   
   def targeting_vector_name
     targeting_vector.name if targeting_vector
@@ -55,7 +57,7 @@ class EsCell < ActiveRecord::Base
       super( options )
     end
 
-    def xml( options = {} )
+    def to_xml( options = {} )
       options.update(
         :skip_types => true,
         :include => {

@@ -11,13 +11,15 @@ class GenbankFile < ActiveRecord::Base
   
   # Associations
   belongs_to :molecular_structure,
-    :class_name => "MolecularStructure",
-    :foreign_key => "molecular_structure_id"
+    :class_name   => "MolecularStructure",
+    :foreign_key  => "molecular_structure_id"
   
   # Data validation
   validates_associated :molecular_structure
   
-  validates_presence_of :molecular_structure_id
+  validates_presence_of :molecular_structure_id, :unless => :nested
+  
+  attr_accessor :nested 
   
   GenbankFile.include_root_in_json = false
 end

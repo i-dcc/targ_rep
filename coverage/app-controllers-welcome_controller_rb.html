@@ -28,17 +28,17 @@
         <tbody>
           <tr>
             <td class="left_align"><a href="app-controllers-welcome_controller_rb.html">app/controllers/welcome_controller.rb</a></td>
-            <td class='right_align'><tt>16</tt></td>
-            <td class='right_align'><tt>16</tt></td>
-            <td class="left_align"><div class="percent_graph_legend"><tt class=''>12.50%</tt></div>
+            <td class='right_align'><tt>11</tt></td>
+            <td class='right_align'><tt>11</tt></td>
+            <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
           <div class="percent_graph">
-            <div class="covered" style="width:13px"></div>
-            <div class="uncovered" style="width:87px"></div>
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
           </div></td>
-            <td class="left_align"><div class="percent_graph_legend"><tt class=''>12.50%</tt></div>
+            <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
           <div class="percent_graph">
-            <div class="covered" style="width:13px"></div>
-            <div class="uncovered" style="width:87px"></div>
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
           </div></td>
           </tr>
         </tbody>
@@ -68,92 +68,62 @@
         
           
           
-          <tr class="uncovered">
-            <td><pre><a name="line3">3</a>     @pipelines = Pipeline.find(:all)</pre></td>
+          <tr class="marked">
+            <td><pre><a name="line3">3</a>     @counts = {}</pre></td>
           </tr>
         
           
           
-          <tr class="uncovered">
-            <td><pre><a name="line4">4</a>     @molecular_structure_count = 0</pre></td>
+          <tr class="marked">
+            <td><pre><a name="line4">4</a>     Pipeline.all.each do |pipeline|</pre></td>
           </tr>
         
           
           
-          <tr class="uncovered">
-            <td><pre><a name="line5">5</a>     @product_count = 0</pre></td>
+          <tr class="marked">
+            <td><pre><a name="line5">5</a>       @counts[pipeline.name] = {</pre></td>
           </tr>
         
           
           
-          <tr class="uncovered">
-            <td><pre><a name="line6">6</a>     @counts = {}</pre></td>
+          <tr class="marked">
+            <td><pre><a name="line6">6</a>         :molecular_structures   =&gt; pipeline.molecular_structures.count,</pre></td>
           </tr>
         
           
           
-          <tr class="uncovered">
-            <td><pre><a name="line7">7</a>     @pipelines.each do |pipeline|</pre></td>
+          <tr class="marked">
+            <td><pre><a name="line7">7</a>         :es_cells               =&gt; pipeline.es_cells.count</pre></td>
           </tr>
         
           
           
-          <tr class="uncovered">
-            <td><pre><a name="line8">8</a>       @counts[pipeline.name] = {</pre></td>
+          <tr class="inferred">
+            <td><pre><a name="line8">8</a>       }</pre></td>
           </tr>
         
           
           
-          <tr class="uncovered">
-            <td><pre><a name="line9">9</a>         :molecular_structures  =&gt; pipeline.molecular_structures.count,</pre></td>
+          <tr class="inferred">
+            <td><pre><a name="line9">9</a>     end</pre></td>
           </tr>
         
           
           
-          <tr class="uncovered">
-            <td><pre><a name="line10">10</a>         :products =&gt; pipeline.es_cells.count</pre></td>
+          <tr class="inferred">
+            <td><pre><a name="line10">10</a>   end</pre></td>
           </tr>
         
           
           
-          <tr class="uncovered">
-            <td><pre><a name="line11">11</a>       }</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="uncovered">
-            <td><pre><a name="line12">12</a>       @molecular_structure_count += @counts[pipeline.name][:molecular_structures]</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="uncovered">
-            <td><pre><a name="line13">13</a>       @product_count += @counts[pipeline.name][:products]</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="uncovered">
-            <td><pre><a name="line14">14</a>     end</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="uncovered">
-            <td><pre><a name="line15">15</a>   end</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="uncovered">
-            <td><pre><a name="line16">16</a> end</pre></td>
+          <tr class="inferred">
+            <td><pre><a name="line11">11</a> end</pre></td>
           </tr>
         
       </tbody>
     </table>
 
-    <p>Generated on Tue Dec 08 13:34:56 +0000 2009 with <a href="http://github.com/relevance/rcov">rcov 0.9.6</a></p>
+    <p>Generated on Tue Dec 15 15:27:29 +0000 2009 with <a href="http://github.com/relevance/rcov">rcov 0.9.6</a></p>
 
   </body>
 </html>

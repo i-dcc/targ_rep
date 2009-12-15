@@ -26,8 +26,9 @@ class UserSessionsControllerTest < ActionController::TestCase
   end
 
   should "delete session" do
+    UserSession.create Factory.build( :user )
     delete :destroy
     assert_nil UserSession.find
-    assert_redirected_to new_user_session_path
+    assert_redirected_to login_path
   end
 end

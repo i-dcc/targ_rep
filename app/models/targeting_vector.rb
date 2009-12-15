@@ -21,24 +21,17 @@ class TargetingVector < ActiveRecord::Base
   belongs_to :updated_by, :class_name => 'User', :foreign_key => 'updated_by'
 
   belongs_to :pipeline,
-    :class_name => "Pipeline",
-    :foreign_key => "pipeline_id"
+    :class_name   => "Pipeline",
+    :foreign_key  => "pipeline_id"
 
   belongs_to :molecular_structure,
-    :class_name => 'MolecularStructure',
-    :foreign_key => 'molecular_structure_id'
+    :class_name   => 'MolecularStructure',
+    :foreign_key  => 'molecular_structure_id'
     
   has_many :es_cells,
-    :class_name => "EsCell",
-    :foreign_key => "targeting_vector_id"
-  
-  # Helper for handling creation/update of associated es_cell in the
-  # targeting_vector's form
+    :class_name   => "EsCell",
+    :foreign_key  => "targeting_vector_id"
   accepts_nested_attributes_for :es_cells, :allow_destroy => true
-
-  has_one :genbank_file,
-    :class_name => "GenbankFile",
-    :foreign_key => "genbank_file_id"
 
   # Unique constraint
   validates_uniqueness_of :name, :scope => :pipeline_id
@@ -48,9 +41,11 @@ class TargetingVector < ActiveRecord::Base
   validates_associated  :molecular_structure
 
   validates_presence_of :pipeline_id,             :on => :save
-  validates_presence_of :molecular_structure_id,  :on => :save
+  validates_presence_of :molecular_structure_id,  :on => :save, :unless => :nested
   validates_presence_of :ikmc_project_id,         :on => :create
   validates_presence_of :name,                    :on => :create
+
+  attr_accessor :nested
 
   public
     def to_json( options = {} )
@@ -64,7 +59,7 @@ class TargetingVector < ActiveRecord::Base
       super( options )
     end
 
-    def xml( options = {} )
+    def to_xml( options = {} )
       options.update(
         :skip_types => true,
         :include => {

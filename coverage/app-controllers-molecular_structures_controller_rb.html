@@ -28,17 +28,17 @@
         <tbody>
           <tr>
             <td class="left_align"><a href="app-controllers-molecular_structures_controller_rb.html">app/controllers/molecular_structures_controller.rb</a></td>
-            <td class='right_align'><tt>121</tt></td>
-            <td class='right_align'><tt>90</tt></td>
-            <td class="left_align"><div class="percent_graph_legend"><tt class=''>96.69%</tt></div>
+            <td class='right_align'><tt>218</tt></td>
+            <td class='right_align'><tt>155</tt></td>
+            <td class="left_align"><div class="percent_graph_legend"><tt class=''>95.41%</tt></div>
           <div class="percent_graph">
-            <div class="covered" style="width:97px"></div>
-            <div class="uncovered" style="width:3px"></div>
+            <div class="covered" style="width:95px"></div>
+            <div class="uncovered" style="width:5px"></div>
           </div></td>
-            <td class="left_align"><div class="percent_graph_legend"><tt class=''>95.56%</tt></div>
+            <td class="left_align"><div class="percent_graph_legend"><tt class=''>93.55%</tt></div>
           <div class="percent_graph">
-            <div class="covered" style="width:96px"></div>
-            <div class="uncovered" style="width:4px"></div>
+            <div class="covered" style="width:94px"></div>
+            <div class="uncovered" style="width:6px"></div>
           </div></td>
           </tr>
         </tbody>
@@ -356,434 +356,1016 @@
         
           
           
-          <tr class="marked">
-            <td><pre><a name="line51">51</a>   def create</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="marked">
-            <td><pre><a name="line52">52</a>     @molecular_structure = MolecularStructure.new(params[:molecular_structure])</pre></td>
+          <tr class="inferred">
+            <td><pre><a name="line51">51</a>   # POST /molecular_structures.json</pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line53">53</a> </pre></td>
-          </tr>
-        
-          
-          
-          <tr class="marked">
-            <td><pre><a name="line54">54</a>     respond_to do |format|</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="marked">
-            <td><pre><a name="line55">55</a>       if @molecular_structure.save</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="marked">
-            <td><pre><a name="line56">56</a>         flash[:notice] = 'Allele successfully created.'</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="marked">
-            <td><pre><a name="line57">57</a>         format.html { redirect_to @molecular_structure }</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="marked">
-            <td><pre><a name="line58">58</a>         format.xml  { render :xml  =&gt; @molecular_structure, :status =&gt; :created, :location =&gt; @molecular_structure }</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="marked">
-            <td><pre><a name="line59">59</a>         format.json { render :json =&gt; @molecular_structure, :status =&gt; :created, :location =&gt; @molecular_structure }</pre></td>
+            <td><pre><a name="line52">52</a>   # For the ``nested`` attribute appended to the hash, have a look here:</pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line60">60</a>       else</pre></td>
+            <td><pre><a name="line53">53</a>   # http://github.com/dazoakley/targ_rep2/issues#issue/1</pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line61">61</a>         format.html { </pre></td>
+            <td><pre><a name="line54">54</a>   def create</pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line62">62</a>           @molecular_structure.genbank_file = GenbankFile.new</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="marked">
-            <td><pre><a name="line63">63</a>           render :action =&gt; &quot;new&quot; </pre></td>
+            <td><pre><a name="line55">55</a>     mol_struct_params = params[:molecular_structure]</pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line64">64</a>         }</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="marked">
-            <td><pre><a name="line65">65</a>         format.xml  { render :xml  =&gt; @molecular_structure.errors, :status =&gt; :unprocessable_entity }</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="marked">
-            <td><pre><a name="line66">66</a>         format.xml  { render :json =&gt; @molecular_structure.errors, :status =&gt; :unprocessable_entity }</pre></td>
+            <td><pre><a name="line56">56</a>     </pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line67">67</a>       end</pre></td>
+            <td><pre><a name="line57">57</a>     # start: web service interface</pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line68">68</a>     end</pre></td>
+            <td><pre><a name="line58">58</a>     </pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line69">69</a>   end</pre></td>
+            <td><pre><a name="line59">59</a>     # accepts_nested_attributes_for expect &lt;child_model&gt;_attributes key</pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line70">70</a> </pre></td>
+            <td><pre><a name="line60">60</a>     # in params hash to create children objects.</pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line71">71</a>   # PUT /molecular_structures/1</pre></td>
+            <td><pre><a name="line61">61</a>     </pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line72">72</a>   # PUT /molecular_structures/1.xml</pre></td>
+            <td><pre><a name="line62">62</a>     # Move es_cells Array to es_cells_attributes Array</pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line73">73</a>   def update</pre></td>
+            <td><pre><a name="line63">63</a>     if mol_struct_params.include? :es_cells</pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line74">74</a>     respond_to do |format|</pre></td>
+            <td><pre><a name="line64">64</a>       mol_struct_params[:es_cells].each { |attrs| attrs[:nested] = true }</pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line75">75</a>       if @molecular_structure.update_attributes(params[:molecular_structure])</pre></td>
+            <td><pre><a name="line65">65</a>       mol_struct_params[:es_cells_attributes] = mol_struct_params[:es_cells].dup</pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line76">76</a>         flash[:notice] = 'Allele successfully updated.'</pre></td>
+            <td><pre><a name="line66">66</a>       mol_struct_params.delete(:es_cells)</pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line77">77</a>         format.html { redirect_to @molecular_structure }</pre></td>
+            <td><pre><a name="line67">67</a>     elsif !mol_struct_params.include? :es_cells_attributes</pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line78">78</a>         format.xml  { head :ok }</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="marked">
-            <td><pre><a name="line79">79</a>         format.json { head :ok }</pre></td>
+            <td><pre><a name="line68">68</a>       mol_struct_params[:es_cells_attributes] = []</pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line80">80</a>       else</pre></td>
+            <td><pre><a name="line69">69</a>     end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line70">70</a>     </pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line71">71</a>     # Move targeting_vectors Array to targeting_vectors_attributes Array</pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line81">81</a>         format.html {</pre></td>
+            <td><pre><a name="line72">72</a>     if mol_struct_params.include? :targeting_vectors</pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line82">82</a>           if @molecular_structure.genbank_file.nil?</pre></td>
+            <td><pre><a name="line73">73</a>       mol_struct_params[:targeting_vectors].each do |attrs|</pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line83">83</a>             @molecular_structure.genbank_file = GenbankFile.new</pre></td>
+            <td><pre><a name="line74">74</a>         attrs.update({ :nested =&gt; true })</pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line84">84</a>           end</pre></td>
+            <td><pre><a name="line75">75</a>         </pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line76">76</a>         # Copy es_cells Array related to this Targeting Vector</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line77">77</a>         # into the es_cells_attributes Array created above.</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line78">78</a>         # es_cell hash will contain targeting_vector_name so that it can be</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line79">79</a>         # related to the proper targeting_vector later - once it gets an ID.</pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line85">85</a>           render :action =&gt; &quot;edit&quot;</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="inferred">
-            <td><pre><a name="line86">86</a>         }</pre></td>
+            <td><pre><a name="line80">80</a>         if attrs.include? :es_cells</pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line87">87</a>         format.xml  { render :xml   =&gt; @molecular_structure.errors, :status =&gt; :unprocessable_entity }</pre></td>
+            <td><pre><a name="line81">81</a>           attrs[:es_cells].each do |es_cell_attr|</pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line88">88</a>         format.json { render :json  =&gt; @molecular_structure.errors, :status =&gt; :unprocessable_entity }</pre></td>
+            <td><pre><a name="line82">82</a>             es_cell_attr.update({</pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line89">89</a>       end</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="inferred">
-            <td><pre><a name="line90">90</a>     end</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="inferred">
-            <td><pre><a name="line91">91</a>   end</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="inferred">
-            <td><pre><a name="line92">92</a> </pre></td>
-          </tr>
-        
-          
-          
-          <tr class="inferred">
-            <td><pre><a name="line93">93</a>   # DELETE /molecular_structures/1</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="inferred">
-            <td><pre><a name="line94">94</a>   # DELETE /molecular_structures/1.xml</pre></td>
+            <td><pre><a name="line83">83</a>               :nested =&gt; true,</pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line95">95</a>   def destroy</pre></td>
+            <td><pre><a name="line84">84</a>               :targeting_vector_name =&gt; attrs[:name]</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line85">85</a>             })</pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line96">96</a>     @molecular_structure.destroy</pre></td>
+            <td><pre><a name="line86">86</a>             mol_struct_params[:es_cells_attributes].push( es_cell_attr )</pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line97">97</a> </pre></td>
+            <td><pre><a name="line87">87</a>           end</pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line98">98</a>     respond_to do |format|</pre></td>
+            <td><pre><a name="line88">88</a>           attrs.delete( :es_cells )</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line89">89</a>         end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line90">90</a>       end</pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line99">99</a>       format.html { redirect_to(molecular_structures_url) }</pre></td>
+            <td><pre><a name="line91">91</a>       mol_struct_params[:targeting_vectors_attributes] = mol_struct_params[:targeting_vectors].dup</pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line100">100</a>       format.xml  { head :ok }</pre></td>
+            <td><pre><a name="line92">92</a>       mol_struct_params.delete(:targeting_vectors)</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line93">93</a>     end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line94">94</a>     </pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line95">95</a>     # Move genbank_file hash to genbank_file_attributes hash</pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line101">101</a>       format.json { head :ok }</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="inferred">
-            <td><pre><a name="line102">102</a>     end</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="inferred">
-            <td><pre><a name="line103">103</a>   end</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="inferred">
-            <td><pre><a name="line104">104</a>   </pre></td>
-          </tr>
-        
-          
-          
-          <tr class="inferred">
-            <td><pre><a name="line105">105</a>   #--- Custom controllers</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="inferred">
-            <td><pre><a name="line106">106</a>   # FIXME: Ugly way of retrieving genbank files. Use nice routing instead</pre></td>
-          </tr>
-        
-          
-          
-          <tr class="inferred">
-            <td><pre><a name="line107">107</a>   # GET /molecular_structures/1/escell-clone-genbank-file/</pre></td>
+            <td><pre><a name="line96">96</a>     if mol_struct_params.include? :genbank_file</pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line108">108</a>   def get_escell_clone_genbank_file</pre></td>
+            <td><pre><a name="line97">97</a>       mol_struct_params[:genbank_file][:nested] = true</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line98">98</a>       mol_struct_params[:genbank_file_attributes] = mol_struct_params[:genbank_file].dup</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line99">99</a>       mol_struct_params.delete(:genbank_file)</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line100">100</a>     end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line101">101</a>     # end: web service interface</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line102">102</a>     </pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line103">103</a>     @molecular_structure = MolecularStructure.new( mol_struct_params )</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line104">104</a>     respond_to do |format|</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line105">105</a>       if @molecular_structure.save</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line106">106</a>         update_links_escell_to_targ_vec( @molecular_structure.id, mol_struct_params )</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line107">107</a>         format.html {</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line108">108</a>           flash[:notice] = 'Allele successfully created.'</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line109">109</a>           redirect_to @molecular_structure</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line110">110</a>         }</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line111">111</a>         format.xml  { render :xml  =&gt; @molecular_structure, :status =&gt; :created, :location =&gt; @molecular_structure }</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line112">112</a>         format.json { render :json =&gt; @molecular_structure, :status =&gt; :created, :location =&gt; @molecular_structure }</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line113">113</a>       else</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line114">114</a>         # p @molecular_structure.errors.to_json</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line115">115</a>         format.html {</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line116">116</a>           @molecular_structure.genbank_file = GenbankFile.new</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line117">117</a>           render :action =&gt; &quot;new&quot;</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line118">118</a>         }</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line119">119</a>         format.xml  { render :xml  =&gt; @molecular_structure, :status =&gt; :unprocessable_entity }</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line120">120</a>         format.json { render :json =&gt; @molecular_structure, :status =&gt; :unprocessable_entity }</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line121">121</a>       end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line122">122</a>     end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line123">123</a>   end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line124">124</a> </pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line125">125</a>   # PUT /molecular_structures/1</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line126">126</a>   # PUT /molecular_structures/1.xml</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line127">127</a>   def update</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line128">128</a>     respond_to do |format|</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line129">129</a>       if @molecular_structure.update_attributes(params[:molecular_structure])</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line130">130</a>         format.html {</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line131">131</a>           update_links_escell_to_targ_vec( @molecular_structure.id, params[:molecular_structure] )</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line132">132</a>           flash[:notice] = 'Allele successfully updated.'</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line133">133</a>           redirect_to @molecular_structure }</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line134">134</a>         format.xml  { head :ok }</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line135">135</a>         format.json { head :ok }</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line136">136</a>       else</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line137">137</a>         format.html {</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line138">138</a>           if @molecular_structure.genbank_file.nil?</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line139">139</a>             @molecular_structure.genbank_file = GenbankFile.new</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line140">140</a>           end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line141">141</a>           render :action =&gt; &quot;edit&quot;</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line142">142</a>         }</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line143">143</a>         format.xml  { render :xml   =&gt; @molecular_structure.errors, :status =&gt; :unprocessable_entity }</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line144">144</a>         format.json { render :json  =&gt; @molecular_structure.errors, :status =&gt; :unprocessable_entity }</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line145">145</a>       end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line146">146</a>     end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line147">147</a>   end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line148">148</a> </pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line149">149</a>   # DELETE /molecular_structures/1</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line150">150</a>   # DELETE /molecular_structures/1.xml</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line151">151</a>   def destroy</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line152">152</a>     @molecular_structure.destroy</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line153">153</a> </pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line154">154</a>     respond_to do |format|</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line155">155</a>       format.html { redirect_to(molecular_structures_url) }</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line156">156</a>       format.xml  { head :ok }</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line157">157</a>       format.json { head :ok }</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line158">158</a>     end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line159">159</a>   end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line160">160</a>   </pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line161">161</a>   #--- Custom controllers</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line162">162</a>   # FIXME: Ugly way of retrieving genbank files. Use nice routing instead</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line163">163</a>   # GET /molecular_structures/1/escell-clone-genbank-file/</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line164">164</a>   def get_escell_clone_genbank_file</pre></td>
           </tr>
         
           
           
           <tr class="uncovered">
-            <td><pre><a name="line109">109</a>     render :inline =&gt; &quot;&lt;pre&gt;&lt;%= @molecular_structure.genbank_file.escell_clone %&gt;&lt;/pre&gt;&quot;</pre></td>
+            <td><pre><a name="line165">165</a>     render :inline =&gt; &quot;&lt;pre&gt;&lt;%= @molecular_structure.genbank_file.escell_clone %&gt;&lt;/pre&gt;&quot;</pre></td>
           </tr>
         
           
           
           <tr class="uncovered">
-            <td><pre><a name="line110">110</a>   end</pre></td>
+            <td><pre><a name="line166">166</a>   end</pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line111">111</a> </pre></td>
+            <td><pre><a name="line167">167</a> </pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line112">112</a>   # GET /molecular_structures/1/targeting-vector-genbank-file/</pre></td>
+            <td><pre><a name="line168">168</a>   # GET /molecular_structures/1/targeting-vector-genbank-file/</pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line113">113</a>   def get_targeting_vector_genbank_file</pre></td>
+            <td><pre><a name="line169">169</a>   def get_targeting_vector_genbank_file</pre></td>
           </tr>
         
           
           
           <tr class="uncovered">
-            <td><pre><a name="line114">114</a>     render :inline =&gt; &quot;&lt;pre&gt;&lt;%= @molecular_structure.genbank_file.targeting_vector %&gt;&lt;/pre&gt;&quot;</pre></td>
+            <td><pre><a name="line170">170</a>     render :inline =&gt; &quot;&lt;pre&gt;&lt;%= @molecular_structure.genbank_file.targeting_vector %&gt;&lt;/pre&gt;&quot;</pre></td>
           </tr>
         
           
           
           <tr class="uncovered">
-            <td><pre><a name="line115">115</a>   end</pre></td>
+            <td><pre><a name="line171">171</a>   end</pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line116">116</a> </pre></td>
+            <td><pre><a name="line172">172</a> </pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line117">117</a>   private</pre></td>
+            <td><pre><a name="line173">173</a>   private</pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line118">118</a>   def find_mol_struct</pre></td>
+            <td><pre><a name="line174">174</a>   def find_mol_struct</pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line119">119</a>     @molecular_structure = MolecularStructure.find(params[:id])</pre></td>
+            <td><pre><a name="line175">175</a>     @molecular_structure = MolecularStructure.find(params[:id])</pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line120">120</a>   end</pre></td>
+            <td><pre><a name="line176">176</a>   end</pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line121">121</a> end</pre></td>
+            <td><pre><a name="line177">177</a>   </pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line178">178</a>   # When trying to create a new targeting vector and link it at the</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line179">179</a>   # same time to an ES Cell via its name, it won't work properly.</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line180">180</a>   # Following is a fix to this problem - specific to HTML pages</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line181">181</a>   def update_links_escell_to_targ_vec( mol_struct_id, params )</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line182">182</a>     return unless params.include? :es_cells_attributes</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line183">183</a>     </pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line184">184</a>     es_cells_attrs = []</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line185">185</a>     if params[:es_cells_attributes].is_a? Array</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line186">186</a>       params[:es_cells_attributes].each do |attrs|</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line187">187</a>         es_cells_attrs.push( attrs )</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line188">188</a>       end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line189">189</a>     else</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line190">190</a>       params[:es_cells_attributes].each do |key, attrs|</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line191">191</a>         es_cells_attrs.push( attrs )</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line192">192</a>       end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line193">193</a>     end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line194">194</a>       </pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line195">195</a>     es_cells_attrs.each do |attrs|</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line196">196</a>       if attrs.include? :targeting_vector_name</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line197">197</a>         # Find ES Cell</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line198">198</a>         if attrs.include? :id</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line199">199</a>           es_cell = EsCell.find attrs[:id]</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line200">200</a>         else</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line201">201</a>           search = EsCell.search</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line202">202</a>           search.name_like = attrs[:name]</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line203">203</a>           search.molecular_structure_id_is = mol_struct_id</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line204">204</a>           es_cell = search.first</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line205">205</a>         end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line206">206</a>         </pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line207">207</a>         # If ES Cell is not related to a targeting vector though a</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line208">208</a>         # targeting vector name has been provided, let's find the targ</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line209">209</a>         # vector and link it to the ES Cell</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line210">210</a>         if es_cell and es_cell.targeting_vector.nil?</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line211">211</a>           search = TargetingVector.name_is(attrs[:targeting_vector_name])</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line212">212</a>           es_cell.targeting_vector = search.first</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line213">213</a>           es_cell.save</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line214">214</a>         end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line215">215</a>       end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line216">216</a>     end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line217">217</a>   end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line218">218</a> end</pre></td>
           </tr>
         
       </tbody>
     </table>
 
-    <p>Generated on Tue Dec 08 13:34:56 +0000 2009 with <a href="http://github.com/relevance/rcov">rcov 0.9.6</a></p>
+    <p>Generated on Tue Dec 15 15:27:29 +0000 2009 with <a href="http://github.com/relevance/rcov">rcov 0.9.6</a></p>
 
   </body>
 </html>

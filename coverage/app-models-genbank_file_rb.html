@@ -28,8 +28,8 @@
         <tbody>
           <tr>
             <td class="left_align"><a href="app-models-genbank_file_rb.html">app/models/genbank_file.rb</a></td>
-            <td class='right_align'><tt>23</tt></td>
-            <td class='right_align'><tt>8</tt></td>
+            <td class='right_align'><tt>26</tt></td>
+            <td class='right_align'><tt>9</tt></td>
             <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
           <div class="percent_graph">
             <div class="covered" style="width:100px"></div>
@@ -135,67 +135,85 @@
           
           
           <tr class="inferred">
-            <td><pre><a name="line14">14</a>     :class_name =&gt; &quot;MolecularStructure&quot;,</pre></td>
+            <td><pre><a name="line14">14</a>     # :inverse_of   =&gt; :genbank_file,</pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line15">15</a>     :foreign_key =&gt; &quot;molecular_structure_id&quot;</pre></td>
+            <td><pre><a name="line15">15</a>     :class_name   =&gt; &quot;MolecularStructure&quot;,</pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line16">16</a>   </pre></td>
+            <td><pre><a name="line16">16</a>     :foreign_key  =&gt; &quot;molecular_structure_id&quot;</pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line17">17</a>   # Data validation</pre></td>
+            <td><pre><a name="line17">17</a>   </pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line18">18</a>   # Data validation</pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line18">18</a>   validates_associated :molecular_structure</pre></td>
+            <td><pre><a name="line19">19</a>   validates_associated :molecular_structure</pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line19">19</a>   </pre></td>
+            <td><pre><a name="line20">20</a>   </pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line20">20</a>   validates_presence_of :molecular_structure_id</pre></td>
+            <td><pre><a name="line21">21</a>   validates_presence_of :molecular_structure_id, :unless =&gt; :nested</pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line21">21</a>   </pre></td>
+            <td><pre><a name="line22">22</a>   </pre></td>
           </tr>
         
           
           
           <tr class="marked">
-            <td><pre><a name="line22">22</a>   GenbankFile.include_root_in_json = false</pre></td>
+            <td><pre><a name="line23">23</a>   attr_accessor :nested </pre></td>
           </tr>
         
           
           
           <tr class="inferred">
-            <td><pre><a name="line23">23</a> end</pre></td>
+            <td><pre><a name="line24">24</a>   </pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line25">25</a>   GenbankFile.include_root_in_json = false</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="inferred">
+            <td><pre><a name="line26">26</a> end</pre></td>
           </tr>
         
       </tbody>
     </table>
 
-    <p>Generated on Tue Dec 08 13:34:56 +0000 2009 with <a href="http://github.com/relevance/rcov">rcov 0.9.6</a></p>
+    <p>Generated on Tue Dec 15 15:27:29 +0000 2009 with <a href="http://github.com/relevance/rcov">rcov 0.9.6</a></p>
 
   </body>
 </html>

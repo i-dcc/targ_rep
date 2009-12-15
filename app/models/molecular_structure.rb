@@ -30,29 +30,21 @@ class MolecularStructure < ActiveRecord::Base
   belongs_to :created_by, :class_name => "User", :foreign_key => "created_by"
   belongs_to :updated_by, :class_name => "User", :foreign_key => "updated_by"
   
-  has_one :genbank_file,
-    :class_name => "GenbankFile",
-    :foreign_key => "molecular_structure_id"
   
-  # Helper for handling creation/update of associated genbank_file in the
-  # molecular_structure's form
-  accepts_nested_attributes_for :genbank_file
+  has_one :genbank_file,
+    :class_name   => "GenbankFile",
+    :foreign_key  => "molecular_structure_id"
+  accepts_nested_attributes_for :genbank_file, :allow_destroy  => true
   
   has_many :targeting_vectors,
-    :class_name => "TargetingVector",
-    :foreign_key => "molecular_structure_id"
-  
-  # Helper for handling creation/update of associated targeting vectors in the
-  # molecular_structure's form
-  accepts_nested_attributes_for :targeting_vectors, :allow_destroy => true
+    :class_name   => "TargetingVector",
+    :foreign_key  => "molecular_structure_id"
+  accepts_nested_attributes_for :targeting_vectors, :allow_destroy  => true
   
   has_many :es_cells,
-    :class_name => "EsCell",
-    :foreign_key => "molecular_structure_id"
-  
-  # Helper for handling creation/update of associated es cells in the
-  # molecular_structure's form
-  accepts_nested_attributes_for :es_cells, :allow_destroy => true
+    :class_name   => "EsCell",
+    :foreign_key  => "molecular_structure_id"
+  accepts_nested_attributes_for :es_cells, :allow_destroy  => true
   
   # Unique constraint
   validates_uniqueness_of :mgi_accession_id,
@@ -67,16 +59,18 @@ class MolecularStructure < ActiveRecord::Base
     :message => "must have unique design features"
   
   # Data validation
-  validates_presence_of :mgi_accession_id,          :on => :create
-  validates_presence_of :assembly,                  :on => :create
-  validates_presence_of :chromosome,                :on => :create
-  validates_presence_of :strand,                    :on => :create
-  validates_presence_of :design_type,               :on => :create
-  validates_presence_of :homology_arm_start,        :on => :create
-  validates_presence_of :homology_arm_end,          :on => :create
-  validates_presence_of :cassette_start,            :on => :create
-  validates_presence_of :cassette_end,              :on => :create
-  validates_presence_of :allele_symbol_superscript, :on => :create
+  validates_presence_of [
+    :mgi_accession_id,
+    :assembly,
+    :chromosome,
+    :strand,
+    :design_type,
+    :homology_arm_start,
+    :homology_arm_end,
+    :cassette_start,
+    :cassette_end,
+    :allele_symbol_superscript
+  ]
   
   validates_inclusion_of :strand,
     :in => ["+", "-"],
@@ -105,12 +99,15 @@ class MolecularStructure < ActiveRecord::Base
   validates_numericality_of :loxp_start,          :only_integer => true, :greater_than => 0, :allow_nil => true
   validates_numericality_of :loxp_end,            :only_integer => true, :greater_than => 0, :allow_nil => true
   
-  validate :has_right_features
+  validate :has_right_features, 
+    :unless => "[mgi_accession_id, assembly, chromosome, strand, design_type,
+    homology_arm_start, homology_arm_end, cassette_start, cassette_end,
+    allele_symbol_superscript].any?(&:nil?)"
   
   public
     def to_json( options = {} )
       MolecularStructure.include_root_in_json = false
-      unless options[:only] or options[:only].include? :es_cells
+      if options.empty? or (options[:only] and options[:only].include? :es_cells)
         options.update(
           :include => {
             :es_cells => { :except => [
@@ -122,7 +119,7 @@ class MolecularStructure < ActiveRecord::Base
         )
       end
       
-      unless options[:only] or options[:only].include? :targeting_vectors
+      if options.empty? or (options[:only] and options[:only].include? :targeting_vectors)
         options.update(
           :include => {
             :targeting_vectors => { :except => [
