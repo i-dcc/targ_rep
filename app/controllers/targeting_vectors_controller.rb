@@ -6,10 +6,16 @@ class TargetingVectorsController < ApplicationController
   # GET /targeting_vectors.xml
   # GET /targeting_vectors.json
   def index
-    search = TargetingVector.search
-    search.molecular_structure_mgi_accession_id_equals( params[:mgi_accession_id]) unless params[:mgi_accession_id].blank?
-    search.name_like( params[:name] ) unless params[:name].blank?
-    @targeting_vectors = search.find( :all )
+    targ_vec_params = params.dup
+    
+    # Just keep params that are Molecular Structure attributes. 
+    # A molecular structure will be search from this params
+    targ_vec_params.delete( "controller" )
+    targ_vec_params.delete( "action" )
+    targ_vec_params.delete( "format" )
+    targ_vec_params.delete( "page" )
+    
+    @targeting_vectors = TargetingVector.search( targ_vec_params ).all
     
     respond_to do |format|
       format.js # index.js.erb

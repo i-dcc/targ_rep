@@ -24,6 +24,18 @@ class CreateMolecularStructures < ActiveRecord::Migration
       t.integer   :updated_by
       t.timestamps
     end
+
+    add_index :molecular_structures,
+      [
+        :assembly, :chromosome, :strand,
+        :homology_arm_start, :homology_arm_end,
+        :cassette_start, :cassette_end,
+        :loxp_start, :loxp_end,
+        :cassette, :backbone,
+        :allele_symbol_superscript
+      ],
+      :name => "index_mol_struct",
+      :unique => true
   end
   
   def self.down

@@ -28,7 +28,6 @@ class MolecularStructureTest < ActiveSupport::TestCase
   should_validate_presence_of :design_type
   should_validate_presence_of :homology_arm_start
   should_validate_presence_of :homology_arm_end
-  should_validate_presence_of :allele_symbol_superscript
   
   should_validate_numericality_of :homology_arm_start
   should_validate_numericality_of :homology_arm_end

@@ -8,6 +8,7 @@
       <th>Design Type</th>
       <th>Cassette</th>
       <th>Backbone</th>
+      <th>Targeted trap</th>
       <th class="last"></th>
     </tr>
   </thead>
@@ -19,6 +20,7 @@
         <td><%= mol_struct.design_type %></td>
         <td><%= mol_struct.cassette %></td>
         <td><%= mol_struct.backbone %></td>
+        <td><%= mol_struct.targeted_trap? %></td>
         <td>
           <%= link_to 'view', mol_struct, :class => "ss_sprite ss_magnifier" %>
           <% if @current_user and ( ( @current_user == mol_struct.created_by ) or @current_user.is_admin ) %>

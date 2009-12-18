@@ -7,11 +7,20 @@ class MolecularStructuresControllerTest < ActionController::TestCase
   end
   
   should "get index" do
-    get :index
+    # html
+    get :index, :format => "html"
     assert_response :success
     assert_not_nil assigns(:molecular_structures)
+    
+    # json
+    get :index, :format => "json"
+    assert_response :success
+    
+    # xml
+    get :index, :format => "xml"
+    assert_response :success
   end
-
+  
   should "get new" do
     get :new
     assert_response :success
@@ -120,14 +129,17 @@ class MolecularStructuresControllerTest < ActionController::TestCase
   should "show molecular structure" do
     mol_struct_id = MolecularStructure.find(:first).id
     
+    # html
     get :show, :format => "html", :id => mol_struct_id
-    assert_response :success, "Controller should allow HTML display"
+    assert_response :success, "should show molecular structure as html"
     
+    # json
     get :show, :format => "json", :id => mol_struct_id
-    assert_response :success, "Controller should allow JSON display"
+    assert_response :success, "should show molecular structure as json"
     
+    # xml
     get :show, :format => "xml", :id => mol_struct_id
-    assert_response :success, "Controller should allow XML display"
+    assert_response :success, "should show molecular structure as xml"
   end
 
   should "get edit" do

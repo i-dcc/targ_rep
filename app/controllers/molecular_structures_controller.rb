@@ -11,8 +11,33 @@ class MolecularStructuresController < ApplicationController
   # GET /molecular_structures.xml
   # GET /molecular_structures.json
   def index
-    @molecular_structures = MolecularStructure.all.paginate(:page => params[:page])
-
+    mol_struct_params = params.dup
+    
+    # Just keep params that are Molecular Structure attributes. 
+    # A molecular structure will be search from this params
+    mol_struct_params.delete( "controller" )
+    mol_struct_params.delete( "action" )
+    mol_struct_params.delete( "format" )
+    mol_struct_params.delete( "page" )
+    
+    if mol_struct_params.nil? or mol_struct_params.empty?
+      @molecular_structures = MolecularStructure.all.paginate(:page => params[:page])
+    else
+      if mol_struct_params[ :loxp_start ] == 'null' and mol_struct_params[ :loxp_end ] == 'null'
+        # If you don't delete these, it will try to search with loxp_start = 0
+        # instead of loxp_start IS NULL
+        mol_struct_params.delete( :loxp_start )
+        mol_struct_params.delete( :loxp_end )
+        
+        # Don't break this line in multiple lines or you will get a wrong result
+        search = MolecularStructure.loxp_start_null.loxp_end_null.search( mol_struct_params )
+      else
+        search = MolecularStructure.search( mol_struct_params )
+      end
+      
+      @molecular_structures = search.paginate(:page => params[:page])
+    end
+    
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml   => @molecular_structures }
@@ -124,6 +149,19 @@ class MolecularStructuresController < ApplicationController
   # PUT /molecular_structures/1
   # PUT /molecular_structures/1.xml
   def update
+    mol_struct_params = params[:molecular_structure]
+    if mol_struct_params.include? :genbank_file and mol_struct_params[:genbank_file].empty?
+      mol_struct_params.delete :genbank_file
+    end
+    
+    if mol_struct_params.include? :targeting_vectors and mol_struct_params[:targeting_vectors].empty?
+      mol_struct_params.delete :targeting_vectors
+    end
+    
+    if mol_struct_params.include? :es_cells and mol_struct_params[:es_cells].empty?
+      mol_struct_params.delete :es_cells
+    end
+    
     respond_to do |format|
       if @molecular_structure.update_attributes(params[:molecular_structure])
         format.html {

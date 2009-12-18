@@ -68,8 +68,7 @@ class MolecularStructure < ActiveRecord::Base
     :homology_arm_start,
     :homology_arm_end,
     :cassette_start,
-    :cassette_end,
-    :allele_symbol_superscript
+    :cassette_end
   ]
   
   validates_inclusion_of :strand,
@@ -151,6 +150,10 @@ class MolecularStructure < ActiveRecord::Base
         }
       )
       super( options )
+    end
+    
+    def targeted_trap?
+      self.loxp_start.nil? ? 'Yes' : 'No'
     end
 
   protected

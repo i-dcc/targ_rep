@@ -7,11 +7,20 @@ class PipelinesControllerTest < ActionController::TestCase
   end
 
   should "get index" do
-    get :index
-    assert_response :success
+    # html
+    get :index, :format => "html"
+    assert_response :success, "should get index as html"
     assert_not_nil assigns(:pipelines)
+    
+    # json
+    get :index, :format => "json"
+    assert_response :success, "should get index as json"
+    
+    # xml
+    get :index, :format => "xml"
+    assert_response :success, "should get index as xml"
   end
-
+  
   should "get new" do
     get :new
     assert_response :success
@@ -32,8 +41,17 @@ class PipelinesControllerTest < ActionController::TestCase
   end
 
   should "show pipeline" do
-    get :show, :id => Pipeline.find(:first).to_param
-    assert_response :success
+    # html
+    get :show, :id => Pipeline.first.id
+    assert_response :success, "should show pipeline as html"
+    
+    # json
+    get :show, :id => Pipeline.first.id, :format => "json"
+    assert_response :success, "should show pipeline as json"
+    
+    # xml
+    get :show, :id => Pipeline.first.id, :format => "xml"
+    assert_response :success, "should show pipeline as xml"
   end
 
   should "get edit" do
