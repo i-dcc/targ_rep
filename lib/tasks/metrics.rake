@@ -8,7 +8,7 @@ begin
     config.reek     = { :dirs_to_reek  => ["app","lib"] }
     config.roodi    = { :dirs_to_roodi => ["app","lib"] }
     config.rcov     = { 
-                        :test_files => ["test/test_*.rb"],
+                        :test_files => ["test/**/*_test.rb"],
                         :rcov_opts  => [
                           "--sort coverage", 
                           "--no-html", 
