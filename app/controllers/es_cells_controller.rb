@@ -5,8 +5,14 @@ class EsCellsController < ApplicationController
   # GET /es_cells.xml
   # GET /es_cells.json
   def index
-    @es_cells = EsCell.all.paginate(:page => params[:page])
-
+    if params.include? :name
+      @es_cells = EsCell.name_like( params[:name] )
+      @es_cells = @es_cells.all
+    else
+      @es_cells = EsCell.all
+    end
+    @es_cells = @es_cells.paginate(:page => params[:page])
+    
     respond_to do |format|
       format.xml  { render :xml   => @es_cells }
       format.json { render :json  => @es_cells }

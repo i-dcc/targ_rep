@@ -49,6 +49,7 @@ class MolecularStructuresController < ApplicationController
   # GET /molecular_structures/1.xml
   # GET /molecular_structures/1.json
   def show
+    @es_cells = @molecular_structure.es_cells.find(:all, :order => "name")
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml   => @molecular_structure }

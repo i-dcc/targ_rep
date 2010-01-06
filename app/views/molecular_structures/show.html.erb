@@ -130,14 +130,14 @@
   <fieldset>
     <legend>ES Cells</legend>
     
-    <% unless @molecular_structure.es_cells.empty? %>
+    <% unless @es_cells.empty? %>
       <table>
         <thead>
           <th>Targeting Vector</th>
           <th class="last">ES Cell</th>
         </thead>
         <tbody>
-          <% @molecular_structure.es_cells.each do |es_cell| %>
+          <% @es_cells.each do |es_cell| %>
           <tr class="<%= cycle("odd", "even") %>">
             <td>
               <% if es_cell.targeting_vector %>
