@@ -693,7 +693,7 @@ that your network connection was severed before it could complete."
   end
   
   def synchronize_es_cells
-    return unless self.targeted_trap and self.allele_symbol_superscript
+    return unless self.targeted_trap
     
     query =
     """
@@ -704,11 +704,18 @@ that your network connection was severed before it could complete."
       JOIN well_summary_by_di ws ON ws.project_id = project.project_id
       JOIN mgi_gene              ON mgi_gene.mgi_gene_id = project.mgi_gene_id
     WHERE
+      (
+        project.is_eucomm = 1
+        OR project.is_komp_csd = 1
+        OR project.is_norcomm = 1
+      )
       epd_well_name IS NOT NULL
       AND ws.epd_distribute = 'yes'
       AND ws.pgdgr_plate_name IS NOT NULL
       AND mgi_gene.mgi_accession_id = '#{self.mgi_accession_id}'
-      AND allele_name LIKE \'%#{self.allele_symbol_superscript}%\'
+      AND project.design_id = '#{self.design_id}'
+      AND project.cassette = '#{self.cassette}'
+      AND project.backbone = '#{self.backbone}'
     """
     
     begin
