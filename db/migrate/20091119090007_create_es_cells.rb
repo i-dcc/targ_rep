@@ -6,6 +6,7 @@ class CreateEsCells < ActiveRecord::Migration
       
       t.foreign_key   :targeting_vector,        :dependent => :delete
       t.integer       :targeting_vector_id
+      t.string        :parental_cell_line
       
       t.string        :name
       

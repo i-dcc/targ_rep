@@ -4,6 +4,7 @@ class EsCell < ActiveRecord::Base
   #   id                     : integer 
   #   molecular_structure_id : integer 
   #   targeting_vector_id    : integer 
+  #   parental_cell_line     : string 
   #   name                   : string 
   #   created_by             : integer 
   #   updated_by             : integer 

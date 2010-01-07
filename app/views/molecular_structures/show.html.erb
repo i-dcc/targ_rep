@@ -105,8 +105,7 @@
           <th>Pipeline</th>
           <th>IKMC Project ID</th>
           <th>Name</th>
-          <th>Intermediate Vector</th>
-          <th class="last">Parental Cell Line</th>
+          <th class="last">Intermediate Vector</th>
         </thead>
         <tbody>
           <% @molecular_structure.targeting_vectors.each do |targ_vec| %>
@@ -115,7 +114,6 @@
             <td><%= targ_vec.ikmc_project_id %></td>
             <td><%= targ_vec.name %></td>
             <td><%= targ_vec.intermediate_vector %></td>
-            <td><%= targ_vec.parental_cell_line %></td>
           </tr>
           <% end -%>
         </tbody>
@@ -134,7 +132,8 @@
       <table>
         <thead>
           <th>Targeting Vector</th>
-          <th class="last">ES Cell</th>
+          <th>ES Cell</th>
+          <th class="last">Parental Cell Line</th>
         </thead>
         <tbody>
           <% @es_cells.each do |es_cell| %>
@@ -145,6 +144,7 @@
               <% end %>
             </td>
             <td><%= es_cell.name %></td>
+            <td><%= es_cell.parental_cell_line %></td>
           </tr>
           <% end -%>
         </tbody>

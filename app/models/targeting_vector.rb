@@ -7,7 +7,6 @@ class TargetingVector < ActiveRecord::Base
   #   ikmc_project_id        : string 
   #   name                   : string 
   #   intermediate_vector    : string 
-  #   parental_cell_line     : string 
   #   created_by             : integer 
   #   updated_by             : integer 
   #   created_at             : datetime 

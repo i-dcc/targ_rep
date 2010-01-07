@@ -511,7 +511,7 @@ class MolecularStructure < IdccObject
   end
   
   def has_changed( mol_struct_hash )
-    not_checked = NOT_DUMPED + [:targeting_vectors, :es_cells, :genbank_file]
+    not_checked = NOT_DUMPED + [:targeting_vectors, :es_cells]
     (ATTRIBUTES - not_checked).each do |attr|
       self_value  = self.instance_variable_get "@#{attr}"
       other_value = mol_struct_hash[ attr.to_s ]
@@ -554,26 +554,28 @@ class MolecularStructure < IdccObject
     
     # Include genbank files if script option is on
     unless @@no_genbank_files
-      base_params = "?cassette=#{@cassette}&design_id=#{@design_id}"
-    
+      base_params = "?cassette=#{self.cassette}&design_id=#{self.design_id}"
+      
       # Targeting vector
       begin
-        params = base_params + "&backbone=#{@backbone}"
-        targ_vec_file = request( method = 'GET', url = params, site = GENBANK_URL )
+        params = base_params + "&backbone=#{self.backbone}"
+        resource = RestClient::Resource.new( GENBANK_URL )
+        targ_vec_file = resource["?#{params}"].get
       rescue RestClient::Exception => e
         targ_vec_file = ''
       end
-    
+      
       # ES Cell clone
       begin
-        base_params += "&targeted_trap=1" if @targeted_trap
-        escell_file = request( method = 'GET', url = base_params, site = GENBANK_URL )
+        base_params += "&targeted_trap=1" if self.targeted_trap
+        resource = RestClient::Resource.new( GENBANK_URL )
+        escell_file = resource["?#{params}"].get
       rescue RestClient::Exception => e
         escell_file = ''
       end
-    
-      @genbank_file = {
-        :escell_clone => escell_file,
+      
+      self.genbank_file = {
+        :escell_clone     => escell_file,
         :targeting_vector => targ_vec_file
       }
     end
@@ -602,7 +604,6 @@ class MolecularStructure < IdccObject
       project.project_id,
       pcs_plate_name || '_' || pcs_well_name as intermediate_vector,
       pgdgr_plate_name || '_' || pgdgr_well_name as targeting_vector,
-      es_cell_line,
       is_eucomm, 
       is_komp_csd, 
       is_norcomm
@@ -621,7 +622,7 @@ class MolecularStructure < IdccObject
       AND project.cassette  = '#{self.cassette}'
       AND project.backbone  = '#{self.backbone}'
       AND (pgdgr_distribute = 'yes' OR ws.epd_distribute = 'yes')
-      AND (pcs_well_name IS NOT NULL OR pgdgr_well_name IS NOT NULL)
+      AND pgdgr_well_name IS NOT NULL
     """
     
     begin
@@ -637,10 +638,9 @@ class MolecularStructure < IdccObject
       ikmc_project_id       = fetch_row[0]
       intermediate_vector   = fetch_row[1]
       targeting_vector      = fetch_row[2]
-      parental_cell_line    = fetch_row[3]
-      is_eucomm             = fetch_row[4] == 1
-      is_komp_csd           = fetch_row[5] == 1
-      is_norcomm            = fetch_row[6] == 1
+      is_eucomm             = fetch_row[3] == 1
+      is_komp_csd           = fetch_row[4] == 1
+      is_norcomm            = fetch_row[5] == 1
       
       #-- Pipeline id
       pipeline_id =
@@ -650,29 +650,12 @@ class MolecularStructure < IdccObject
       end
       next if pipeline_id.nil?
       
-      #-- Parental cell line
-      unless parental_cell_line.nil?
-        parental_cell_line =
-        case parental_cell_line
-          when /JM8\s+/     then 'JM8 parental'
-          when /JM8\.F6/    then 'JM8.F6'
-          when /JM8\.N19/   then 'JM8.N19'
-          when /JM8\.N4/    then 'JM8.N4'
-          when /JM8\.AF6/   then 'JM8.AF6'
-          when /JM8\.N3/    then 'JM8A1.N3'
-          when /JM8A1\.N3/  then 'JM8A1.N3'
-          else parental_cell_line
-        end
-      end
-      
-      # Now that every field is properly formated, let's create the Targeting Vector
       targ_vec = TargetingVector.new({
         :molecular_structure_id => self.molecular_structure_id,
         :pipeline_id            => pipeline_id,
         :ikmc_project_id        => ikmc_project_id,
         :intermediate_vector    => intermediate_vector,
-        :name                   => targeting_vector,
-        :parental_cell_line     => parental_cell_line
+        :name                   => targeting_vector
       })
       
       begin
@@ -697,8 +680,9 @@ that your network connection was severed before it could complete."
     
     query =
     """
-    SELECT
-      epd_well_name
+    SELECT DISTINCT
+      epd_well_name,
+      es_cell_line
     FROM
       project
       JOIN well_summary_by_di ws ON ws.project_id = project.project_id
@@ -718,8 +702,10 @@ that your network connection was severed before it could complete."
       raise
     end
     
-    htgt_products = []
-    cursor.fetch { |fetch_row| htgt_products.push(fetch_row[0]) }
+    htgt_products = {}
+    cursor.fetch do |fetch_row|
+      htgt_products[fetch_row[0]] = format_parental_cell_line(fetch_row[1])
+    end
     
     idcc_products = []
     unless self.es_cells.nil? or self.es_cells.empty?
@@ -729,11 +715,11 @@ that your network connection was severed before it could complete."
     #
     #  DELETE ES Cells
     #
-    if (idcc_products - htgt_products).length > 0
+    if (idcc_products - htgt_products.keys).length > 0
       self.es_cells.each do |es_cell|
         next if es_cell.empty?
         
-        unless htgt_products.include? es_cell['name']
+        unless htgt_products.keys.include? es_cell['name']
           begin
             request( 'DELETE', "products/#{es_cell['id']}" )
           rescue RestClient::Exception => e
@@ -746,25 +732,28 @@ that your network connection was severed before it could complete."
     #
     #  CREATE / UPDATE ES Cells
     #
-    (htgt_products - idcc_products).each do |product_name|
+    (htgt_products.keys - idcc_products).each do |product_name|
       
       # Search product in IDCC - ie. linked to another allele
       response = request( 'GET', "products.json?name=#{product_name}" )
       products_found = JSON.parse( response )
+      
+      json = 
+      JSON.generate({
+        'es_cell' => {
+          'molecular_structure_id'  => self.molecular_structure_id,
+          'name'                    => product_name,
+          'parental_cell_line'      => htgt_products[product_name]
+        }
+      })
       
       #
       #  UPDATE - if changed
       #
       if products_found.length > 0
         product_found = products_found[0]
-        if product_found['molecular_structure_id'] != self.molecular_structure_id
-          json = 
-          JSON.generate({
-            'es_cell' => {
-              'molecular_structure_id' => self.molecular_structure_id,
-              'name' => product_name
-            }
-          })
+        if product_found['molecular_structure_id'] != self.molecular_structure_id \
+        or product_found['parental_cell_line'] != htgt_products[product_name]
           begin
             request( 'PUT', "products/#{product_found['id']}.json", json )
           rescue RestClient::Exception => e
@@ -777,13 +766,6 @@ that your network connection was severed before it could complete."
       #
       else
         begin
-          json = 
-          JSON.generate({
-            'es_cell' => {
-              'molecular_structure_id' => self.molecular_structure_id,
-              'name' => product_name
-            }
-          })
           request( 'POST', 'products.json', json )
         rescue RestClient::Exception => e
           log "[PRODUCT UPDATE];#{json};#{e.http_body}"
@@ -796,7 +778,7 @@ end
 class TargetingVector < IdccObject
   ATTRIBUTES = [
     :targeting_vector_id,
-    :ikmc_project_id, :intermediate_vector, :name, :parental_cell_line,
+    :ikmc_project_id, :intermediate_vector, :name,
     :molecular_structure_id, :pipeline_id, :es_cells
   ].freeze
   ATTRIBUTES.each { |attr| attr_accessor attr }
@@ -851,7 +833,7 @@ class TargetingVector < IdccObject
     query =
     """
     SELECT DISTINCT
-      epd_well_name, targeted_trap
+      epd_well_name, targeted_trap, es_cell_line
     FROM
       well_summary_by_di
     WHERE
@@ -861,9 +843,19 @@ class TargetingVector < IdccObject
       AND pgdgr_plate_name || '_' || pgdgr_well_name = '#{self.name}'
     """
     
+    begin
+      cursor = @@ora_dbh.exec(query)
+    rescue
+      log "[ES CELL SQL];#{query}"
+      raise
+    end
+    
     htgt_products = {}
-    @@ora_dbh.exec(query) do |fetch_row| 
-      htgt_products[fetch_row[0]] = fetch_row[1]
+    cursor.fetch do |fetch_row|
+      htgt_products[fetch_row[0]] = {
+        :is_targeted_trap   => fetch_row[1], 
+        :parental_cell_line => format_parental_cell_line( fetch_row[2] )
+      }
     end
     
     idcc_products = []
@@ -893,6 +885,9 @@ class TargetingVector < IdccObject
     #
     (htgt_products.keys - idcc_products).each do |product_name|
       
+      parental_cell_line = htgt_products[product_name][:parental_cell_line]
+      is_targeted_trap = htgt_products[product_name][:is_targeted_trap] == true
+      
       # Search product in IDCC - ie. linked to another allele
       response = request( 'GET', "products.json?name=#{product_name}" )
       products_found = JSON.parse( response )
@@ -904,15 +899,17 @@ class TargetingVector < IdccObject
         product_found = products_found[0]
         
         # Case 1 - Targeted trap
-        if htgt_products[product_name] == true
+        if is_targeted_trap
           # Continue if nothing has changed - don't check mol struct in this case
-          next if product_found['targeting_vector_id'] == self.targeting_vector_id
+          next if product_found['targeting_vector_id'] == self.targeting_vector_id \
+          and product_found['parental_cell_line'] == parental_cell_line
           
           json = 
           JSON.generate({
             'es_cell' => {
               'targeting_vector_id' => self.targeting_vector_id,
-              'name' => product_name
+              'name'                => product_name,
+              'parental_cell_line'  => parental_cell_line
             }
           })
           
@@ -927,7 +924,8 @@ class TargetingVector < IdccObject
             'es_cell' => {
               'molecular_structure_id'  => self.molecular_structure_id,
               'targeting_vector_id'     => self.targeting_vector_id,
-              'name'                    => product_name
+              'name'                    => product_name,
+              'parental_cell_line'      => parental_cell_line
             }
           })
         end
@@ -948,7 +946,8 @@ class TargetingVector < IdccObject
           'es_cell' => {
             'molecular_structure_id'  => self.molecular_structure_id,
             'targeting_vector_id'     => self.targeting_vector_id,
-            'name'                    => product_name
+            'name'                    => product_name,
+            'parental_cell_line'      => parental_cell_line
           }
         })
         begin
@@ -961,6 +960,22 @@ class TargetingVector < IdccObject
   end
 end
 
+
+def format_parental_cell_line( parental_cell_line )
+  unless parental_cell_line.nil?
+    parental_cell_line =
+    case parental_cell_line
+      when /JM8\s+/     then 'JM8 parental'
+      when /JM8\.F6/    then 'JM8.F6'
+      when /JM8\.N19/   then 'JM8.N19'
+      when /JM8\.N4/    then 'JM8.N4'
+      when /JM8\.AF6/   then 'JM8.AF6'
+      when /JM8\.N3/    then 'JM8A1.N3'
+      when /JM8A1\.N3/  then 'JM8A1.N3'
+      else parental_cell_line
+    end
+  end
+end
 
 # Will get the project ids to filter on for finding new or udpated alleles
 def get_changed_projects

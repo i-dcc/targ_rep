@@ -30,6 +30,7 @@ ActiveRecord::Schema.define(:version => 20091119090007) do
   create_table "es_cells", :force => true do |t|
     t.integer  "molecular_structure_id", :null => false
     t.integer  "targeting_vector_id"
+    t.string   "parental_cell_line"
     t.string   "name"
     t.integer  "created_by"
     t.integer  "updated_by"
@@ -85,7 +86,6 @@ ActiveRecord::Schema.define(:version => 20091119090007) do
     t.string   "ikmc_project_id",        :null => false
     t.string   "name",                   :null => false
     t.string   "intermediate_vector"
-    t.string   "parental_cell_line"
     t.integer  "created_by"
     t.integer  "updated_by"
     t.datetime "created_at"

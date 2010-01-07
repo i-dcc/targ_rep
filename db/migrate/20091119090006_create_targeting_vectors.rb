@@ -10,7 +10,6 @@ class CreateTargetingVectors < ActiveRecord::Migration
       t.string      :ikmc_project_id,         :null => false      
       t.string      :name,                    :null => false
       t.string      :intermediate_vector
-      t.string      :parental_cell_line
       
       t.integer     :created_by
       t.integer     :updated_by

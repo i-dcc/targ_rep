@@ -8,6 +8,7 @@ class GenbankFile < ActiveRecord::Base
   #   created_at             : datetime 
   #   updated_at             : datetime 
   # =======================
+
   
   # Associations
   belongs_to :molecular_structure,
