@@ -602,7 +602,7 @@ class MolecularStructure < IdccObject
       project.project_id,
       pcs_plate_name || '_' || pcs_well_name as intermediate_vector,
       pgdgr_plate_name || '_' || pgdgr_well_name as targeting_vector,
-      es_cell_line
+      es_cell_line,
       is_eucomm, 
       is_komp_csd, 
       is_norcomm
