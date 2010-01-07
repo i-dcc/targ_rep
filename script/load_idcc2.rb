@@ -340,12 +340,6 @@ class Design < IdccObject
   end
   
   def self.retrieve_from_htgt
-    if @@end_date
-      extra_cond = "AND design.created_date <= TO_DATE('#{@@end_date}', 'YYYY-MM-DD')"
-    else
-      extra_cond = ''
-    end
-    
     query =
     """
     SELECT DISTINCT
@@ -371,16 +365,11 @@ class Design < IdccObject
       project_status.order_by >= 75
       AND display_feature.assembly_id = 11
       AND display_feature.display_feature_type IN ('G3','G5','U3','U5','D3','D5')
-      #{extra_cond}
     ORDER BY design.design_id
     """
     current_design = nil
     @@ora_dbh.exec(query) do |fetch_row|
       design_id = fetch_row[0]
-      
-      # 2 options:
-      # 1- Fetched design_id equals previously fetched design_id
-      # 2- Fetched design_id is new
       
       # 1- Same design as fetched previously
       if current_design and design_id == current_design.design_id
@@ -539,214 +528,7 @@ class MolecularStructure < IdccObject
     false
   end
   
-  def self.load_idcc_from_htgt( changed_projects )
-    return nil if changed_projects.length == 0
-
-    #--- Prepare additional query conditions
-    design_filter = ""    
-    Design.each_by(1000) do |design_list|
-      designs_ids = []
-      design_list.each do |design|
-        designs_ids.push(design.design_id) if design.is_valid?
-      end
-      next if designs_ids.length == 0
-      design_filter += "\nOR " if design_filter.length > 0
-      design_filter += "project.design_id IN (#{designs_ids.join(',')})"
-    end
-
-    project_filter = ""
-    projects = []
-    changed_projects.each do |project_id|
-      if projects.length < 1000
-        projects.push( project_id )
-      else
-        project_filter += "\nOR " if project_filter.length > 0
-        project_filter += "project.project_id IN (#{projects.join(',')})"
-        projects = []
-      end
-    end
-    if projects.length > 0
-      project_filter += "\nOR " if project_filter.length > 0
-      project_filter += "project.project_id IN (#{projects.join(',')})"
-    end
-
-    #--- Additional query conditions are set, let's create the query
-    # Conditional and non-conditional alleles are selected in two rows.
-    query =
-    """
-    SELECT DISTINCT
-      mgi_gene.mgi_accession_id,
-      project.design_id,
-      project.cassette,
-      project.backbone,
-      ws.epd_distribute,
-      ws.targeted_trap,
-      allele_name
-    FROM
-      project
-      JOIN well_summary_by_di ws ON ws.project_id = project.project_id
-      JOIN mgi_gene              ON mgi_gene.mgi_gene_id = project.mgi_gene_id
-    WHERE
-      pgdgr_distribute = 'yes'
-      AND (pcs_well_name IS NOT NULL OR pgdgr_well_name IS NOT NULL)
-    """
-    query += "
-      AND ( #{design_filter} )
-    " unless design_filter.empty?
-    query += "
-      AND ( #{project_filter} )
-    " unless project_filter.empty?
-    
-    query += "
-    ORDER BY 
-      mgi_gene.mgi_accession_id,
-      project.design_id,
-      project.cassette,
-      project.backbone,
-      ws.epd_distribute,
-      ws.targeted_trap,
-      allele_name
-    "
-    
-    begin
-      cursor = @@ora_dbh.exec(query)
-    rescue
-      log "[MOL STRUCT SQL];#{query}"
-      raise
-    end
-    
-    mol_struct = nil
-    
-    cursor.fetch do |fetch_row|
-      mgi_accession_id  = fetch_row[0]
-      design_id         = fetch_row[1]
-      cassette          = fetch_row[2]
-      backbone          = fetch_row[3]
-      epd_distribute    = fetch_row[4] == 'yes'
-      targeted_trap     = fetch_row[5] == 'yes'
-      allele_name       = fetch_row[6]
-      
-      #-- Allele symbol superscript
-      if epd_distribute or targeted_trap
-        rxp_matches = /<sup>(tm\d.*)<\/sup>/.match( allele_name )
-        allele_symbol_superscript = rxp_matches[1] if rxp_matches
-      else
-          allele_symbol_superscript = nil
-      end
-      
-      new_mol_struct =
-        mol_struct.nil? \
-        or mol_struct.mgi_accession_id != mgi_accession_id \
-        or mol_struct.design_id != design_id \
-        or mol_struct.cassette != cassette \
-        or mol_struct.backbone != backbone
-      
-      next if not new_mol_struct \
-        and not epd_distribute \
-        and not targeted_trap
-      
-      if epd_distribute and targeted_trap
-        log "[DATABASE ERROR];#{mgi_accession_id};design_id #{design_id};#{cassette};#{backbone};we have epd_distribute=targeted_trap='yes'"
-        next
-      end
-      
-      # Already seen allele
-      next if !new_mol_struct and allele_symbol_superscript == mol_struct.allele_symbol_superscript
-      
-      #-- Design features
-      design    = Design.get( design_id )
-      features  = design.features
-      
-      # Homology Arm
-      homology_arm_start  = nil
-      homology_arm_end    = nil
-      if features['G5'] and features['G3']
-        case design.strand
-        when '+'
-          homology_arm_start  = features['G5']['end']
-          homology_arm_end    = features['G3']['start']
-        when '-'
-          homology_arm_start  = features['G5']['start']
-          homology_arm_end    = features['G3']['end']
-        end
-      end
-      
-      # Cassette
-      cassette_start  = nil
-      cassette_end    = nil
-      if features['U5'] and features['U3']
-        case design.strand
-        when '+'
-          cassette_start  = features['U5']['end']
-          cassette_end    = features['U3']['start']
-        when '-'
-          cassette_start  = features['U5']['start']
-          cassette_end    = features['U3']['end']
-        end
-      end
-      
-      # LoxP, unless targeted trap
-      loxp_start  = nil
-      loxp_end    = nil
-      unless targeted_trap
-        if features['D5'] and features['D3']
-          case design.strand
-          when '+'
-            loxp_start  = features['D5']['end']
-            loxp_end    = features['D3']['start']
-          when '-'
-            loxp_start  = features['D5']['start']
-            loxp_end    = features['D3']['end']
-          end
-        end
-      end
-      
-      # Now that every field is properly formated, 
-      # let's create the Molecular Structure
-      mol_struct = MolecularStructure.new({
-        :allele_symbol_superscript  => allele_symbol_superscript,
-        :backbone                   => backbone,
-        :cassette                   => cassette,
-        :mgi_accession_id           => mgi_accession_id,
-        :design_id                  => design_id,
-        :chromosome                 => design.chromosome,
-        :strand                     => design.strand,
-        :design_type                => design.design_type,
-        :design_subtype             => design.subtype,
-        :subtype_description        => design.subtype_description,
-        :homology_arm_start         => homology_arm_start,
-        :homology_arm_end           => homology_arm_end,
-        :cassette_start             => cassette_start,
-        :cassette_end               => cassette_end,
-        :loxp_start                 => loxp_start,
-        :loxp_end                   => loxp_end,
-        :targeted_trap              => targeted_trap
-      })
-      
-      begin
-        mol_struct.update_or_create_in_idcc()
-        
-        # Only retrieve products for targeted trap. The link to the right
-        # targeting vector will be made when retrieving targeting vectors.
-        mol_struct.synchronize_products() if targeted_trap
-      rescue RestClient::ServerBrokeConnection
-        log "[MOL STRUCT];#{mol_struct.to_json()};The server broke the connection \
-prior to the request completing. Usually this means it crashed, or sometimes \
-that your network connection was severed before it could complete."
-      rescue RestClient::RequestTimeout
-        log "[MOL STRUCT];#{mol_struct.to_json()};Request timed out"
-      rescue RestClient::Exception => e
-        log "[MOL STRUCT];#{mol_struct.to_json()};#{e.http_body}"
-      rescue OCI8::Exception => e
-        log "[MOL STRUCT];#{mol_struct.to_json()};#{e}"
-        raise
-      rescue Exception => e
-        log "[MOL STRUCT];#{mol_struct.to_json()};#{e}"
-      end
-    end
-  end
-  
-  def update_or_create_in_idcc
+  def push_to_idcc
     params = "mgi_accession_id=#{self.mgi_accession_id}"
     params += "&chromosome=#{self.chromosome}"
     params += "&strand=#{self.strand}"
@@ -813,20 +595,104 @@ that your network connection was severed before it could complete."
     end
   end
   
-  # - If the mol_struct has a Deletion design:
-  # Related products are retrieved in this function but not linked to a 
-  # targeting vector yet. They will be linked to the proper targeting vector 
-  # when calling TargetingVector.synchronize_products(). At this time, then,
-  # they will already have the right mol_struct id (tm*e).
-  #
-  # - If the mol_struct has a KO design:
-  # Related products will be retrieved with the targeting vectors and the
-  # mol_struct id will be given by the targeting vector (tm*a).
-  # 
-  # - synchronize means:
-  # Delete products from IDCC that no longer exist in HTGT
-  # Add products into IDCC that were newly added in HTGT
-  def synchronize_products
+  def synchronize_targeting_vectors
+    query =
+    """
+    SELECT DISTINCT
+      project.project_id,
+      pcs_plate_name || '_' || pcs_well_name as intermediate_vector,
+      pgdgr_plate_name || '_' || pgdgr_well_name as targeting_vector,
+      es_cell_line
+      is_eucomm, 
+      is_komp_csd, 
+      is_norcomm
+    FROM
+      project
+      JOIN well_summary_by_di ws ON ws.project_id = project.project_id
+      JOIN mgi_gene              ON mgi_gene.mgi_gene_id = project.mgi_gene_id
+    WHERE
+      (
+        project.is_eucomm = 1
+        OR project.is_komp_csd = 1
+        OR project.is_norcomm = 1
+      )
+      AND mgi_gene.mgi_accession_id = '#{self.mgi_accession_id}'
+      AND project.design_id = '#{self.design_id}'
+      AND project.cassette  = '#{self.cassette}'
+      AND project.backbone  = '#{self.backbone}'
+      AND (pgdgr_distribute = 'yes' OR ws.epd_distribute = 'yes')
+      AND (pcs_well_name IS NOT NULL OR pgdgr_well_name IS NOT NULL)
+    """
+    
+    begin
+      cursor = @@ora_dbh.exec(query)
+    rescue
+      log "[TARG VEC SQL];#{query}"
+      raise
+    end
+    
+    htgt_targ_vec = []
+    
+    cursor.fetch do |fetch_row|
+      ikmc_project_id       = fetch_row[0]
+      intermediate_vector   = fetch_row[1]
+      targeting_vector      = fetch_row[2]
+      parental_cell_line    = fetch_row[3]
+      is_eucomm             = fetch_row[4] == 1
+      is_komp_csd           = fetch_row[5] == 1
+      is_norcomm            = fetch_row[6] == 1
+      
+      #-- Pipeline id
+      pipeline_id =
+      if is_eucomm then Pipeline.get_id_from('EUCOMM')
+      elsif is_komp_csd then Pipeline.get_id_from('KOMP-CSD')
+      elsif is_norcomm then Pipeline.get_id_from('NorCOMM')
+      end
+      next if pipeline_id.nil?
+      
+      #-- Parental cell line
+      unless parental_cell_line.nil?
+        parental_cell_line =
+        case parental_cell_line
+          when /JM8\s+/     then 'JM8 parental'
+          when /JM8\.F6/    then 'JM8.F6'
+          when /JM8\.N19/   then 'JM8.N19'
+          when /JM8\.N4/    then 'JM8.N4'
+          when /JM8\.AF6/   then 'JM8.AF6'
+          when /JM8\.N3/    then 'JM8A1.N3'
+          when /JM8A1\.N3/  then 'JM8A1.N3'
+          else parental_cell_line
+        end
+      end
+      
+      # Now that every field is properly formated, let's create the Targeting Vector
+      targ_vec = TargetingVector.new({
+        :molecular_structure_id => self.molecular_structure_id,
+        :pipeline_id            => pipeline_id,
+        :ikmc_project_id        => ikmc_project_id,
+        :intermediate_vector    => intermediate_vector,
+        :name                   => targeting_vector,
+        :parental_cell_line     => parental_cell_line
+      })
+      
+      begin
+        targ_vec.push_to_idcc()
+        targ_vec.synchronize_es_cells()
+      rescue RestClient::ServerBrokeConnection
+        log "[TARG VEC];#{targ_vec.to_json()};The server broke the connection \
+prior to the request completing. Usually this means it crashed, or sometimes \
+that your network connection was severed before it could complete."
+      rescue RestClient::RequestTimeout
+        log "[TARG VEC];#{targ_vec.to_json()};Request timed out"
+      rescue RestClient::Exception => e
+        log "[TARG VEC];#{targ_vec.to_json()};#{e.http_body}"
+      rescue Exception => e
+        log "[TARG VEC];#{targ_vec.to_json()};#{e}"
+      end
+    end
+  end
+  
+  def synchronize_es_cells
     return unless self.targeted_trap and self.allele_symbol_superscript
     
     query =
@@ -838,50 +704,90 @@ that your network connection was severed before it could complete."
       JOIN well_summary_by_di ws ON ws.project_id = project.project_id
       JOIN mgi_gene              ON mgi_gene.mgi_gene_id = project.mgi_gene_id
     WHERE
-      mgi_accession_id = '#{self.mgi_accession_id}'
+      epd_well_name IS NOT NULL
+      AND ws.epd_distribute = 'yes'
+      AND ws.pgdgr_plate_name IS NOT NULL
+      AND mgi_gene.mgi_accession_id = '#{self.mgi_accession_id}'
       AND allele_name LIKE \'%#{self.allele_symbol_superscript}%\'
-      AND pgdgr_plate_name IS NOT NULL
-      AND epd_well_name IS NOT NULL
     """
     
+    begin
+      cursor = @@ora_dbh.exec(query)
+    rescue
+      log "[ES CELL SQL];#{query}"
+      raise
+    end
+    
     htgt_products = []
-    @@ora_dbh.exec(query) { |fetch_row| htgt_products.push(fetch_row[0]) }
-
+    cursor.fetch { |fetch_row| htgt_products.push(fetch_row[0]) }
+    
     idcc_products = []
     unless self.es_cells.nil? or self.es_cells.empty?
       self.es_cells.each { |es_cell| idcc_products.push(es_cell['name']) }
     end
     
-    # Add product to IDCC if it is new in HTGT or move allele association 
-    # if product already exists in IDCC
+    #
+    #  DELETE ES Cells
+    #
+    if (idcc_products - htgt_products).length > 0
+      self.es_cells.each do |es_cell|
+        next if es_cell.empty?
+        
+        unless htgt_products.include? es_cell['name']
+          begin
+            request( 'DELETE', "products/#{es_cell['id']}" )
+          rescue RestClient::Exception => e
+            log "[PRODUCT DELETE];#{es_cell['id']};#{e.http_body}"
+          end
+        end
+      end
+    end
+    
+    #
+    #  CREATE / UPDATE ES Cells
+    #
     (htgt_products - idcc_products).each do |product_name|
       
       # Search product in IDCC - ie. linked to another allele
       response = request( 'GET', "products.json?name=#{product_name}" )
-      product_list = JSON.parse( response )
-      product_found = product_list.size > 0 ? product_list[0] : nil
+      products_found = JSON.parse( response )
       
-      # Update or create IDCC product
-      json = 
-        JSON.generate({
-          'es_cell' => {
-            'molecular_structure_id' => self.molecular_structure_id,
-            'name' => product_name
-          }
-        })
-      
-      begin
-        if product_found
-          if product_found['molecular_structure_id'] != self.molecular_structure_id
-            action = "UPDATE"
+      #
+      #  UPDATE - if changed
+      #
+      if products_found.length > 0
+        product_found = products_found[0]
+        if product_found['molecular_structure_id'] != self.molecular_structure_id
+          json = 
+          JSON.generate({
+            'es_cell' => {
+              'molecular_structure_id' => self.molecular_structure_id,
+              'name' => product_name
+            }
+          })
+          begin
             request( 'PUT', "products/#{product_found['id']}.json", json )
+          rescue RestClient::Exception => e
+            log "[PRODUCT UPDATE];#{json};#{e.http_body}"
           end
-        else
-          action = "CREATION"
-          request( 'POST', 'products.json', json )
         end
-      rescue RestClient::Exception => e
-        log "[PRODUCT #{action}];#{json};#{e.http_body}"
+      
+      #
+      #  CREATE
+      #
+      else
+        begin
+          json = 
+          JSON.generate({
+            'es_cell' => {
+              'molecular_structure_id' => self.molecular_structure_id,
+              'name' => product_name
+            }
+          })
+          request( 'POST', 'products.json', json )
+        rescue RestClient::Exception => e
+          log "[PRODUCT UPDATE];#{json};#{e.http_body}"
+        end
       end
     end
   end
@@ -908,119 +814,19 @@ class TargetingVector < IdccObject
     JSON.generate( { "targeting_vector" => to_hash() } )
   end
   
-  def has_changed( mol_struct_hash )
+  def has_changed( targ_vec_hash )
     (ATTRIBUTES - NOT_DUMPED).each do |attr|
       self_value  = self.instance_variable_get "@#{attr}"
-      other_value = mol_struct_hash[ attr.to_s ]
+      other_value = targ_vec_hash[ attr.to_s ]
       unless self_value.to_s == other_value.to_s
-        log "[TARG VEC CHANGES];#{self.molecular_structure_id};#{attr};'#{other_value}' -> '#{self_value}'"
+        log "[TARG VEC CHANGES];#{self.targeting_vector_id};#{attr};'#{other_value}' -> '#{self_value}'"
         return true
       end
     end
     false
   end
   
-  def self.load_idcc_from_htgt
-    MolecularStructure.each do |mol_struct|
-      next if mol_struct.molecular_structure_id.nil?
-      next if mol_struct.targeted_trap
-      
-      query =
-      """
-      SELECT DISTINCT
-        project.project_id,
-        pcs_plate_name || '_' || pcs_well_name as intermediate_vector,
-        pgdgr_plate_name || '_' || pgdgr_well_name as targeting_vector,
-        es_cell_line
-        is_eucomm, 
-        is_komp_csd, 
-        is_norcomm
-      FROM
-        project
-        JOIN well_summary_by_di ws ON ws.project_id = project.project_id
-        JOIN mgi_gene              ON mgi_gene.mgi_gene_id = project.mgi_gene_id
-      WHERE
-        (
-          project.is_eucomm = 1
-          OR project.is_komp_csd = 1
-          OR project.is_norcomm = 1
-        )
-        AND mgi_gene.mgi_accession_id = '#{mol_struct.mgi_accession_id}'
-        AND project.design_id = '#{mol_struct.design_id}'
-        AND project.cassette  = '#{mol_struct.cassette}'
-        AND project.backbone  = '#{mol_struct.backbone}'
-        AND (pgdgr_distribute = 'yes' OR ws.epd_distribute = 'yes')
-        AND (pcs_well_name IS NOT NULL OR pgdgr_well_name IS NOT NULL)
-      """
-      
-      begin
-        cursor = @@ora_dbh.exec(query)
-      rescue
-        log "[TARG VEC SQL];#{query}"
-        next
-      end
-
-      cursor.fetch do |fetch_row|
-        ikmc_project_id       = fetch_row[0]
-        intermediate_vector   = fetch_row[1]
-        targeting_vector      = fetch_row[2]
-        parental_cell_line    = fetch_row[3]
-        is_eucomm             = fetch_row[4] == 1
-        is_komp_csd           = fetch_row[5] == 1
-        is_norcomm            = fetch_row[6] == 1
-        
-        #-- Pipeline id
-        pipeline_id =
-        if is_eucomm then Pipeline.get_id_from('EUCOMM')
-        elsif is_komp_csd then Pipeline.get_id_from('KOMP-CSD')
-        elsif is_norcomm then Pipeline.get_id_from('NorCOMM')
-        end
-        next if pipeline_id.nil?
-        
-        #-- Parental cell line
-        unless parental_cell_line.nil?
-          parental_cell_line =
-          case parental_cell_line
-            when /JM8\s+/     then 'JM8 parental'
-            when /JM8\.F6/    then 'JM8.F6'
-            when /JM8\.N19/   then 'JM8.N19'
-            when /JM8\.N4/    then 'JM8.N4'
-            when /JM8\.AF6/   then 'JM8.AF6'
-            when /JM8\.N3/    then 'JM8A1.N3'
-            when /JM8A1\.N3/  then 'JM8A1.N3'
-            else parental_cell_line
-          end
-        end
-        
-        # Now that every field is properly formated, let's create the Targeting Vector
-        targ_vec = TargetingVector.new({
-          :molecular_structure_id => mol_struct.molecular_structure_id,
-          :pipeline_id            => pipeline_id,
-          :ikmc_project_id        => ikmc_project_id,
-          :intermediate_vector    => intermediate_vector,
-          :name                   => targeting_vector,
-          :parental_cell_line     => parental_cell_line
-        })
-        
-        begin
-          targ_vec.update_or_create_in_idcc()
-          targ_vec.synchronize_products()
-        rescue RestClient::ServerBrokeConnection
-          log "[TARG VEC];#{targ_vec.to_json()};The server broke the connection \
-prior to the request completing. Usually this means it crashed, or sometimes \
-that your network connection was severed before it could complete."
-        rescue RestClient::RequestTimeout
-          log "[TARG VEC];#{targ_vec.to_json()};Request timed out"
-        rescue RestClient::Exception => e
-          log "[TARG VEC];#{targ_vec.to_json()};#{e.http_body}"
-        rescue Exception => e
-          log "[TARG VEC];#{targ_vec.to_json()};#{e}"
-        end
-      end
-    end
-  end
-  
-  def update_or_create_in_idcc
+  def push_to_idcc
     # Search for an IDCC allele with IKMC project ID and targeting vector
     params = "ikmc_project_id=#{@ikmc_project_id}&name=#{@name}"
     json_response = JSON.parse(request( 'GET', "targeting_vectors.json?#{params}" ))
@@ -1041,83 +847,114 @@ that your network connection was severed before it could complete."
     end
   end
   
-  # For each product:
-  # - If product has a Deletion design
-  # Product should already exist - created by a mol_struct and linked to it
-  # Yet, the product is not linked to any targeting vector, let's do it here.
-  # /!\ Targeting vector and product may be linked to a different mol_struct
-  #
-  # - If product has a KO design
-  # Product is created or updated. mol_struct id will be the one held by 
-  # the targeting vector.
-  def synchronize_products
+  def synchronize_es_cells
     query =
     """
     SELECT DISTINCT
-      epd_well_name, targeted_trap, ws.epd_distribute
+      epd_well_name, targeted_trap
     FROM
       well_summary_by_di
     WHERE
-      project_id = #{self.ikmc_project_id}
+      epd_well_name IS NOT NULL
+      AND epd_distribute = 'yes'
+      AND project_id = #{self.ikmc_project_id}
       AND pgdgr_plate_name || '_' || pgdgr_well_name = '#{self.name}'
-      AND epd_well_name IS NOT NULL
     """
     
-    @@ora_dbh.exec(query) do |fetch_row|
-      product_name      = fetch_row[0]
-      is_targeted_trap  = fetch_row[1] == 'yes'
-      is_distributable  = fetch_row[2] == 'yes'
+    htgt_products = {}
+    @@ora_dbh.exec(query) do |fetch_row| 
+      htgt_products[fetch_row[0]] = fetch_row[1]
+    end
+    
+    idcc_products = []
+    unless self.es_cells.nil? or self.es_cells.empty?
+      self.es_cells.each { |es_cell| idcc_products.push(es_cell['name']) }
+    end
+    
+    #
+    #  DELETE ES Cells
+    #
+    if (idcc_products - htgt_products.keys).length > 0
+      self.es_cells.each do |es_cell|
+        next if es_cell.empty?
+        
+        unless htgt_products.keys.include? es_cell['name']
+          begin
+            request( 'DELETE', "products/#{es_cell['id']}" )
+          rescue RestClient::Exception => e
+            log "[PRODUCT DELETE];#{es_cell['id']};#{e.http_body}"
+          end
+        end
+      end
+    end
+    
+    #
+    #  CREATE / UPDATE ES Cells
+    #
+    (htgt_products.keys - idcc_products).each do |product_name|
       
-      # Product is distributable and is already related to this targeting vector 
-      next if is_distributable and idcc_products.include? product_name
+      # Search product in IDCC - ie. linked to another allele
+      response = request( 'GET', "products.json?name=#{product_name}" )
+      products_found = JSON.parse( response )
       
-      # Search for this product in IDCC
-      product_list = JSON.parse( request('GET', "products.json?name=#{product_name}") )
-      product_found = product_list.size > 0 ? product_list[0] : nil
-      
-      # Product is distributable but is not related to this targeting vector
-      # -> CREATE OR UPDATE
-      if is_distributable
-        json =
+      #
+      #  UPDATE - if changed
+      #
+      if products_found.length > 0
+        product_found = products_found[0]
+        
+        # Case 1 - Targeted trap
+        if htgt_products[product_name] == true
+          # Continue if nothing has changed - don't check mol struct in this case
+          next if product_found['targeting_vector_id'] == self.targeting_vector_id
+          
+          json = 
+          JSON.generate({
+            'es_cell' => {
+              'targeting_vector_id' => self.targeting_vector_id,
+              'name' => product_name
+            }
+          })
+          
+        # Case 2 - Not targeted trap
+        else
+          # Continue if nothing has changed
+          next if product_found['molecular_structure_id'] == self.molecular_structure_id \
+          and product_found['targeting_vector_id'] == self.targeting_vector_id
+          
+          json = 
           JSON.generate({
             'es_cell' => {
               'molecular_structure_id'  => self.molecular_structure_id,
               'targeting_vector_id'     => self.targeting_vector_id,
-              'name'                    => product_name 
+              'name'                    => product_name
             }
           })
+        end
         
-        # Product is unknown in IDCC -> CREATE
-        unless product_found
-          begin
-            request( 'POST', 'products.json', json )
-          rescue RestClient::Exception => e
-            log "[PRODUCT CREATE];#{json};#{e.http_body}"
-          end
-        
-        # Product is known in IDCC -> UPDATE
-        else
-          # Product is a "targeted trap" -> only update targeting vector link,
-          # don't update molecular structure link.
-          if is_targeted_trap
-            json = JSON.generate({ 'es_cell' => 
-              { 'targeting_vector_id' => self.targeting_vector_id }
-            })
-          end
-          
-          begin
-            request( 'PUT', "products/#{product_found['id']}.json", json )
-          rescue RestClient::Exception => e
-            log "[PRODUCT UPDATE];#{json};#{e.http_body}"
-          end
+        # Finally, push ES cell to IDCC
+        begin
+          request( 'PUT', "products/#{product_found['id']}.json", json )
+        rescue RestClient::Exception => e
+          log "[PRODUCT UPDATE];#{json};#{e.http_body}"
         end
       
-      # Product is not distributable, yet it exists in IDCC -> DELETE
-      elsif !is_distributable and product_found
+      #
+      #  CREATE
+      #
+      else
+        json = 
+        JSON.generate({
+          'es_cell' => {
+            'molecular_structure_id'  => self.molecular_structure_id,
+            'targeting_vector_id'     => self.targeting_vector_id,
+            'name'                    => product_name
+          }
+        })
         begin
-          request( 'DELETE', "products/#{product_found['id']}" )
+          request( 'POST', 'products.json', json )
         rescue RestClient::Exception => e
-          log "[PRODUCT DELETE];#{product_found['id']};#{e.http_body}"
+          log "[PRODUCT UPDATE];#{json};#{e.http_body}"
         end
       end
     end
@@ -1242,12 +1079,222 @@ def get_changed_projects
   return changed_projects
 end
 
+def load_idcc( changed_projects )
+  return if changed_projects.empty?
+
+  #--- Prepare additional query conditions
+  design_filter = ""    
+  Design.each_by(1000) do |design_list|
+    designs_ids = []
+    design_list.each do |design|
+      designs_ids.push(design.design_id) if design.is_valid?
+    end
+    next if designs_ids.length == 0
+    design_filter += "\nOR " if design_filter.length > 0
+    design_filter += "project.design_id IN (#{designs_ids.join(',')})"
+  end
+
+  project_filter = ""
+  projects = []
+  changed_projects.each do |project_id|
+    if projects.length < 1000
+      projects.push( project_id )
+    else
+      project_filter += "\nOR " if project_filter.length > 0
+      project_filter += "project.project_id IN (#{projects.join(',')})"
+      projects = []
+    end
+  end
+  if projects.length > 0
+    project_filter += "\nOR " if project_filter.length > 0
+    project_filter += "project.project_id IN (#{projects.join(',')})"
+  end
+
+  #--- Additional query conditions are set, let's create the query
+  # Conditional and non-conditional alleles are selected in two rows.
+  query =
+  """
+  SELECT DISTINCT
+    mgi_gene.mgi_accession_id,
+    project.design_id,
+    project.cassette,
+    project.backbone,
+    ws.epd_distribute,
+    ws.targeted_trap,
+    allele_name
+  FROM
+    project
+    JOIN well_summary_by_di ws ON ws.project_id = project.project_id
+    JOIN mgi_gene              ON mgi_gene.mgi_gene_id = project.mgi_gene_id
+  WHERE
+    pgdgr_distribute = 'yes'
+    AND (pcs_well_name IS NOT NULL OR pgdgr_well_name IS NOT NULL)
+  """
+  query += "
+    AND ( #{design_filter} )
+  " unless design_filter.empty?
+  query += "
+    AND ( #{project_filter} )
+  " unless project_filter.empty?
+  
+  query += "
+  ORDER BY 
+    mgi_gene.mgi_accession_id,
+    project.design_id,
+    project.cassette,
+    project.backbone,
+    ws.epd_distribute,
+    ws.targeted_trap,
+    allele_name
+  "
+  
+  begin
+    cursor = @@ora_dbh.exec(query)
+  rescue
+    log "[MOL STRUCT SQL];#{query}"
+    raise
+  end
+  
+  mol_struct = nil
+  
+  cursor.fetch do |fetch_row|
+    mgi_accession_id  = fetch_row[0]
+    design_id         = fetch_row[1]
+    cassette          = fetch_row[2]
+    backbone          = fetch_row[3]
+    epd_distribute    = fetch_row[4] == 'yes'
+    targeted_trap     = fetch_row[5] == 'yes'
+    allele_name       = fetch_row[6]
+    
+    #-- Allele symbol superscript
+    if epd_distribute or targeted_trap
+      rxp_matches = /<sup>(tm\d.*)<\/sup>/.match( allele_name )
+      allele_symbol_superscript = rxp_matches[1] if rxp_matches
+    else
+        allele_symbol_superscript = nil
+    end
+    
+    new_mol_struct =
+      mol_struct.nil? \
+      or mol_struct.mgi_accession_id != mgi_accession_id \
+      or mol_struct.design_id != design_id \
+      or mol_struct.cassette != cassette \
+      or mol_struct.backbone != backbone
+    
+    next if not new_mol_struct \
+      and not epd_distribute \
+      and not targeted_trap
+    
+    if epd_distribute and targeted_trap
+      log "[DATABASE ERROR];#{mgi_accession_id};design_id #{design_id};#{cassette};#{backbone};we have epd_distribute=targeted_trap='yes'"
+      next
+    end
+    
+    # Already seen allele
+    next if !new_mol_struct and allele_symbol_superscript == mol_struct.allele_symbol_superscript
+    
+    #-- Design features
+    design    = Design.get( design_id )
+    features  = design.features
+    
+    # Homology Arm
+    homology_arm_start  = nil
+    homology_arm_end    = nil
+    if features['G5'] and features['G3']
+      case design.strand
+      when '+'
+        homology_arm_start  = features['G5']['end']
+        homology_arm_end    = features['G3']['start']
+      when '-'
+        homology_arm_start  = features['G5']['start']
+        homology_arm_end    = features['G3']['end']
+      end
+    end
+    
+    # Cassette
+    cassette_start  = nil
+    cassette_end    = nil
+    if features['U5'] and features['U3']
+      case design.strand
+      when '+'
+        cassette_start  = features['U5']['end']
+        cassette_end    = features['U3']['start']
+      when '-'
+        cassette_start  = features['U5']['start']
+        cassette_end    = features['U3']['end']
+      end
+    end
+    
+    # LoxP, unless targeted trap
+    loxp_start  = nil
+    loxp_end    = nil
+    unless targeted_trap
+      if features['D5'] and features['D3']
+        case design.strand
+        when '+'
+          loxp_start  = features['D5']['end']
+          loxp_end    = features['D3']['start']
+        when '-'
+          loxp_start  = features['D5']['start']
+          loxp_end    = features['D3']['end']
+        end
+      end
+    end
+    
+    # Now that every field is properly formated, 
+    # let's create the Molecular Structure
+    mol_struct = MolecularStructure.new({
+      :allele_symbol_superscript  => allele_symbol_superscript,
+      :backbone                   => backbone,
+      :cassette                   => cassette,
+      :mgi_accession_id           => mgi_accession_id,
+      :design_id                  => design_id,
+      :chromosome                 => design.chromosome,
+      :strand                     => design.strand,
+      :design_type                => design.design_type,
+      :design_subtype             => design.subtype,
+      :subtype_description        => design.subtype_description,
+      :homology_arm_start         => homology_arm_start,
+      :homology_arm_end           => homology_arm_end,
+      :cassette_start             => cassette_start,
+      :cassette_end               => cassette_end,
+      :loxp_start                 => loxp_start,
+      :loxp_end                   => loxp_end,
+      :targeted_trap              => targeted_trap
+    })
+    
+    begin
+      mol_struct.push_to_idcc()
+      
+      if targeted_trap
+        mol_struct.synchronize_es_cells()
+      else
+        mol_struct.synchronize_targeting_vectors()
+        # Then targeting vectors will sync their own ES cells
+      end
+    rescue RestClient::ServerBrokeConnection
+      log "[MOL STRUCT];#{mol_struct.to_json()};The server broke the connection \
+prior to the request completing. Usually this means it crashed, or sometimes \
+that your network connection was severed before it could complete."
+    rescue RestClient::RequestTimeout
+      log "[MOL STRUCT];#{mol_struct.to_json()};Request timed out"
+    rescue RestClient::Exception => e
+      log "[MOL STRUCT];#{mol_struct.to_json()};#{e.http_body}"
+    rescue OCI8::Exception => e
+      log "[MOL STRUCT];#{mol_struct.to_json()};#{e}"
+      raise
+    rescue Exception => e
+      log "[MOL STRUCT];#{mol_struct.to_json()};#{e}"
+      raise
+    end
+  end
+end
+
 ##
 ##   Main script
 ##
 
 def run
-  # Initialize script directory
   system("mkdir -p #{@@log_dir}/#{TODAY}")
   Dir.chdir(@@log_dir)
   
@@ -1269,11 +1316,8 @@ def run
   unless changed_projects.empty?
     log "Changed projects: #{changed_projects.join(',')}"
     
-    puts "\n-- Updating molecular structures --"
-    MolecularStructure.load_idcc_from_htgt( changed_projects )
-    
-    puts "\n-- Updating targeting vectors --"
-    TargetingVector.load_idcc_from_htgt()
+    puts "\n-- Updating IDCC --"
+    load_idcc( changed_projects )
   else
     puts "Nothing has changed since the previous run!"
   end  
