@@ -823,7 +823,7 @@ class TargetingVector < IdccObject
         return true
       end
     end
-    false
+    return false
   end
   
   def push_to_idcc
@@ -841,7 +841,7 @@ class TargetingVector < IdccObject
     else
       self.targeting_vector_id  = targ_vec_hash['id']
       self.es_cells             = targ_vec_hash['es_cells']
-      if has_changed( targ_vec_hash )
+      if self.has_changed( targ_vec_hash )
         request( 'PUT', "targeting_vectors/#{self.targeting_vector_id}.json", to_json )
       end
     end
