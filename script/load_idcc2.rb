@@ -585,8 +585,8 @@ class MolecularStructure < IdccObject
       begin
         response = request( 'POST', 'alleles.json', to_json )
         self.molecular_structure_id = JSON.parse(response)['id']
-      rescue RestClient::Exception => e
-        log "[MOL STRUCT CREATION];#{JSON.parse(response)}" if response
+      rescue RestClient::RequestFailed => e
+        log "[MOL STRUCT CREATION];#{e.response.body}"
         raise
       end
     
