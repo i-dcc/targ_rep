@@ -751,22 +751,25 @@ that your network connection was severed before it could complete."
       
       # Search product in IDCC - ie. linked to another allele
       response = request( 'GET', "products.json?name=#{product_name}" )
-      products_found = JSON.parse( response )
+      product_list = JSON.parse( response )
+      product_found = product_list.length > 0 ? product_list[0] : nil
       
-      json = 
-      JSON.generate({
-        'es_cell' => {
-          'molecular_structure_id'  => self.molecular_structure_id,
-          'name'                    => product_name,
-          'parental_cell_line'      => htgt_products[product_name]
-        }
-      })
+      es_cell = {
+        'molecular_structure_id'  => self.molecular_structure_id,
+        'name'                    => product_name,
+        'parental_cell_line'      => htgt_products[product_name]
+      }
+      
+      if product_found and product_found['targeting_vector_id']
+        es_cell.update({ 'targeting_vector_id' => product_found['targeting_vector_id'] })
+      end
+      
+      json = JSON.generate({ 'es_cell' => es_cell })
       
       #
       #  UPDATE - if changed
       #
-      if products_found.length > 0
-        product_found = products_found[0]
+      if product_found
         if product_found['molecular_structure_id'] != self.molecular_structure_id \
         or product_found['parental_cell_line'] != htgt_products[product_name]
           begin
