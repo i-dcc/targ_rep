@@ -116,6 +116,39 @@ class MolecularStructuresControllerTest < ActionController::TestCase
     assert_redirected_to molecular_structure_path(assigns(:molecular_structure))
   end
   
+  should "create molecular structure and genbank file" do
+    mol_struct    = Factory.attributes_for( :molecular_structure )
+    genbank_file  = Factory.build( :genbank_file )
+    
+    mol_struct_count    = MolecularStructure.count
+    genbank_file_count  = GenbankFile.count
+    
+    post :create, :molecular_structure => {
+      :allele_symbol_superscript  => mol_struct[:allele_symbol_superscript],
+      :assembly                   => mol_struct[:assembly],
+      :mgi_accession_id           => mol_struct[:mgi_accession_id],
+      :chromosome                 => mol_struct[:chromosome],
+      :strand                     => mol_struct[:strand],
+      :design_type                => mol_struct[:design_type],
+      :homology_arm_start         => mol_struct[:homology_arm_start],
+      :homology_arm_end           => mol_struct[:homology_arm_end],
+      :cassette_start             => mol_struct[:cassette_start],
+      :cassette_end               => mol_struct[:cassette_end],
+      :genbank_file => {
+        :escell_clone     => genbank_file[:escell_clone],
+        :targeting_vector => genbank_file[:targeting_vector]
+      }
+    }
+    assert_equal(
+      mol_struct_count + 1, MolecularStructure.count,
+      "Controller should have created 1 valid molecular structure."
+    )
+    assert_equal(
+      genbank_file_count + 1, GenbankFile.count,
+      "Controller should have create 1 more genbank file"
+    )
+  end
+  
   should "not create molecular structure" do
     assert_no_difference('MolecularStructure.count') do
       post :create,

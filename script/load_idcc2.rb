@@ -582,8 +582,13 @@ class MolecularStructure < IdccObject
     
     # CREATE I-DCC allele if not found ...
     if mol_struct_hash.nil?
-      response = request( 'POST', 'alleles.json', to_json )
-      self.molecular_structure_id = JSON.parse(response)['id']
+      begin
+        response = request( 'POST', 'alleles.json', to_json )
+        self.molecular_structure_id = JSON.parse(response)['id']
+      rescue RestClient::Exception => e
+        log "[MOL STRUCT CREATION];#{JSON.parse(response)}" if response
+        raise
+      end
     
     # ... or UPDATE it - if any change has been made
     else
@@ -592,7 +597,12 @@ class MolecularStructure < IdccObject
       self.es_cells               = mol_struct_hash['es_cells']
       
       if has_changed( mol_struct_hash )
-        request( 'PUT', "alleles/#{@molecular_structure_id}.json", to_json )
+        begin
+          response = request( 'PUT', "alleles/#{@molecular_structure_id}.json", to_json )
+        rescue RestClient::Exception => e
+          log "[MOL STRUCT UPDATE];#{JSON.parse(response)}" if response
+          raise
+        end
       end
     end
   end
@@ -667,9 +677,6 @@ prior to the request completing. Usually this means it crashed, or sometimes \
 that your network connection was severed before it could complete."
       rescue RestClient::RequestTimeout
         log "[TARG VEC];#{targ_vec.to_json()};Request timed out"
-      rescue Exception => e
-        log "[TARG VEC];#{targ_vec.to_json()};#{e}"
-        raise
       end
     end
   end
@@ -722,7 +729,7 @@ that your network connection was severed before it could complete."
           begin
             request( 'DELETE', "products/#{es_cell['id']}" )
           rescue RestClient::Exception => e
-            log "[PRODUCT DELETE];#{es_cell['id']};#{e.http_body}"
+            log "[ES CELL DELETE];#{es_cell['id']};#{e}"
           end
         end
       end
@@ -754,9 +761,14 @@ that your network connection was severed before it could complete."
         if product_found['molecular_structure_id'] != self.molecular_structure_id \
         or product_found['parental_cell_line'] != htgt_products[product_name]
           begin
-            request( 'PUT', "products/#{product_found['id']}.json", json )
+            response = request( 'PUT', "products/#{product_found['id']}.json", json )
           rescue RestClient::Exception => e
-            log "[PRODUCT UPDATE];#{json};#{e}"
+            if response
+              log "[ES CELL UPDATE];#{product_found['id']};#{JSON.parse(response)}"
+            else
+              log "[ES CELL UPDATE];#{json};#{e}"
+            end
+            raise
           end
         end
       
@@ -765,9 +777,14 @@ that your network connection was severed before it could complete."
       #
       else
         begin
-          request( 'POST', 'products.json', json )
+          response = request( 'POST', 'products.json', json )
         rescue RestClient::Exception => e
-          log "[PRODUCT UPDATE];#{json};#{e}"
+          if response
+            log "[ES CELL CREATION];#{JSON.parse(response)}"
+          else
+            log "[ES CELL CREATION];#{json};#{e}"
+          end
+          raise
         end
       end
     end
@@ -815,15 +832,33 @@ class TargetingVector < IdccObject
     
     # CREATE IDCC targeting vector if not found ...
     if targ_vec_hash.nil?
-      response = request( 'POST', 'targeting_vectors.json', to_json )
-      self.targeting_vector_id = JSON.parse(response)['id']
+      begin
+        response = request( 'POST', 'targeting_vectors.json', to_json )
+        self.targeting_vector_id = JSON.parse(response)['id']
+      rescue RestClient::Exception => e
+        if response
+          log "[TARG VEC CREATION];#{JSON.parse(response)}"
+        else
+          log "[TARG VEC CREATION];#{e}"
+        end
+        raise
+      end
       
     # ... or UPDATE it - if any change has been made
     else
       self.targeting_vector_id  = targ_vec_hash['id']
       self.es_cells             = targ_vec_hash['es_cells']
       if self.has_changed( targ_vec_hash )
-        request( 'PUT', "targeting_vectors/#{self.targeting_vector_id}.json", to_json )
+        begin
+          response = request( 'PUT', "targeting_vectors/#{self.targeting_vector_id}.json", to_json )
+        rescue
+          if response
+            log "[TARG VEC UPDATE];#{self.targeting_vector_id};#{JSON.parse(response)}"
+          else
+            log "[TARG VEC UPDATE];#{self.targeting_vector_id};#{e}"
+          end
+          raise
+        end
       end
     end
   end
@@ -873,7 +908,7 @@ class TargetingVector < IdccObject
           begin
             request( 'DELETE', "products/#{es_cell['id']}" )
           rescue RestClient::Exception => e
-            log "[PRODUCT DELETE];#{es_cell['id']};#{e.http_body}"
+            log "[ES CELL DELETE];#{es_cell['id']};#{e}"
           end
         end
       end
@@ -931,9 +966,14 @@ class TargetingVector < IdccObject
         
         # Finally, push ES cell to IDCC
         begin
-          request( 'PUT', "products/#{product_found['id']}.json", json )
+          response = request( 'PUT', "products/#{product_found['id']}.json", json )
         rescue RestClient::Exception => e
-          log "[PRODUCT UPDATE];#{json};#{e.http_body}"
+          if response
+            log "[ES CELL UPDATE];#{product_found['id']};JSON.parse(response)"
+          else
+            log "[ES CELL UPDATE];#{product_found['id']};#{e}"
+          end
+          raise
         end
       
       #
@@ -950,9 +990,14 @@ class TargetingVector < IdccObject
           }
         })
         begin
-          request( 'POST', 'products.json', json )
+          response = request( 'POST', 'products.json', json )
         rescue RestClient::Exception => e
-          log "[PRODUCT UPDATE];#{json};#{e.http_body}"
+          if response
+            log "[ES CELL CREATION];#{JSON.parse(response)}"
+          else
+            log "[ES CELL CREATION];#{e}"
+          end
+          raise
         end
       end
     end
@@ -1292,9 +1337,6 @@ prior to the request completing. Usually this means it crashed, or sometimes \
 that your network connection was severed before it could complete."
     rescue RestClient::RequestTimeout
       log "[MOL STRUCT];#{mol_struct.to_json()};Request timed out"
-    rescue Exception => e
-      log "[MOL STRUCT];#{mol_struct.to_json()};#{e}"
-      raise
     end
   end
 end

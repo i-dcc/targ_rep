@@ -80,12 +80,13 @@ class MolecularStructuresController < ApplicationController
   def create
     mol_struct_params = params[:molecular_structure]
     
-    # start: web service interface
+    # Start: web service interface
     
-    # accepts_nested_attributes_for expect <child_model>_attributes key
-    # in params hash to create children objects.
+    # Rails helper:
+    # ``accepts_nested_attributes_for`` expects <child_model>_attributes as a 
+    # key in params hash to create <child_model> objects.
     
-    # Move es_cells Array to es_cells_attributes Array
+    # Move ``es_cells`` to ``es_cells_attributes``
     if mol_struct_params.include? :es_cells
       mol_struct_params[:es_cells].each { |attrs| attrs[:nested] = true }
       mol_struct_params[:es_cells_attributes] = mol_struct_params[:es_cells].dup
@@ -94,7 +95,7 @@ class MolecularStructuresController < ApplicationController
       mol_struct_params[:es_cells_attributes] = []
     end
     
-    # Move targeting_vectors Array to targeting_vectors_attributes Array
+    # Move ``targeting_vectors`` to ``targeting_vectors_attributes``
     if mol_struct_params.include? :targeting_vectors
       mol_struct_params[:targeting_vectors].each do |attrs|
         attrs.update({ :nested => true })
@@ -118,13 +119,14 @@ class MolecularStructuresController < ApplicationController
       mol_struct_params.delete(:targeting_vectors)
     end
     
-    # Move genbank_file hash to genbank_file_attributes hash
+    # Move ``genbank_file`` to ``genbank_file_attributes``
     if mol_struct_params.include? :genbank_file
-      mol_struct_params[:genbank_file][:nested] = true
+      mol_struct_params[:genbank_file].update({ :nested => true })
       mol_struct_params[:genbank_file_attributes] = mol_struct_params[:genbank_file].dup
       mol_struct_params.delete(:genbank_file)
     end
-    # end: web service interface
+    
+    # End: web service interface
     
     @molecular_structure = MolecularStructure.new( mol_struct_params )
     respond_to do |format|
