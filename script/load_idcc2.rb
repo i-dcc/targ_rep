@@ -693,7 +693,7 @@ that your network connection was severed before it could complete."
       JOIN mgi_gene              ON mgi_gene.mgi_gene_id = project.mgi_gene_id
     WHERE
       epd_well_name IS NOT NULL
-      AND ws.epd_distribute = 'yes'
+      AND (ws.epd_distribute = 'yes' OR ws.targeted_trap = 'yes')
       AND ws.pgdgr_plate_name IS NOT NULL
       AND mgi_gene.mgi_accession_id = '#{self.mgi_accession_id}'
       AND allele_name LIKE \'%#{self.allele_symbol_superscript}%\'
@@ -772,7 +772,7 @@ that your network connection was severed before it could complete."
         begin
           response = request( 'POST', 'products.json', json )
         rescue RestClient::Exception => e
-          log "[ES CELL CREATION];#{json};#{e.http_body}"
+          log "[ES CELL CREATION - MOL STRUCT];#{json};#{e.http_body}"
         end
       end
     end
@@ -965,7 +965,7 @@ class TargetingVector < IdccObject
         begin
           response = request( 'POST', 'products.json', json )
         rescue RestClient::Exception => e
-          log "[ES CELL CREATION];#{json};#{e.http_body}"
+          log "[ES CELL CREATION - TARG VEC];#{json};#{e.http_body}"
         end
       end
     end
