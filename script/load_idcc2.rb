@@ -945,8 +945,8 @@ class TargetingVector < IdccObject
           json = 
           JSON.generate({
             'es_cell' => {
-              'molecular_structure_id'  => self.molecular_structure_id,
               'targeting_vector_id'     => self.targeting_vector_id,
+              'molecular_structure_id'  => self.molecular_structure_id,
               'name'                    => product_name,
               'parental_cell_line'      => parental_cell_line
             }
@@ -967,8 +967,8 @@ class TargetingVector < IdccObject
         json = 
         JSON.generate({
           'es_cell' => {
-            'molecular_structure_id'  => self.molecular_structure_id,
             'targeting_vector_id'     => self.targeting_vector_id,
+            'molecular_structure_id'  => self.molecular_structure_id,
             'name'                    => product_name,
             'parental_cell_line'      => parental_cell_line
           }
@@ -1181,8 +1181,8 @@ def load_idcc( changed_projects )
     project.design_id,
     project.cassette,
     project.backbone,
-    ws.epd_distribute,
     ws.targeted_trap,
+    ws.epd_distribute,
     allele_name
   "
   
