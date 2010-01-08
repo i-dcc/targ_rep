@@ -521,7 +521,11 @@ class MolecularStructure < IdccObject
           next
         end
         
-        log "[MOL STRUCT CHANGES];#{self.molecular_structure_id};#{attr};'#{other_value}' -> '#{self_value}'"
+        if attr == 'genbank_file'
+          log "[MOL STRUCT CHANGES];#{self.molecular_structure_id};genbank_file"
+        else
+          log "[MOL STRUCT CHANGES];#{self.molecular_structure_id};#{attr};'#{other_value}' -> '#{self_value}'"
+        end
         return true
       end
     end
@@ -1160,7 +1164,7 @@ def load_idcc( changed_projects )
     JOIN mgi_gene              ON mgi_gene.mgi_gene_id = project.mgi_gene_id
   WHERE
     pgdgr_distribute = 'yes'
-    AND (pcs_well_name IS NOT NULL OR pgdgr_well_name IS NOT NULL)
+    AND (ws.pgdgr_well_name IS NOT NULL OR ws.epd_well_name IS NOT NULL)
   """
   query += "
     AND ( #{design_filter} )
