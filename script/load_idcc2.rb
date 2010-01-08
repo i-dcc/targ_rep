@@ -512,6 +512,8 @@ class MolecularStructure < IdccObject
   
   def has_changed( mol_struct_hash )
     not_checked = NOT_DUMPED + [:targeting_vectors, :es_cells]
+    not_checked.push(:genbank_file) if @@no_genbank_files
+    
     (ATTRIBUTES - not_checked).each do |attr|
       self_value  = self.instance_variable_get "@#{attr}"
       other_value = mol_struct_hash[ attr.to_s ]
@@ -521,7 +523,7 @@ class MolecularStructure < IdccObject
           next
         end
         
-        if attr == 'genbank_file'
+        if attr.to_s == 'genbank_file'
           log "[MOL STRUCT CHANGES];#{self.molecular_structure_id};genbank_file"
         else
           log "[MOL STRUCT CHANGES];#{self.molecular_structure_id};#{attr};'#{other_value}' -> '#{self_value}'"
