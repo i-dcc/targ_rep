@@ -585,9 +585,8 @@ class MolecularStructure < IdccObject
       begin
         response = request( 'POST', 'alleles.json', to_json )
         self.molecular_structure_id = JSON.parse(response)['id']
-      rescue RestClient::RequestFailed => e
-        log "[MOL STRUCT CREATION];#{e.response.body}"
-        raise
+      rescue RestClient::Exception => e
+        log "[MOL STRUCT CREATION];#{params};#{e.http_body}"
       end
     
     # ... or UPDATE it - if any change has been made
@@ -601,7 +600,6 @@ class MolecularStructure < IdccObject
           response = request( 'PUT', "alleles/#{@molecular_structure_id}.json", to_json )
         rescue RestClient::Exception => e
           log "[MOL STRUCT UPDATE];#{JSON.parse(response)}" if response
-          raise
         end
       end
     end
@@ -763,12 +761,7 @@ that your network connection was severed before it could complete."
           begin
             response = request( 'PUT', "products/#{product_found['id']}.json", json )
           rescue RestClient::Exception => e
-            if response
-              log "[ES CELL UPDATE];#{product_found['id']};#{JSON.parse(response)}"
-            else
-              log "[ES CELL UPDATE];#{json};#{e}"
-            end
-            raise
+            log "[ES CELL UPDATE];#{json};#{e.http_body}"
           end
         end
       
@@ -779,12 +772,7 @@ that your network connection was severed before it could complete."
         begin
           response = request( 'POST', 'products.json', json )
         rescue RestClient::Exception => e
-          if response
-            log "[ES CELL CREATION];#{JSON.parse(response)}"
-          else
-            log "[ES CELL CREATION];#{json};#{e}"
-          end
-          raise
+          log "[ES CELL CREATION];#{json};#{e.http_body}"
         end
       end
     end
@@ -836,12 +824,7 @@ class TargetingVector < IdccObject
         response = request( 'POST', 'targeting_vectors.json', to_json )
         self.targeting_vector_id = JSON.parse(response)['id']
       rescue RestClient::Exception => e
-        if response
-          log "[TARG VEC CREATION];#{JSON.parse(response)}"
-        else
-          log "[TARG VEC CREATION];#{e}"
-        end
-        raise
+        log "[TARG VEC CREATION];#{params};#{e.http_body}"
       end
       
     # ... or UPDATE it - if any change has been made
@@ -851,13 +834,8 @@ class TargetingVector < IdccObject
       if self.has_changed( targ_vec_hash )
         begin
           response = request( 'PUT', "targeting_vectors/#{self.targeting_vector_id}.json", to_json )
-        rescue
-          if response
-            log "[TARG VEC UPDATE];#{self.targeting_vector_id};#{JSON.parse(response)}"
-          else
-            log "[TARG VEC UPDATE];#{self.targeting_vector_id};#{e}"
-          end
-          raise
+        rescue RestClient::Exception => e
+          log "[TARG VEC UPDATE];#{self.targeting_vector_id};#{e.http_body}"
         end
       end
     end
@@ -968,12 +946,7 @@ class TargetingVector < IdccObject
         begin
           response = request( 'PUT', "products/#{product_found['id']}.json", json )
         rescue RestClient::Exception => e
-          if response
-            log "[ES CELL UPDATE];#{product_found['id']};JSON.parse(response)"
-          else
-            log "[ES CELL UPDATE];#{product_found['id']};#{e}"
-          end
-          raise
+          log "[ES CELL UPDATE];#{product_found['id']};#{e.http_body}"
         end
       
       #
@@ -992,12 +965,7 @@ class TargetingVector < IdccObject
         begin
           response = request( 'POST', 'products.json', json )
         rescue RestClient::Exception => e
-          if response
-            log "[ES CELL CREATION];#{JSON.parse(response)}"
-          else
-            log "[ES CELL CREATION];#{e}"
-          end
-          raise
+          log "[ES CELL CREATION];#{json};#{e.http_body}"
         end
       end
     end
@@ -1346,6 +1314,7 @@ end
 ##
 
 def run
+  system("rm -rf #{@@log_dir}/#{TODAY}")
   system("mkdir -p #{@@log_dir}/#{TODAY}")
   Dir.chdir(@@log_dir)
   
