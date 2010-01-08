@@ -640,6 +640,9 @@ class MolecularStructure < IdccObject
       AND (pgdgr_distribute = 'yes' OR ws.epd_distribute = 'yes')
       AND pgdgr_well_name IS NOT NULL
     """
+    unless self.allele_symbol_superscript.nil? or self.allele_symbol_superscript.empty?
+      query += "AND allele_name LIKE '%#{self.allele_symbol_superscript}%'"
+    end
     
     begin
       cursor = @@ora_dbh.exec(query)
