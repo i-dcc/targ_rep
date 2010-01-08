@@ -597,7 +597,7 @@ class MolecularStructure < IdccObject
       
       if has_changed( mol_struct_hash )
         begin
-          response = request( 'PUT', "alleles/#{@molecular_structure_id}.json", to_json )
+          response = request( 'PUT', "alleles/#{self.molecular_structure_id}.json", to_json )
         rescue RestClient::Exception => e
           log "[MOL STRUCT UPDATE];#{JSON.parse(response)}" if response
         end
@@ -606,6 +606,8 @@ class MolecularStructure < IdccObject
   end
   
   def synchronize_targeting_vectors
+    return unless self.molecular_structure_id
+    
     query =
     """
     SELECT DISTINCT
@@ -680,7 +682,10 @@ that your network connection was severed before it could complete."
   end
   
   def synchronize_es_cells
-    return unless self.targeted_trap and self.allele_symbol_superscript
+    return unless \
+      self.molecular_structure_id \
+      and self.targeted_trap \
+      and self.allele_symbol_superscript
     
     query =
     """
@@ -1292,6 +1297,7 @@ def load_idcc( changed_projects )
     
     begin
       mol_struct.push_to_idcc()
+      next unless mol_struct.molecular_structure_id
       
       if targeted_trap
         mol_struct.synchronize_es_cells()
