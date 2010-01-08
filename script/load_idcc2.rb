@@ -680,12 +680,28 @@ class MolecularStructure < IdccObject
       begin
         targ_vec.push_to_idcc()
         targ_vec.synchronize_es_cells()
+        
+        htgt_targ_vec.push(targeting_vector)
+        
       rescue RestClient::ServerBrokeConnection
         log "[TARG VEC];#{targ_vec.to_json()};The server broke the connection \
 prior to the request completing. Usually this means it crashed, or sometimes \
 that your network connection was severed before it could complete."
       rescue RestClient::RequestTimeout
         log "[TARG VEC];#{targ_vec.to_json()};Request timed out"
+      end
+    end
+    
+    #
+    # DELETE targ vec
+    #
+    self.targeting_vectors.each do |targ_vec|
+      unless htgt_targ_vec.include? targ_vec['name']
+        begin
+          request( 'DELETE', "targeting_vectors/#{targ_vec['id']}" )
+        rescue RestClient::Exception => e
+          log "[TARG VEC DELETE];#{targ_vec['id']};#{e.http_body}"
+        end
       end
     end
   end
@@ -741,7 +757,7 @@ that your network connection was severed before it could complete."
           begin
             request( 'DELETE', "products/#{es_cell['id']}" )
           rescue RestClient::Exception => e
-            log "[ES CELL DELETE];#{es_cell['id']};#{e}"
+            log "[ES CELL DELETE];#{es_cell['id']};#{e.http_body}"
           end
         end
       end
