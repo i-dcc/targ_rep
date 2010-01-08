@@ -667,10 +667,9 @@ prior to the request completing. Usually this means it crashed, or sometimes \
 that your network connection was severed before it could complete."
       rescue RestClient::RequestTimeout
         log "[TARG VEC];#{targ_vec.to_json()};Request timed out"
-      rescue RestClient::Exception => e
-        log "[TARG VEC];#{targ_vec.to_json()};#{e.http_body}"
       rescue Exception => e
         log "[TARG VEC];#{targ_vec.to_json()};#{e}"
+        raise
       end
     end
   end
@@ -757,7 +756,7 @@ that your network connection was severed before it could complete."
           begin
             request( 'PUT', "products/#{product_found['id']}.json", json )
           rescue RestClient::Exception => e
-            log "[PRODUCT UPDATE];#{json};#{e.http_body}"
+            log "[PRODUCT UPDATE];#{json};#{e}"
           end
         end
       
@@ -768,7 +767,7 @@ that your network connection was severed before it could complete."
         begin
           request( 'POST', 'products.json', json )
         rescue RestClient::Exception => e
-          log "[PRODUCT UPDATE];#{json};#{e.http_body}"
+          log "[PRODUCT UPDATE];#{json};#{e}"
         end
       end
     end
@@ -1293,11 +1292,6 @@ prior to the request completing. Usually this means it crashed, or sometimes \
 that your network connection was severed before it could complete."
     rescue RestClient::RequestTimeout
       log "[MOL STRUCT];#{mol_struct.to_json()};Request timed out"
-    rescue RestClient::Exception => e
-      log "[MOL STRUCT];#{mol_struct.to_json()};#{e.http_body}"
-    rescue OCI8::Exception => e
-      log "[MOL STRUCT];#{mol_struct.to_json()};#{e}"
-      raise
     rescue Exception => e
       log "[MOL STRUCT];#{mol_struct.to_json()};#{e}"
       raise
