@@ -27,7 +27,6 @@ class TargetingVectorsControllerTest < ActionController::TestCase
         :name                   => attrs[:name],
         :intermediate_vector    => attrs[:intermediate_vector],
         :ikmc_project_id        => attrs[:ikmc_project_id],
-        :parental_cell_line     => attrs[:parental_cell_line],
         :pipeline_id            => TargetingVector.find(:first).pipeline_id,
         :molecular_structure_id => TargetingVector.find(:first).molecular_structure_id
       }
@@ -45,7 +44,6 @@ class TargetingVectorsControllerTest < ActionController::TestCase
       :name                   => targ_vec_attrs[:name],
       :intermediate_vector    => targ_vec_attrs[:intermediate_vector],
       :ikmc_project_id        => targ_vec_attrs[:ikmc_project_id],
-      :parental_cell_line     => targ_vec_attrs[:parental_cell_line],
       :pipeline_id            => TargetingVector.find(:first).pipeline_id,
       :molecular_structure    => {
         :mgi_accession_id           => mol_struct_attrs[:mgi_accession_id],
@@ -82,7 +80,6 @@ class TargetingVectorsControllerTest < ActionController::TestCase
       :name                   => targ_vec_attrs[:name],
       :intermediate_vector    => targ_vec_attrs[:intermediate_vector],
       :ikmc_project_id        => targ_vec_attrs[:ikmc_project_id],
-      :parental_cell_line     => targ_vec_attrs[:parental_cell_line],
       :pipeline_id            => TargetingVector.find(:first).pipeline_id,
       :molecular_structure_id => TargetingVector.find(:first).molecular_structure_id,
       :molecular_structure    => {
@@ -111,7 +108,6 @@ class TargetingVectorsControllerTest < ActionController::TestCase
         :name                   => attrs[:name],
         :intermediate_vector    => attrs[:intermediate_vector],
         :ikmc_project_id        => attrs[:ikmc_project_id],
-        :parental_cell_line     => attrs[:parental_cell_line],
         :pipeline_id            => TargetingVector.find(:first).pipeline_id,
         :molecular_structure    => Factory.attributes_for( :invalid_molecular_structure )
       }
@@ -161,7 +157,6 @@ class TargetingVectorsControllerTest < ActionController::TestCase
       :name                   => targ_vec_attrs[:name],
       :intermediate_vector    => targ_vec_attrs[:intermediate_vector],
       :ikmc_project_id        => targ_vec_attrs[:ikmc_project_id],
-      :parental_cell_line     => targ_vec_attrs[:parental_cell_line],
       :pipeline_id            => TargetingVector.find(:first).pipeline_id,
       :molecular_structure    => {
         :mgi_accession_id           => mol_struct_attrs[:mgi_accession_id],
@@ -216,8 +211,7 @@ class TargetingVectorsControllerTest < ActionController::TestCase
       :targeting_vector => {
         :ikmc_project_id     => attrs[:ikmc_project_id],
         :name                => attrs[:name],
-        :intermediate_vector => attrs[:intermediate_vector],
-        :parental_cell_line  => attrs[:parental_cell_line]
+        :intermediate_vector => attrs[:intermediate_vector]
       }
     assert_response :success
   end

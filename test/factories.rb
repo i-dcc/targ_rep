@@ -119,7 +119,6 @@ Factory.define :targeting_vector do |f|
   f.sequence(:name)                 { |n| "PRPGS#{n}"}
   f.sequence(:intermediate_vector)  { |n| "PCS#{n}" }
   f.sequence(:ikmc_project_id)      { |n| "#{n}" }
-  f.parental_cell_line { ['JM8 parental', 'JM8.F6', 'JM8.N19'].choice }
   
   f.association :pipeline
   f.association :molecular_structure
@@ -134,6 +133,7 @@ end
 
 Factory.define :es_cell do |f|
   f.sequence(:name) { |n| "EPD#{n}" }
+  f.parental_cell_line { ['JM8 parental', 'JM8.F6', 'JM8.N19'].choice }
   
   f.association :targeting_vector
   f.association :molecular_structure

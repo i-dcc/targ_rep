@@ -17,10 +17,12 @@ class EsCellsControllerTest < ActionController::TestCase
   
   should "create es_cell" do
     targ_vec = Factory.create( :targeting_vector )
+    es_cell_attrs = Factory.attributes_for( :es_cell )
     
     assert_difference('EsCell.count') do
       post :create, :es_cell => {
-        :name                    => Factory.attributes_for( :es_cell )[:name],
+        :name                    => es_cell_attrs[:name],
+        :parental_cell_line      => es_cell_attrs[:parental_cell_line],
         :targeting_vector_id     => targ_vec.id,
         :molecular_structure_id  => targ_vec.molecular_structure.id
       }
@@ -34,14 +36,15 @@ class EsCellsControllerTest < ActionController::TestCase
     es_cell_count     = EsCell.count
     mol_struct_attrs  = Factory.attributes_for( :molecular_structure )
     targ_vec_attrs    = Factory.attributes_for( :targeting_vector )
+    es_cell_attrs     = Factory.attributes_for( :es_cell )
     
     post :create, :es_cell => {
-      :name                 => Factory.attributes_for( :es_cell )[:name],
+      :name                 => es_cell_attrs[:name],
+      :parental_cell_line   => es_cell_attrs[:parental_cell_line],
       :targeting_vector     => {
         :name                 => targ_vec_attrs[:name],
         :intermediate_vector  => targ_vec_attrs[:intermediate_vector],
         :ikmc_project_id      => targ_vec_attrs[:ikmc_project_id],
-        :parental_cell_line   => targ_vec_attrs[:parental_cell_line],
         :pipeline_id          => TargetingVector.find(:first).pipeline_id
       },
       :molecular_structure  => {
@@ -69,9 +72,11 @@ class EsCellsControllerTest < ActionController::TestCase
     targ_vec_count    = TargetingVector.count
     es_cell_count     = EsCell.count
     mol_struct_attrs  = Factory.attributes_for( :molecular_structure )
+    es_cell_attrs     = Factory.attributes_for( :es_cell )
     
     post :create, :es_cell => {
-      :name                 => Factory.attributes_for( :es_cell )[:name],
+      :name                 => es_cell_attrs[:name],
+      :parental_cell_line   => es_cell_attrs[:parental_cell_line],
       :molecular_structure  => {
         :allele_symbol_superscript  => mol_struct_attrs[:allele_symbol_superscript],
         :mgi_accession_id           => mol_struct_attrs[:mgi_accession_id],
@@ -92,54 +97,17 @@ class EsCellsControllerTest < ActionController::TestCase
     assert_response :success
   end
   
-  should "create es_cell and molecular_structure, link to existing targeting_vector" do
-    mol_struct_count  = MolecularStructure.count
-    targ_vec_count    = TargetingVector.count
-    es_cell_count     = EsCell.count
-    targ_vec          = TargetingVector.first
-    mol_struct        = targ_vec.molecular_structure
-    
-    post :create, :es_cell => {
-      :name                 => Factory.attributes_for( :es_cell )[:name],
-      :targeting_vector_id  => targ_vec.id,
-      :molecular_structure  => {
-        :allele_symbol_superscript  => mol_struct.allele_symbol_superscript,
-        :mgi_accession_id           => mol_struct.mgi_accession_id,
-        :assembly                   => mol_struct.assembly,
-        :chromosome                 => mol_struct.chromosome,
-        :strand                     => mol_struct.strand,
-        :design_type                => mol_struct.design_type,
-        :homology_arm_start         => mol_struct.homology_arm_start,
-        :homology_arm_end           => mol_struct.homology_arm_end,
-        :cassette_start             => mol_struct.cassette_start,
-        :cassette_end               => mol_struct.cassette_end
-      }
-    }
-    
-    assert_not_equal(
-      MolecularStructure.count, mol_struct_count, 
-      "ES Cell controller should create molecular structure"
-    )
-    assert_equal(
-      TargetingVector.count, targ_vec_count, 
-      "ES Cell controller should not create targeting vector"
-    )
-    assert_not_equal(
-      EsCell.count, es_cell_count,
-      "ES Cell controller should create ES Cell"
-    )
-    assert_response :success
-  end
-  
   should "not create anything if given targeting_vector (from id) has not a similar molecular structure to the given one" do
     mol_struct_count  = MolecularStructure.count
     targ_vec_count    = TargetingVector.count
     es_cell_count     = EsCell.count
     targ_vec          = TargetingVector.first
     mol_struct_attrs  = Factory.attributes_for( :molecular_structure )
+    es_cell_attrs     = Factory.attributes_for( :es_cell )
     
     post :create, :es_cell => {
-      :name                 => Factory.attributes_for( :es_cell )[:name],
+      :name                 => es_cell_attrs[:name],
+      :parental_cell_line   => es_cell_attrs[:parental_cell_line],
       :targeting_vector_id  => targ_vec.id,
       :molecular_structure  => {
         :allele_symbol_superscript  => mol_struct_attrs[:allele_symbol_superscript],
@@ -179,11 +147,11 @@ class EsCellsControllerTest < ActionController::TestCase
     
     post :create, :es_cell => {
       :name                 => nil,
+      :parental_cell_line   => nil,
       :targeting_vector     => {
         :name                 => targ_vec_attrs[:name],
         :intermediate_vector  => targ_vec_attrs[:intermediate_vector],
         :ikmc_project_id      => targ_vec_attrs[:ikmc_project_id],
-        :parental_cell_line   => targ_vec_attrs[:parental_cell_line],
         :pipeline_id          => TargetingVector.find(:first).pipeline_id
       },
       :molecular_structure  => {

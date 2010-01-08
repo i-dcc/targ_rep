@@ -57,7 +57,6 @@ class MolecularStructuresControllerTest < ActionController::TestCase
           :ikmc_project_id     => targ_vec1[:ikmc_project_id],
           :name                => targ_vec1[:name],
           :intermediate_vector => targ_vec1[:intermediate_vector],
-          :parental_cell_line  => targ_vec1[:parental_cell_line],
           :es_cells => [
             Factory.attributes_for( :es_cell ),
             Factory.attributes_for( :es_cell ),
@@ -70,8 +69,7 @@ class MolecularStructuresControllerTest < ActionController::TestCase
           :pipeline_id         => targ_vec2[:pipeline_id],
           :ikmc_project_id     => targ_vec2[:ikmc_project_id],
           :name                => targ_vec2[:name],
-          :intermediate_vector => targ_vec2[:intermediate_vector],
-          :parental_cell_line  => targ_vec2[:parental_cell_line]          
+          :intermediate_vector => targ_vec2[:intermediate_vector]     
         }
       ],
       
