@@ -866,7 +866,7 @@ class TargetingVector < IdccObject
     end
   end
   
-  def synchronize_es_cells( cassette, backbone )
+  def synchronize_es_cells
     query =
     """
     SELECT DISTINCT
