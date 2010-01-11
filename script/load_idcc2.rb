@@ -681,7 +681,7 @@ class MolecularStructure < IdccObject
         targ_vec.push_to_idcc()
         
         puts "-- synchronize es_cells for #{targeting_vector} | #{ikmc_project_id} --"
-        targ_vec.synchronize_es_cells()
+        targ_vec.synchronize_es_cells( self.allele_symbol_superscript )
         
         htgt_targ_vec.push(targeting_vector)
         
@@ -876,7 +876,7 @@ class TargetingVector < IdccObject
     end
   end
   
-  def synchronize_es_cells
+  def synchronize_es_cells( allele_symbol_superscript )
     query =
     """
     SELECT DISTINCT
@@ -889,6 +889,9 @@ class TargetingVector < IdccObject
       AND project_id = #{self.ikmc_project_id}
       AND pgdgr_plate_name || '_' || pgdgr_well_name = '#{self.name}'
     """
+    unless allele_symbol_superscript.nil? or allele_symbol_superscript.empty?
+      query += "AND allele_name LIKE '%#{allele_symbol_superscript}%'"
+    end
     
     begin
       cursor = @@ora_dbh.exec(query)
@@ -1330,10 +1333,10 @@ def load_idcc( changed_projects )
       next unless mol_struct.molecular_structure_id
       
       if targeted_trap
-        puts "-- synchronize es_cells for #{allele_symbol_superscript} | #{mgi_accession_id} --"
+        puts "\n-- synchronize es_cells for #{allele_symbol_superscript} | #{mgi_accession_id} --"
         mol_struct.synchronize_es_cells()
       else
-        puts "-- synchronize targ_vecs for #{allele_symbol_superscript} | #{mgi_accession_id} --"
+        puts "\n-- synchronize targ_vecs for #{allele_symbol_superscript} | #{mgi_accession_id} --"
         mol_struct.synchronize_targeting_vectors()
         # Then targeting vectors will sync their own ES cells
       end
