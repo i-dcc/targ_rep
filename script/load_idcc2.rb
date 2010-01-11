@@ -709,6 +709,7 @@ that your network connection was severed before it could complete."
       JOIN mgi_gene              ON mgi_gene.mgi_gene_id = project.mgi_gene_id
     WHERE
       epd_well_name IS NOT NULL
+      AND ws.epd_distribute <> 'yes'
       AND ws.targeted_trap = 'yes'
       AND ws.pgdgr_plate_name IS NOT NULL
       AND mgi_gene.mgi_accession_id = '#{self.mgi_accession_id}'
