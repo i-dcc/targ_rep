@@ -6,7 +6,6 @@ class CreateMolecularStructures < ActiveRecord::Migration
       t.string    :strand,              :null => false
       t.string    :mgi_accession_id,    :null => false
       
-      t.string    :allele_symbol_superscript
       t.integer   :homology_arm_start,  :null => false
       t.integer   :homology_arm_end,    :null => false
       t.integer   :loxp_start
@@ -31,8 +30,7 @@ class CreateMolecularStructures < ActiveRecord::Migration
         :homology_arm_start, :homology_arm_end,
         :cassette_start, :cassette_end,
         :loxp_start, :loxp_end,
-        :cassette, :backbone,
-        :allele_symbol_superscript
+        :cassette, :backbone
       ],
       :name => "index_mol_struct",
       :unique => true

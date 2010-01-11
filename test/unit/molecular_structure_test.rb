@@ -16,8 +16,7 @@ class MolecularStructureTest < ActiveSupport::TestCase
       :homology_arm_start, :homology_arm_end,
       :cassette_start, :cassette_end,
       :loxp_start, :loxp_end,
-      :cassette, :backbone,
-      :allele_symbol_superscript
+      :cassette, :backbone
     ],
     :message => "must have unique design features"
   

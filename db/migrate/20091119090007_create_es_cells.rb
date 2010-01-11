@@ -7,8 +7,9 @@ class CreateEsCells < ActiveRecord::Migration
       t.foreign_key   :targeting_vector,        :dependent => :delete
       t.integer       :targeting_vector_id
       t.string        :parental_cell_line
+      t.string        :allele_symbol_superscript
       
-      t.string        :name
+      t.string        :name,                    :null => false
       
       t.integer       :created_by
       t.integer       :updated_by

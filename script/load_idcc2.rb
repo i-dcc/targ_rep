@@ -486,8 +486,7 @@ end
 
 class MolecularStructure < IdccObject
   ATTRIBUTES = [
-    :molecular_structure_id, :design_id, :mgi_accession_id, 
-    :chromosome, :strand, :allele_symbol_superscript, 
+    :molecular_structure_id, :design_id, :mgi_accession_id, :chromosome, :strand,
     :design_type, :design_subtype, :subtype_description, :cassette, :backbone,
     :cassette_start, :cassette_end, :loxp_start, :loxp_end, 
     :homology_arm_start, :homology_arm_end, :targeted_trap, 
@@ -518,11 +517,6 @@ class MolecularStructure < IdccObject
       self_value  = self.instance_variable_get "@#{attr}"
       other_value = mol_struct_hash[ attr.to_s ]
       unless self_value.to_s == other_value.to_s
-        if attr.to_s == 'allele_symbol_superscript' and self_value.nil?
-          self.allele_symbol_superscript = mol_struct_hash[ attr.to_s ]
-          next
-        end
-        
         if attr.to_s == 'genbank_file'
           log "[MOL STRUCT CHANGES];#{self.molecular_structure_id};genbank_file"
         else
@@ -548,11 +542,7 @@ class MolecularStructure < IdccObject
     if self.loxp_start and self.loxp_end
       params += "&loxp_start=#{self.loxp_start}&loxp_end=#{self.loxp_end}"
     else
-      params += "&loxp_start=null&loxp_end=null"
-    end
-    
-    if self.allele_symbol_superscript
-      params += "&allele_symbol_superscript=#{self.allele_symbol_superscript}"
+      params += "&loxp_start=null&loxp_end=null" # important!
     end
     
     json_response = JSON.parse(request( 'GET', "alleles.json?#{params}" ))
@@ -640,10 +630,6 @@ class MolecularStructure < IdccObject
       AND (pgdgr_distribute = 'yes' OR ws.epd_distribute = 'yes')
       AND pgdgr_well_name IS NOT NULL
     """
-    unless self.allele_symbol_superscript.nil? or self.allele_symbol_superscript.empty?
-      query += "AND allele_name LIKE '%#{self.allele_symbol_superscript}%'"
-    end
-    
     begin
       cursor = @@ora_dbh.exec(query)
     rescue
@@ -681,7 +667,7 @@ class MolecularStructure < IdccObject
         targ_vec.push_to_idcc()
         
         puts "-- synchronize es_cells for #{targeting_vector} | #{ikmc_project_id} --"
-        targ_vec.synchronize_es_cells( self.allele_symbol_superscript )
+        targ_vec.synchronize_es_cells
         
         htgt_targ_vec.push(targeting_vector)
         
@@ -709,26 +695,24 @@ that your network connection was severed before it could complete."
   end
   
   def synchronize_es_cells
-    return unless \
-      self.molecular_structure_id \
-      and self.targeted_trap \
-      and self.allele_symbol_superscript
+    return unless self.molecular_structure_id and self.targeted_trap
     
     query =
     """
     SELECT DISTINCT
       epd_well_name,
-      es_cell_line
+      es_cell_line,
+      allele_name
     FROM
       project
       JOIN well_summary_by_di ws ON ws.project_id = project.project_id
       JOIN mgi_gene              ON mgi_gene.mgi_gene_id = project.mgi_gene_id
     WHERE
       epd_well_name IS NOT NULL
-      AND (ws.epd_distribute = 'yes' OR ws.targeted_trap = 'yes')
+      AND ws.epd_distribute = 'yes'
+      AND ws.targeted_trap = 'yes'
       AND ws.pgdgr_plate_name IS NOT NULL
       AND mgi_gene.mgi_accession_id = '#{self.mgi_accession_id}'
-      AND allele_name LIKE \'%#{self.allele_symbol_superscript}%\'
     """
     
     begin
@@ -740,7 +724,10 @@ that your network connection was severed before it could complete."
     
     htgt_products = {}
     cursor.fetch do |fetch_row|
-      htgt_products[fetch_row[0]] = format_parental_cell_line(fetch_row[1])
+      htgt_products[fetch_row[0]] = {
+        'parental_cell_line'        => format_parental_cell_line( fetch_row[1] ),
+        'allele_symbol_superscript' => get_allele_symbol_superscript( fetch_row[2] )
+      }
     end
     
     idcc_products = []
@@ -769,6 +756,7 @@ that your network connection was severed before it could complete."
     #  CREATE / UPDATE ES Cells
     #
     (htgt_products.keys - idcc_products).each do |product_name|
+      htgt_product = htgt_products[product_name]
       
       # Search product in IDCC - ie. linked to another allele
       response = request( 'GET', "products.json?name=#{product_name}" )
@@ -776,9 +764,10 @@ that your network connection was severed before it could complete."
       product_found = product_list.length > 0 ? product_list[0] : nil
       
       es_cell = {
-        'molecular_structure_id'  => self.molecular_structure_id,
-        'name'                    => product_name,
-        'parental_cell_line'      => htgt_products[product_name]
+        'molecular_structure_id'    => self.molecular_structure_id,
+        'name'                      => product_name,
+        'parental_cell_line'        => htgt_product['parental_cell_line']
+        'allele_symbol_superscript' => htgt_product['allele_symbol_superscript']
       }
       
       if product_found and product_found['targeting_vector_id']
@@ -792,7 +781,8 @@ that your network connection was severed before it could complete."
       #
       if product_found
         if product_found['molecular_structure_id'] != self.molecular_structure_id \
-        or product_found['parental_cell_line'] != htgt_products[product_name]
+        or product_found['parental_cell_line'] != htgt_product['parental_cell_line'] \
+        or product_found['allele_symbol_superscript'] != htgt_product['allele_symbol_superscript']
           begin
             response = request( 'PUT', "products/#{product_found['id']}.json", json )
           rescue RestClient::Exception => e
@@ -876,11 +866,14 @@ class TargetingVector < IdccObject
     end
   end
   
-  def synchronize_es_cells( allele_symbol_superscript )
+  def synchronize_es_cells( cassette, backbone )
     query =
     """
     SELECT DISTINCT
-      epd_well_name, targeted_trap, es_cell_line
+      epd_well_name,
+      targeted_trap,
+      es_cell_line,
+      allele_name
     FROM
       well_summary_by_di
     WHERE
@@ -889,10 +882,6 @@ class TargetingVector < IdccObject
       AND project_id = #{self.ikmc_project_id}
       AND pgdgr_plate_name || '_' || pgdgr_well_name = '#{self.name}'
     """
-    unless allele_symbol_superscript.nil? or allele_symbol_superscript.empty?
-      query += "AND allele_name LIKE '%#{allele_symbol_superscript}%'"
-    end
-    
     begin
       cursor = @@ora_dbh.exec(query)
     rescue
@@ -903,8 +892,9 @@ class TargetingVector < IdccObject
     htgt_products = {}
     cursor.fetch do |fetch_row|
       htgt_products[fetch_row[0]] = {
-        :is_targeted_trap   => fetch_row[1], 
-        :parental_cell_line => format_parental_cell_line( fetch_row[2] )
+        :is_targeted_trap           => fetch_row[1], 
+        :parental_cell_line         => format_parental_cell_line( fetch_row[2] )
+        :allele_symbol_superscript  => get_allele_symbol_superscript( fetch_row[3] )
       }
     end
     
@@ -937,6 +927,7 @@ class TargetingVector < IdccObject
       
       parental_cell_line = htgt_products[product_name][:parental_cell_line]
       is_targeted_trap = htgt_products[product_name][:is_targeted_trap] == true
+      allele_symbol_superscript = htgt_products[product_name][:allele_symbol_superscript]
       
       # Search product in IDCC - ie. linked to another allele
       response = request( 'GET', "products.json?name=#{product_name}" )
@@ -952,14 +943,16 @@ class TargetingVector < IdccObject
         if is_targeted_trap
           # Continue if nothing has changed - don't check mol struct in this case
           next if product_found['targeting_vector_id'] == self.targeting_vector_id \
-          and product_found['parental_cell_line'] == parental_cell_line
+          and product_found['parental_cell_line'] == parental_cell_line \
+          and product_found['allele_symbol_superscript'] == allele_symbol_superscript
           
           json = 
           JSON.generate({
             'es_cell' => {
-              'targeting_vector_id' => self.targeting_vector_id,
-              'name'                => product_name,
-              'parental_cell_line'  => parental_cell_line
+              'targeting_vector_id'       => self.targeting_vector_id,
+              'name'                      => product_name,
+              'parental_cell_line'        => parental_cell_line,
+              'allele_symbol_superscript' => allele_symbol_superscript
             }
           })
           
@@ -967,15 +960,17 @@ class TargetingVector < IdccObject
         else
           # Continue if nothing has changed
           next if product_found['molecular_structure_id'] == self.molecular_structure_id \
-          and product_found['targeting_vector_id'] == self.targeting_vector_id
+          and product_found['targeting_vector_id'] == self.targeting_vector_id \
+          and product_found['allele_symbol_superscript'] == allele_symbol_superscript
           
           json = 
           JSON.generate({
             'es_cell' => {
-              'targeting_vector_id'     => self.targeting_vector_id,
-              'molecular_structure_id'  => self.molecular_structure_id,
-              'name'                    => product_name,
-              'parental_cell_line'      => parental_cell_line
+              'targeting_vector_id'       => self.targeting_vector_id,
+              'molecular_structure_id'    => self.molecular_structure_id,
+              'name'                      => product_name,
+              'parental_cell_line'        => parental_cell_line,
+              'allele_symbol_superscript' => allele_symbol_superscript
             }
           })
         end
@@ -994,10 +989,11 @@ class TargetingVector < IdccObject
         json = 
         JSON.generate({
           'es_cell' => {
-            'targeting_vector_id'     => self.targeting_vector_id,
-            'molecular_structure_id'  => self.molecular_structure_id,
-            'name'                    => product_name,
-            'parental_cell_line'      => parental_cell_line
+            'targeting_vector_id'       => self.targeting_vector_id,
+            'molecular_structure_id'    => self.molecular_structure_id,
+            'name'                      => product_name,
+            'parental_cell_line'        => parental_cell_line,
+            'allele_symbol_superscript' => allele_symbol_superscript
           }
         })
         begin
@@ -1010,6 +1006,11 @@ class TargetingVector < IdccObject
   end
 end
 
+
+def get_allele_symbol_superscript( allele_name )
+  rxp_matches = /<sup>(tm\d.*)<\/sup>/.match( allele_name )
+  return rxp_matches[1] if rxp_matches
+end
 
 def format_parental_cell_line( parental_cell_line )
   unless parental_cell_line.nil?
@@ -1185,8 +1186,7 @@ def load_idcc( changed_projects )
     project.cassette,
     project.backbone,
     ws.epd_distribute,
-    ws.targeted_trap,
-    allele_name
+    ws.targeted_trap
   FROM
     project
     JOIN well_summary_by_di ws ON ws.project_id = project.project_id
@@ -1209,8 +1209,7 @@ def load_idcc( changed_projects )
     project.cassette,
     project.backbone,
     ws.targeted_trap,
-    ws.epd_distribute,
-    allele_name
+    ws.epd_distribute
   "
   
   begin
@@ -1231,32 +1230,17 @@ def load_idcc( changed_projects )
     targeted_trap     = fetch_row[5] == 'yes'
     allele_name       = fetch_row[6]
     
-    #-- Allele symbol superscript
-    if epd_distribute or targeted_trap
-      rxp_matches = /<sup>(tm\d.*)<\/sup>/.match( allele_name )
-      allele_symbol_superscript = rxp_matches[1] if rxp_matches
-    else
-        allele_symbol_superscript = nil
-    end
-    
-    new_mol_struct =
-      mol_struct.nil? \
-      or mol_struct.mgi_accession_id != mgi_accession_id \
-      or mol_struct.design_id != design_id \
-      or mol_struct.cassette != cassette \
-      or mol_struct.backbone != backbone
-    
-    next if not new_mol_struct \
-      and not epd_distribute \
-      and not targeted_trap
-    
     if epd_distribute and targeted_trap
       log "[DATABASE ERROR];#{mgi_accession_id};design_id #{design_id};#{cassette};#{backbone};we have epd_distribute=targeted_trap='yes'"
       next
     end
     
-    # Already seen allele
-    next if !new_mol_struct and allele_symbol_superscript == mol_struct.allele_symbol_superscript
+    next if not mol_struct.nil? \
+      and mol_struct.mgi_accession_id == mgi_accession_id \
+      and mol_struct.design_id == design_id \
+      and mol_struct.cassette == cassette \
+      and mol_struct.backbone == backbone \
+      and not epd_distribute and not targeted_trap
     
     #-- Design features
     design    = Design.get( design_id )

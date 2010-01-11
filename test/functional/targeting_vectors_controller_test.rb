@@ -41,21 +41,20 @@ class TargetingVectorsControllerTest < ActionController::TestCase
     targ_vec_attrs    = Factory.attributes_for( :targeting_vector )
     
     post :create, :targeting_vector => {
-      :name                   => targ_vec_attrs[:name],
-      :intermediate_vector    => targ_vec_attrs[:intermediate_vector],
-      :ikmc_project_id        => targ_vec_attrs[:ikmc_project_id],
-      :pipeline_id            => TargetingVector.find(:first).pipeline_id,
-      :molecular_structure    => {
-        :mgi_accession_id           => mol_struct_attrs[:mgi_accession_id],
-        :assembly                   => mol_struct_attrs[:assembly],
-        :chromosome                 => mol_struct_attrs[:chromosome],
-        :strand                     => mol_struct_attrs[:strand],
-        :design_type                => mol_struct_attrs[:design_type],
-        :homology_arm_start         => mol_struct_attrs[:homology_arm_start],
-        :homology_arm_end           => mol_struct_attrs[:homology_arm_end],
-        :cassette_start             => mol_struct_attrs[:cassette_start],
-        :cassette_end               => mol_struct_attrs[:cassette_end],
-        :allele_symbol_superscript  => mol_struct_attrs[:allele_symbol_superscript]
+      :name                => targ_vec_attrs[:name],
+      :intermediate_vector => targ_vec_attrs[:intermediate_vector],
+      :ikmc_project_id     => targ_vec_attrs[:ikmc_project_id],
+      :pipeline_id         => TargetingVector.find(:first).pipeline_id,
+      :molecular_structure => {
+        :mgi_accession_id     => mol_struct_attrs[:mgi_accession_id],
+        :assembly             => mol_struct_attrs[:assembly],
+        :chromosome           => mol_struct_attrs[:chromosome],
+        :strand               => mol_struct_attrs[:strand],
+        :design_type          => mol_struct_attrs[:design_type],
+        :homology_arm_start   => mol_struct_attrs[:homology_arm_start],
+        :homology_arm_end     => mol_struct_attrs[:homology_arm_end],
+        :cassette_start       => mol_struct_attrs[:cassette_start],
+        :cassette_end         => mol_struct_attrs[:cassette_end]
       }
     }
     
@@ -83,16 +82,15 @@ class TargetingVectorsControllerTest < ActionController::TestCase
       :pipeline_id            => TargetingVector.find(:first).pipeline_id,
       :molecular_structure_id => TargetingVector.find(:first).molecular_structure_id,
       :molecular_structure    => {
-        :mgi_accession_id           => mol_struct_attrs[:mgi_accession_id],
-        :assembly                   => mol_struct_attrs[:assembly],
-        :chromosome                 => mol_struct_attrs[:chromosome],
-        :strand                     => mol_struct_attrs[:strand],
-        :design_type                => mol_struct_attrs[:design_type],
-        :homology_arm_start         => mol_struct_attrs[:homology_arm_start],
-        :homology_arm_end           => mol_struct_attrs[:homology_arm_end],
-        :cassette_start             => mol_struct_attrs[:cassette_start],
-        :cassette_end               => mol_struct_attrs[:cassette_end],
-        :allele_symbol_superscript  => mol_struct_attrs[:allele_symbol_superscript]
+        :mgi_accession_id    => mol_struct_attrs[:mgi_accession_id],
+        :assembly            => mol_struct_attrs[:assembly],
+        :chromosome          => mol_struct_attrs[:chromosome],
+        :strand              => mol_struct_attrs[:strand],
+        :design_type         => mol_struct_attrs[:design_type],
+        :homology_arm_start  => mol_struct_attrs[:homology_arm_start],
+        :homology_arm_end    => mol_struct_attrs[:homology_arm_end],
+        :cassette_start      => mol_struct_attrs[:cassette_start],
+        :cassette_end        => mol_struct_attrs[:cassette_end]
       }
     }
     
@@ -121,17 +119,16 @@ class TargetingVectorsControllerTest < ActionController::TestCase
     
     attrs = Factory.attributes_for( :molecular_structure )
     post :create, :targeting_vector => {
-      :molecular_structure    => {
-        :mgi_accession_id           => attrs[:mgi_accession_id],
-        :assembly                   => attrs[:assembly],
-        :chromosome                 => attrs[:chromosome],
-        :strand                     => attrs[:strand],
-        :design_type                => attrs[:design_type],
-        :homology_arm_start         => attrs[:homology_arm_start],
-        :homology_arm_end           => attrs[:homology_arm_end],
-        :cassette_start             => attrs[:cassette_start],
-        :cassette_end               => attrs[:cassette_end],
-        :allele_symbol_superscript  => attrs[:allele_symbol_superscript]
+      :molecular_structure => {
+        :mgi_accession_id    => attrs[:mgi_accession_id],
+        :assembly            => attrs[:assembly],
+        :chromosome          => attrs[:chromosome],
+        :strand              => attrs[:strand],
+        :design_type         => attrs[:design_type],
+        :homology_arm_start  => attrs[:homology_arm_start],
+        :homology_arm_end    => attrs[:homology_arm_end],
+        :cassette_start      => attrs[:cassette_start],
+        :cassette_end        => attrs[:cassette_end]
       }
     }
     
@@ -154,21 +151,20 @@ class TargetingVectorsControllerTest < ActionController::TestCase
     targ_vec_attrs    = Factory.attributes_for( :targeting_vector )
     
     post :create, :targeting_vector => {
-      :name                   => targ_vec_attrs[:name],
-      :intermediate_vector    => targ_vec_attrs[:intermediate_vector],
-      :ikmc_project_id        => targ_vec_attrs[:ikmc_project_id],
-      :pipeline_id            => TargetingVector.find(:first).pipeline_id,
+      :name                 => targ_vec_attrs[:name],
+      :intermediate_vector  => targ_vec_attrs[:intermediate_vector],
+      :ikmc_project_id      => targ_vec_attrs[:ikmc_project_id],
+      :pipeline_id          => TargetingVector.find(:first).pipeline_id,
       :molecular_structure    => {
-        :mgi_accession_id           => mol_struct_attrs[:mgi_accession_id],
-        :assembly                   => mol_struct_attrs[:assembly],
-        :chromosome                 => mol_struct_attrs[:chromosome],
-        :strand                     => mol_struct_attrs[:strand],
-        :design_type                => mol_struct_attrs[:design_type],
-        :homology_arm_start         => mol_struct_attrs[:homology_arm_start],
-        :homology_arm_end           => mol_struct_attrs[:homology_arm_end],
-        :cassette_start             => mol_struct_attrs[:cassette_start],
-        :cassette_end               => mol_struct_attrs[:cassette_end],
-        :allele_symbol_superscript  => mol_struct_attrs[:allele_symbol_superscript]
+        :mgi_accession_id     => mol_struct_attrs[:mgi_accession_id],
+        :assembly             => mol_struct_attrs[:assembly],
+        :chromosome           => mol_struct_attrs[:chromosome],
+        :strand               => mol_struct_attrs[:strand],
+        :design_type          => mol_struct_attrs[:design_type],
+        :homology_arm_start   => mol_struct_attrs[:homology_arm_start],
+        :homology_arm_end     => mol_struct_attrs[:homology_arm_end],
+        :cassette_start       => mol_struct_attrs[:cassette_start],
+        :cassette_end         => mol_struct_attrs[:cassette_end]
       },
       :es_cells_attributes => [
         { :name => Factory.attributes_for( :es_cell )[:name] },

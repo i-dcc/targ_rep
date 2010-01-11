@@ -48,16 +48,15 @@ class EsCellsControllerTest < ActionController::TestCase
         :pipeline_id          => TargetingVector.find(:first).pipeline_id
       },
       :molecular_structure  => {
-        :allele_symbol_superscript  => mol_struct_attrs[:allele_symbol_superscript],
-        :mgi_accession_id           => mol_struct_attrs[:mgi_accession_id],
-        :assembly                   => mol_struct_attrs[:assembly],
-        :chromosome                 => mol_struct_attrs[:chromosome],
-        :strand                     => mol_struct_attrs[:strand],
-        :design_type                => mol_struct_attrs[:design_type],
-        :homology_arm_start         => mol_struct_attrs[:homology_arm_start],
-        :homology_arm_end           => mol_struct_attrs[:homology_arm_end],
-        :cassette_start             => mol_struct_attrs[:cassette_start],
-        :cassette_end               => mol_struct_attrs[:cassette_end]
+        :mgi_accession_id     => mol_struct_attrs[:mgi_accession_id],
+        :assembly             => mol_struct_attrs[:assembly],
+        :chromosome           => mol_struct_attrs[:chromosome],
+        :strand               => mol_struct_attrs[:strand],
+        :design_type          => mol_struct_attrs[:design_type],
+        :homology_arm_start   => mol_struct_attrs[:homology_arm_start],
+        :homology_arm_end     => mol_struct_attrs[:homology_arm_end],
+        :cassette_start       => mol_struct_attrs[:cassette_start],
+        :cassette_end         => mol_struct_attrs[:cassette_end]
       }
     }
     
@@ -78,16 +77,15 @@ class EsCellsControllerTest < ActionController::TestCase
       :name                 => es_cell_attrs[:name],
       :parental_cell_line   => es_cell_attrs[:parental_cell_line],
       :molecular_structure  => {
-        :allele_symbol_superscript  => mol_struct_attrs[:allele_symbol_superscript],
-        :mgi_accession_id           => mol_struct_attrs[:mgi_accession_id],
-        :assembly                   => mol_struct_attrs[:assembly],
-        :chromosome                 => mol_struct_attrs[:chromosome],
-        :strand                     => mol_struct_attrs[:strand],
-        :design_type                => mol_struct_attrs[:design_type],
-        :homology_arm_start         => mol_struct_attrs[:homology_arm_start],
-        :homology_arm_end           => mol_struct_attrs[:homology_arm_end],
-        :cassette_start             => mol_struct_attrs[:cassette_start],
-        :cassette_end               => mol_struct_attrs[:cassette_end]
+        :mgi_accession_id      => mol_struct_attrs[:mgi_accession_id],
+        :assembly              => mol_struct_attrs[:assembly],
+        :chromosome            => mol_struct_attrs[:chromosome],
+        :strand                => mol_struct_attrs[:strand],
+        :design_type           => mol_struct_attrs[:design_type],
+        :homology_arm_start    => mol_struct_attrs[:homology_arm_start],
+        :homology_arm_end      => mol_struct_attrs[:homology_arm_end],
+        :cassette_start        => mol_struct_attrs[:cassette_start],
+        :cassette_end          => mol_struct_attrs[:cassette_end]
       }
     }
     
@@ -110,16 +108,15 @@ class EsCellsControllerTest < ActionController::TestCase
       :parental_cell_line   => es_cell_attrs[:parental_cell_line],
       :targeting_vector_id  => targ_vec.id,
       :molecular_structure  => {
-        :allele_symbol_superscript  => mol_struct_attrs[:allele_symbol_superscript],
-        :mgi_accession_id           => mol_struct_attrs[:mgi_accession_id],
-        :assembly                   => mol_struct_attrs[:assembly],
-        :chromosome                 => mol_struct_attrs[:chromosome],
-        :strand                     => mol_struct_attrs[:strand],
-        :design_type                => mol_struct_attrs[:design_type],
-        :homology_arm_start         => mol_struct_attrs[:homology_arm_start],
-        :homology_arm_end           => mol_struct_attrs[:homology_arm_end],
-        :cassette_start             => mol_struct_attrs[:cassette_start],
-        :cassette_end               => mol_struct_attrs[:cassette_end]
+        :mgi_accession_id     => mol_struct_attrs[:mgi_accession_id],
+        :assembly             => mol_struct_attrs[:assembly],
+        :chromosome           => mol_struct_attrs[:chromosome],
+        :strand               => mol_struct_attrs[:strand],
+        :design_type          => mol_struct_attrs[:design_type],
+        :homology_arm_start   => mol_struct_attrs[:homology_arm_start],
+        :homology_arm_end     => mol_struct_attrs[:homology_arm_end],
+        :cassette_start       => mol_struct_attrs[:cassette_start],
+        :cassette_end         => mol_struct_attrs[:cassette_end]
       }
     }
     
@@ -155,16 +152,15 @@ class EsCellsControllerTest < ActionController::TestCase
         :pipeline_id          => TargetingVector.find(:first).pipeline_id
       },
       :molecular_structure  => {
-        :allele_symbol_superscript  => mol_struct_attrs[:allele_symbol_superscript],
-        :mgi_accession_id           => mol_struct_attrs[:mgi_accession_id],
-        :assembly                   => mol_struct_attrs[:assembly],
-        :chromosome                 => mol_struct_attrs[:chromosome],
-        :strand                     => mol_struct_attrs[:strand],
-        :design_type                => mol_struct_attrs[:design_type],
-        :homology_arm_start         => mol_struct_attrs[:homology_arm_start],
-        :homology_arm_end           => mol_struct_attrs[:homology_arm_end],
-        :cassette_start             => mol_struct_attrs[:cassette_start],
-        :cassette_end               => mol_struct_attrs[:cassette_end]
+        :mgi_accession_id     => mol_struct_attrs[:mgi_accession_id],
+        :assembly             => mol_struct_attrs[:assembly],
+        :chromosome           => mol_struct_attrs[:chromosome],
+        :strand               => mol_struct_attrs[:strand],
+        :design_type          => mol_struct_attrs[:design_type],
+        :homology_arm_start   => mol_struct_attrs[:homology_arm_start],
+        :homology_arm_end     => mol_struct_attrs[:homology_arm_end],
+        :cassette_start       => mol_struct_attrs[:cassette_start],
+        :cassette_end         => mol_struct_attrs[:cassette_end]
       }
     }
     
@@ -222,16 +218,15 @@ class EsCellsControllerTest < ActionController::TestCase
       :name                 => Factory.attributes_for( :es_cell )[:name],
       :targeting_vector     => Factory.attributes_for( :invalid_targeting_vector ),
       :molecular_structure  => {
-        :allele_symbol_superscript  => mol_struct_attrs[:allele_symbol_superscript],
-        :mgi_accession_id           => mol_struct_attrs[:mgi_accession_id],
-        :assembly                   => mol_struct_attrs[:assembly],
-        :chromosome                 => mol_struct_attrs[:chromosome],
-        :strand                     => mol_struct_attrs[:strand],
-        :design_type                => mol_struct_attrs[:design_type],
-        :homology_arm_start         => mol_struct_attrs[:homology_arm_start],
-        :homology_arm_end           => mol_struct_attrs[:homology_arm_end],
-        :cassette_start             => mol_struct_attrs[:cassette_start],
-        :cassette_end               => mol_struct_attrs[:cassette_end]
+        :mgi_accession_id     => mol_struct_attrs[:mgi_accession_id],
+        :assembly             => mol_struct_attrs[:assembly],
+        :chromosome           => mol_struct_attrs[:chromosome],
+        :strand               => mol_struct_attrs[:strand],
+        :design_type          => mol_struct_attrs[:design_type],
+        :homology_arm_start   => mol_struct_attrs[:homology_arm_start],
+        :homology_arm_end     => mol_struct_attrs[:homology_arm_end],
+        :cassette_start       => mol_struct_attrs[:cassette_start],
+        :cassette_end         => mol_struct_attrs[:cassette_end]
       }
     }
     
@@ -301,16 +296,15 @@ class EsCellsControllerTest < ActionController::TestCase
       },
       :molecular_structure_id => Factory.attributes_for( :molecular_structure )[:id],
       :molecular_structure  => {
-        :allele_symbol_superscript  => mol_struct_attrs[:allele_symbol_superscript],
-        :mgi_accession_id           => mol_struct_attrs[:mgi_accession_id],
-        :assembly                   => mol_struct_attrs[:assembly],
-        :chromosome                 => mol_struct_attrs[:chromosome],
-        :strand                     => mol_struct_attrs[:strand],
-        :design_type                => mol_struct_attrs[:design_type],
-        :homology_arm_start         => mol_struct_attrs[:homology_arm_start],
-        :homology_arm_end           => mol_struct_attrs[:homology_arm_end],
-        :cassette_start             => mol_struct_attrs[:cassette_start],
-        :cassette_end               => mol_struct_attrs[:cassette_end]
+        :mgi_accession_id     => mol_struct_attrs[:mgi_accession_id],
+        :assembly             => mol_struct_attrs[:assembly],
+        :chromosome           => mol_struct_attrs[:chromosome],
+        :strand               => mol_struct_attrs[:strand],
+        :design_type          => mol_struct_attrs[:design_type],
+        :homology_arm_start   => mol_struct_attrs[:homology_arm_start],
+        :homology_arm_end     => mol_struct_attrs[:homology_arm_end],
+        :cassette_start       => mol_struct_attrs[:cassette_start],
+        :cassette_end         => mol_struct_attrs[:cassette_end]
       }
     }
     
@@ -347,16 +341,15 @@ class EsCellsControllerTest < ActionController::TestCase
         :pipeline_id          => TargetingVector.find(:first).pipeline_id
       },
       :molecular_structure  => {
-        :allele_symbol_superscript  => mol_struct_attrs[:allele_symbol_superscript],
-        :mgi_accession_id           => mol_struct_attrs[:mgi_accession_id],
-        :assembly                   => mol_struct_attrs[:assembly],
-        :chromosome                 => mol_struct_attrs[:chromosome],
-        :strand                     => mol_struct_attrs[:strand],
-        :design_type                => mol_struct_attrs[:design_type],
-        :homology_arm_start         => mol_struct_attrs[:homology_arm_start],
-        :homology_arm_end           => mol_struct_attrs[:homology_arm_end],
-        :cassette_start             => mol_struct_attrs[:cassette_start],
-        :cassette_end               => mol_struct_attrs[:cassette_end]
+        :mgi_accession_id     => mol_struct_attrs[:mgi_accession_id],
+        :assembly             => mol_struct_attrs[:assembly],
+        :chromosome           => mol_struct_attrs[:chromosome],
+        :strand               => mol_struct_attrs[:strand],
+        :design_type          => mol_struct_attrs[:design_type],
+        :homology_arm_start   => mol_struct_attrs[:homology_arm_start],
+        :homology_arm_end     => mol_struct_attrs[:homology_arm_end],
+        :cassette_start       => mol_struct_attrs[:cassette_start],
+        :cassette_end         => mol_struct_attrs[:cassette_end]
       }
     }
     

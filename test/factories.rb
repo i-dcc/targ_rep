@@ -31,7 +31,6 @@ end
 
 Factory.define :molecular_structure do |f|
   f.sequence(:mgi_accession_id)           { |n| "MGI:#{n}" }
-  f.sequence(:allele_symbol_superscript)  { |n| "allele_symbol_#{n}" }
   f.sequence(:design_subtype)             { |n| "subtype #{n}" }
   f.sequence(:subtype_description)        { |n| "subtype description #{n}" }
   f.sequence(:cassette)                   { |n| "cassette #{n}"}
@@ -133,6 +132,7 @@ end
 
 Factory.define :es_cell do |f|
   f.sequence(:name) { |n| "EPD#{n}" }
+  f.sequence(:allele_symbol_superscript)  { |n| "allele_symbol_#{n}" }
   f.parental_cell_line { ['JM8 parental', 'JM8.F6', 'JM8.N19'].choice }
   
   f.association :targeting_vector

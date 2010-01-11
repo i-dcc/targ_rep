@@ -39,16 +39,15 @@ class MolecularStructuresControllerTest < ActionController::TestCase
     linked_es_cells   = EsCell.targeting_vector_id_not_null.count
     
     post :create, :molecular_structure => {
-      :allele_symbol_superscript  => mol_struct[:allele_symbol_superscript],
-      :assembly                   => mol_struct[:assembly],
-      :mgi_accession_id           => mol_struct[:mgi_accession_id],
-      :chromosome                 => mol_struct[:chromosome],
-      :strand                     => mol_struct[:strand],
-      :design_type                => mol_struct[:design_type],
-      :homology_arm_start         => mol_struct[:homology_arm_start],
-      :homology_arm_end           => mol_struct[:homology_arm_end],
-      :cassette_start             => mol_struct[:cassette_start],
-      :cassette_end               => mol_struct[:cassette_end],
+      :assembly            => mol_struct[:assembly],
+      :mgi_accession_id    => mol_struct[:mgi_accession_id],
+      :chromosome          => mol_struct[:chromosome],
+      :strand              => mol_struct[:strand],
+      :design_type         => mol_struct[:design_type],
+      :homology_arm_start  => mol_struct[:homology_arm_start],
+      :homology_arm_end    => mol_struct[:homology_arm_end],
+      :cassette_start      => mol_struct[:cassette_start],
+      :cassette_end        => mol_struct[:cassette_end],
       
       :targeting_vectors => [
         # Targeting vector 1 with its ES cells
@@ -124,16 +123,15 @@ class MolecularStructuresControllerTest < ActionController::TestCase
     genbank_file_count  = GenbankFile.count
     
     post :create, :molecular_structure => {
-      :allele_symbol_superscript  => mol_struct[:allele_symbol_superscript],
-      :assembly                   => mol_struct[:assembly],
-      :mgi_accession_id           => mol_struct[:mgi_accession_id],
-      :chromosome                 => mol_struct[:chromosome],
-      :strand                     => mol_struct[:strand],
-      :design_type                => mol_struct[:design_type],
-      :homology_arm_start         => mol_struct[:homology_arm_start],
-      :homology_arm_end           => mol_struct[:homology_arm_end],
-      :cassette_start             => mol_struct[:cassette_start],
-      :cassette_end               => mol_struct[:cassette_end],
+      :assembly           => mol_struct[:assembly],
+      :mgi_accession_id   => mol_struct[:mgi_accession_id],
+      :chromosome         => mol_struct[:chromosome],
+      :strand             => mol_struct[:strand],
+      :design_type        => mol_struct[:design_type],
+      :homology_arm_start => mol_struct[:homology_arm_start],
+      :homology_arm_end   => mol_struct[:homology_arm_end],
+      :cassette_start     => mol_struct[:cassette_start],
+      :cassette_end       => mol_struct[:cassette_end],
       :genbank_file => {
         :escell_clone     => genbank_file[:escell_clone],
         :targeting_vector => genbank_file[:targeting_vector]

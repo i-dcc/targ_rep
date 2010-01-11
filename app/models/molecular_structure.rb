@@ -54,8 +54,7 @@ class MolecularStructure < ActiveRecord::Base
       :homology_arm_start, :homology_arm_end,
       :cassette_start, :cassette_end,
       :loxp_start, :loxp_end,
-      :cassette, :backbone,
-      :allele_symbol_superscript
+      :cassette, :backbone
     ],
     :message => "must have unique design features"
   
@@ -101,8 +100,7 @@ class MolecularStructure < ActiveRecord::Base
   
   validate :has_right_features, 
     :unless => "[mgi_accession_id, assembly, chromosome, strand, design_type,
-    homology_arm_start, homology_arm_end, cassette_start, cassette_end,
-    allele_symbol_superscript].any?(&:nil?)"
+    homology_arm_start, homology_arm_end, cassette_start, cassette_end].any?(&:nil?)"
   
   public
     def to_json( options = {} )
