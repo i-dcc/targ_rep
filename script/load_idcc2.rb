@@ -679,6 +679,8 @@ class MolecularStructure < IdccObject
       
       begin
         targ_vec.push_to_idcc()
+        
+        puts "-- synchronize es_cells for #{targeting_vector} | #{ikmc_project_id} --"
         targ_vec.synchronize_es_cells()
         
         htgt_targ_vec.push(targeting_vector)
@@ -1328,8 +1330,10 @@ def load_idcc( changed_projects )
       next unless mol_struct.molecular_structure_id
       
       if targeted_trap
+        puts "-- synchronize es_cells for #{allele_symbol_superscript} | #{mgi_accession_id} --"
         mol_struct.synchronize_es_cells()
       else
+        puts "-- synchronize targ_vecs for #{allele_symbol_superscript} | #{mgi_accession_id} --"
         mol_struct.synchronize_targeting_vectors()
         # Then targeting vectors will sync their own ES cells
       end
