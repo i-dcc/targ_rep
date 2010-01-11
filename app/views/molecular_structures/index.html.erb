@@ -4,7 +4,6 @@
   <thead>
     <tr>
       <th>MGI Accession ID</th>
-      <th>Allele Symbol Superscript</th>
       <th>Design Type</th>
       <th>Cassette</th>
       <th>Backbone</th>
@@ -16,7 +15,6 @@
     <% @molecular_structures.each do |mol_struct| %>
       <tr class="<%= cycle("odd", "even") %>">
         <td><%= mol_struct.mgi_accession_id %></td>
-        <td><%= mol_struct.allele_symbol_superscript %></td>
         <td><%= mol_struct.design_type %></td>
         <td><%= mol_struct.cassette %></td>
         <td><%= mol_struct.backbone %></td>

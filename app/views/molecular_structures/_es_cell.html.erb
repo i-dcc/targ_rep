@@ -1,4 +1,5 @@
 <tr class="es_cell">
+  <td><%= f.text_field :name %></td>
   <td>
     <%= f.hidden_field :nested %>
     <%= f.text_field :targeting_vector_name %>
@@ -22,7 +23,7 @@
       );
     </script>
   </td>
-  <td><%= f.text_field :name %></td>
   <td><%= f.text_field :parental_cell_line %></td>
+  <td><%= f.text_field :allele_symbol_superscript %></td>
   <td><%= remove_es_cell_link(f) %></td>
 </tr>

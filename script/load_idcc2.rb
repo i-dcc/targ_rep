@@ -766,7 +766,7 @@ that your network connection was severed before it could complete."
       es_cell = {
         'molecular_structure_id'    => self.molecular_structure_id,
         'name'                      => product_name,
-        'parental_cell_line'        => htgt_product['parental_cell_line']
+        'parental_cell_line'        => htgt_product['parental_cell_line'],
         'allele_symbol_superscript' => htgt_product['allele_symbol_superscript']
       }
       
@@ -893,7 +893,7 @@ class TargetingVector < IdccObject
     cursor.fetch do |fetch_row|
       htgt_products[fetch_row[0]] = {
         :is_targeted_trap           => fetch_row[1], 
-        :parental_cell_line         => format_parental_cell_line( fetch_row[2] )
+        :parental_cell_line         => format_parental_cell_line( fetch_row[2] ),
         :allele_symbol_superscript  => get_allele_symbol_superscript( fetch_row[3] )
       }
     end

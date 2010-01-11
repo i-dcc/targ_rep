@@ -1,18 +1,4 @@
-<h2><%=h @molecular_structure.allele_symbol_superscript %> | <%=h @molecular_structure.mgi_accession_id %></h2>
-
-<div class="span-12">
-  <p>
-    <strong>Allele Symbol Superscript:</strong> 
-    <%=h @molecular_structure.allele_symbol_superscript %>
-  </p>
-</div>
-
-<div class="span-12 last">
-  <p>
-    <strong>MGI Accession ID:</strong> 
-    <%=h @molecular_structure.mgi_accession_id %>
-  </p>
-</div>
+<h2><%=h @molecular_structure.mgi_accession_id %></h2>
 
 <div class="span-12">
   <fieldset>
@@ -104,7 +90,7 @@
         <thead>
           <th>Pipeline</th>
           <th>IKMC Project ID</th>
-          <th>Name</th>
+          <th>Targeting Vector</th>
           <th class="last">Intermediate Vector</th>
         </thead>
         <tbody>
@@ -131,19 +117,21 @@
     <% unless @es_cells.empty? %>
       <table>
         <thead>
-          <th>Targeting Vector</th>
           <th>ES Cell</th>
+          <th>Targeting Vector</th>
+          <th>Allele Symbol Superscript</th>
           <th class="last">Parental Cell Line</th>
         </thead>
         <tbody>
           <% @es_cells.each do |es_cell| %>
           <tr class="<%= cycle("odd", "even") %>">
+            <td><%= es_cell.name %></td>
             <td>
               <% if es_cell.targeting_vector %>
                 <%= es_cell.targeting_vector.name %>
               <% end %>
             </td>
-            <td><%= es_cell.name %></td>
+            <td><%= es_cell.allele_symbol_superscript %></td>
             <td><%= es_cell.parental_cell_line %></td>
           </tr>
           <% end -%>
@@ -172,7 +160,6 @@
     <table>
       <thead>
         <th>Version</th>
-        <th>Allele Symbol Superscript</th>
         <th>Chromosome</th>
         <th>Strand</th>
         <th>Cassette</th>
@@ -185,7 +172,6 @@
         <% for revision in @molecular_structure.revisions %>
           <tr class="<%= cycle("odd", "even") %>">
             <td><%= revision.version %></td>
-            <td><%= revision.allele_symbol_superscript %></td>
             <td><%= revision.chromosome %></td>
             <td><%= revision.strand %></td>
             <td><%= revision.cassette %></td>
