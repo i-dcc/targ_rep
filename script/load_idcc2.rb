@@ -582,7 +582,7 @@ class MolecularStructure < IdccObject
         response = request( 'POST', 'alleles.json', to_json )
         self.molecular_structure_id = JSON.parse(response)['id']
       rescue RestClient::Exception => e
-        log "[MOL STRUCT CREATION];#{params};#{e.http_body}"
+        log "[MOL STRUCT CREATION];Design ID:#{self.design_id} | #{self.mgi_accession_id} | #{self.cassette} | #{self.backbone};#{e.http_body}"
       end
     
     # ... or UPDATE it - if any change has been made
@@ -1316,10 +1316,10 @@ def load_idcc( changed_projects )
       next unless mol_struct.molecular_structure_id
       
       if targeted_trap
-        puts "\n-- synchronize es_cells for #{mgi_accession_id} --"
+        # puts "\n-- synchronize es_cells for #{mgi_accession_id} --"
         mol_struct.synchronize_es_cells()
       else
-        puts "\n-- synchronize targ_vecs for #{mgi_accession_id} --"
+        # puts "\n-- synchronize targ_vecs for #{mgi_accession_id} --"
         mol_struct.synchronize_targeting_vectors()
         # Then targeting vectors will sync their own ES cells
       end
