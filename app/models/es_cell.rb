@@ -1,15 +1,16 @@
 class EsCell < ActiveRecord::Base
 
   # === List of columns ===
-  #   id                     : integer 
-  #   molecular_structure_id : integer 
-  #   targeting_vector_id    : integer 
-  #   parental_cell_line     : string 
-  #   name                   : string 
-  #   created_by             : integer 
-  #   updated_by             : integer 
-  #   created_at             : datetime 
-  #   updated_at             : datetime 
+  #   id                        : integer 
+  #   molecular_structure_id    : integer 
+  #   targeting_vector_id       : integer 
+  #   parental_cell_line        : string 
+  #   allele_symbol_superscript : string 
+  #   name                      : string 
+  #   created_by                : integer 
+  #   updated_by                : integer 
+  #   created_at                : datetime 
+  #   updated_at                : datetime 
   # =======================
 
   acts_as_audited

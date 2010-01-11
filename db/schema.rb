@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091119090007) do
+ActiveRecord::Schema.define(:version => 0) do
 
   create_table "audits", :force => true do |t|
     t.integer  "auditable_id"
@@ -28,10 +28,11 @@ ActiveRecord::Schema.define(:version => 20091119090007) do
   add_index "audits", ["user_id", "user_type"], :name => "user_index"
 
   create_table "es_cells", :force => true do |t|
-    t.integer  "molecular_structure_id", :null => false
+    t.integer  "molecular_structure_id",    :null => false
     t.integer  "targeting_vector_id"
     t.string   "parental_cell_line"
-    t.string   "name"
+    t.string   "allele_symbol_superscript"
+    t.string   "name",                      :null => false
     t.integer  "created_by"
     t.integer  "updated_by"
     t.datetime "created_at"
@@ -52,20 +53,19 @@ ActiveRecord::Schema.define(:version => 20091119090007) do
   add_index "genbank_files", ["molecular_structure_id"], :name => "molecular_structure_id"
 
   create_table "molecular_structures", :force => true do |t|
-    t.string   "assembly",                  :default => "NCBIM37", :null => false
-    t.string   "chromosome",                                       :null => false
-    t.string   "strand",                                           :null => false
-    t.string   "mgi_accession_id",                                 :null => false
-    t.string   "allele_symbol_superscript"
-    t.integer  "homology_arm_start",                               :null => false
-    t.integer  "homology_arm_end",                                 :null => false
+    t.string   "assembly",            :default => "NCBIM37", :null => false
+    t.string   "chromosome",                                 :null => false
+    t.string   "strand",                                     :null => false
+    t.string   "mgi_accession_id",                           :null => false
+    t.integer  "homology_arm_start",                         :null => false
+    t.integer  "homology_arm_end",                           :null => false
     t.integer  "loxp_start"
     t.integer  "loxp_end"
     t.integer  "cassette_start"
     t.integer  "cassette_end"
     t.string   "cassette"
     t.string   "backbone"
-    t.string   "design_type",                                      :null => false
+    t.string   "design_type",                                :null => false
     t.string   "design_subtype"
     t.string   "subtype_description"
     t.integer  "created_by"
@@ -73,46 +73,5 @@ ActiveRecord::Schema.define(:version => 20091119090007) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-
-  create_table "pipelines", :force => true do |t|
-    t.string   "name",       :null => false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "targeting_vectors", :force => true do |t|
-    t.integer  "pipeline_id",            :null => false
-    t.integer  "molecular_structure_id", :null => false
-    t.string   "ikmc_project_id",        :null => false
-    t.string   "name",                   :null => false
-    t.string   "intermediate_vector"
-    t.integer  "created_by"
-    t.integer  "updated_by"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "targeting_vectors", ["molecular_structure_id"], :name => "molecular_structure_id"
-  add_index "targeting_vectors", ["pipeline_id", "name"], :name => "index_targvec", :unique => true
-
-  create_table "users", :force => true do |t|
-    t.string   "username",                             :null => false
-    t.string   "email"
-    t.string   "crypted_password"
-    t.string   "password_salt"
-    t.string   "persistence_token"
-    t.datetime "last_login_at"
-    t.boolean  "is_admin",          :default => false, :null => false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_foreign_key "es_cells", "molecular_structures", :name => "es_cells_ibfk_1", :dependent => :delete
-  add_foreign_key "es_cells", "targeting_vectors", :name => "es_cells_ibfk_2", :dependent => :delete
-
-  add_foreign_key "genbank_files", "molecular_structures", :name => "genbank_files_ibfk_1", :dependent => :delete
-
-  add_foreign_key "targeting_vectors", "molecular_structures", :name => "targeting_vectors_ibfk_2", :dependent => :delete
-  add_foreign_key "targeting_vectors", "pipelines", :name => "targeting_vectors_ibfk_1", :dependent => :delete
 
 end
