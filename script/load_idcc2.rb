@@ -1293,23 +1293,22 @@ def load_idcc( changed_projects )
     # Now that every field is properly formated, 
     # let's create the Molecular Structure
     mol_struct = MolecularStructure.new({
-      :allele_symbol_superscript  => allele_symbol_superscript,
-      :backbone                   => backbone,
-      :cassette                   => cassette,
-      :mgi_accession_id           => mgi_accession_id,
-      :design_id                  => design_id,
-      :chromosome                 => design.chromosome,
-      :strand                     => design.strand,
-      :design_type                => design.design_type,
-      :design_subtype             => design.subtype,
-      :subtype_description        => design.subtype_description,
-      :homology_arm_start         => homology_arm_start,
-      :homology_arm_end           => homology_arm_end,
-      :cassette_start             => cassette_start,
-      :cassette_end               => cassette_end,
-      :loxp_start                 => loxp_start,
-      :loxp_end                   => loxp_end,
-      :targeted_trap              => targeted_trap
+      :mgi_accession_id     => mgi_accession_id,
+      :cassette             => cassette,
+      :backbone             => backbone,
+      :design_id            => design_id,
+      :chromosome           => design.chromosome,
+      :strand               => design.strand,
+      :design_type          => design.design_type,
+      :design_subtype       => design.subtype,
+      :subtype_description  => design.subtype_description,
+      :homology_arm_start   => homology_arm_start,
+      :homology_arm_end     => homology_arm_end,
+      :cassette_start       => cassette_start,
+      :cassette_end         => cassette_end,
+      :loxp_start           => loxp_start,
+      :loxp_end             => loxp_end,
+      :targeted_trap        => targeted_trap
     })
     
     begin
@@ -1317,10 +1316,10 @@ def load_idcc( changed_projects )
       next unless mol_struct.molecular_structure_id
       
       if targeted_trap
-        puts "\n-- synchronize es_cells for #{allele_symbol_superscript} | #{mgi_accession_id} --"
+        puts "\n-- synchronize es_cells for #{mgi_accession_id} --"
         mol_struct.synchronize_es_cells()
       else
-        puts "\n-- synchronize targ_vecs for #{allele_symbol_superscript} | #{mgi_accession_id} --"
+        puts "\n-- synchronize targ_vecs for #{mgi_accession_id} --"
         mol_struct.synchronize_targeting_vectors()
         # Then targeting vectors will sync their own ES cells
       end
