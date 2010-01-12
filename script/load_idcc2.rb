@@ -494,14 +494,12 @@ class MolecularStructure < IdccObject
   ].freeze
   ATTRIBUTES.each { |attr| attr_accessor attr }
   NOT_DUMPED = [:molecular_structure_id, :design_id, :targeted_trap]
-  @@instances = []
   
   def initialize( args = nil )
     mol_struct = super(args)
     mol_struct.es_cells = []
     mol_struct.targeting_vectors = []
     mol_struct.genbank_file = {}
-    @@instances.push( mol_struct )
     mol_struct
   end
   
@@ -666,7 +664,7 @@ class MolecularStructure < IdccObject
       begin
         targ_vec.push_to_idcc()
         
-        puts "-- synchronize es_cells for #{targeting_vector} | #{ikmc_project_id} --"
+        # puts "-- synchronize es_cells for #{targeting_vector} | #{ikmc_project_id} --"
         targ_vec.synchronize_es_cells
         
         htgt_targ_vec.push(targeting_vector)
@@ -812,12 +810,10 @@ class TargetingVector < IdccObject
   ].freeze
   ATTRIBUTES.each { |attr| attr_accessor attr }
   NOT_DUMPED = [:targeting_vector_id, :es_cells]
-  @@instances = []
   
   def initialize( args = nil )
     targ_vec = super( args )
     targ_vec.es_cells = []
-    @@instances.push( targ_vec )
     targ_vec
   end
   
