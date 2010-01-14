@@ -102,8 +102,7 @@ ORA_USER    = 'eucomm_vector'
 ORA_PASS    = 'eucomm_vector'
 ORA_DB      = 'migp_ha.world'
 IDCC_SITE   = 'http://htgt:htgt@www.i-dcc.org/dev/targ_rep/'
-# LOG_DIR     = '/software/team87/logs/idcc/htgt_load'
-LOG_DIR     = 'htgt_load'
+LOG_DIR     = '/software/team87/logs/idcc/htgt_load'
 GENBANK_URL = 'http://www.sanger.ac.uk/htgt/qc/seq_view_file'
 
 ##
