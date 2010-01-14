@@ -102,7 +102,8 @@ ORA_USER    = 'eucomm_vector'
 ORA_PASS    = 'eucomm_vector'
 ORA_DB      = 'migp_ha.world'
 IDCC_SITE   = 'http://htgt:htgt@www.i-dcc.org/dev/targ_rep/'
-LOG_DIR     = '/software/team87/logs/idcc/htgt_load'
+# LOG_DIR     = '/software/team87/logs/idcc/htgt_load'
+LOG_DIR     = 'htgt_load'
 GENBANK_URL = 'http://www.sanger.ac.uk/htgt/qc/seq_view_file'
 
 ##
@@ -413,11 +414,9 @@ class Design < IdccObject
     end
   end
   
-  def self.each_by( step_by = 1000 )
-    raise "step_by arg must be strictly positive" unless step_by > 0
-    
-    0.step( @@instances.length, step_by ) do |step_nb|
-      yield @@instances[step_nb..(step_nb + step_by - 1)]
+  def self.each_slice( chunk_length )
+    @@instances.each_slice( chunk_length ) do |design_array|
+      yield design_array
     end
   end
   
@@ -462,8 +461,6 @@ class Design < IdccObject
           end
         end
       end
-      
-      design.is_valid = true
     end
   end
   
@@ -580,7 +577,7 @@ class MolecularStructure < IdccObject
         response = request( 'POST', 'alleles.json', to_json )
         self.molecular_structure_id = JSON.parse(response)['id']
       rescue RestClient::Exception => e
-        log "[MOL STRUCT CREATION];Design ID:#{self.design_id} | #{self.mgi_accession_id} | #{self.cassette} | #{self.backbone};#{e.http_body}"
+        log "[MOL STRUCT CREATION];#{self.design_type} | Design ID:#{self.design_id} | #{self.mgi_accession_id} | #{self.cassette} | #{self.backbone};#{e.http_body}"
       end
     
     # ... or UPDATE it - if any change has been made
@@ -1146,7 +1143,7 @@ def load_idcc( changed_projects )
 
   #--- Prepare additional query conditions
   design_filter = ""    
-  Design.each_by(1000) do |design_list|
+  Design.each_slice(1000) do |design_list|
     designs_ids = []
     design_list.each do |design|
       designs_ids.push(design.design_id) if design.is_valid?
@@ -1259,21 +1256,24 @@ def load_idcc( changed_projects )
     # Cassette
     cassette_start  = nil
     cassette_end    = nil
-    if features['U5'] and features['U3']
+    if (design.design_type == 'Knock Out' and features['U5'] and features['U3']) \
+    or (design.design_type == 'Deletion' and features['U5'] and features['D3'])
       case design.strand
       when '+'
         cassette_start  = features['U5']['end']
-        cassette_end    = features['U3']['start']
+        cassette_end    = features['U3']['start'] if design.design_type == 'Knock Out'
+        cassette_end    = features['D3']['start'] if design.design_type == 'Deletion'
       when '-'
         cassette_start  = features['U5']['start']
-        cassette_end    = features['U3']['end']
+        cassette_end    = features['U3']['end'] if design.design_type == 'Knock Out'
+        cassette_end    = features['D3']['end'] if design.design_type == 'Deletion'
       end
     end
     
     # LoxP, unless targeted trap
     loxp_start  = nil
     loxp_end    = nil
-    unless targeted_trap
+    unless targeted_trap or design.design_type == 'Deletion'
       if features['D5'] and features['D3']
         case design.strand
         when '+'

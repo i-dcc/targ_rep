@@ -41,7 +41,6 @@ class TargetingVector < ActiveRecord::Base
 
   validates_presence_of :pipeline_id,             :on => :save
   validates_presence_of :molecular_structure_id,  :on => :save, :unless => :nested
-  validates_presence_of :ikmc_project_id,         :on => :create
   validates_presence_of :name,                    :on => :create
 
   attr_accessor :nested

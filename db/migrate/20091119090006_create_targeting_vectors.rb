@@ -7,7 +7,7 @@ class CreateTargetingVectors < ActiveRecord::Migration
       t.foreign_key :molecular_structures,    :dependent => :delete
       t.integer     :molecular_structure_id,  :null => false
       
-      t.string      :ikmc_project_id,         :null => false      
+      t.string      :ikmc_project_id
       t.string      :name,                    :null => false
       t.string      :intermediate_vector
       

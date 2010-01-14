@@ -13,7 +13,6 @@ class TargetingVectorTest < ActiveSupport::TestCase
   should_validate_presence_of :name
   should_validate_presence_of :pipeline_id
   should_validate_presence_of :molecular_structure_id
-  should_validate_presence_of :ikmc_project_id
   
   context "Targeting vector with empty attributes" do
     targ_vec = Factory.build( :invalid_targeting_vector )
