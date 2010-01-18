@@ -152,13 +152,14 @@ class MolecularStructure < ActiveRecord::Base
 
   protected
     def has_right_features
+      error_msg = "cannot be greater than %s position on this strand (#{strand})"
+      
       case strand
       when '+'
-        error_msg = "cannot be greater than %s position on this strand (+)"
-        if cassette_start > cassette_end
+        if cassette_start and cassette_end and cassette_start > cassette_end
           errors.add( :cassette_start, error_msg % "cassette end" )
         end
-        if homology_arm_start > homology_arm_end
+        if homology_arm_start and homology_arm_end and homology_arm_start > homology_arm_end
           errors.add( :homology_arm_start, error_msg % "homology arm end" )
         end
         if loxp_start and loxp_end and loxp_start > loxp_end
@@ -175,7 +176,6 @@ class MolecularStructure < ActiveRecord::Base
         end
       
       when '-'
-        error_msg = "cannot be greater than %s position on this strand (-)"
         if cassette_start and cassette_end and cassette_start < cassette_end
           errors.add( :cassette_start, error_msg % "cassette end" )
         end

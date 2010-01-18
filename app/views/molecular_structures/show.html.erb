@@ -120,19 +120,35 @@
           <th>ES Cell</th>
           <th>Targeting Vector</th>
           <th>Allele Symbol Superscript</th>
-          <th class="last">Parental Cell Line</th>
+          <th>Parental Cell Line</th>
+          <th>5' LR Check</th>
+          <th>3' LR Check</th>
+          <th>5' SR Check</th>
+          <th>3' SR Check</th>
         </thead>
         <tbody>
           <% @es_cells.each do |es_cell| %>
           <tr class="<%= cycle("odd", "even") %>">
             <td><%= es_cell.name %></td>
-            <td>
-              <% if es_cell.targeting_vector %>
-                <%= es_cell.targeting_vector.name %>
-              <% end %>
-            </td>
+            <td><% if es_cell.targeting_vector %><%= es_cell.targeting_vector.name %><% end -%></td>
             <td><%= es_cell.allele_symbol_superscript %></td>
             <td><%= es_cell.parental_cell_line %></td>
+            <td>
+              <% if es_cell.upper_LR_chk_passed == true %>
+                <%= image_tag "led-icons/accept.png", :alt => "Passed" %>
+              <% elsif es_cell.upper_LR_chk_passed == false %>
+                <%= image_tag "led-icons/cross.png", :alt => "Failed" %>
+              <% end -%>
+            </td>
+            <td>
+              <% if es_cell.lower_LR_chk_passed == true %>
+                <%= image_tag "led-icons/accept.png", :alt => "Passed" %>
+              <% elsif es_cell.lower_LR_chk_passed == false %>
+                <%= image_tag "led-icons/cross.png", :alt => "Failed" %>
+              <% end -%>
+            </td>
+            <td><%= es_cell.upper_SR_chk_passed %></td>
+            <td><%= es_cell.lower_SR_chk_passed %></td>
           </tr>
           <% end -%>
         </tbody>

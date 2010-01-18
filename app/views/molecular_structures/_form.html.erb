@@ -4,7 +4,7 @@
   </div>
 <% end %>
 
-<div class="span-12 last">
+<div class="span-24">
   <p>
     <%= f.label :mgi_accession_id, "MGI Accession ID" %><br />
     <%= f.text_field :mgi_accession_id, :class => :title %>
@@ -132,6 +132,10 @@
       <th>Targeting Vector</th>
       <th>Allele Symbol Superscript</th>
       <th>Parental Cell Line</th>
+      <th>5' LR Passed ?</th>
+      <th>3' LR Passed ?</th>
+      <th>5' SR Passed ?</th>
+      <th>3' SR Passed ?</th>
       <th class="last"></th>
     </thead>
     <tbody id="es_cells">

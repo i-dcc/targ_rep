@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 0) do
+ActiveRecord::Schema.define(:version => 20100118090008) do
 
   create_table "audits", :force => true do |t|
     t.integer  "auditable_id"
@@ -37,6 +37,12 @@ ActiveRecord::Schema.define(:version => 0) do
     t.integer  "updated_by"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "comment"
+    t.string   "contact"
+    t.boolean  "upper_LR_chk_passed"
+    t.boolean  "upper_SR_chk_passed"
+    t.boolean  "lower_LR_chk_passed"
+    t.boolean  "lower_SR_chk_passed"
   end
 
   add_index "es_cells", ["molecular_structure_id"], :name => "molecular_structure_id"
@@ -73,5 +79,48 @@ ActiveRecord::Schema.define(:version => 0) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "molecular_structures", ["assembly", "chromosome", "strand", "homology_arm_start", "homology_arm_end", "cassette_start", "cassette_end", "loxp_start", "loxp_end", "cassette", "backbone"], :name => "index_mol_struct", :unique => true
+
+  create_table "pipelines", :force => true do |t|
+    t.string   "name",       :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "targeting_vectors", :force => true do |t|
+    t.integer  "pipeline_id",            :null => false
+    t.integer  "molecular_structure_id", :null => false
+    t.string   "ikmc_project_id"
+    t.string   "name",                   :null => false
+    t.string   "intermediate_vector"
+    t.integer  "created_by"
+    t.integer  "updated_by"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "targeting_vectors", ["molecular_structure_id"], :name => "molecular_structure_id"
+  add_index "targeting_vectors", ["pipeline_id", "name"], :name => "index_targvec", :unique => true
+
+  create_table "users", :force => true do |t|
+    t.string   "username",                             :null => false
+    t.string   "email"
+    t.string   "crypted_password"
+    t.string   "password_salt"
+    t.string   "persistence_token"
+    t.datetime "last_login_at"
+    t.boolean  "is_admin",          :default => false, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_foreign_key "es_cells", "molecular_structures", :name => "es_cells_ibfk_1", :dependent => :delete
+  add_foreign_key "es_cells", "targeting_vectors", :name => "es_cells_ibfk_2", :dependent => :delete
+
+  add_foreign_key "genbank_files", "molecular_structures", :name => "genbank_files_ibfk_1", :dependent => :delete
+
+  add_foreign_key "targeting_vectors", "molecular_structures", :name => "targeting_vectors_ibfk_2", :dependent => :delete
+  add_foreign_key "targeting_vectors", "pipelines", :name => "targeting_vectors_ibfk_1", :dependent => :delete
 
 end

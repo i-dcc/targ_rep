@@ -23,7 +23,11 @@
       );
     </script>
   </td>
-  <td><%= f.text_field :parental_cell_line %></td>
   <td><%= f.text_field :allele_symbol_superscript %></td>
+  <td><%= f.text_field :parental_cell_line %></td>
+  <td><%= f.check_box  :upper_LR_chk_passed %></td>
+  <td><%= f.check_box  :lower_LR_chk_passed %></td>
+  <td><%= f.check_box  :upper_SR_chk_passed %></td>
+  <td><%= f.check_box  :lower_SR_chk_passed %></td>
   <td><%= remove_es_cell_link(f) %></td>
 </tr>
