@@ -13,10 +13,10 @@ class EsCell < ActiveRecord::Base
   #   updated_at                : datetime 
   #   comment                   : string 
   #   contact                   : string 
-  #   upper_LR_chk_passed       : boolean 
-  #   upper_SR_chk_passed       : boolean 
-  #   lower_LR_chk_passed       : boolean 
-  #   lower_SR_chk_passed       : boolean 
+  #   upper_LR_chk_passed       : integer 
+  #   upper_SR_chk_passed       : integer 
+  #   lower_LR_chk_passed       : integer 
+  #   lower_SR_chk_passed       : integer 
   # =======================
 
   acts_as_audited
