@@ -1,3 +1,5 @@
+<% options_for_checks = ['----------', 'Passed', 'Failed'] %>
+
 <tr class="es_cell">
   <td><%= f.text_field :name %></td>
   <td>
@@ -25,9 +27,9 @@
   </td>
   <td><%= f.text_field :allele_symbol_superscript %></td>
   <td><%= f.text_field :parental_cell_line %></td>
-  <td><%= f.check_box  :upper_LR_chk_passed %></td>
-  <td><%= f.check_box  :lower_LR_chk_passed %></td>
-  <td><%= f.check_box  :upper_SR_chk_passed %></td>
-  <td><%= f.check_box  :lower_SR_chk_passed %></td>
+  <td><%= f.select(:upper_LR_check, options_for_checks) %></td>
+  <td><%= f.select(:lower_LR_check, options_for_checks) %></td>
+  <td><%= f.select(:upper_SR_check, options_for_checks) %></td>
+  <td><%= f.select(:lower_SR_check, options_for_checks) %></td>
   <td><%= remove_es_cell_link(f) %></td>
 </tr>
