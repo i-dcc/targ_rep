@@ -39,10 +39,10 @@ ActiveRecord::Schema.define(:version => 20100118090008) do
     t.datetime "updated_at"
     t.string   "comment"
     t.string   "contact"
-    t.boolean  "upper_LR_chk_passed"
-    t.boolean  "upper_SR_chk_passed"
-    t.boolean  "lower_LR_chk_passed"
-    t.boolean  "lower_SR_chk_passed"
+    t.string   "upper_LR_check"
+    t.string   "upper_SR_check"
+    t.string   "lower_LR_check"
+    t.string   "lower_SR_check"
   end
 
   add_index "es_cells", ["molecular_structure_id"], :name => "molecular_structure_id"
