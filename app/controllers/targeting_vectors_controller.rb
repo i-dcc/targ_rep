@@ -99,6 +99,13 @@ class TargetingVectorsController < ApplicationController
   # PUT /targeting_vectors/1.xml
   # PUT /targeting_vectors/1.json
   def update
+    targ_vec_params = params[:targeting_vector]
+    if targ_vec_params.include? :es_cells 
+      if targ_vec_params[:es_cells].nil? or targ_vec_params[:es_cells].empty?
+        targ_vec_params.delete :es_cells
+      end
+    end
+    
     respond_to do |format|
       if @targeting_vector.update_attributes(params[:targeting_vector])
         format.xml  { head :ok }

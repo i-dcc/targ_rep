@@ -34,12 +34,10 @@
 #    update would take ages to run, the idea is to retrieve recently changed
 #    projects and recently changed products.
 #      * Get project_ids of interest.
-#      * Alleles are retrieved by 1000 designs (SQL 'IN' condition limit) and
-#        filtered on project_ids previously retrieved.
 #      * SQL query returns one row per allele (conditional or non-conditional)
 #      * For each fetched allele do:
 #        * Check if fetched allele exists in IDCC:
-#          - yes: IDCC allele is updated if any change has been made in HTGT
+#          - yes: IDCC allele is updated - if modified only
 #          - no: IDCC allele is created
 #        * Synchronize allele products between HTGT and IDCC:
 #          For each (HTGT - IDCC) product do:
@@ -59,9 +57,6 @@
 #
 # -p, --production:
 #     Insert the extracted HTGT data into the I-DCC production database
-#
-# -t, --test:
-#     Insert the extracted HTGT data into the I-DCC test database
 #
 # --no_genbank_files:
 #     Won't load genbank files from HTGT
@@ -97,12 +92,10 @@ REPORT_TO       = {
   'Sebastien Briois'  => 'sb25@sanger.ac.uk'
 }
 
-# When pushing live:
 ORA_USER    = 'eucomm_vector'
 ORA_PASS    = 'eucomm_vector'
 ORA_DB      = 'migp_ha.world'
 IDCC_SITE   = 'http://htgt:htgt@www.i-dcc.org/dev/targ_rep/'
-# IDCC_SITE   = 'http://htgt:htgt@localhost:3000/'
 LOG_DIR     = '/software/team87/logs/idcc/htgt_load'
 GENBANK_URL = 'http://www.sanger.ac.uk/htgt/qc/seq_view_file'
 
@@ -116,11 +109,15 @@ GENBANK_URL = 'http://www.sanger.ac.uk/htgt/qc/seq_view_file'
 @@start_date        = nil
 @@end_date          = nil
 
+# When test only
+@@idcc_site = 'http://htgt:htgt@localhost:3000/'
+@@ora_dbh   = OCI8.new(ORA_USER, ORA_PASS, 'migp_ha.world')
+@@log_dir   = 'htgt_load'
+
 # TODO: Remove "production" and "test" options when pushing live
 opts = GetoptLong.new(
   [ '--help',               '-h',   GetoptLong::NO_ARGUMENT ],
   [ '--production',         '-p',   GetoptLong::NO_ARGUMENT ],
-  [ '--test',               '-t',   GetoptLong::NO_ARGUMENT ],
   [ '--no_genbank_files',           GetoptLong::NO_ARGUMENT ],
   [ '--no_report',                  GetoptLong::NO_ARGUMENT ],
   [ '--debug',                      GetoptLong::NO_ARGUMENT ],
@@ -136,10 +133,6 @@ opts.each do |opt, arg|
       @@idcc_site = IDCC_SITE
       @@ora_dbh   = OCI8.new(ORA_USER, ORA_PASS, ORA_DB)
       @@log_dir   = LOG_DIR
-    when '--test'
-      @@idcc_site = 'http://htgt:htgt@localhost:3000/'
-      @@ora_dbh   = OCI8.new(ORA_USER, ORA_PASS, 'migp_ha.world')
-      @@log_dir   = 'htgt_load'
     when '--debug'
       @@debug = true
     when '--no_genbank_files'
@@ -155,147 +148,19 @@ end
 
 
 ##
-##  Helpers
+##  I-DCC classes
 ##
 
-def request(method, url, data = nil, datatype = "application/json", site = @@idcc_site)
-  resource = RestClient::Resource.new( site )
+class Pipeline
+  attr_accessor :id, :name
+  @@instances = []  
   
-  case method.upcase
-  when "GET"    then resource[url].get
-  when "POST"   then resource[url].post data, :content_type => datatype
-  when "PUT"    then resource[url].put  data, :content_type => datatype
-  when "DELETE" then resource[url].delete
-  else
-    raise "Method #{method} unknown when requesting url #{url}"
-  end
-end
-
-def log(message)
-  f = File.open("#{TODAY}/errors.txt", 'a')
-  f << "#{message}\n"
-  f.close()
-  puts "#{message}\n" if @@debug
-end
-
-def report
-  designs_file = File.open "#{TODAY}/invalid_designs.txt"
-  errors_file = File.open "#{TODAY}/errors.txt"
-  send_to = REPORT_TO.collect { |name, email| "#{name} <#{email}>" }.join(', ')
-  
-  email = <<-END_OF_MESSAGE
-From: I-DCC Loading Script <#{REPORT_FROM}>
-Subject: #{REPORT_SUBJECT}
-To: #{send_to}
-
-Invalid designs found:
-#{designs_file.readlines}
-
-Errors:
-#{errors_file.readlines}
-END_OF_MESSAGE
-
-  designs_file.close
-  errors_file.close
-  begin
-    Net::SMTP.start(SMTP_SERVER, SMTP_PORT) do |smtp|
-      smtp.sendmail(email, REPORT_FROM, REPORT_TO.values)
-    end
-  rescue Exception => e
-    log "Error: " + e
-  end
-end
-
-class Chrono
-  def initialize
-    @start = nil
-    @stop = nil
-  end
-  
-  def start
-    @stop  = nil
-    @start = Time.now
-  end
-  
-  def stop
-    @stop = Time.now if @stop.nil?
-    diff_time = @stop - @start.to_i
-    puts "#{diff_time.hour - 1}h #{diff_time.min}m #{diff_time.sec}s"
-  end
-end
-
-class IdccObject
-  # Holds common methods for Pipeline, Design and Allele classes
-  
-  def initialize( args = nil )
-    @ATTRIBUTES = self.class.const_get 'ATTRIBUTES'
-    
-    @ATTRIBUTES.each do |attr|
-      if args.key? attr
-        instance_variable_set("@#{attr}", args[attr])
-      elsif args.key? attr.to_s
-        instance_variable_set("@#{attr}", args[attr.to_s])
-      end
-    end
-    
+  def initialize( id, name )
+    @id, @name = id, name
+    @@instances.push( self )
     return self
   end
   
-  def self.get( instance_id )
-    instances = self.class_eval "@@instances"
-    instances.each do |instance|
-      if instance.instance_eval("@#{self.name.downcase}_id").to_s == instance_id.to_s
-        return instance
-      end
-    end
-    nil
-  end
-  
-  def self.delete( instance )
-    instances = self.class_eval "@@instances"
-    instances.delete( instance )
-    instance = nil
-  end
-  
-  def self.each
-    instances = self.class_eval "@@instances"
-    instances.each { |instance| yield instance }
-    instances.length
-  end
-  
-  def self.count
-    instances = self.class_eval "@@instances"
-    instances.length
-  end
-  
-  def to_hash
-    @NOT_DUMPED = self.class.const_get 'NOT_DUMPED'
-    ( @ATTRIBUTES - @NOT_DUMPED ).inject({ }) do |h, attr|
-      attr_value = instance_variable_get "@#{attr}"
-      h[attr.to_s] = attr_value ? attr_value : ''
-      h
-    end
-  end
-  
-  def to_json
-    JSON.generate( {self.class.name.downcase => to_hash()} )
-  end
-end
-
-class Pipeline < IdccObject
-  ATTRIBUTES = [:id, :name].freeze
-  ATTRIBUTES.each { |attr| attr_accessor attr }
-  NOT_DUMPED = []
-  
-  @@instances = []
-  
-  def initialize( args = nil )
-    pipeline = super(args)
-    @@instances.push( pipeline )
-    pipeline
-  end
-  
-  # Get IDCC pipelines or create them if they do not exist.
   def self.get_or_create
     response = request( 'GET', 'pipelines.json' )
     pipeline_list = JSON.parse(response)
@@ -303,16 +168,20 @@ class Pipeline < IdccObject
     # GET 
     if pipeline_list.size > 0
       pipeline_list.each do |pipeline|
-        Pipeline.new({ :id => pipeline['id'], :name => pipeline['name'] })
+        Pipeline.new( pipeline['id'], pipeline['name'] )
       end
     # CREATE
     else
       ['KOMP-CSD', 'EUCOMM', 'KOMP-Regeneron', 'NorCOMM'].each do |pipeline|
-        json = JSON.generate( {'pipeline' => { 'name' => pipeline }} )
+        json = JSON.generate({ 'pipeline' => { 'name' => pipeline } })
         response = request( 'POST', 'pipelines.json', json )
         pipeline = JSON.parse( response )
-        Pipeline.new({ :id => pipeline['id'], :name => pipeline['name'] })
+        Pipeline.new( pipeline['id'], pipeline['name'] )
       end
+    end
+    
+    @@instances.each do |pipeline|
+      puts "Pipeline loaded: id #{pipeline.id} name #{pipeline.name}"
     end
   end
   
@@ -323,23 +192,33 @@ class Pipeline < IdccObject
   end
 end
 
-class Design < IdccObject
-  ATTRIBUTES = [
-    :design_id, :features, :design_type, :subtype, :subtype_description,
-    :assembly_name, :chromosome, :strand, 
-    :homology_arm_start, :homology_arm_end, :cassette_start, :cassette_end,
-    :loxp_start, :loxp_end, :is_valid, :invalid_msg
-  ].freeze
-  ATTRIBUTES.each { |attr| attr_accessor attr }
-  NOT_DUMPED = []
+class Design
+  attr_accessor :id, :design_type, :subtype, :subtype_description
+  attr_accessor :assembly_name, :chromosome, :strand
+  attr_accessor :homology_arm_start, :homology_arm_end
+  attr_accessor :cassette_start, :cassette_end
+  attr_accessor :loxp_start, :loxp_end
+  attr_accessor :is_valid, :invalid_msg
+  attr_accessor :features
+  
   @@instances = []
   
-  def initialize( args = nil )
-    design = super(args)
+  def initialize( design_id )
+    @id = design_id
     @features = {}
-    design.is_valid = true
-    @@instances.push( design )
-    design
+    @is_valid = true
+    @@instances.push( self )
+    return self
+  end
+  
+  def self.get( design_id )
+    @@instances.each { |design| return design if design.id == design_id }
+  end
+  
+  def self.each_slice( chunk_length )
+    @@instances.each_slice( chunk_length ) do |design_array|
+      yield design_array
+    end
   end
   
   def self.retrieve_from_htgt
@@ -375,23 +254,23 @@ class Design < IdccObject
       design_id = fetch_row[0]
       
       # 1- Same design as fetched previously
-      if current_design and design_id == current_design.design_id
-        next unless current_design.is_valid?
+      if current_design and design_id == current_design.id
+        next unless current_design.is_valid
       
       # 2- New design found
       else
-        design_type = fetch_row[1] == 'Del_Block' ? 'Deletion' : 'Knock Out'
+        if current_design
+          current_design.validate()
+          current_design.set_features() if current_design.is_valid
+        end
         
-        current_design =
-        Design.new({
-          :design_id           => design_id,
-          :design_type         => design_type,
-          :subtype             => fetch_row[2],
-          :subtype_description => fetch_row[3],
-          :strand              => fetch_row[7],
-          :assembly_name       => fetch_row[8],
-          :chromosome          => fetch_row[9]
-        })
+        current_design = Design.new( design_id )
+        current_design.design_type         = fetch_row[1] == 'Del_Block' ? 'Deletion' : 'Knock Out'
+        current_design.subtype             = fetch_row[2]
+        current_design.subtype_description = fetch_row[3]
+        current_design.strand              = fetch_row[7]
+        current_design.assembly_name       = fetch_row[8]
+        current_design.chromosome          = fetch_row[9]
       end
       
       # Populate design with feature or set it as invalid design if 
@@ -400,236 +279,239 @@ class Design < IdccObject
       feature_start = fetch_row[5]
       feature_end   = fetch_row[6]
       
-      feature = current_design.features[feature_name]
+      feature = current_design.features[ feature_name ]
       if feature.nil?
         current_design.features[feature_name] = {
           'start' => feature_start,
           'end'   => feature_end
         }
       elsif feature['start'] != feature_start
-        current_design.invalid_msg = "multiple start positions found for #{feature_name}"
+        log "Design #{design_id};multiple start positions found for #{feature_name}"
         current_design.is_valid = false
       elsif feature['end'] != feature_end
-        current_design.invalid_msg = "multiple end positions found for #{feature_name}"
+        log "Design #{design_id};multiple end positions found for #{feature_name}"
         current_design.is_valid = false
       end
     end
   end
   
-  def self.set_features
-    @@instances.each do |design|
-      next unless design.is_valid?
-      
-      features  = design.features
-      
-      #
-      # Homology Arm
-      #
-      homology_arm_start  = nil
-      homology_arm_end    = nil
-      if features['G5'] and features['G3']
-        case design.strand
-        when '+'
-          homology_arm_start  = features['G5']['end']
-          homology_arm_end    = features['G3']['start']
-        when '-'
-          homology_arm_start  = features['G5']['start']
-          homology_arm_end    = features['G3']['end']
-        end
-      end
-      
-      #
-      # Cassette
-      #
-      cassette_start  = nil
-      cassette_end    = nil
-      if (design.design_type == 'Knock Out' and features['U5'] and features['U3']) \
-      or (design.design_type == 'Deletion' and features['U5'] and features['D3'])
-        case design.strand
-        when '+'
-          cassette_start  = features['U5']['end']
-          cassette_end    = features['U3']['start'] if design.design_type == 'Knock Out'
-          cassette_end    = features['D3']['start'] if design.design_type == 'Deletion'
-        when '-'
-          cassette_start  = features['U5']['start']
-          cassette_end    = features['U3']['end'] if design.design_type == 'Knock Out'
-          cassette_end    = features['D3']['end'] if design.design_type == 'Deletion'
-        end
-      end
-      
-      #
-      # LoxP, unless targeted trap
-      #
-      loxp_start  = nil
-      loxp_end    = nil
-      unless design.design_type == 'Deletion'
-        if features['D5'] and features['D3']
-          case design.strand
-          when '+'
-            loxp_start  = features['D5']['end']
-            loxp_end    = features['D3']['start']
-          when '-'
-            loxp_start  = features['D5']['start']
-            loxp_end    = features['D3']['end']
-          end
-        end
-      end
-      
-      # Set features positions
-      design.homology_arm_start = homology_arm_start
-      design.homology_arm_end   = homology_arm_end
-      design.cassette_start     = cassette_start
-      design.cassette_end       = cassette_end
-      design.loxp_start         = loxp_start
-      design.loxp_end           = loxp_end
-    end
-  end
-  
-  def self.each_slice( chunk_length )
-    @@instances.each_slice( chunk_length ) do |design_array|
-      yield design_array
-    end
-  end
-  
-  # Perform validation on all valid designs (pointless on invalid designs)
-  def self.validation
-    @@instances.each do |design|
-      next unless design.is_valid?
-      
-      # Knockout type
-      if design.design_type == 'Knock Out'
-        ['G3', 'G5', 'U3', 'U5', 'D3', 'D5'].each do |feature_name|
-          next unless design.is_valid?
-          
-          feature = design.features[feature_name]
-          if feature.nil?
-            design.invalid_msg = "#{feature_name} is missing."
-            design.is_valid = false
-          elsif feature['start'].nil?
-            design.invalid_msg = "#{feature_name} ``start`` is missing."
-            design.is_valid = false
-          elsif feature['end'].nil?
-            design.invalid_msg = "#{feature_name} ``end`` is missing."
-            design.is_valid = false
-          end
-        end
-        
-      # Deletion type
-      else
-        ['U5', 'D3', 'G3', 'G5'].each do |feature_name|
-          next unless design.is_valid?
-          
-          feature = design.features[feature_name]
-          if feature.nil?
-            design.invalid_msg = "#{feature_name} is missing."
-            design.is_valid = false
-          elsif feature['start'].nil?
-            design.invalid_msg = "#{feature_name} ``start`` is missing."
-            design.is_valid = false
-          elsif feature['end'].nil?
-            design.invalid_msg = "#{feature_name} ``end`` is missing."
-            design.is_valid = false
-          end
-        end
-      end
-    end
-  end
-  
-  def self.log
-    invalid_designs_file  = File.open("#{TODAY}/invalid_designs.txt", 'w')
+  def set_features
+    next unless @is_valid
     
-    Design.each do |design|
-      unless design.is_valid?
-        invalid_designs_file << "#{design.design_id};#{design.invalid_msg}\n"
+    #
+    # Homology Arm
+    #
+    if @features['G5'] and @features['G3']
+      case @strand
+      when '+'
+        @homology_arm_start  = @features['G5']['end']
+        @homology_arm_end    = @features['G3']['start']
+      when '-'
+        @homology_arm_start  = @features['G5']['start']
+        @homology_arm_end    = @features['G3']['end']
       end
+    else
+      @homology_arm_start, @homology_arm_end = nil, nil
     end
     
-    invalid_designs_file.close
+    #
+    # Cassette
+    #
+    if (@design_type == 'Knock Out' and @features['U5'] and @features['U3']) \
+    or (@design_type == 'Deletion' and @features['U5'] and @features['D3'])
+      case @strand
+      when '+'
+        @cassette_start  = @features['U5']['end']
+        @cassette_end    = @features['U3']['start'] if @design_type == 'Knock Out'
+        @cassette_end    = @features['D3']['start'] if @design_type == 'Deletion'
+      when '-'
+        @cassette_start  = @features['U5']['start']
+        @cassette_end    = @features['U3']['end'] if @design_type == 'Knock Out'
+        @cassette_end    = @features['D3']['end'] if @design_type == 'Deletion'
+      end
+    else
+      @cassette_start, @cassette_end = nil, nil
+    end
+    
+    #
+    # LoxP, unless targeted trap
+    #
+    unless @design_type == 'Deletion'
+      if @features['D5'] and @features['D3']
+        case @strand
+        when '+'
+          @loxp_start  = @features['D5']['end']
+          @loxp_end    = @features['D3']['start']
+        when '-'
+          @loxp_start  = @features['D5']['start']
+          @loxp_end    = @features['D3']['end']
+        end
+      end
+    else
+      @loxp_start, @loxp_end = nil, nil
+    end
   end
   
-  def is_valid?
-    self.is_valid == true
+  def validate
+    return if not @is_valid
+    
+    # Knockout type
+    if @design_type == 'Knock Out'
+      ['G3', 'G5', 'U3', 'U5', 'D3', 'D5'].each do |feature_name|
+        feature = @features[feature_name]
+        if feature.nil?
+          log "Design #{id};#{feature_name} is missing."
+          @is_valid = false
+        elsif feature['start'].nil?
+          log "Design #{id};#{feature_name} ``start`` is missing."
+          @is_valid = false
+        elsif feature['end'].nil?
+          log "Design #{id};#{feature_name} ``end`` is missing."
+          @is_valid = false
+        end
+        return unless @is_valid
+      end
+      
+    # Deletion type
+    else
+      ['U5', 'D3', 'G3', 'G5'].each do |feature_name|
+        feature = @features[feature_name]
+        if feature.nil?
+          log "Design #{id};#{feature_name} is missing."
+          @is_valid = false
+        elsif feature['start'].nil?
+          log "Design #{id};#{feature_name} ``start`` is missing."
+          @is_valid = false
+        elsif feature['end'].nil?
+          log "Design #{id};#{feature_name} ``end`` is missing."
+          @is_valid = false
+        end
+        return unless @is_valid
+      end
+    end
   end
 end
 
-class MolecularStructure < IdccObject
-  ATTRIBUTES = [
-    :molecular_structure_id, :design_id, :mgi_accession_id, :chromosome, :strand,
-    :design_type, :design_subtype, :subtype_description, :cassette, :backbone,
-    :cassette_start, :cassette_end, :loxp_start, :loxp_end, 
-    :homology_arm_start, :homology_arm_end, :targeted_trap, 
-    :targeting_vectors, :es_cells, :genbank_file
-  ].freeze
-  ATTRIBUTES.each { |attr| attr_accessor attr }
-  NOT_DUMPED = [:molecular_structure_id, :design_id, :targeted_trap]
+class MolecularStructure
+  attr_accessor :id, :mgi_accession_id
+  attr_accessor :design_id, :design_type, :design_subtype, :subtype_description
+  attr_accessor :chromosome, :strand, :cassette, :backbone
+  attr_accessor :cassette_start, :cassette_end, :loxp_start, :loxp_end
+  attr_accessor :homology_arm_start, :homology_arm_end
+  attr_accessor :targeting_vectors, :es_cells, :genbank_file
+  attr_accessor :targeted_trap
   
-  def initialize( args = nil )
-    mol_struct = super(args)
-    mol_struct.es_cells = []
-    mol_struct.targeting_vectors = []
-    mol_struct.genbank_file = {}
-    mol_struct
+  def initialize( args )
+    args.each_pair do | key, value |
+      self.send("#{key}=", value) if self.respond_to?("#{key}=")
+    end
+    return self
   end
   
   def to_json
-    JSON.generate( { "molecular_structure" => to_hash() } )
+    JSON.generate({
+      'molecular_structure' => {
+        'mgi_accession_id'     => @mgi_accession_id,
+        'cassette'             => @cassette,
+        'backbone'             => @backbone,
+        'chromosome'           => @chromosome,
+        'strand'               => @strand,
+        'design_type'          => @design_type,
+        'design_subtype'       => @design_subtype,
+        'subtype_description'  => @subtype_description,
+        'homology_arm_start'   => @homology_arm_start,
+        'homology_arm_end'     => @homology_arm_end,
+        'cassette_start'       => @cassette_start,
+        'cassette_end'         => @cassette_end,
+        'loxp_start'           => @loxp_start,
+        'loxp_end'             => @loxp_end,
+        'genbank_file'         => @genbank_file
+      }
+    })
   end
   
   def has_changed( mol_struct_hash )
-    not_checked = NOT_DUMPED + [:targeting_vectors, :es_cells]
-    not_checked.push(:genbank_file) if @@no_genbank_files
-    
-    (ATTRIBUTES - not_checked).each do |attr|
-      self_value  = self.instance_variable_get "@#{attr}"
-      other_value = mol_struct_hash[ attr.to_s ]
-      unless self_value.to_s == other_value.to_s
-        if attr.to_s == 'genbank_file'
-          log "[MOL STRUCT CHANGES];#{self.molecular_structure_id};genbank_file"
-        else
-          log "[MOL STRUCT CHANGES];#{self.molecular_structure_id};#{attr};'#{other_value}' -> '#{self_value}'"
-        end
-        return true
-      end
+    if @mgi_accession_id    != mol_struct_hash['mgi_accession_id']    \
+    or @design_type         != mol_struct_hash['design_type']         \
+    or @design_subtype      != mol_struct_hash['design_subtype']      \
+    or @subtype_description != mol_struct_hash['subtype_description'] \
+    or @chromosome          != mol_struct_hash['chromosome']          \
+    or @strand              != mol_struct_hash['strand']              \
+    or @cassette            != mol_struct_hash['cassette']            \
+    or @backbone            != mol_struct_hash['backbone']            \
+    or @homology_arm_start  != mol_struct_hash['homology_arm_start']  \
+    or @homology_arm_end    != mol_struct_hash['homology_arm_end']    \
+    or @cassette_start      != mol_struct_hash['cassette_start']      \
+    or @cassette_end        != mol_struct_hash['cassette_end']        \
+    or @loxp_start          != mol_struct_hash['loxp_start']          \
+    or @loxp_end            != mol_struct_hash['loxp_end']            \
+    or ( @@no_genbank_files == false and @genbank_file != mol_struct_hash['genbank_file'] )
+      log "[MOL STRUCT CHANGES];#{@id};"
+      return true
+    else
+      return false
     end
-    false
   end
   
   def create
+    # Used for loging/identify mol struct on error. 
+    # If to_json() is used instead, you'll have the genbank file printed out
+    dump_for_error = "#{@design_type} | Design ID: #{@design_id} | #{@mgi_accession_id}"
+    
     begin
-      response = request( 'POST', 'alleles.json', to_json )
-      self.molecular_structure_id = JSON.parse( response )['id']
+      response = request( 'POST', 'alleles.json', to_json() )
+      @id = JSON.parse( response )['id']
     rescue RestClient::RequestFailed => e
-      log "[MOL STRUCT CREATION];#{self.design_type} | Design ID:#{self.design_id} | #{self.mgi_accession_id} | #{self.cassette} | #{self.backbone};#{e.http_body}"
+      log "[MOL STRUCT CREATION];#{dump_for_error};#{e.http_body}"
+    rescue RestClient::ServerBrokeConnection
+      log "[MOL STRUCT CREATION];#{dump_for_error};The server broke the connection prior to the request completing."
+    rescue RestClient::RequestTimeout
+      log "[MOL STRUCT CREATION];#{dump_for_error};Request timed out"
+    rescue RestClient::Exception => e
+      log "[MOL STRUCT CREATION];#{dump_for_error};#{e}"
     end
   end
   
   def update( mol_struct_hash )
-    self.molecular_structure_id = mol_struct_hash['id']
-    self.targeting_vectors      = mol_struct_hash['targeting_vectors']
-    self.es_cells               = mol_struct_hash['es_cells']
+    # Used for loging/identify mol struct on error. 
+    # If to_json() is used instead, you'll have the genbank file printed out
+    dump_for_error = "#{@design_type} | Design ID: #{@design_id} | #{@mgi_accession_id}"
+    
+    @id                = mol_struct_hash['id']
+    @targeting_vectors = mol_struct_hash['targeting_vectors']
+    @es_cells          = mol_struct_hash['es_cells']
     
     if has_changed( mol_struct_hash )
       begin
-        response = request( 'PUT', "alleles/#{self.molecular_structure_id}.json", to_json )
+        response = request( 'PUT', "alleles/#{@id}.json", to_json() )
       rescue RestClient::RequestFailed
-        log "[MOL STRUCT UPDATE];#{JSON.parse(response)}" if response
+        if response
+          log "[MOL STRUCT UPDATE];#{JSON.parse(response)}"
+        else
+          log "[MOL STRUCT UPDATE];#{dump_for_error};#{e.http_body}"
+        end
+      rescue RestClient::ServerBrokeConnection
+        log "[MOL STRUCT UPDATE];#{dump_for_error};The server broke the connection prior to the request completing."
+      rescue RestClient::RequestTimeout
+        log "[MOL STRUCT UPDATE];#{dump_for_error};Request timed out"
+      rescue RestClient::Exception => e
+        log "[MOL STRUCT UPDATE];#{dump_for_error};#{e}"
       end
     end
   end
   
-  def search_idcc
-    params = "mgi_accession_id=#{self.mgi_accession_id}"
-    params += "&chromosome=#{self.chromosome}"
-    params += "&strand=#{self.strand}"
-    params += "&homology_arm_start=#{self.homology_arm_start}"
-    params += "&homology_arm_end=#{self.homology_arm_end}"
-    params += "&cassette_start=#{self.cassette_start}"
-    params += "&cassette_end=#{self.cassette_end}"
-    params += "&cassette=#{self.cassette}"
-    params += "&backbone=#{CGI::escape( self.backbone )}"
+  def search
+    params =  "mgi_accession_id=#{@mgi_accession_id}"
+    params += "&chromosome=#{@chromosome}&strand=#{@strand}"
+    params += "&homology_arm_start=#{@homology_arm_start}"
+    params += "&homology_arm_end=#{@homology_arm_end}"
+    params += "&cassette_start=#{@cassette_start}"
+    params += "&cassette_end=#{@cassette_end}"
+    params += "&cassette=#{@cassette}"
+    params += "&backbone=#{CGI::escape( @backbone )}"
     
-    if self.loxp_start and self.loxp_end
-      params += "&loxp_start=#{self.loxp_start}&loxp_end=#{self.loxp_end}"
+    unless @loxp_start.nil? or @loxp_end.nil?
+      params += "&loxp_start=#{@loxp_start}&loxp_end=#{@loxp_end}"
     else
       params += "&loxp_start=null&loxp_end=null" # important!
     end
@@ -639,48 +521,31 @@ class MolecularStructure < IdccObject
   end
   
   def get_genbank_files
-    base_params = "?cassette=#{self.cassette}&design_id=#{self.design_id}"
-    
     # Targeting vector
-    begin
-      params = base_params + "&backbone=#{self.backbone}"
-      resource = RestClient::Resource.new( GENBANK_URL )
-      targ_vec_file = resource["?#{params}"].get
-    rescue RestClient::Exception => e
-      targ_vec_file = ''
-    end
+    url = GENBANK_URL + "?design_id=#{@design_id}&cassette=#{@cassette}&backbone=#{@backbone}"
+    targ_vec_file = RestClient::get( url ) rescue ''
     
     # ES Cell clone
-    begin
-      base_params += "&targeted_trap=1" if self.targeted_trap
-      resource = RestClient::Resource.new( GENBANK_URL )
-      escell_file = resource["?#{params}"].get
-    rescue RestClient::Exception => e
-      escell_file = ''
-    end
+    url = GENBANK_URL + "?design_id=#{@design_id}&cassette=#{@cassette}"
+    url += "&targeted_trap=1" if @targeted_trap
+    escell_file = RestClient::get( url ) rescue ''
     
-    self.genbank_file = {
+    @genbank_file = {
       :escell_clone     => escell_file,
       :targeting_vector => targ_vec_file
     }
   end
   
   def push_to_idcc
-    mol_struct_hash = search_idcc()
-    
     # Include genbank files if script option is on
     get_genbank_files() unless @@no_genbank_files
     
-    # CREATE or UPDATE molecular structure whether it has been found or not
-    if mol_struct_hash.nil?
-      create()
-    else
-      update( mol_struct_hash )
-    end
+    existing_mol_struct = search()
+    existing_mol_struct.nil? ? create() : update( existing_mol_struct )
   end
   
   def synchronize_targeting_vectors
-    return unless self.molecular_structure_id
+    return unless @id
     
     query =
     """
@@ -688,8 +553,8 @@ class MolecularStructure < IdccObject
       project.project_id,
       pcs_plate_name || '_' || pcs_well_name as intermediate_vector,
       pgdgr_plate_name || '_' || pgdgr_well_name as targeting_vector,
-      is_eucomm, 
-      is_komp_csd, 
+      is_eucomm,
+      is_komp_csd,
       is_norcomm
     FROM
       project
@@ -701,10 +566,10 @@ class MolecularStructure < IdccObject
         OR project.is_komp_csd = 1
         OR project.is_norcomm = 1
       )
-      AND mgi_gene.mgi_accession_id = '#{self.mgi_accession_id}'
-      AND project.design_id = '#{self.design_id}'
-      AND project.cassette  = '#{self.cassette}'
-      AND project.backbone  = '#{self.backbone}'
+      AND mgi_gene.mgi_accession_id = '#{@mgi_accession_id}'
+      AND project.design_id = '#{@design_id}'
+      AND project.cassette  = '#{@cassette}'
+      AND project.backbone  = '#{@backbone}'
       AND (pgdgr_distribute = 'yes' OR ws.epd_distribute = 'yes')
       AND pgdgr_well_name IS NOT NULL
     """
@@ -715,55 +580,45 @@ class MolecularStructure < IdccObject
       raise
     end
     
-    htgt_targ_vec = []
+    htgt_targ_vec_list = []
     
     cursor.fetch do |fetch_row|
-      ikmc_project_id       = fetch_row[0]
-      intermediate_vector   = fetch_row[1]
-      targeting_vector      = fetch_row[2]
-      is_eucomm             = fetch_row[3] == 1
-      is_komp_csd           = fetch_row[4] == 1
-      is_norcomm            = fetch_row[5] == 1
+      ikmc_project_id = fetch_row[0]
+      int_vec         = fetch_row[1]
+      targ_vec        = fetch_row[2]
+      is_eucomm       = fetch_row[3] == 1
+      is_komp_csd     = fetch_row[4] == 1
+      is_norcomm      = fetch_row[5] == 1
       
-      #-- Pipeline id
+      # Get pipeline ID
       pipeline_id =
-      if is_eucomm then Pipeline.get_id_from('EUCOMM')
+      if    is_eucomm   then Pipeline.get_id_from('EUCOMM')
       elsif is_komp_csd then Pipeline.get_id_from('KOMP-CSD')
-      elsif is_norcomm then Pipeline.get_id_from('NorCOMM')
+      elsif is_norcomm  then Pipeline.get_id_from('NorCOMM')
       end
       next if pipeline_id.nil?
       
-      targ_vec = TargetingVector.new({
-        :molecular_structure_id => self.molecular_structure_id,
+      # Create new targeting vector instance
+      tv = TargetingVector.new({
+        :molecular_structure_id => @id,
         :pipeline_id            => pipeline_id,
         :ikmc_project_id        => ikmc_project_id,
-        :intermediate_vector    => intermediate_vector,
-        :name                   => targeting_vector
+        :intermediate_vector    => int_vec,
+        :name                   => targ_vec,
+        :es_cells               => []
       })
       
-      begin
-        targ_vec.push_to_idcc()
-        
-        targ_vec.synchronize_es_cells
-        
-        htgt_targ_vec.push(targeting_vector)
-        
-      rescue RestClient::ServerBrokeConnection
-        log "[TARG VEC];#{targ_vec.to_json()};The server broke the connection \
-prior to the request completing. Usually this means it crashed, or sometimes \
-that your network connection was severed before it could complete."
-      rescue RestClient::RequestTimeout
-        log "[TARG VEC];#{targ_vec.to_json()};Request timed out"
-      rescue RestClient::Exception => e
-        log "[TARG VEC];#{targ_vec.to_json()};#{e}"
-      end
+      # Create or update targeting vector and its ES cells in I-DCC
+      tv.push_to_idcc()
+      tv.synchronize_es_cells()
+      
+      # Keep track of HTGT's targeting vectors fetched
+      htgt_targ_vec_list.push( targ_vec )
     end
     
-    #
-    # DELETE targ vec
-    #
-    self.targeting_vectors.each do |targ_vec|
-      unless htgt_targ_vec.include? targ_vec['name']
+    # DELETE targ vec if no longer exist in HTGT
+    @targeting_vectors.each do |targ_vec|
+      unless htgt_targ_vec_list.include? targ_vec['name']
         begin
           request( 'DELETE', "targeting_vectors/#{targ_vec['id']}" )
         rescue RestClient::RequestFailed => e
@@ -774,7 +629,7 @@ that your network connection was severed before it could complete."
   end
   
   def synchronize_es_cells
-    return unless self.molecular_structure_id and self.targeted_trap
+    return unless @id and @targeted_trap
     
     query =
     """
@@ -788,10 +643,9 @@ that your network connection was severed before it could complete."
       JOIN mgi_gene              ON mgi_gene.mgi_gene_id = project.mgi_gene_id
     WHERE
       epd_well_name IS NOT NULL
-      AND ws.epd_distribute IS NULL
       AND ws.targeted_trap = 'yes'
-      AND ws.pgdgr_plate_name IS NOT NULL
-      AND mgi_gene.mgi_accession_id = '#{self.mgi_accession_id}'
+      AND ws.pgdgr_well_name IS NOT NULL
+      AND mgi_gene.mgi_accession_id = '#{@mgi_accession_id}'
     """
     
     begin
@@ -802,23 +656,27 @@ that your network connection was severed before it could complete."
     end
     
     htgt_products = {}
+    idcc_products = []
+    
+    # Fetch HTGT ES Cells
     cursor.fetch do |fetch_row|
       htgt_products[fetch_row[0]] = {
-        'parental_cell_line'        => format_parental_cell_line( fetch_row[1] ),
-        'allele_symbol_superscript' => get_allele_symbol_superscript( fetch_row[2] )
+        :parental_cell_line        => format_parental_cell_line( fetch_row[1] ),
+        :allele_symbol_superscript => format_allele_symbol_superscript( fetch_row[2] )
       }
     end
     
-    idcc_products = []
-    unless self.es_cells.nil? or self.es_cells.empty?
-      self.es_cells.each { |es_cell| idcc_products.push(es_cell['name']) }
+    # Dump Molecular Structure's ES Cells names into idcc_products list
+    # Those are retrieved from I-DCC when searching for a similar mol struct
+    unless @es_cells.nil? or @es_cells.empty?
+      @es_cells.each { |es_cell| idcc_products.push(es_cell['name']) }
     end
     
     #
     #  DELETE ES Cells
     #
     if (idcc_products - htgt_products.keys).length > 0
-      self.es_cells.each do |es_cell|
+      @es_cells.each do |es_cell|
         next if es_cell.empty?
         
         unless htgt_products.keys.include? es_cell['name']
@@ -832,125 +690,109 @@ that your network connection was severed before it could complete."
     end
     
     #
-    #  CREATE / UPDATE ES Cells
+    #  CREATE or UPDATE ES Cells
     #
     (htgt_products.keys - idcc_products).each do |product_name|
-      htgt_product = htgt_products[product_name]
+      es_cell = EsCell.new({
+        :molecular_structure_id    => @id,
+        :name                      => product_name,
+        :parental_cell_line        => htgt_products[product_name][:parental_cell_line],
+        :allele_symbol_superscript => htgt_products[product_name][:allele_symbol_superscript]
+      })
+      existing_es_cell = es_cell.search()
       
-      # Search product in IDCC - ie. linked to another allele
-      response = request( 'GET', "products.json?name=#{product_name}" )
-      product_list = JSON.parse( response )
-      product_found = product_list.length > 0 ? product_list[0] : nil
-      
-      es_cell = {
-        'molecular_structure_id'    => self.molecular_structure_id,
-        'name'                      => product_name,
-        'parental_cell_line'        => htgt_product['parental_cell_line'],
-        'allele_symbol_superscript' => htgt_product['allele_symbol_superscript']
-      }
-      
-      if product_found and product_found['targeting_vector_id']
-        es_cell.update({ 'targeting_vector_id' => product_found['targeting_vector_id'] })
-      end
-      
-      json = JSON.generate({ 'es_cell' => es_cell })
-      
-      #
-      #  UPDATE - if changed
-      #
-      if product_found
-        if product_found['molecular_structure_id'] != self.molecular_structure_id \
-        or product_found['parental_cell_line'] != htgt_product['parental_cell_line'] \
-        or product_found['allele_symbol_superscript'] != htgt_product['allele_symbol_superscript']
-          begin
-            response = request( 'PUT', "products/#{product_found['id']}.json", json )
-          rescue RestClient::RequestFailed => e
-            log "[ES CELL UPDATE];#{json};#{e.http_body}"
-          end
-        end
-      
-      #
-      #  CREATE
-      #
+      if existing_es_cell
+        es_cell.id                  = existing_es_cell['id']
+        es_cell.targeting_vector_id = existing_es_cell['targeting_vector_id']
+        es_cell.update() if es_cell.has_changed( existing_es_cell, true )
       else
-        begin
-          response = request( 'POST', 'products.json', json )
-        rescue RestClient::RequestFailed => e
-          log "[ES CELL CREATION - MOL STRUCT];#{json};#{e.http_body}"
-        end
+        es_cell.create()
       end
     end
   end
 end
 
-class TargetingVector < IdccObject
-  ATTRIBUTES = [
-    :targeting_vector_id,
-    :ikmc_project_id, :intermediate_vector, :name,
-    :molecular_structure_id, :pipeline_id, :es_cells
-  ].freeze
-  ATTRIBUTES.each { |attr| attr_accessor attr }
-  NOT_DUMPED = [:targeting_vector_id, :es_cells]
+class TargetingVector
+  attr_accessor :id, :pipeline_id, :molecular_structure_id
+  attr_accessor :ikmc_project_id, :intermediate_vector, :name
+  attr_accessor :es_cells
   
-  def initialize( args = nil )
-    targ_vec = super( args )
-    targ_vec.es_cells = []
-    targ_vec
+  def initialize( args )
+    args.each_pair do | key, value |
+      self.send("#{key}=", value) if self.respond_to?("#{key}=")
+    end
+    return self
   end
   
   def to_json
-    JSON.generate( { "targeting_vector" => to_hash() } )
+    JSON.generate({ 
+      'targeting_vector' => {
+        'pipeline_id'             => @pipeline_id,
+        'molecular_structure_id'  => @molecular_structure_id,
+        'ikmc_project_id'         => @ikmc_project_id,
+        'intermediate_vector'     => @intermediate_vector,
+        'name'                    => @name
+      }
+    })
   end
   
   def has_changed( targ_vec_hash )
-    (ATTRIBUTES - NOT_DUMPED).each do |attr|
-      self_value  = self.instance_variable_get "@#{attr}"
-      other_value = targ_vec_hash[ attr.to_s ]
-      unless self_value.to_s == other_value.to_s
-        log "[TARG VEC CHANGES];#{self.targeting_vector_id};#{attr};'#{other_value}' -> '#{self_value}'"
+    targ_vec_hash.each_pair do | key, value |
+      next unless self.instance_variable_defined? "@#{key}"
+      self_value = self.instance_variable_get "@#{key}"
+      if self_value.to_s != value.to_s
+        log "[TARG VEC CHANGES];#{@id}; #{key}: #{value} -> #{self_value}"
         return true
       end
     end
     return false
   end
   
+  def search
+    params = "ikmc_project_id=#{@ikmc_project_id}&name=#{@name}"
+    
+    response = request( 'GET', "targeting_vectors.json?#{params}" )
+    json_response = JSON.parse( response )
+    return json_response[0] if json_response.length > 0
+  end
+  
   def create
     begin
-      response = request( 'POST', 'targeting_vectors.json', to_json )
-      self.targeting_vector_id = JSON.parse(response)['id']
+      response = request( 'POST', 'targeting_vectors.json', to_json() )
+      @id = JSON.parse(response)['id']
     rescue RestClient::RequestFailed => e
-      log "[TARG VEC CREATION];#{params};#{e.http_body}"
+      log "[TARG VEC CREATION];#{to_json()};#{e.http_body}"
+    rescue RestClient::ServerBrokeConnection
+      log "[TARG VEC CREATION];#{to_json()};The server broke the connection prior to the request completing."
+    rescue RestClient::RequestTimeout
+      log "[TARG VEC CREATION];#{to_json()};Request timed out"
+    rescue RestClient::Exception => e
+      log "[TARG VEC CREATION];#{to_json()};#{e}"
     end
   end
   
   def update( targ_vec_hash )
-    self.targeting_vector_id  = targ_vec_hash['id']
-    self.es_cells             = targ_vec_hash['es_cells']
-    if self.has_changed( targ_vec_hash )
+    @id       = targ_vec_hash['id']
+    @es_cells = targ_vec_hash['es_cells']
+    
+    if has_changed( targ_vec_hash )
       begin
-        response = request( 'PUT', "targeting_vectors/#{self.targeting_vector_id}.json", to_json )
+        response = request( 'PUT', "targeting_vectors/#{@id}.json", to_json() )
       rescue RestClient::RequestFailed => e
-        log "[TARG VEC UPDATE];#{self.targeting_vector_id};#{e.http_body}"
+        log "[TARG VEC UPDATE];#{to_json()};#{e.http_body}"
+      rescue RestClient::ServerBrokeConnection
+        log "[TARG VEC UPDATE];#{to_json()};The server broke the connection prior to the request completing."
+      rescue RestClient::RequestTimeout
+        log "[TARG VEC UPDATE];#{to_json()};Request timed out"
+      rescue RestClient::Exception => e
+        log "[TARG VEC UPDATE];#{to_json()};#{e}"
       end
     end
   end
   
-  def search
-    params = "ikmc_project_id=#{@ikmc_project_id}&name=#{@name}"
-    
-    json_response = JSON.parse(request( 'GET', "targeting_vectors.json?#{params}" ))
-    return json_response[0] if json_response.length > 0
-  end
-  
   def push_to_idcc
-    targ_vec_hash = search()
-    
-    # CREATE or UPDATE I-DCC targeting vector whether targ_vec has been found
-    if targ_vec_hash.nil?
-      create()
-    else
-      update( targ_vec_hash )
-    end
+    existing_targ_vec = search()
+    existing_targ_vec.nil? ? create() : update( existing_targ_vec )
   end
   
   def synchronize_es_cells
@@ -965,9 +807,8 @@ class TargetingVector < IdccObject
       well_summary_by_di
     WHERE
       epd_well_name IS NOT NULL
-      AND epd_distribute = 'yes'
-      AND project_id = #{self.ikmc_project_id}
-      AND pgdgr_plate_name || '_' || pgdgr_well_name = '#{self.name}'
+      AND project_id = #{@ikmc_project_id}
+      AND pgdgr_plate_name || '_' || pgdgr_well_name = '#{@name}'
     """
     begin
       cursor = @@ora_dbh.exec(query)
@@ -981,20 +822,20 @@ class TargetingVector < IdccObject
       htgt_products[fetch_row[0]] = {
         :is_targeted_trap           => fetch_row[1], 
         :parental_cell_line         => format_parental_cell_line( fetch_row[2] ),
-        :allele_symbol_superscript  => get_allele_symbol_superscript( fetch_row[3] )
+        :allele_symbol_superscript  => format_allele_symbol_superscript( fetch_row[3] )
       }
     end
     
     idcc_products = []
-    unless self.es_cells.nil? or self.es_cells.empty?
-      self.es_cells.each { |es_cell| idcc_products.push(es_cell['name']) }
+    unless @es_cells.nil? or @es_cells.empty?
+      @es_cells.each { |es_cell| idcc_products.push(es_cell['name']) }
     end
     
     #
     #  DELETE ES Cells
     #
     if (idcc_products - htgt_products.keys).length > 0
-      self.es_cells.each do |es_cell|
+      @es_cells.each do |es_cell|
         next if es_cell.empty?
         
         unless htgt_products.keys.include? es_cell['name']
@@ -1008,93 +849,145 @@ class TargetingVector < IdccObject
     end
     
     #
-    #  CREATE / UPDATE ES Cells
+    #  CREATE or UPDATE ES Cells
     #
     (htgt_products.keys - idcc_products).each do |product_name|
+      es_cell = EsCell.new({
+        :targeting_vector_id       => @id,
+        :name                      => product_name,
+        :parental_cell_line        => htgt_products[product_name][:parental_cell_line],
+        :allele_symbol_superscript => htgt_products[product_name][:allele_symbol_superscript]
+      })
+      existing_es_cell = es_cell.search()
       
-      parental_cell_line = htgt_products[product_name][:parental_cell_line]
-      is_targeted_trap = htgt_products[product_name][:is_targeted_trap] == true
-      allele_symbol_superscript = htgt_products[product_name][:allele_symbol_superscript]
-      
-      # Search product in IDCC - ie. linked to another allele
-      response = request( 'GET', "products.json?name=#{product_name}" )
-      products_found = JSON.parse( response )
-      
-      #
-      #  UPDATE - if changed
-      #
-      if products_found.length > 0
-        product_found = products_found[0]
-        
-        # Case 1 - Targeted trap
-        if is_targeted_trap
-          # Continue if nothing has changed - don't check mol struct in this case
-          next if product_found['targeting_vector_id'] == self.targeting_vector_id \
-          and product_found['parental_cell_line'] == parental_cell_line \
-          and product_found['allele_symbol_superscript'] == allele_symbol_superscript
-          
-          json = 
-          JSON.generate({
-            'es_cell' => {
-              'targeting_vector_id'       => self.targeting_vector_id,
-              'name'                      => product_name,
-              'parental_cell_line'        => parental_cell_line,
-              'allele_symbol_superscript' => allele_symbol_superscript
-            }
-          })
-          
-        # Case 2 - Not targeted trap
-        else
-          # Continue if nothing has changed
-          next if product_found['molecular_structure_id'] == self.molecular_structure_id \
-          and product_found['targeting_vector_id'] == self.targeting_vector_id \
-          and product_found['allele_symbol_superscript'] == allele_symbol_superscript
-          
-          json = 
-          JSON.generate({
-            'es_cell' => {
-              'targeting_vector_id'       => self.targeting_vector_id,
-              'molecular_structure_id'    => self.molecular_structure_id,
-              'name'                      => product_name,
-              'parental_cell_line'        => parental_cell_line,
-              'allele_symbol_superscript' => allele_symbol_superscript
-            }
-          })
-        end
-        
-        # Finally, push ES cell to IDCC
-        begin
-          response = request( 'PUT', "products/#{product_found['id']}.json", json )
-        rescue RestClient::RequestFailed => e
-          log "[ES CELL UPDATE];#{product_found['id']};#{e.http_body}"
-        end
-      
-      #
-      #  CREATE
-      #
+      # CREATE
+      if existing_es_cell.nil?
+        es_cell.molecular_structure_id = @molecular_structure_id
+        es_cell.create()
+      # UPDATE - if changed
       else
-        json = 
-        JSON.generate({
-          'es_cell' => {
-            'targeting_vector_id'       => self.targeting_vector_id,
-            'molecular_structure_id'    => self.molecular_structure_id,
-            'name'                      => product_name,
-            'parental_cell_line'        => parental_cell_line,
-            'allele_symbol_superscript' => allele_symbol_superscript
-          }
-        })
-        begin
-          response = request( 'POST', 'products.json', json )
-        rescue RestClient::RequestFailed => e
-          log "[ES CELL CREATION - TARG VEC];#{json};#{e.http_body}"
+        es_cell.id = existing_es_cell['id']
+        is_targeted_trap = htgt_products[product_name][:is_targeted_trap] == true
+        if es_cell.has_changed( existing_es_cell, is_targeted_trap )
+          es_cell.update()
         end
       end
     end
   end
 end
 
+class EsCell
+  attr_accessor :id
+  attr_accessor :molecular_structure_id, :targeting_vector_id
+  attr_accessor :name, :parental_cell_line, :allele_symbol_superscript
+  
+  def initialize( args )
+    @molecular_structure_id, @targeting_vector_id = nil, nil
+    args.each_pair do | key, value |
+      self.send("#{key}=", value) if self.respond_to?("#{key}=")
+    end
+    return self
+  end
+  
+  def to_json
+    es_cell_hash = {
+      'parental_cell_line'        => @parental_cell_line,
+      'name'                      => @name,
+      'allele_symbol_superscript' => @allele_symbol_superscript
+    }
+    unless @molecular_structure_id.nil?
+      es_cell_hash.update({ 'molecular_structure_id' => @molecular_structure_id })
+    end
+    unless @targeting_vector_id.nil?
+      es_cell_hash.update({ 'targeting_vector_id' => @targeting_vector_id })
+    end
+    
+    JSON.generate({ 'es_cell' => es_cell_hash })
+  end
+  
+  def has_changed( es_cell_hash, is_targeted_trap )
+    if is_targeted_trap
+      if @targeting_vector_id       != es_cell_hash['targeting_vector_id']  \
+      or @parental_cell_line        != es_cell_hash['parental_cell_line']   \
+      or @allele_symbol_superscript != es_cell_hash['allele_symbol_superscript']
+        return true
+      end
+    else
+      if @molecular_structure_id    != es_cell_hash['molecular_structure_id'] \
+      or @targeting_vector_id       != es_cell_hash['targeting_vector_id']    \
+      or @parental_cell_line        != es_cell_hash['parental_cell_line']     \
+      or @allele_symbol_superscript != es_cell_hash['allele_symbol_superscript']
+        return true
+      end
+    end  
+    return false
+  end
+  
+  def search
+    begin
+      response = request( 'GET', "products.json?name=#{@name}" )
+      product_list = JSON.parse( response )
+      return product_list.length > 0 ? product_list[0] : nil
+    rescue RestClient::ResourceNotFound
+      return nil
+    end
+  end
+  
+  def create
+    begin
+      response = request( 'POST', 'products.json', to_json() )
+    rescue RestClient::RequestFailed => e
+      log "[ES CELL CREATION];#{to_json()};#{e.http_body}"
+    rescue RestClient::ServerBrokeConnection
+      log "[ES CELL CREATION];#{to_json()};The server broke the connection prior to the request completing."
+    rescue RestClient::RequestTimeout
+      log "[ES CELL CREATION];#{to_json()};Request timed out"
+    rescue RestClient::Exception => e
+      log "[ES CELL CREATION];#{to_json()};#{e}"
+    end
+  end
+  
+  def update
+    begin
+      response = request( 'PUT', "products/#{@id}.json", to_json() )
+    rescue RestClient::RequestFailed => e
+      log "[ES CELL UPDATE];#{to_json()};#{e.http_body}"
+    rescue RestClient::ServerBrokeConnection
+      log "[ES CELL UPDATE];#{to_json()};The server broke the connection prior to the request completing."
+    rescue RestClient::RequestTimeout
+      log "[ES CELL UPDATE];#{to_json()};Request timed out"
+    rescue RestClient::Exception => e
+      log "[ES CELL UPDATE];#{to_json()};#{e}"
+    end
+  end
+end
 
-def get_allele_symbol_superscript( allele_name )
+
+##
+##  Helpers
+##
+
+def request(method, url, data = nil, datatype = "application/json", site = @@idcc_site)
+  resource = RestClient::Resource.new( site )
+  
+  case method.upcase
+  when "GET"    then resource[url].get
+  when "POST"   then resource[url].post data, :content_type => datatype
+  when "PUT"    then resource[url].put  data, :content_type => datatype
+  when "DELETE" then resource[url].delete
+  else
+    raise "Method #{method} unknown when requesting url #{url}"
+  end
+end
+
+def log(message)
+  f = File.open("#{TODAY}/errors.txt", 'a')
+  f << "[Time.now.strftime('%d/%m/%Y - %H:%M:%S')] #{message}\n"
+  f.close()
+  puts "#{message}\n" if @@debug
+end
+
+def format_allele_symbol_superscript( allele_name )
   rxp_matches = /<sup>(tm\d.*)<\/sup>/.match( allele_name )
   return rxp_matches[1] if rxp_matches
 end
@@ -1240,7 +1133,7 @@ def load_idcc( changed_projects )
   Design.each_slice(1000) do |design_list|
     designs_ids = []
     design_list.each do |design|
-      designs_ids.push(design.design_id) if design.is_valid?
+      designs_ids.push(design.id) if design.is_valid
     end
     next if designs_ids.length == 0
     design_filter += "\nOR " if design_filter.length > 0
@@ -1315,22 +1208,23 @@ def load_idcc( changed_projects )
     backbone          = fetch_row[3]
     epd_distribute    = fetch_row[4] == 'yes'
     targeted_trap     = fetch_row[5] == 'yes'
-    allele_name       = fetch_row[6]
     
     if epd_distribute and targeted_trap
       log "[DATABASE ERROR];#{mgi_accession_id};design_id #{design_id};#{cassette};#{backbone};epd_distribute = targeted_trap = 'yes'"
       next
     end
     
-    next if not mol_struct.nil? \
+    next if not mol_struct.nil?                           \
       and mol_struct.mgi_accession_id == mgi_accession_id \
-      and mol_struct.design_id == design_id \
-      and mol_struct.cassette == cassette \
-      and mol_struct.backbone == backbone \
-      and not epd_distribute and not targeted_trap
+      and mol_struct.design_id        == design_id        \
+      and mol_struct.cassette         == cassette         \
+      and mol_struct.backbone         == backbone         \
+      and not epd_distribute                              \
+      and not targeted_trap
     
-    # Create a new instance of MolecularStructure
-    mol_struct = MolecularStructure.new({
+    design = Design.get( design_id )
+    
+    mol_struct_hash = {
       :mgi_accession_id     => mgi_accession_id,
       :cassette             => cassette,
       :backbone             => backbone,
@@ -1344,33 +1238,63 @@ def load_idcc( changed_projects )
       :homology_arm_end     => design.homology_arm_end,
       :cassette_start       => design.cassette_start,
       :cassette_end         => design.cassette_end,
-      :targeted_trap        => targeted_trap
-    })
+      :targeted_trap        => targeted_trap,
+      :loxp_start           => nil,
+      :loxp_end             => nil,
+      :es_cells             => [],
+      :targeting_vectors    => [],
+      :genbank_file         => {}
+    }
     
     unless targeted_trap
-      mol_struct.loxp_start = design.loxp_start
-      mol_struct.loxp_end   = design.loxp_end
+      mol_struct_hash.update({
+        :loxp_start => design.loxp_start,
+        :loxp_end   => design.loxp_end
+      })
     end
     
-    begin
-      mol_struct.push_to_idcc()
-      next unless mol_struct.molecular_structure_id
-      
-      if targeted_trap
-        mol_struct.synchronize_es_cells()
-      else
-        mol_struct.synchronize_targeting_vectors()
-        # Then targeting vectors will sync their own ES cells
-      end
-    rescue RestClient::ServerBrokeConnection
-      log "[MOL STRUCT];#{mol_struct.to_json()};The server broke the connection \
-prior to the request completing. Usually this means it crashed, or sometimes \
-that your network connection was severed before it could complete."
-    rescue RestClient::RequestTimeout
-      log "[MOL STRUCT];#{mol_struct.to_json()};Request timed out"
-    rescue RestClient::Exception => e
-      log "[MOL STRUCT];#{mol_struct.to_json()};#{e}"
+    # Create molecular structure
+    mol_struct = MolecularStructure.new( mol_struct_hash )
+    mol_struct.push_to_idcc()
+    next unless mol_struct.id
+    
+    if targeted_trap
+      # No targeting vector will be linked to this mol_struct but some
+      # ES Cells will be. Let's find them.
+      mol_struct.synchronize_es_cells()
+    else
+      # Some targeting vector will be linked to this mol_struct.
+      # They will sync their own ES cells.
+      mol_struct.synchronize_targeting_vectors()
     end
+  end
+end
+
+def report
+  designs_file = File.open "#{TODAY}/invalid_designs.txt"
+  errors_file = File.open "#{TODAY}/errors.txt"
+  send_to = REPORT_TO.collect { |name, email| "#{name} <#{email}>" }.join(', ')
+  
+  email = <<-END_OF_MESSAGE
+From: I-DCC Loading Script <#{REPORT_FROM}>
+Subject: #{REPORT_SUBJECT}
+To: #{send_to}
+
+Invalid designs found:
+#{designs_file.readlines}
+
+Errors:
+#{errors_file.readlines}
+END_OF_MESSAGE
+
+  designs_file.close
+  errors_file.close
+  begin
+    Net::SMTP.start(SMTP_SERVER, SMTP_PORT) do |smtp|
+      smtp.sendmail(email, REPORT_FROM, REPORT_TO.values)
+    end
+  rescue Exception => e
+    log "Error: " + e
   end
 end
 
@@ -1385,23 +1309,14 @@ def run
   
   puts "-- Loading pipelines --"
   Pipeline.get_or_create()
-  Pipeline.each do |pipeline|
-    puts "Pipeline loaded: id #{pipeline.id} name #{pipeline.name}"
-  end
 
   puts "\n-- Retrieving designs --"
   Design.retrieve_from_htgt()
-  Design.validation()
-  Design.set_features()
-  Design.log()
-  puts "#{Design.count} designs"
-  
+    
   puts "\n-- Retrieving new and updated projects --"
   changed_projects = get_changed_projects()
   
   unless changed_projects.empty?
-    log "Changed projects: #{changed_projects.join(',')}"
-    
     puts "\n-- Updating IDCC --"
     load_idcc( changed_projects )
   else
@@ -1414,7 +1329,8 @@ def run
   end
 end
 
-c = Chrono.new()
-c.start()
+start = Time.now
 run()
-c.stop()
+stop = Time.now
+diff_time = stop - start.to_i
+puts "#{diff_time.hour - 1}h #{diff_time.min}m #{diff_time.sec}s"

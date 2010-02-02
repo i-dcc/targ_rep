@@ -18,21 +18,21 @@ class EsCell < ActiveRecord::Base
   #   lower_LR_check            : string 
   #   lower_SR_check            : string 
   # =======================
-
+  
   acts_as_audited
   
   # Associations
   belongs_to :created_by, :class_name => 'User', :foreign_key => 'created_by'
   belongs_to :updated_by, :class_name => 'User', :foreign_key => 'updated_by'
-
+  
   belongs_to :molecular_structure,
     :class_name => 'MolecularStructure',
     :foreign_key => 'molecular_structure_id'
-
+  
   belongs_to :targeting_vector,
     :class_name => 'TargetingVector',
     :foreign_key => 'targeting_vector_id'
-
+  
   # Unique constraint
   validates_uniqueness_of :name
   
@@ -41,6 +41,7 @@ class EsCell < ActiveRecord::Base
   validates_associated  :targeting_vector
   
   validates_presence_of :molecular_structure_id,  :on => :save, :unless => :nested
+  # validates_presence_of :targeting_vector_id,     :on => :save, :unless => :nested
   validates_presence_of :name,                    :on => :create
   
   attr_accessor :nested
@@ -52,7 +53,7 @@ class EsCell < ActiveRecord::Base
   def targeting_vector_name=(name)
     self.targeting_vector = TargetingVector.find_by_name(name) unless name.blank?
   end
-
+  
   public
     def to_json( options = {} )
       EsCell.include_root_in_json = false
@@ -64,7 +65,7 @@ class EsCell < ActiveRecord::Base
       )
       super( options )
     end
-
+    
     def to_xml( options = {} )
       options.update(
         :skip_types => true,
