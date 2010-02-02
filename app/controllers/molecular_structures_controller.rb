@@ -153,14 +153,22 @@ class MolecularStructuresController < ApplicationController
   # PUT /molecular_structures/1.xml
   def update
     mol_struct_params = params[:molecular_structure]
+    
+    # Genbank file handling
     if mol_struct_params.include? :genbank_file and mol_struct_params[:genbank_file].empty?
+      mol_struct_params.delete :genbank_file
+    elsif mol_struct_params.include? :genbank_file
+      mol_struct_params[:genbank_file].update({ :nested => true })
+      mol_struct_params[:genbank_file_attributes] = mol_struct_params[:genbank_file].dup
       mol_struct_params.delete :genbank_file
     end
     
+    # Targeting vectors handling - TODO
     if mol_struct_params.include? :targeting_vectors and mol_struct_params[:targeting_vectors].empty?
       mol_struct_params.delete :targeting_vectors
     end
     
+    # ES Cells handling - TODO
     if mol_struct_params.include? :es_cells and mol_struct_params[:es_cells].empty?
       mol_struct_params.delete :es_cells
     end
