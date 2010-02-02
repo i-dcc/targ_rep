@@ -484,7 +484,7 @@ class MolecularStructure
     if has_changed( mol_struct_hash )
       begin
         response = request( 'PUT', "alleles/#{@id}.json", to_json() )
-      rescue RestClient::RequestFailed
+      rescue RestClient::RequestFailed => e
         if response
           log "[MOL STRUCT UPDATE];#{JSON.parse(response)}"
         else
