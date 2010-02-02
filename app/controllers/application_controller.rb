@@ -8,6 +8,9 @@ class ApplicationController < ActionController::Base
   # Scrub sensitive parameters from your log
   filter_parameter_logging :password, :password_confirmation
   
+  # Scrub genbank files from log as it is huge
+  filter_parameter_logging :genbank_file
+  
   # See ActionController::RequestForgeryProtection for details
   protect_from_forgery
   
