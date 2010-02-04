@@ -556,11 +556,23 @@ class MolecularStructure
       if mol_struct.mgi_accession_id  == mgi_accession_id  \
       and mol_struct.design_id        == design_id         \
       and mol_struct.cassette         == cassette          \
-      and mol_struct.backbone         == backbone          \
-      and mol_struct.loxp_start       == design.loxp_start \
-      and mol_struct.loxp_end         == design.loxp_end
-        puts "found in cache"
-        return mol_struct
+      and mol_struct.backbone         == backbone
+        # Design is a Deletion
+        if design.design_type == 'Deletion' \
+        and mol_struct.loxp_start.nil? and mol_struct.loxp_end.nil?
+          return mol_struct
+          
+        # Design is a targeted trap - Knock Out
+        elsif targeted_trap and design.design_type == 'Knock Out' \
+        and mol_struct.loxp_start.nil? and mol_struct.loxp_end.nil?
+          return mol_struct
+          
+        # Design is a Knock Out - no targeted trap
+        elsif not targeted_trap and design.design_type == 'Knock Out' \
+        and mol_struct.loxp_start == design.loxp_start \
+        and mol_struct.loxp_end == design.loxp_end
+          return mol_struct
+        end
       end
     end
     
@@ -585,17 +597,18 @@ class MolecularStructure
     design = Design.get( design_id )
     
     params =  "mgi_accession_id=#{mgi_accession_id}"
+    params += "&project_design_id=#{design_id}"
+    params += "&cassette=#{cassette}"
+    params += "&backbone=#{CGI::escape( backbone )}"
+    
+    # Following might be pointless - we're already searching on design_id
     params += "&chromosome=#{design.chromosome}&strand=#{design.strand}"
     params += "&homology_arm_start=#{design.homology_arm_start}"
     params += "&homology_arm_end=#{design.homology_arm_end}"
     params += "&cassette_start=#{design.cassette_start}"
     params += "&cassette_end=#{design.cassette_end}"
-    params += "&project_design_id=#{design_id}"
-    params += "&cassette=#{cassette}"
-    params += "&backbone=#{CGI::escape( backbone )}"
     
-    if design.design_type == 'Deletion' or targeted_trap \
-    or design.loxp_start.nil? or design.loxp_end.nil?
+    if design.design_type == 'Deletion' or targeted_trap
       params += "&loxp_start=null&loxp_end=null" # important!
     else  
       params += "&loxp_start=#{design.loxp_start}&loxp_end=#{design.loxp_end}"
@@ -647,7 +660,12 @@ class MolecularStructure
   end
   
   def push_to_idcc
-    existing_mol_struct = MolecularStructure.search(@mgi_accession_id, @design_id, @cassette, @backbone, @targeted_trap)
+    existing_mol_struct = 
+    MolecularStructure.search(
+      @mgi_accession_id, @design_id, 
+      @cassette, @backbone, 
+      @targeted_trap
+    )
     existing_mol_struct.nil? ? create() : update( existing_mol_struct )
   end
 end
@@ -842,12 +860,12 @@ class EsCell
     return self
   end
   
-  def format_allele_symbol_superscript( allele_name )
+  def self.format_allele_symbol_superscript( allele_name )
     rxp_matches = /<sup>(tm\d.*)<\/sup>/.match( allele_name )
     return rxp_matches[1] if rxp_matches
   end
   
-  def format_parental_cell_line( parental_cell_line )
+  def self.format_parental_cell_line( parental_cell_line )
     unless parental_cell_line.nil?
       parental_cell_line =
       case parental_cell_line
@@ -1218,7 +1236,7 @@ def run
     puts "\n-- Update IDCC --"
     # Pass 1
     puts "Updating molecular structures..."
-    # MolecularStructure.create_or_update()
+    MolecularStructure.create_or_update()
     
     # Pass 2
     puts "Updating targeting vectors..."
