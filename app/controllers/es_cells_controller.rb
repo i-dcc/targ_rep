@@ -82,25 +82,19 @@ class EsCellsController < ApplicationController
         @targ_vec = TargetingVector.find( es_cell_hash[ :targeting_vector_id ] )
         
         # Check if targeting vector is link to a molecular structure that is
-        # similar to the molecular structure provided - compare json dumps
-        unless @targ_vec.molecular_structure.id == @mol_struct.id
+        # similar to the molecular structure provided
+        unless @targ_vec.molecular_structure.id == @mol_struct.id         \
+        or (@mol_struct.mgi_accession_id  == @targ_vec.mgi_accession_id   \
+        and @mol_struct.project_design_id == @targ_vec.project_design_id  \
+        and @mol_struct.design_type       == @targ_vec.design_type        \
+        and @mol_struct.cassette          == @targ_vec.cassette           \
+        and @mol_struct.backbone          == @targ_vec.backbone)
+          # Delete molecular structure if created in this process
+          @mol_struct.delete if mol_struct_created
           
-          checked_attrs = [
-            :mgi_accession_id, :assembly, :chromosome, :strand, :design_type, 
-            :homology_arm_start, :homology_arm_end, :cassette_start, :cassette_end
-          ]
-          
-          mol_struct_json = @mol_struct.to_json(:only => checked_attrs)
-          targ_vec_json   = @targ_vec.molecular_structure.to_json(:only => checked_attrs)
-          
-          unless mol_struct_json == targ_vec_json
-            # Delete molecular structure if created in this process
-            @mol_struct.delete if mol_struct_created
-            
-            errors << { "ES Cell is invalid" =>
-              "targeting vector's molecular structure should be similar to molecular structure hash provided."
-            }
-          end
+          errors << { "ES Cell is invalid" =>
+            "targeting vector's molecular structure should be similar to molecular structure hash provided."
+          }
         end
       
       # CREATE targeting vector from hash
