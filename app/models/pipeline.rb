@@ -11,9 +11,8 @@ class Pipeline < ActiveRecord::Base
   has_many :targeting_vectors, 
     :class_name => "TargetingVector",
     :foreign_key => "pipeline_id"
-    
-  has_many :molecular_structures, :through => :targeting_vectors, :uniq => true
-  has_many :es_cells,             :through => :targeting_vectors, :uniq => true
+  
+  has_many :es_cells, :through => :targeting_vectors, :uniq => true
   
   # Unique constraints
   validates_uniqueness_of :name
@@ -22,4 +21,10 @@ class Pipeline < ActiveRecord::Base
   validates_presence_of :name
   
   Pipeline.include_root_in_json = false
+  
+  def molecular_structures
+    tv_mol_structs = targeting_vectors.collect(&:molecular_structure).uniq
+    ec_mol_structs = es_cells.collect(&:molecular_structure).uniq
+    (tv_mol_structs + ec_mol_structs).uniq
+  end
 end
