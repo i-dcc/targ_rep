@@ -84,16 +84,17 @@ class EsCellsController < ApplicationController
         # Check if targeting vector is link to a molecular structure that is
         # similar to the molecular structure provided
         unless @targ_vec.molecular_structure.id == @mol_struct.id         \
-        or (@mol_struct.mgi_accession_id  == @targ_vec.mgi_accession_id   \
-        and @mol_struct.project_design_id == @targ_vec.project_design_id  \
-        and @mol_struct.design_type       == @targ_vec.design_type        \
-        and @mol_struct.cassette          == @targ_vec.cassette           \
-        and @mol_struct.backbone          == @targ_vec.backbone)
+        or (@mol_struct.mgi_accession_id  == @targ_vec.molecular_structure.mgi_accession_id   \
+        and @mol_struct.project_design_id == @targ_vec.molecular_structure.project_design_id  \
+        and @mol_struct.design_type       == @targ_vec.molecular_structure.design_type        \
+        and @mol_struct.cassette          == @targ_vec.molecular_structure.cassette           \
+        and @mol_struct.backbone          == @targ_vec.molecular_structure.backbone)
           # Delete molecular structure if created in this process
           @mol_struct.delete if mol_struct_created
           
           errors << { "ES Cell is invalid" =>
-            "targeting vector's molecular structure should be similar to molecular structure hash provided."
+            "targeting vector's molecular structure should be similar to molecular structure hash provided.",
+            "Molecular Structure" => @mol_struct.to_json()
           }
         end
       
