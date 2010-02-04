@@ -557,20 +557,14 @@ class MolecularStructure
       and mol_struct.design_id        == design_id         \
       and mol_struct.cassette         == cassette          \
       and mol_struct.backbone         == backbone
-        # Design is a Deletion
-        if design.design_type == 'Deletion' \
-        and mol_struct.loxp_start.nil? and mol_struct.loxp_end.nil?
-          return mol_struct
-          
-        # Design is a targeted trap - Knock Out
-        elsif targeted_trap and design.design_type == 'Knock Out' \
-        and mol_struct.loxp_start.nil? and mol_struct.loxp_end.nil?
-          return mol_struct
-          
-        # Design is a Knock Out - no targeted trap
-        elsif not targeted_trap and design.design_type == 'Knock Out' \
-        and mol_struct.loxp_start == design.loxp_start \
-        and mol_struct.loxp_end == design.loxp_end
+        # Design is a Deletion or a targeted trap
+        if design.design_type == 'Deletion' or targeted_trap == true
+          if mol_struct.loxp_start.nil? and mol_struct.loxp_end.nil?
+            return mol_struct
+          end
+        
+        # Design is a Knock Out
+        elsif mol_struct.loxp_start == design.loxp_start and mol_struct.loxp_end == design.loxp_end
           return mol_struct
         end
       end
@@ -601,16 +595,9 @@ class MolecularStructure
     params += "&cassette=#{cassette}"
     params += "&backbone=#{CGI::escape( backbone )}"
     
-    # Following might be pointless - we're already searching on design_id
-    params += "&chromosome=#{design.chromosome}&strand=#{design.strand}"
-    params += "&homology_arm_start=#{design.homology_arm_start}"
-    params += "&homology_arm_end=#{design.homology_arm_end}"
-    params += "&cassette_start=#{design.cassette_start}"
-    params += "&cassette_end=#{design.cassette_end}"
-    
-    if design.design_type == 'Deletion' or targeted_trap
+    if design.design_type == 'Deletion' or targeted_trap == true
       params += "&loxp_start=null&loxp_end=null" # important!
-    else  
+    else
       params += "&loxp_start=#{design.loxp_start}&loxp_end=#{design.loxp_end}"
     end
     
@@ -795,7 +782,7 @@ class TargetingVector
       return targ_vec
     end
     
-    raise UnknownTargetingVector.new( "Can't find targeting vector #{name}" )
+    raise "Can't find targeting vector #{name}"
   end
   
   def self.search( name, ikmc_project_id )

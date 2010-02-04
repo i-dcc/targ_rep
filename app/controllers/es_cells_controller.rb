@@ -86,9 +86,8 @@ class EsCellsController < ApplicationController
         unless @targ_vec.molecular_structure.id == @mol_struct.id
           
           checked_attrs = [
-            :allele_symbol_superscript, :mgi_accession_id, :assembly, :chromosome,
-            :strand, :design_type, :homology_arm_start, :homology_arm_end,
-            :cassette_start, :cassette_end
+            :mgi_accession_id, :assembly, :chromosome, :strand, :design_type, 
+            :homology_arm_start, :homology_arm_end, :cassette_start, :cassette_end
           ]
           
           mol_struct_json = @mol_struct.to_json(:only => checked_attrs)

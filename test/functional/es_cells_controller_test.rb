@@ -95,7 +95,7 @@ class EsCellsControllerTest < ActionController::TestCase
     assert_response :success
   end
   
-  should "not create anything if given targeting_vector (from id) has not a similar molecular structure to the given one" do
+  should "not create anything if targ vec's mol struct has different details from the given mol struct" do
     mol_struct_count  = MolecularStructure.count
     targ_vec_count    = TargetingVector.count
     es_cell_count     = EsCell.count
