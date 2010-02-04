@@ -21,6 +21,9 @@ class MolecularStructure < ActiveRecord::Base
   #   updated_by          : integer 
   #   created_at          : datetime 
   #   updated_at          : datetime 
+  #   floxed_start_exon   : string 
+  #   floxed_end_exon     : string 
+  #   project_design_id   : integer 
   # =======================
 
   

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100118090008) do
+ActiveRecord::Schema.define(:version => 20100202105513) do
 
   create_table "audits", :force => true do |t|
     t.integer  "auditable_id"
@@ -78,6 +78,9 @@ ActiveRecord::Schema.define(:version => 20100118090008) do
     t.integer  "updated_by"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "floxed_start_exon"
+    t.string   "floxed_end_exon"
+    t.integer  "project_design_id"
   end
 
   add_index "molecular_structures", ["assembly", "chromosome", "strand", "homology_arm_start", "homology_arm_end", "cassette_start", "cassette_end", "loxp_start", "loxp_end", "cassette", "backbone"], :name => "index_mol_struct", :unique => true

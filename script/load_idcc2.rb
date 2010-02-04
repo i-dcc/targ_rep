@@ -148,7 +148,7 @@ end
 
 
 ##
-##  I-DCC classes
+##    I-DCC classes
 ##
 
 class Pipeline
@@ -195,9 +195,9 @@ end
 class Design
   attr_accessor :id, :design_type, :subtype, :subtype_description
   attr_accessor :assembly_name, :chromosome, :strand
+  attr_accessor :floxed_start_exon, :floxed_end_exon
+  attr_accessor :cassette_start, :cassette_end, :loxp_start, :loxp_end
   attr_accessor :homology_arm_start, :homology_arm_end
-  attr_accessor :cassette_start, :cassette_end
-  attr_accessor :loxp_start, :loxp_end
   attr_accessor :is_valid, :invalid_msg
   attr_accessor :features
   
@@ -237,18 +237,23 @@ class Design
       chromosome_dict.name
     FROM
       design
-      JOIN project          ON project.design_id = design.design_id
-      JOIN project_status   ON project_status.project_status_id = project.project_status_id
-      JOIN feature          ON feature.design_id = design.design_id
-      JOIN display_feature  ON display_feature.feature_id = feature.feature_id
+      JOIN project ON project.design_id = design.design_id
+      JOIN project_status ON 
+        project_status.project_status_id = project.project_status_id 
+        AND project_status.order_by >= 75
+      JOIN feature ON feature.design_id = design.design_id
+      JOIN display_feature ON
+        display_feature.feature_id = feature.feature_id 
+        AND display_feature.assembly_id = 11 
+        AND display_feature.display_feature_type IN ('G3','G5','U3','U5','D3','D5')
       JOIN mig.gnm_assembly ON mig.gnm_assembly.id = display_feature.assembly_id
-      JOIN chromosome_dict  ON chromosome_dict.chr_id = feature.chr_id
-    WHERE
-      project_status.order_by >= 75
-      AND display_feature.assembly_id = 11
-      AND display_feature.display_feature_type IN ('G3','G5','U3','U5','D3','D5')
+      JOIN chromosome_dict ON chromosome_dict.chr_id = feature.chr_id
     ORDER BY design.design_id
     """
+    
+    # JOIN mig.gnm_exon start_exon ON start_exon.id = design.start_exon_id
+    # JOIN mig.gnm_exon end_exon   ON end_exon.id   = design.end_exon_id
+    
     current_design = nil
     @@ora_dbh.exec(query) do |fetch_row|
       design_id = fetch_row[0]
@@ -271,6 +276,8 @@ class Design
         current_design.strand              = fetch_row[7]
         current_design.assembly_name       = fetch_row[8]
         current_design.chromosome          = fetch_row[9]
+        current_design.floxed_start_exon   = 'unknown'
+        current_design.floxed_end_exon     = 'unknown'
       end
       
       # Populate design with feature or set it as invalid design if 
@@ -396,6 +403,7 @@ class MolecularStructure
   attr_accessor :id, :mgi_accession_id
   attr_accessor :design_id, :design_type, :design_subtype, :subtype_description
   attr_accessor :chromosome, :strand, :cassette, :backbone
+  attr_accessor :floxed_start_exon, :floxed_end_exon
   attr_accessor :cassette_start, :cassette_end, :loxp_start, :loxp_end
   attr_accessor :homology_arm_start, :homology_arm_end
   attr_accessor :targeting_vectors, :es_cells, :genbank_file
@@ -419,6 +427,8 @@ class MolecularStructure
         'design_type'          => @design_type,
         'design_subtype'       => @design_subtype,
         'subtype_description'  => @subtype_description,
+        'floxed_start_exon'    => @floxed_start_exon,
+        'floxed_end_exon'      => @floxed_end_exon,
         'homology_arm_start'   => @homology_arm_start,
         'homology_arm_end'     => @homology_arm_end,
         'cassette_start'       => @cassette_start,
@@ -439,6 +449,8 @@ class MolecularStructure
     or @strand              != mol_struct_hash['strand']              \
     or @cassette            != mol_struct_hash['cassette']            \
     or @backbone            != mol_struct_hash['backbone']            \
+    or @floxed_start_exon   != mol_struct_hash['floxed_start_exon']   \
+    or @floxed_end_exon     != mol_struct_hash['floxed_end_exon']     \
     or @homology_arm_start  != mol_struct_hash['homology_arm_start']  \
     or @homology_arm_end    != mol_struct_hash['homology_arm_end']    \
     or @cassette_start      != mol_struct_hash['cassette_start']      \
@@ -501,6 +513,24 @@ class MolecularStructure
   end
   
   def search
+    
+    # Search in loaded idcc mol_struct
+    if @@idcc_mol_structs.key? @mgi_accession_id
+      idcc_mol_struct = @@idcc_mol_structs[ @mgi_accession_id ].dup
+      if idcc_mol_struct['chromosome']           == @chromosome         \
+      and idcc_mol_struct['strand']              == @strand             \
+      and idcc_mol_struct['homology_arm_start']  == @homology_arm_start \
+      and idcc_mol_struct['homology_arm_end']    == @homology_arm_end   \
+      and idcc_mol_struct['cassette_start']      == @cassette_start     \
+      and idcc_mol_struct['cassette_end']        == @cassette_end       \
+      and idcc_mol_struct['cassette']            == @cassette           \
+      and idcc_mol_struct['backbone']            == @backbone
+        @@idcc_mol_structs.delete( @mgi_accession_id )
+        return idcc_mol_struct
+      end
+    end
+    
+    # Search through web service
     params =  "mgi_accession_id=#{@mgi_accession_id}"
     params += "&chromosome=#{@chromosome}&strand=#{@strand}"
     params += "&homology_arm_start=#{@homology_arm_start}"
@@ -702,7 +732,7 @@ class MolecularStructure
       existing_es_cell = es_cell.search()
       
       if existing_es_cell
-        es_cell.id                  = existing_es_cell['id']
+        es_cell.id = existing_es_cell['id']
         es_cell.targeting_vector_id = existing_es_cell['targeting_vector_id']
         es_cell.update() if es_cell.has_changed( existing_es_cell, true )
       else
@@ -736,24 +766,28 @@ class TargetingVector
     })
   end
   
-  def has_changed( targ_vec_hash )
-    targ_vec_hash.each_pair do | key, value |
-      next unless self.instance_variable_defined? "@#{key}"
-      self_value = self.instance_variable_get "@#{key}"
-      if self_value.to_s != value.to_s
-        log "[TARG VEC CHANGES];#{@id}; #{key}: #{value} -> #{self_value}"
-        return true
-      end
-    end
-    return false
-  end
+  # def has_changed( targ_vec_hash )
+  #   targ_vec_hash.each_pair do | key, value |
+  #     next unless self.instance_variable_defined? "@#{key}"
+  #     self_value = self.instance_variable_get "@#{key}"
+  #     if self_value.to_s != value.to_s
+  #       log "[TARG VEC CHANGES];#{@id}; #{key}: #{value} -> #{self_value}"
+  #       return true
+  #     end
+  #   end
+  #   return false
+  # end
   
   def search
     params = "ikmc_project_id=#{@ikmc_project_id}&name=#{@name}"
     
-    response = request( 'GET', "targeting_vectors.json?#{params}" )
-    json_response = JSON.parse( response )
-    return json_response[0] if json_response.length > 0
+    begin
+      response = request( 'GET', "targeting_vectors.json?#{params}" )
+      json_response = JSON.parse( response )
+      return json_response[0] if json_response.length > 0
+    rescue RestClient::ResourceNotFound
+      return nil
+    end
   end
   
   def create
@@ -775,7 +809,7 @@ class TargetingVector
     @id       = targ_vec_hash['id']
     @es_cells = targ_vec_hash['es_cells']
     
-    if has_changed( targ_vec_hash )
+    unless self.eql? TargetingVector.new( targ_vec_hash )
       begin
         response = request( 'PUT', "targeting_vectors/#{@id}.json", to_json() )
       rescue RestClient::RequestFailed => e
@@ -820,7 +854,7 @@ class TargetingVector
     htgt_products = {}
     cursor.fetch do |fetch_row|
       htgt_products[fetch_row[0]] = {
-        :is_targeted_trap           => fetch_row[1], 
+        :is_targeted_trap           => fetch_row[1] == 'yes', 
         :parental_cell_line         => format_parental_cell_line( fetch_row[2] ),
         :allele_symbol_superscript  => format_allele_symbol_superscript( fetch_row[3] )
       }
@@ -864,6 +898,7 @@ class TargetingVector
       if existing_es_cell.nil?
         es_cell.molecular_structure_id = @molecular_structure_id
         es_cell.create()
+        
       # UPDATE - if changed
       else
         es_cell.id = existing_es_cell['id']
@@ -910,6 +945,16 @@ class EsCell
       if @targeting_vector_id       != es_cell_hash['targeting_vector_id']  \
       or @parental_cell_line        != es_cell_hash['parental_cell_line']   \
       or @allele_symbol_superscript != es_cell_hash['allele_symbol_superscript']
+        # my_json = to_json()
+        # other_json = JSON.generate( 'es_cell' => {
+        #   'targeting_vector_id' => es_cell_hash['targeting_vector_id'],
+        #   'parental_cell_line' => es_cell_hash['parental_cell_line'],
+        #   'allele_symbol_superscript' => es_cell_hash['allele_symbol_superscript']
+        # })
+        # puts my_json
+        # puts other_json
+        # puts my_json == other_json
+        # puts "-"*100
         return true
       end
     else
@@ -917,6 +962,17 @@ class EsCell
       or @targeting_vector_id       != es_cell_hash['targeting_vector_id']    \
       or @parental_cell_line        != es_cell_hash['parental_cell_line']     \
       or @allele_symbol_superscript != es_cell_hash['allele_symbol_superscript']
+        # my_json = to_json()
+        # other_json = JSON.generate( 'es_cell' => {
+        #   'targeting_vector_id' => es_cell_hash['targeting_vector_id'],
+        #   'molecular_structure_id' => es_cell_hash['molecular_structure_id'],
+        #   'parental_cell_line' => es_cell_hash['parental_cell_line'],
+        #   'allele_symbol_superscript' => es_cell_hash['allele_symbol_superscript']
+        # })
+        # puts my_json
+        # puts other_json
+        # puts my_json == other_json
+        # puts "-"*100
         return true
       end
     end  
@@ -926,8 +982,8 @@ class EsCell
   def search
     begin
       response = request( 'GET', "products.json?name=#{@name}" )
-      product_list = JSON.parse( response )
-      return product_list.length > 0 ? product_list[0] : nil
+      json_response = JSON.parse( response )
+      return json_response[0] if json_response.length > 0
     rescue RestClient::ResourceNotFound
       return nil
     end
@@ -964,7 +1020,7 @@ end
 
 
 ##
-##  Helpers
+##    Helpers
 ##
 
 def request(method, url, data = nil, datatype = "application/json", site = @@idcc_site)
@@ -982,7 +1038,7 @@ end
 
 def log(message)
   f = File.open("#{TODAY}/errors.txt", 'a')
-  f << "[Time.now.strftime('%d/%m/%Y - %H:%M:%S')] #{message}\n"
+  f << "[#{Time.now.strftime('%d/%m/%Y - %H:%M:%S')}] #{message}\n"
   f.close()
   puts "#{message}\n" if @@debug
 end
@@ -1125,6 +1181,20 @@ def get_changed_projects
   return changed_projects
 end
 
+def get_idcc_mol_structs
+  page = 1
+  while page
+    response = request( 'GET', "alleles.json?page=#{page}" )
+    mol_struct_list = JSON.parse( response )
+    break if mol_struct_list.size == 0
+  
+    mol_struct_list.each do |mol_struct|
+      @@idcc_mol_structs[ mol_struct['mgi_accession_id'] ] = mol_struct.dup
+    end
+    page += 1
+  end
+end
+
 def load_idcc( changed_projects )
   return if changed_projects.empty?
 
@@ -1234,13 +1304,15 @@ def load_idcc( changed_projects )
       :design_type          => design.design_type,
       :design_subtype       => design.subtype,
       :subtype_description  => design.subtype_description,
+      :floxed_start_exon    => design.floxed_start_exon,
+      :floxed_end_exon      => design.floxed_end_exon,
       :homology_arm_start   => design.homology_arm_start,
       :homology_arm_end     => design.homology_arm_end,
       :cassette_start       => design.cassette_start,
       :cassette_end         => design.cassette_end,
-      :targeted_trap        => targeted_trap,
       :loxp_start           => nil,
       :loxp_end             => nil,
+      :targeted_trap        => targeted_trap,
       :es_cells             => [],
       :targeting_vectors    => [],
       :genbank_file         => {}
@@ -1302,6 +1374,8 @@ end
 ##   Main script
 ##
 
+@@idcc_mol_structs = {}
+
 def run
   system("rm -rf #{@@log_dir}/#{TODAY}")
   system("mkdir -p #{@@log_dir}/#{TODAY}")
@@ -1317,6 +1391,8 @@ def run
   changed_projects = get_changed_projects()
   
   unless changed_projects.empty?
+    get_idcc_mol_structs()
+    
     puts "\n-- Updating IDCC --"
     load_idcc( changed_projects )
   else
