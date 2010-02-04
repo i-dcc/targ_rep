@@ -469,8 +469,8 @@ class MolecularStructure
       project.design_id,
       project.cassette,
       project.backbone,
-      ws.targeted_trap,
       ws.epd_distribute
+      ws.targeted_trap
     "
   end
   
@@ -999,24 +999,39 @@ end
 
 class GenbankFile
   def retrieve_molecular_structures
-    if mol_struct_cache
+    if @@mol_struct_cache.empty?
       'pass'
     else
-      'pass'
+      @@mol_struct_cache.each_pair do |id, mol_struct|
+        genbank_file = 
+        get_genbank_file(
+          mol_struct.design_id,
+          mol_struct.cassette,
+          mol_struct.backbone,
+          mol_struct.targeted_trap
+        )
+        json = JSON.generate({
+          'molecular_structure' => {
+            'id' => id,
+            'genbank_file' => genbank_file
+          }
+        })
+        request( 'PUT', "alleles/#{id}.json", json )
+      end
     end
   end
   
-  def get_genbank_files
+  def get_genbank_file( design_id, cassette, backbone, targeted_trap )
     # Targeting vector
-    url = GENBANK_URL + "?design_id=#{@design_id}&cassette=#{@cassette}&backbone=#{@backbone}"
+    url = GENBANK_URL + "?design_id=#{design_id}&cassette=#{cassette}&backbone=#{backbone}"
     targ_vec_file = RestClient::get( url ) rescue ''
     
     # ES Cell clone
-    url = GENBANK_URL + "?design_id=#{@design_id}&cassette=#{@cassette}"
-    url += "&targeted_trap=1" if @targeted_trap
+    url = GENBANK_URL + "?design_id=#{design_id}&cassette=#{cassette}"
+    url += "&targeted_trap=1" if targeted_trap
     escell_file = RestClient::get( url ) rescue ''
     
-    @genbank_file = {
+    genbank_file = {
       :escell_clone     => escell_file,
       :targeting_vector => targ_vec_file
     }
