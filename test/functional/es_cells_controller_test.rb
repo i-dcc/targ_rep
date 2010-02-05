@@ -30,7 +30,7 @@ class EsCellsControllerTest < ActionController::TestCase
     assert_response :success
   end
   
-  should "create es_cell, targeting_vector and molecular_structure" do
+  should "create ES Cell, Targeting Vector and Molecular Structure" do
     mol_struct_count  = MolecularStructure.count
     targ_vec_count    = TargetingVector.count
     es_cell_count     = EsCell.count
@@ -66,7 +66,7 @@ class EsCellsControllerTest < ActionController::TestCase
     assert_response :success
   end
   
-  should "create es_cell and molecular_structure without targeting vector" do
+  should "not create anything if Targeting Vector is missing" do
     mol_struct_count  = MolecularStructure.count
     targ_vec_count    = TargetingVector.count
     es_cell_count     = EsCell.count
@@ -89,10 +89,10 @@ class EsCellsControllerTest < ActionController::TestCase
       }
     }
     
-    assert_not_equal(MolecularStructure.count, mol_struct_count)
+    assert_equal(MolecularStructure.count, mol_struct_count)
     assert_equal(TargetingVector.count, targ_vec_count)
-    assert_not_equal(EsCell.count, es_cell_count)
-    assert_response :success
+    assert_equal(EsCell.count, es_cell_count)
+    assert_response 400, "ES Cell controller should return a 400 reponse"
   end
   
   should "not create anything if targ vec's mol struct has different details from the given mol struct" do
