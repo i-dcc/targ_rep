@@ -469,7 +469,7 @@ class MolecularStructure
       project.design_id,
       project.cassette,
       project.backbone,
-      ws.epd_distribute
+      ws.epd_distribute,
       ws.targeted_trap
     "
   end
