@@ -4,10 +4,17 @@
   </div>
 <% end %>
 
-<div class="span-24">
+<div class="span-12">
   <p>
     <%= f.label :mgi_accession_id, "MGI Accession ID" %><br />
     <%= f.text_field :mgi_accession_id, :class => :title %>
+  </p>
+</div>
+
+<div class="span-12 last">
+  <p>
+    <%= f.label :project_design_id, "Project Design ID" %><br />
+    <%= f.text_field :project_design_id, :class => :title %>
   </p>
 </div>
 

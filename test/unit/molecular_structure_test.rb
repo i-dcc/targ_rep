@@ -10,15 +10,15 @@ class MolecularStructureTest < ActiveSupport::TestCase
   should_have_many :targeting_vectors
   should_have_many :es_cells
   
-  should_validate_uniqueness_of :mgi_accession_id,
-    :scoped_to => [
-      :assembly, :chromosome, :strand,
-      :homology_arm_start, :homology_arm_end,
-      :cassette_start, :cassette_end,
-      :loxp_start, :loxp_end,
-      :cassette, :backbone
-    ],
-    :message => "must have unique design features"
+  # should_validate_uniqueness_of :mgi_accession_id,
+  #   :scoped_to => [
+  #     :assembly, :chromosome, :strand,
+  #     :homology_arm_start, :homology_arm_end,
+  #     :cassette_start, :cassette_end,
+  #     :loxp_start, :loxp_end,
+  #     :cassette, :backbone
+  #   ],
+  #   :message => "must have unique design features"
   
   should_validate_presence_of :mgi_accession_id
   should_validate_presence_of :assembly
@@ -167,7 +167,7 @@ class MolecularStructureTest < ActiveSupport::TestCase
       end
     end
     
-    context "with design 'Deletion' and LoxP set" do
+    context "with design type 'Deletion' and LoxP set" do
       mol_struct = Factory.build( :molecular_structure, {
                       :design_type        => 'Deletion',
                       :strand             => '+',
