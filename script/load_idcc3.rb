@@ -476,7 +476,7 @@ class MolecularStructure
       targeted_trap     = fetch_row[6] == 'yes'
       
       design = Design.get( design_id )
-      next if design.nil
+      next if design.nil?
       next unless design.is_valid
       next unless @@changed_projects.include? project_id
       
@@ -724,7 +724,7 @@ class TargetingVector
       targeted_trap     = fetch_row[10] == 'yes'
       
       design = Design.get( design_id )
-      next if design.nil
+      next if design.nil?
       next unless design.is_valid
       next unless @@changed_projects.include? project_id
       
@@ -930,7 +930,7 @@ class EsCell
       targeted_trap     = fetch_row[9] == 'yes'
       
       design = Design.get( design_id )
-      next if design.nil
+      next if design.nil?
       next unless design.is_valid
       next unless @@changed_projects.include? project_id
       
