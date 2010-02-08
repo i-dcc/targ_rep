@@ -174,39 +174,23 @@ class Design
   attr_accessor :is_valid, :invalid_msg
   attr_accessor :features
   
-  @@instances = []
-  
-  def initialize( design_id )
-    @id = design_id
-    @features = {}
-    @is_valid = true
-    @@instances.push( self )
+  def initialize( args )
+    args.each_pair do | key, value |
+      self.send("#{key}=", value) if self.respond_to?("#{key}=")
+    end
     return self
   end
   
   def self.get( design_id )
-    @@instances.each { |design| return design if design.id == design_id }
+    @@design_cache.each_pair { |id, design| return design if id == design_id }
+    raise "Design ID #{design_id} not found."
   end
   
-  def self.create_sql_filter
-    design_filter = ""
-    
-    @@instances.each_slice( 1000 ) do |design_array|
-      designs_ids = []
-      design_array.each do |design|
-        designs_ids.push(design.id) if design.is_valid
-      end
-      
-      next if designs_ids.length == 0
-      design_filter += "\nOR " if design_filter.length > 0
-      design_filter += "project.design_id IN (#{designs_ids.join(',')})"
-    end
-    
-    return design_filter
+  def self.push_to_cache( design )
+    @@design_cache[design.id] = design
   end
   
-  def self.retrieve_from_htgt
-    query =
+  def self.get_sql_query_htgt
     """
     SELECT DISTINCT
       design.design_id,
@@ -234,9 +218,13 @@ class Design
       JOIN chromosome_dict ON chromosome_dict.chr_id = feature.chr_id
     ORDER BY design.design_id
     """
+  end
+  
+  def self.retrieve_from_htgt
+    cursor = @@ora_dbh.exec( get_sql_query_htgt )
     
     current_design = nil
-    @@ora_dbh.exec(query) do |fetch_row|
+    cursor.fetch do |fetch_row|
       design_id = fetch_row[0]
       
       # 1- Same design as fetched previously
@@ -245,20 +233,26 @@ class Design
       
       # 2- New design found
       else
-        if current_design
-          current_design.validate()
-          current_design.set_features() if current_design.is_valid
+        if current_design and current_design.validate()
+          current_design.set_features()
+          push_to_cache( current_design )
         end
         
-        current_design = Design.new( design_id )
-        current_design.design_type         = fetch_row[1] == 'Del_Block' ? 'Deletion' : 'Knock Out'
-        current_design.subtype             = fetch_row[2]
-        current_design.subtype_description = fetch_row[3]
-        current_design.strand              = fetch_row[7]
-        current_design.assembly_name       = fetch_row[8]
-        current_design.chromosome          = fetch_row[9]
-        current_design.floxed_start_exon   = 'unknown'
-        current_design.floxed_end_exon     = 'unknown'
+        design_type = fetch_row[1] == 'Del_Block' ? 'Deletion' : 'Knock Out'
+        design_hash = {
+          :id                   => design_id,
+          :design_type          => design_type,
+          :subtype              => fetch_row[2],
+          :subtype_description  => fetch_row[3],
+          :strand               => fetch_row[7],
+          :assembly_name        => fetch_row[8],
+          :chromosome           => fetch_row[9],
+          :floxed_start_exon    => 'unknown',
+          :floxed_end_exon      => 'unknown',
+          :features             => {},
+          :is_valid             => true
+        }
+        current_design = Design.new( design_hash )
       end
       
       # Populate design with feature or set it as invalid design if 
@@ -341,7 +335,7 @@ class Design
   end
   
   def validate
-    return if not @is_valid
+    return false unless @is_valid
     
     # Knockout type
     if @design_type == 'Knock Out'
@@ -357,7 +351,7 @@ class Design
           log "Design #{id};#{feature_name} ``end`` is missing."
           @is_valid = false
         end
-        return unless @is_valid
+        return false unless @is_valid
       end
       
     # Deletion type
@@ -374,9 +368,11 @@ class Design
           log "Design #{id};#{feature_name} ``end`` is missing."
           @is_valid = false
         end
-        return unless @is_valid
+        return false unless @is_valid
       end
     end
+    
+    return true
   end
 end
 
@@ -399,7 +395,7 @@ class MolecularStructure
   def eql?( args )
     args.each_pair do |key, value|
       next unless self.instance_variable_defined? "@#{key}"
-      return false if self.instance_variable_get "@#{key}" != value
+      return false if self.instance_variable_get("@#{key}") != value
     end
   end
   
@@ -428,11 +424,11 @@ class MolecularStructure
   end
   
   def self.get_sql_query_htgt
-    query =
     """
     SELECT DISTINCT
       mgi_gene.mgi_accession_id,
       project.design_id,
+      project.project_id,
       project.cassette,
       project.backbone,
       ws.epd_distribute,
@@ -449,24 +445,14 @@ class MolecularStructure
       )
       AND (ws.pgdgr_distribute = 'yes' OR ws.epd_distribute = 'yes')
       AND (ws.pgdgr_well_name IS NOT NULL OR ws.epd_well_name IS NOT NULL)
-    """
-    
-    query += "
-      AND ( #{@@design_sql_filter} )
-    " unless @@design_sql_filter.empty?
-    query += "
-      AND ( #{@@project_sql_filter} )
-    " unless @@project_sql_filter.empty?
-
-    query += "
-    ORDER BY 
+    ORDER BY
       mgi_gene.mgi_accession_id,
       project.design_id,
       project.cassette,
       project.backbone,
       ws.epd_distribute,
       ws.targeted_trap
-    "
+    """
   end
   
   def self.create_or_update
@@ -484,10 +470,19 @@ class MolecularStructure
     cursor.fetch do |fetch_row|
       mgi_accession_id  = fetch_row[0]
       design_id         = fetch_row[1]
-      cassette          = fetch_row[2]
-      backbone          = fetch_row[3]
-      epd_distribute    = fetch_row[4] == 'yes'
-      targeted_trap     = fetch_row[5] == 'yes'
+      project_id        = fetch_row[2]
+      cassette          = fetch_row[3]
+      backbone          = fetch_row[4]
+      epd_distribute    = fetch_row[5] == 'yes'
+      targeted_trap     = fetch_row[6] == 'yes'
+      
+      begin
+        next unless Design.get(design_id).is_valid
+        next unless @@changed_projects.include? project_id
+      rescue Exception => e
+        log "[MOL STRUCT];#{e}"
+        next
+      end
       
       if epd_distribute and targeted_trap
         log "[DATABASE ERROR];#{mgi_accession_id};design_id #{design_id};#{cassette};#{backbone};epd_distribute = targeted_trap = 'yes'"
@@ -709,10 +704,8 @@ class TargetingVector
       )
       AND (pgdgr_distribute = 'yes' OR ws.epd_distribute = 'yes')
       AND pgdgr_well_name IS NOT NULL
+    ORDER BY mgi_gene.mgi_accession_id
     """
-    query += " AND ( #{@@design_sql_filter} )" unless @@design_sql_filter.empty?
-    query += " AND ( #{@@project_sql_filter} )" unless @@project_sql_filter.empty?
-    query += " ORDER BY mgi_gene.mgi_accession_id"
   end
   
   def self.create_or_update
@@ -727,7 +720,7 @@ class TargetingVector
     end
     
     cursor.fetch do |fetch_row|
-      ikmc_project_id   = fetch_row[0]
+      project_id        = fetch_row[0]
       int_vec_name      = fetch_row[1]
       targ_vec_name     = fetch_row[2]
       mgi_accession_id  = fetch_row[3]
@@ -735,6 +728,9 @@ class TargetingVector
       cassette          = fetch_row[5]
       backbone          = fetch_row[6]
       targeted_trap     = fetch_row[10] == 'yes'
+      
+      next unless Design.is_valid? design_id
+      next unless @@changed_projects.include? project_id
       
       # Get pipeline ID
       pipeline_id = 
@@ -755,7 +751,7 @@ class TargetingVector
       targ_vec = TargetingVector.new({
         :molecular_structure_id => mol_struct.id,
         :pipeline_id            => pipeline_id,
-        :ikmc_project_id        => ikmc_project_id,
+        :ikmc_project_id        => project_id,
         :intermediate_vector    => int_vec_name,
         :name                   => targ_vec_name
       })
@@ -893,7 +889,6 @@ class EsCell
   end
   
   def self.get_sql_query_htgt
-    query =
     """
     SELECT DISTINCT
       ws.epd_well_name,
@@ -914,12 +909,6 @@ class EsCell
       ws.epd_well_name IS NOT NULL
       AND ws.pgdgr_well_name IS NOT NULL
     """
-    query += "
-      AND ( #{@@design_sql_filter} )
-    " unless @@design_sql_filter.empty?
-    query += "
-      AND ( #{@@project_sql_filter} )
-    " unless @@project_sql_filter.empty?
   end
   
   def self.create_or_update
@@ -943,6 +932,9 @@ class EsCell
       cassette          = fetch_row[7]
       backbone          = fetch_row[8]
       targeted_trap     = fetch_row[9] == 'yes'
+      
+      next unless Design.is_valid? design_id
+      next unless @@changed_projects.include? project_id
       
       begin
         mol_struct = MolecularStructure.find( mgi_accession_id, design_id, cassette, backbone, targeted_trap )
@@ -1226,8 +1218,7 @@ end
 ##   Main script
 ##
 
-@@mol_struct_cache, @@targ_vec_cache = {}, {}
-@@design_sql_filter, @@project_sql_filter = "", ""
+@@design_cache, @@mol_struct_cache, @@targ_vec_cache = {}, {}, {}
 
 def run
   system("rm -rf #{@@log_dir}/#{TODAY}")
@@ -1239,32 +1230,24 @@ def run
   
   puts "\n-- Retrieving designs --"
   Design.retrieve_from_htgt()
-  @@design_sql_filter = Design.create_sql_filter()
   
   puts "\n-- Retrieving new and updated projects --"
-  changed_projects = get_changed_projects()
-  changed_projects.each_slice( 1000 ) do |project_array|
-    @@project_sql_filter += "\nOR " unless @@project_sql_filter.empty?
-    @@project_sql_filter += "project.project_id IN (#{project_array.join(',')})"
-  end
+  @@changed_projects = get_changed_projects()
   
-  unless changed_projects.empty?
+  unless @@changed_projects.empty?
     puts "\n-- Update IDCC --"
-    # Pass 1
     puts "Updating molecular structures..."
     MolecularStructure.create_or_update() unless @@no_mol_struct
     
-    # Pass 2
     puts "Updating targeting vectors..."
     TargetingVector.create_or_update() unless @@no_targ_vec
     
-    # Pass 3
     puts "Updating ES cells..."
     EsCell.create_or_update() unless @@no_es_cell
   else
     puts "Nothing has changed since the previous run!"
-  end  
-
+  end
+  
   unless @@no_report
     puts "\n-- Sending email report --"
     report()
