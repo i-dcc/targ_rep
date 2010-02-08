@@ -729,8 +729,13 @@ class TargetingVector
       backbone          = fetch_row[6]
       targeted_trap     = fetch_row[10] == 'yes'
       
-      next unless Design.is_valid? design_id
-      next unless @@changed_projects.include? project_id
+      begin
+        next unless Design.get(design_id).is_valid
+        next unless @@changed_projects.include? project_id
+      rescue Exception => e
+        log "[TARG VEC];#{e}"
+        next
+      end
       
       # Get pipeline ID
       pipeline_id = 
@@ -933,8 +938,13 @@ class EsCell
       backbone          = fetch_row[8]
       targeted_trap     = fetch_row[9] == 'yes'
       
-      next unless Design.is_valid? design_id
-      next unless @@changed_projects.include? project_id
+      begin
+        next unless Design.get(design_id).is_valid
+        next unless @@changed_projects.include? project_id
+      rescue Exception => e
+        log "[ES CELL];#{e}"
+        next
+      end
       
       begin
         mol_struct = MolecularStructure.find( mgi_accession_id, design_id, cassette, backbone, targeted_trap )
