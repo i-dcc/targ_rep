@@ -182,8 +182,7 @@ class Design
   end
   
   def self.get( design_id )
-    @@design_cache.each_pair { |id, design| return design if id == design_id }
-    raise "Design ID #{design_id} not found."
+    @@design_cache[design_id]
   end
   
   def self.push_to_cache( design )
@@ -476,13 +475,10 @@ class MolecularStructure
       epd_distribute    = fetch_row[5] == 'yes'
       targeted_trap     = fetch_row[6] == 'yes'
       
-      begin
-        next unless Design.get(design_id).is_valid
-        next unless @@changed_projects.include? project_id
-      rescue Exception => e
-        log "[MOL STRUCT];#{e}"
-        next
-      end
+      design = Design.get( design_id )
+      next if design.nil
+      next unless design.is_valid
+      next unless @@changed_projects.include? project_id
       
       if epd_distribute and targeted_trap
         log "[DATABASE ERROR];#{mgi_accession_id};design_id #{design_id};#{cassette};#{backbone};epd_distribute = targeted_trap = 'yes'"
@@ -496,8 +492,6 @@ class MolecularStructure
         and mol_struct.backbone         == backbone         \
         and not epd_distribute                              \
         and not targeted_trap
-      
-      design = Design.get( design_id )
       
       mol_struct_hash = {
         :mgi_accession_id     => mgi_accession_id,
@@ -729,13 +723,10 @@ class TargetingVector
       backbone          = fetch_row[6]
       targeted_trap     = fetch_row[10] == 'yes'
       
-      begin
-        next unless Design.get(design_id).is_valid
-        next unless @@changed_projects.include? project_id
-      rescue Exception => e
-        log "[TARG VEC];#{e}"
-        next
-      end
+      design = Design.get( design_id )
+      next if design.nil
+      next unless design.is_valid
+      next unless @@changed_projects.include? project_id
       
       # Get pipeline ID
       pipeline_id = 
@@ -938,13 +929,10 @@ class EsCell
       backbone          = fetch_row[8]
       targeted_trap     = fetch_row[9] == 'yes'
       
-      begin
-        next unless Design.get(design_id).is_valid
-        next unless @@changed_projects.include? project_id
-      rescue Exception => e
-        log "[ES CELL];#{e}"
-        next
-      end
+      design = Design.get( design_id )
+      next if design.nil
+      next unless design.is_valid
+      next unless @@changed_projects.include? project_id
       
       begin
         mol_struct = MolecularStructure.find( mgi_accession_id, design_id, cassette, backbone, targeted_trap )
