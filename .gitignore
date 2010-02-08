@@ -1,5 +1,5 @@
 log/*.log
-tmp/**/*
+tmp/*
 config/database.yml
 db/*.sqlite3
 vendor/plugins/what_column/*
