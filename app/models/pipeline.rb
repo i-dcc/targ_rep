@@ -22,10 +22,17 @@ class Pipeline < ActiveRecord::Base
   
   Pipeline.include_root_in_json = false
   
-  def molecular_structures
+  def molecular_structures_id
     tv_mol_structs = targeting_vectors.collect(&:molecular_structure_id).uniq
     ec_mol_structs = es_cells.collect(&:molecular_structure_id).uniq
     (tv_mol_structs + ec_mol_structs).uniq
-    MolecularStructure.find( (tv_mol_structs + ec_mol_structs).uniq )
+  end
+  
+  def molecular_structures
+    MolecularStructure.find( molecular_structures_id )
+  end
+  
+  def molecular_structure_count
+    molecular_structures_id.count
   end
 end

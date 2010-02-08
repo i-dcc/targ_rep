@@ -396,6 +396,13 @@ class MolecularStructure
     return self
   end
   
+  def eql?( args )
+    args.each_pair.all? do |key, value|
+      next unless self.instance_variable_defined? "@#{key}"
+      return false if self.instance_variable_get "@#{key}" != value
+    end
+  end
+  
   def to_json
     JSON.generate({
       'molecular_structure' => {
@@ -418,30 +425,6 @@ class MolecularStructure
         'loxp_end'             => @loxp_end
       }
     })
-  end
-  
-  def has_changed( mol_struct_hash )
-    if @mgi_accession_id      != mol_struct_hash['mgi_accession_id']    \
-    or @design_id             != mol_struct_hash['project_design_id']   \
-    or @design_type           != mol_struct_hash['design_type']         \
-    or @design_subtype        != mol_struct_hash['design_subtype']      \
-    or @subtype_description   != mol_struct_hash['subtype_description'] \
-    or @chromosome            != mol_struct_hash['chromosome']          \
-    or @strand                != mol_struct_hash['strand']              \
-    or @cassette              != mol_struct_hash['cassette']            \
-    or @backbone              != mol_struct_hash['backbone']            \
-    or @floxed_start_exon     != mol_struct_hash['floxed_start_exon']   \
-    or @floxed_end_exon       != mol_struct_hash['floxed_end_exon']     \
-    or @homology_arm_start    != mol_struct_hash['homology_arm_start']  \
-    or @homology_arm_end      != mol_struct_hash['homology_arm_end']    \
-    or @cassette_start        != mol_struct_hash['cassette_start']      \
-    or @cassette_end          != mol_struct_hash['cassette_end']        \
-    or @loxp_start            != mol_struct_hash['loxp_start']          \
-    or @loxp_end              != mol_struct_hash['loxp_end']
-      return true
-    else
-      return false
-    end
   end
   
   def self.get_sql_query_htgt
@@ -620,28 +603,24 @@ class MolecularStructure
   end
   
   def create
-    dump_for_error = "#{@design_type} | Design ID: #{@design_id} | #{@mgi_accession_id}"
-    
     begin
       response = request( 'POST', 'alleles.json', to_json() )
       @id = JSON.parse( response )['id']
     rescue RestClient::RequestFailed => e
       log "[MOL STRUCT CREATION];#{to_json()};#{e.http_body}\n"
     rescue RestClient::ServerBrokeConnection
-      log "[MOL STRUCT CREATION];#{dump_for_error};The server broke the connection prior to the request completing."
+      log "[MOL STRUCT CREATION];#{to_json()};The server broke the connection prior to the request completing."
     rescue RestClient::RequestTimeout
-      log "[MOL STRUCT CREATION];#{dump_for_error};Request timed out"
+      log "[MOL STRUCT CREATION];#{to_json()};Request timed out"
     rescue RestClient::Exception => e
-      log "[MOL STRUCT CREATION];#{dump_for_error};#{e}"
+      log "[MOL STRUCT CREATION];#{to_json()};#{e}"
     end
   end
   
   def update( mol_struct_hash )
-    dump_for_error = "#{@design_type} | Design ID: #{@design_id} | #{@mgi_accession_id}"
-    
     @id = mol_struct_hash['id']
     
-    if has_changed( mol_struct_hash )
+    unless self.eql? mol_struct_hash
       begin
         response = request( 'PUT', "alleles/#{@id}.json", to_json() )
       rescue RestClient::RequestFailed => e
@@ -651,11 +630,11 @@ class MolecularStructure
           log "[MOL STRUCT UPDATE];#{to_json()};#{e.http_body}\n"
         end
       rescue RestClient::ServerBrokeConnection
-        log "[MOL STRUCT UPDATE];#{dump_for_error};The server broke the connection prior to the request completing."
+        log "[MOL STRUCT UPDATE];#{to_json()};The server broke the connection prior to the request completing."
       rescue RestClient::RequestTimeout
-        log "[MOL STRUCT UPDATE];#{dump_for_error};Request timed out"
+        log "[MOL STRUCT UPDATE];#{to_json()};Request timed out"
       rescue RestClient::Exception => e
-        log "[MOL STRUCT UPDATE];#{dump_for_error};#{e}"
+        log "[MOL STRUCT UPDATE];#{to_json()};#{e}"
       end
     end
   end
@@ -676,10 +655,19 @@ class TargetingVector
   attr_accessor :ikmc_project_id, :intermediate_vector, :name
   
   def initialize( args )
-    args.each_pair do | key, value |
-      self.send("#{key}=", value) if self.respond_to?("#{key}=")
-    end
+    @molecular_structure_id = args[:molecular_structure_id]
+    @pipeline_id            = args[:pipeline_id]
+    @ikmc_project_id        = args[:ikmc_project_id]
+    @intermediate_vector    = args[:intermediate_vector]
+    @name                   = args[:name]
     return self
+  end
+  
+  def eql?( args )
+    args.each_pair.all? do |key, value|
+      next unless self.instance_variable_defined? "@#{key}"
+      return false if self.instance_variable_get "@#{key}" != value
+    end
   end
   
   def to_json
@@ -760,7 +748,7 @@ class TargetingVector
       begin
         mol_struct = MolecularStructure.find( mgi_accession_id, design_id, cassette, backbone, targeted_trap )
       rescue Exception => e
-        log "[TARG VEC];#{e}"
+        log "[TARG VEC];#{targ_vec_name};#{e}"
         next
       end
       
@@ -830,7 +818,8 @@ class TargetingVector
   
   def update( targ_vec_hash )
     @id = targ_vec_hash['id']
-    unless self.eql? TargetingVector.new( targ_vec_hash )
+    
+    unless self.eql? targ_vec_hash
       begin
         response = request( 'PUT', "targeting_vectors/#{@id}.json", to_json() )
       rescue RestClient::RequestFailed => e
@@ -863,6 +852,25 @@ class EsCell
     return self
   end
   
+  def eql?( args )
+    args.each_pair.all? do |key, value|
+      next unless self.instance_variable_defined? "@#{key}"
+      return false if self.instance_variable_get "@#{key}" != value
+    end
+  end
+  
+  def to_json
+    JSON.generate({ 
+      'es_cell' => {
+        'name'                      => @name,
+        'parental_cell_line'        => @parental_cell_line,
+        'allele_symbol_superscript' => @allele_symbol_superscript,
+        'molecular_structure_id'    => @molecular_structure_id,
+        'targeting_vector_id'       => @targeting_vector_id
+      }
+    })
+  end
+  
   def self.format_allele_symbol_superscript( allele_name )
     rxp_matches = /<sup>(tm\d.*)<\/sup>/.match( allele_name )
     return rxp_matches[1] if rxp_matches
@@ -882,18 +890,6 @@ class EsCell
         else parental_cell_line
       end
     end
-  end
-  
-  def to_json
-    JSON.generate({ 
-      'es_cell' => {
-        'name'                      => @name,
-        'parental_cell_line'        => @parental_cell_line,
-        'allele_symbol_superscript' => @allele_symbol_superscript,
-        'molecular_structure_id'    => @molecular_structure_id,
-        'targeting_vector_id'       => @targeting_vector_id
-      }
-    })
   end
   
   def self.get_sql_query_htgt
@@ -999,7 +995,7 @@ class EsCell
   
   def update( es_cell_hash )
     @id = es_cell_hash['id']
-    unless self.eql? EsCell.new( es_cell_hash )
+    unless self.eql? es_cell_hash
       begin
         response = request( 'PUT', "products/#{@id}.json", to_json() )
       rescue RestClient::RequestFailed => e
