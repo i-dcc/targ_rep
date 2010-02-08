@@ -397,7 +397,7 @@ class MolecularStructure
   end
   
   def eql?( args )
-    args.each_pair.all? do |key, value|
+    args.each_pair do |key, value|
       next unless self.instance_variable_defined? "@#{key}"
       return false if self.instance_variable_get "@#{key}" != value
     end
@@ -664,7 +664,7 @@ class TargetingVector
   end
   
   def eql?( args )
-    args.each_pair.all? do |key, value|
+    args.each_pair do |key, value|
       next unless self.instance_variable_defined? "@#{key}"
       return false if self.instance_variable_get "@#{key}" != value
     end
@@ -853,7 +853,7 @@ class EsCell
   end
   
   def eql?( args )
-    args.each_pair.all? do |key, value|
+    args.each_pair do |key, value|
       next unless self.instance_variable_defined? "@#{key}"
       return false if self.instance_variable_get "@#{key}" != value
     end
