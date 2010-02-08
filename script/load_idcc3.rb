@@ -655,7 +655,7 @@ class TargetingVector
   def eql?( args )
     args.each_pair do |key, value|
       next unless self.instance_variable_defined? "@#{key}"
-      return false if self.instance_variable_get "@#{key}" != value
+      return false if self.instance_variable_get("@#{key}") != value
     end
   end
   
@@ -847,7 +847,7 @@ class EsCell
   def eql?( args )
     args.each_pair do |key, value|
       next unless self.instance_variable_defined? "@#{key}"
-      return false if self.instance_variable_get "@#{key}" != value
+      return false if self.instance_variable_get("@#{key}") != value
     end
   end
   
