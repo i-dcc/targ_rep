@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100202105513) do
+ActiveRecord::Schema.define(:version => 20100208110320) do
 
   create_table "audits", :force => true do |t|
     t.integer  "auditable_id"
@@ -45,9 +45,6 @@ ActiveRecord::Schema.define(:version => 20100202105513) do
     t.string   "lower_SR_check"
   end
 
-  add_index "es_cells", ["molecular_structure_id"], :name => "molecular_structure_id"
-  add_index "es_cells", ["targeting_vector_id"], :name => "targeting_vector_id"
-
   create_table "genbank_files", :force => true do |t|
     t.integer  "molecular_structure_id", :null => false
     t.text     "escell_clone"
@@ -55,8 +52,6 @@ ActiveRecord::Schema.define(:version => 20100202105513) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-
-  add_index "genbank_files", ["molecular_structure_id"], :name => "molecular_structure_id"
 
   create_table "molecular_structures", :force => true do |t|
     t.string   "assembly",            :default => "NCBIM37", :null => false
@@ -83,7 +78,7 @@ ActiveRecord::Schema.define(:version => 20100202105513) do
     t.integer  "project_design_id"
   end
 
-  add_index "molecular_structures", ["assembly", "chromosome", "strand", "homology_arm_start", "homology_arm_end", "cassette_start", "cassette_end", "loxp_start", "loxp_end", "cassette", "backbone"], :name => "index_mol_struct", :unique => true
+  add_index "molecular_structures", ["mgi_accession_id", "project_design_id", "assembly", "chromosome", "strand", "homology_arm_start", "homology_arm_end", "cassette_start", "cassette_end", "loxp_start", "loxp_end", "cassette", "backbone"], :name => "index_mol_struct", :unique => true
 
   create_table "pipelines", :force => true do |t|
     t.string   "name",       :null => false
@@ -103,7 +98,6 @@ ActiveRecord::Schema.define(:version => 20100202105513) do
     t.datetime "updated_at"
   end
 
-  add_index "targeting_vectors", ["molecular_structure_id"], :name => "molecular_structure_id"
   add_index "targeting_vectors", ["pipeline_id", "name"], :name => "index_targvec", :unique => true
 
   create_table "users", :force => true do |t|
@@ -117,13 +111,5 @@ ActiveRecord::Schema.define(:version => 20100202105513) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-
-  add_foreign_key "es_cells", "molecular_structures", :name => "es_cells_ibfk_1", :dependent => :delete
-  add_foreign_key "es_cells", "targeting_vectors", :name => "es_cells_ibfk_2", :dependent => :delete
-
-  add_foreign_key "genbank_files", "molecular_structures", :name => "genbank_files_ibfk_1", :dependent => :delete
-
-  add_foreign_key "targeting_vectors", "molecular_structures", :name => "targeting_vectors_ibfk_2", :dependent => :delete
-  add_foreign_key "targeting_vectors", "pipelines", :name => "targeting_vectors_ibfk_1", :dependent => :delete
 
 end

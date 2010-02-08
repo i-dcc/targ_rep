@@ -10,15 +10,15 @@ class MolecularStructureTest < ActiveSupport::TestCase
   should_have_many :targeting_vectors
   should_have_many :es_cells
   
-  # should_validate_uniqueness_of :mgi_accession_id,
-  #   :scoped_to => [
-  #     :assembly, :chromosome, :strand,
-  #     :homology_arm_start, :homology_arm_end,
-  #     :cassette_start, :cassette_end,
-  #     :loxp_start, :loxp_end,
-  #     :cassette, :backbone
-  #   ],
-  #   :message => "must have unique design features"
+  should_validate_uniqueness_of :project_design_id,
+    :scoped_to => [
+      :mgi_accession_id, :assembly, :chromosome, :strand,
+      :cassette, :backbone,
+      :homology_arm_start, :homology_arm_end,
+      :cassette_start, :cassette_end,
+      :loxp_start, :loxp_end
+    ],
+    :message => "must have unique design features"
   
   should_validate_presence_of :mgi_accession_id
   should_validate_presence_of :assembly

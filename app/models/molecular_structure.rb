@@ -50,14 +50,15 @@ class MolecularStructure < ActiveRecord::Base
   accepts_nested_attributes_for :es_cells, :allow_destroy  => true
   
   # Unique constraint
-  # validates_uniqueness_of :mgi_accession_id,
-  #   :scope => [
-  #     :assembly, :chromosome, :strand, :cassette, :backbone,
-  #     :homology_arm_start, :homology_arm_end,
-  #     :cassette_start, :cassette_end,
-  #     :loxp_start, :loxp_end
-  #   ],
-  #   :message => "must have unique design features"
+  validates_uniqueness_of :project_design_id,
+    :scope => [
+      :mgi_accession_id, :assembly, :chromosome, :strand,
+      :cassette, :backbone,
+      :homology_arm_start, :homology_arm_end,
+      :cassette_start, :cassette_end,
+      :loxp_start, :loxp_end
+    ],
+    :message => "must have unique design features"
   
   # Data validation
   validates_presence_of [
@@ -98,8 +99,6 @@ class MolecularStructure < ActiveRecord::Base
   validates_numericality_of :cassette_end,        :only_integer => true, :greater_than => 0, :allow_nil => true
   validates_numericality_of :loxp_start,          :only_integer => true, :greater_than => 0, :allow_nil => true
   validates_numericality_of :loxp_end,            :only_integer => true, :greater_than => 0, :allow_nil => true
-  
-  validate :has_unique_features
   
   validate :has_right_features, 
     :unless => "[mgi_accession_id, assembly, chromosome, strand, design_type,
@@ -155,26 +154,6 @@ class MolecularStructure < ActiveRecord::Base
     end
 
   protected
-    def has_unique_features
-      search = MolecularStructure.search({
-        :mgi_accession_id   => mgi_accession_id,
-        :assembly           => assembly,
-        :chromosome         => chromosome,
-        :strand             => strand,
-        :cassette           => cassette,
-        :backbone           => backbone,
-        :homology_arm_start => homology_arm_start,
-        :homology_arm_end   => homology_arm_end,
-        :cassette_start     => cassette_start,
-        :cassette_end       => cassette_end,
-        :loxp_start         => loxp_start,
-        :loxp_end           => loxp_end
-      })
-      if search.count > 0
-        errors.add( :mgi_accession_id, "must have unique features" )
-      end
-    end
-    
     def has_right_features
       error_msg = "cannot be greater than %s position on this strand (#{strand})"
       
