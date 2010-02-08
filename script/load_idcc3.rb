@@ -64,11 +64,14 @@ GENBANK_URL = 'http://www.sanger.ac.uk/htgt/qc/seq_view_file'
 ## Set the script options
 ##
 
+@@no_mol_struct     = false # Will exclude molecular structures loading
 @@no_genbank_files  = false # Will exclude genbank files loading
+@@no_targ_vec       = false # Will exclude targeting vectors loading
+@@no_es_cell        = false # Will exclude ES cells loading
+
 @@no_report         = false # Will exclude email report
 @@debug             = false # Won't print logs on screen
-@@start_date        = nil
-@@end_date          = nil
+@@start_date, @@end_date = nil, nil
 
 # When test only
 @@idcc_site = 'http://htgt:htgt@localhost:3000/'
@@ -79,7 +82,10 @@ GENBANK_URL = 'http://www.sanger.ac.uk/htgt/qc/seq_view_file'
 opts = GetoptLong.new(
   [ '--help',               '-h',   GetoptLong::NO_ARGUMENT ],
   [ '--production',         '-p',   GetoptLong::NO_ARGUMENT ],
+  [ '--no_mol_struct',              GetoptLong::NO_ARGUMENT ],
   [ '--no_genbank_files',           GetoptLong::NO_ARGUMENT ],
+  [ '--no_targ_vec',                GetoptLong::NO_ARGUMENT ],
+  [ '--no_es_cell',                 GetoptLong::NO_ARGUMENT ],
   [ '--no_report',                  GetoptLong::NO_ARGUMENT ],
   [ '--debug',                      GetoptLong::NO_ARGUMENT ],
   [ '--start_date',                 GetoptLong::OPTIONAL_ARGUMENT ],
@@ -96,8 +102,14 @@ opts.each do |opt, arg|
       @@log_dir   = LOG_DIR
     when '--debug'
       @@debug = true
+    when '--no_mol_struct'
+      @@no_mol_struct = true
     when '--no_genbank_files'
       @@no_genbank_files = true
+    when '--no_targ_vec'
+      @@no_targ_vec = true
+    when '--no_es_cell'
+      @@no_es_cell = true
     when '--no_report'
       @@no_report = true
     when '--start_date'
@@ -476,7 +488,9 @@ class MolecularStructure
   
   def self.create_or_update
     begin
+      puts "Querying HTGT..."
       cursor = @@ora_dbh.exec( get_sql_query_htgt )
+      puts "Done."
     rescue
       log "[MOL STRUCT SQL];#{get_sql_query_htgt}"
       raise
@@ -716,7 +730,9 @@ class TargetingVector
   def self.create_or_update
     query = TargetingVector.get_sql_query_htgt()
     begin
+      puts "Querying HTGT..."
       cursor = @@ora_dbh.exec( query )
+      puts "Done."
     rescue
       log "[TARG VEC SQL];#{query}"
       raise
@@ -912,7 +928,9 @@ class EsCell
   
   def self.create_or_update
     begin
+      puts "Querying HTGT..."
       cursor = @@ora_dbh.exec( get_sql_query_htgt )
+      puts "Done."
     rescue
       log "[ES CELL SQL];#{get_sql_query_htgt}"
       raise
@@ -1238,15 +1256,15 @@ def run
     puts "\n-- Update IDCC --"
     # Pass 1
     puts "Updating molecular structures..."
-    MolecularStructure.create_or_update()
+    MolecularStructure.create_or_update() unless @@no_mol_struct
     
     # Pass 2
     puts "Updating targeting vectors..."
-    TargetingVector.create_or_update()
+    TargetingVector.create_or_update() unless @@no_targ_vec
     
     # Pass 3
     puts "Updating ES cells..."
-    EsCell.create_or_update()
+    EsCell.create_or_update() unless @@no_es_cell
   else
     puts "Nothing has changed since the previous run!"
   end  
