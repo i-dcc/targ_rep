@@ -19,7 +19,7 @@
 # -p, --production:
 #     Insert the extracted HTGT data into the I-DCC production database
 #
-# --no_genbank_files:
+# --skip_genbank_files:
 #     Won't load genbank files from HTGT
 #
 # --no_report:
@@ -64,10 +64,10 @@ GENBANK_URL = 'http://www.sanger.ac.uk/htgt/qc/seq_view_file'
 ## Set the script options
 ##
 
-@@no_mol_struct     = false # Will exclude molecular structures loading
-@@no_genbank_files  = false # Will exclude genbank files loading
-@@no_targ_vec       = false # Will exclude targeting vectors loading
-@@no_es_cell        = false # Will exclude ES cells loading
+@@skip_mol_struct     = false # Will exclude molecular structures loading
+@@skip_genbank_files  = false # Will exclude genbank files loading
+@@skip_targ_vec       = false # Will exclude targeting vectors loading
+@@skip_es_cell        = false # Will exclude ES cells loading
 
 @@no_report         = false # Will exclude email report
 @@debug             = false # Won't print logs on screen
@@ -82,10 +82,10 @@ GENBANK_URL = 'http://www.sanger.ac.uk/htgt/qc/seq_view_file'
 opts = GetoptLong.new(
   [ '--help',               '-h',   GetoptLong::NO_ARGUMENT ],
   [ '--production',         '-p',   GetoptLong::NO_ARGUMENT ],
-  [ '--no_mol_struct',              GetoptLong::NO_ARGUMENT ],
-  [ '--no_genbank_files',           GetoptLong::NO_ARGUMENT ],
-  [ '--no_targ_vec',                GetoptLong::NO_ARGUMENT ],
-  [ '--no_es_cell',                 GetoptLong::NO_ARGUMENT ],
+  [ '--skip_mol_struct',              GetoptLong::NO_ARGUMENT ],
+  [ '--skip_genbank_files',           GetoptLong::NO_ARGUMENT ],
+  [ '--skip_targ_vec',                GetoptLong::NO_ARGUMENT ],
+  [ '--skip_es_cell',                 GetoptLong::NO_ARGUMENT ],
   [ '--no_report',                  GetoptLong::NO_ARGUMENT ],
   [ '--debug',                      GetoptLong::NO_ARGUMENT ],
   [ '--start_date',                 GetoptLong::OPTIONAL_ARGUMENT ],
@@ -102,14 +102,14 @@ opts.each do |opt, arg|
       @@log_dir   = LOG_DIR
     when '--debug'
       @@debug = true
-    when '--no_mol_struct'
-      @@no_mol_struct = true
-    when '--no_genbank_files'
-      @@no_genbank_files = true
-    when '--no_targ_vec'
-      @@no_targ_vec = true
-    when '--no_es_cell'
-      @@no_es_cell = true
+    when '--skip_mol_struct'
+      @@skip_mol_struct = true
+    when '--skip_genbank_files'
+      @@skip_genbank_files = true
+    when '--skip_targ_vec'
+      @@skip_targ_vec = true
+    when '--skip_es_cell'
+      @@skip_es_cell = true
     when '--no_report'
       @@no_report = true
     when '--start_date'
@@ -558,11 +558,7 @@ class MolecularStructure
     
     # Search through webservice
     mol_struct = search( mgi_accession_id, design_id, cassette, backbone, targeted_trap )
-    unless mol_struct.nil?
-      mol_struct = MolecularStructure.new( mol_struct )
-      MolecularStructure.push_to_cache( mol_struct )
-      return mol_struct
-    end
+    return mol_struct unless mol_struct.nil?
     
     raise "Can't find molecular structure (#{design.design_type} - targeted trap #{targeted_trap})
     mgi_accession_id='#{mgi_accession_id}'
@@ -696,7 +692,7 @@ class TargetingVector
         OR project.is_komp_csd = 1
         OR project.is_norcomm = 1
       )
-      AND (pgdgr_distribute = 'yes' OR ws.epd_distribute = 'yes')
+      AND pgdgr_distribute = 'yes'
       AND pgdgr_well_name IS NOT NULL
     ORDER BY mgi_gene.mgi_accession_id
     """
@@ -904,6 +900,7 @@ class EsCell
     WHERE
       ws.epd_well_name IS NOT NULL
       AND ws.pgdgr_well_name IS NOT NULL
+      AND (ws.targeted_trap = 'yes' OR ws.epd_distribute = 'yes')
     """
   end
   
@@ -1235,13 +1232,13 @@ def run
   unless @@changed_projects.empty?
     puts "\n-- Update IDCC --"
     puts "Updating molecular structures..."
-    MolecularStructure.create_or_update() unless @@no_mol_struct
+    MolecularStructure.create_or_update() unless @@skip_mol_struct
     
     puts "Updating targeting vectors..."
-    TargetingVector.create_or_update() unless @@no_targ_vec
+    TargetingVector.create_or_update() unless @@skip_targ_vec
     
     puts "Updating ES cells..."
-    EsCell.create_or_update() unless @@no_es_cell
+    EsCell.create_or_update() unless @@skip_es_cell
   else
     puts "Nothing has changed since the previous run!"
   end
