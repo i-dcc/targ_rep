@@ -640,11 +640,9 @@ class TargetingVector
   attr_accessor :ikmc_project_id, :intermediate_vector, :name
   
   def initialize( args )
-    @molecular_structure_id = args[:molecular_structure_id]
-    @pipeline_id            = args[:pipeline_id]
-    @ikmc_project_id        = args[:ikmc_project_id]
-    @intermediate_vector    = args[:intermediate_vector]
-    @name                   = args[:name]
+    args.each_pair do | key, value |
+      self.send("#{key}=", value) if self.respond_to?("#{key}=")
+    end
     return self
   end
   
