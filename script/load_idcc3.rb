@@ -82,10 +82,10 @@ GENBANK_URL = 'http://www.sanger.ac.uk/htgt/qc/seq_view_file'
 opts = GetoptLong.new(
   [ '--help',               '-h',   GetoptLong::NO_ARGUMENT ],
   [ '--production',         '-p',   GetoptLong::NO_ARGUMENT ],
-  [ '--skip_mol_struct',              GetoptLong::NO_ARGUMENT ],
-  [ '--skip_genbank_files',           GetoptLong::NO_ARGUMENT ],
-  [ '--skip_targ_vec',                GetoptLong::NO_ARGUMENT ],
-  [ '--skip_es_cell',                 GetoptLong::NO_ARGUMENT ],
+  [ '--skip_mol_struct',            GetoptLong::NO_ARGUMENT ],
+  [ '--skip_genbank_files',         GetoptLong::NO_ARGUMENT ],
+  [ '--skip_targ_vec',              GetoptLong::NO_ARGUMENT ],
+  [ '--skip_es_cell',               GetoptLong::NO_ARGUMENT ],
   [ '--no_report',                  GetoptLong::NO_ARGUMENT ],
   [ '--debug',                      GetoptLong::NO_ARGUMENT ],
   [ '--start_date',                 GetoptLong::OPTIONAL_ARGUMENT ],
@@ -990,30 +990,32 @@ class EsCell
 end
 
 class GenbankFile
-  def retrieve_molecular_structures
+  def self.create_or_update
     if @@mol_struct_cache.empty?
-      'pass'
+      page = 1
+      while not page.nil?
+        response = request( 'GET', "alleles.json?page=#{page}" )
+        mol_struct_list = JSON.parse( response )
+        
+        if mol_struct_list.length > 0
+          mol_struct_list.each do |mol_struct_hash|
+            mol_struct = MolecularStructure.new( mol_struct_hash )
+            mol_struct.targeted_trap = mol_struct.design_type == 'KO' and mol_struct.loxp_start.nil?
+            push_to_idcc( mol_struct )
+          end
+          page += 1
+        else
+          page = nil
+        end
+      end
     else
-      @@mol_struct_cache.each_pair do |id, mol_struct|
-        genbank_file = 
-        get_genbank_file(
-          mol_struct.design_id,
-          mol_struct.cassette,
-          mol_struct.backbone,
-          mol_struct.targeted_trap
-        )
-        json = JSON.generate({
-          'molecular_structure' => {
-            'id' => id,
-            'genbank_file' => genbank_file
-          }
-        })
-        request( 'PUT', "alleles/#{id}.json", json )
+      @@mol_struct_cache.each_pair do |mol_struct_id, mol_struct|
+        push_to_idcc( mol_struct )
       end
     end
   end
   
-  def get_genbank_file( design_id, cassette, backbone, targeted_trap )
+  def self.get_genbank_file( design_id, cassette, backbone, targeted_trap )
     # Targeting vector
     url = GENBANK_URL + "?design_id=#{design_id}&cassette=#{cassette}&backbone=#{backbone}"
     targ_vec_file = RestClient::get( url ) rescue ''
@@ -1027,6 +1029,25 @@ class GenbankFile
       :escell_clone     => escell_file,
       :targeting_vector => targ_vec_file
     }
+  end
+  
+  def self.push_to_idcc( mol_struct )
+    genbank_file = 
+    get_genbank_file(
+      mol_struct.design_id,
+      mol_struct.cassette,
+      mol_struct.backbone,
+      mol_struct.targeted_trap
+    )
+    
+    json = JSON.generate({
+      'molecular_structure' => {
+        'id' => mol_struct.id,
+        'genbank_file' => genbank_file
+      }
+    })
+    
+    request( 'PUT', "alleles/#{mol_struct.id}.json", json )
   end
 end
 
@@ -1222,14 +1243,17 @@ def run
   
   unless @@changed_projects.empty?
     puts "\n-- Update IDCC --"
-    puts "Updating molecular structures..."
+    puts 'Updating molecular structures...'
     MolecularStructure.create_or_update() unless @@skip_mol_struct
     
-    puts "Updating targeting vectors..."
+    puts 'Updating targeting vectors...'
     TargetingVector.create_or_update() unless @@skip_targ_vec
     
-    puts "Updating ES cells..."
+    puts 'Updating ES cells...'
     EsCell.create_or_update() unless @@skip_es_cell
+    
+    puts 'Updating Genbank Files...'
+    GenbankFile.create_or_update() unless @@skip_genbank_files
   else
     puts "Nothing has changed since the previous run!"
   end
