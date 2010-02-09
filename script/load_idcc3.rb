@@ -558,7 +558,7 @@ class MolecularStructure
     
     # Search through webservice
     mol_struct = search( mgi_accession_id, design_id, cassette, backbone, targeted_trap )
-    return mol_struct unless mol_struct.nil?
+    return MolecularStructure.new( mol_struct ) unless mol_struct.nil?
     
     raise "Can't find molecular structure (#{design.design_type} - targeted trap #{targeted_trap})
     mgi_accession_id='#{mgi_accession_id}'
@@ -768,7 +768,7 @@ class TargetingVector
     
     # Search through webservice
     targ_vec = search( name, ikmc_project_id )
-    return targ_vec unless targ_vec.nil?
+    return TargetingVector.new( targ_vec ) unless targ_vec.nil?
     
     raise "Can't find targeting vector #{name}"
   end
