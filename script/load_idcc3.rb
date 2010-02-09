@@ -768,11 +768,7 @@ class TargetingVector
     
     # Search through webservice
     targ_vec = search( name, ikmc_project_id )
-    unless targ_vec.nil?
-      targ_vec = TargetingVector.new( targ_vec )
-      TargetingVector.push_to_cache( targ_vec )
-      return targ_vec
-    end
+    return targ_vec unless targ_vec.nil?
     
     raise "Can't find targeting vector #{name}"
   end
@@ -780,13 +776,9 @@ class TargetingVector
   def self.search( name, ikmc_project_id )
     params = "name=#{name}&ikmc_project_id=#{ikmc_project_id}"
     
-    begin
-      response = request( 'GET', "targeting_vectors.json?#{params}" )
-      json_response = JSON.parse( response )
-      return json_response[0] if json_response.length > 0
-    rescue RestClient::ResourceNotFound
-      return nil
-    end
+    response = request( 'GET', "targeting_vectors.json?#{params}" )
+    json_response = JSON.parse( response )
+    return json_response[0] if json_response.length > 0
   end
   
   def create
@@ -901,6 +893,7 @@ class EsCell
       ws.epd_well_name IS NOT NULL
       AND ws.pgdgr_well_name IS NOT NULL
       AND (ws.targeted_trap = 'yes' OR ws.epd_distribute = 'yes')
+    ORDER BY mgi_gene.mgi_accession_id, project.design_id, project.project_id
     """
   end
   
