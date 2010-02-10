@@ -39,6 +39,21 @@
       <strong>Backbone:</strong>
       <%=h @molecular_structure.backbone %>
     </p>
+    <% if @molecular_structure.floxed_start_exon == @molecular_structure.floxed_end_exon %>
+    <p>
+      <strong>Floxed Exon:</strong>
+      <%=h @molecular_structure.floxed_start_exon %>
+    </p>
+    <% else %>
+    <p>
+      <strong>First Floxed Exon:</strong>
+      <%=h @molecular_structure.floxed_start_exon %>
+    </p>
+    <p>
+      <strong>Last Floxed Exon:</strong>
+      <%=h @molecular_structure.floxed_end_exon %>
+    </p>
+    <% end %>
   </fieldset>
 </div>
 

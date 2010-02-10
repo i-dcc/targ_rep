@@ -56,7 +56,7 @@ REPORT_TO       = {
 ORA_USER    = 'eucomm_vector'
 ORA_PASS    = 'eucomm_vector'
 ORA_DB      = 'migp_ha.world'
-IDCC_SITE   = 'http://htgt:htgt@www.i-dcc.org/dev/targ_rep/'
+IDCC_SITE   = 'http://htgt:htgt@htgt.internal.sanger.ac.uk:4002/labs/targ_rep'
 LOG_DIR     = '/software/team87/logs/idcc/htgt_load'
 GENBANK_URL = 'http://www.sanger.ac.uk/htgt/qc/seq_view_file'
 
@@ -69,8 +69,8 @@ GENBANK_URL = 'http://www.sanger.ac.uk/htgt/qc/seq_view_file'
 @@skip_targ_vec       = false # Will exclude targeting vectors loading
 @@skip_es_cell        = false # Will exclude ES cells loading
 
-@@no_report         = false # Will exclude email report
-@@debug             = false # Won't print logs on screen
+@@no_report = false # Will exclude email report
+@@debug     = false # Won't print logs on screen
 @@start_date, @@end_date = nil, nil
 
 # When test only
@@ -234,6 +234,7 @@ class Design
       else
         if current_design and current_design.validate()
           current_design.set_features()
+          current_design.set_exons()
           push_to_cache( current_design )
         end
         
@@ -330,6 +331,65 @@ class Design
       end
     else
       @loxp_start, @loxp_end = nil, nil
+    end
+  end
+  
+  def set_exons
+    if @strand == '+'
+      strand = '1'
+      chr_start = @cassette_end
+      if @loxp_start
+        chr_end = @loxp_start
+      else
+        chr_end = @homology_arm_end
+      end
+    elsif @strand == '-'  
+      strand = '-1'
+      chr_end = @cassette_end
+      if @loxp_start
+        chr_start = @loxp_start
+      else
+        chr_start = @homology_arm_end
+      end
+    end
+    
+    query =
+    """
+    SELECT ensembl_exon_stable_id
+    FROM display_exon
+    WHERE
+      chr_name = '#{@chromosome}'
+      AND chr_strand = #{strand}
+      AND 
+      (
+        chr_start = (
+          SELECT MIN(chr_start)
+          FROM display_exon
+          WHERE
+            chr_name = '#{@chromosome}'
+            AND chr_strand = #{strand}
+            AND chr_start >= #{chr_start}
+        )
+        OR chr_end = (
+          SELECT MAX(chr_end)
+          FROM display_exon
+          WHERE 
+            chr_name = '#{@chromosome}'
+            AND chr_strand = #{strand}
+            AND chr_end <= #{chr_end}
+        )
+      )
+      ORDER BY chr_start, chr_end;
+    """
+    
+    row_number = 1
+    @@ora_dbh.exec( query ) do |fetch_row|
+      if row_number == 1
+        @floxed_start_exon = fetch_row[0]
+      else
+        @floxed_end_exon = fetch_row[0]
+      end
+      row_number += 1
     end
   end
   
@@ -750,10 +810,40 @@ class TargetingVector
       next unless targ_vec.id
       push_to_cache( targ_vec )
     end
+    
+    TargetingVector.delete_obsoletes()
+  end
+  
+  def self.delete_obsoletes
+    page = 1
+    while not page.nil?
+      response = request( 'GET', "targeting_vectors.json?page=#{page}" )
+      targ_vec_list = JSON.parse( response )
+      
+      if targ_vec_list.length > 0
+        targ_vec_list.each do |targ_vec_hash|
+          found = 
+          @@targ_vec_cache.values.any? do |targ_vec|
+            targ_vec.name == targ_vec_hash['name']
+          end
+          
+          if not found
+            request( 'DELETE', "targeting_vectors/#{targ_vec_hash['id']}" )
+          end
+        end
+        page += 1
+      else
+        page = nil
+      end
+    end
   end
   
   def self.push_to_cache( targ_vec )
     @@targ_vec_cache[targ_vec.id] = targ_vec
+  end
+  
+  def self.flush_cache
+    @@targ_vec_cache = nil
   end
   
   def self.find( name, ikmc_project_id )
@@ -939,7 +1029,44 @@ class EsCell
       })
       
       es_cell.push_to_idcc()
+      next unless es_cell.id
+      es_cell.push_to_cache()
     end
+    TargetingVector.flush_cache()
+    EsCell.delete_obsoletes()
+    EsCell.flush_cache()
+  end
+  
+  def self.delete_obsoletes
+    page = 1
+    while not page.nil?
+      response = request( 'GET', "es_cells.json?page=#{page}" )
+      es_cell_list = JSON.parse( response )
+      
+      if es_cell_list.length > 0
+        es_cell_list.each do |es_cell_hash|
+          found = 
+          @@es_cell_cache.values.any? do |es_cell_name|
+            es_cell_name == es_cell_hash['name']
+          end
+          
+          if not found
+            request( 'DELETE', "es_cells/#{es_cell_hash['id']}" )
+          end
+        end
+        page += 1
+      else
+        page = nil
+      end
+    end
+  end
+  
+  def self.push_to_cache( es_cell )
+    @@es_cell_cache[es_cell.id] = es_cell.name
+  end
+  
+  def self.flush_cache
+    @@es_cell_cache = nil
   end
   
   def push_to_idcc
@@ -991,27 +1118,23 @@ end
 
 class GenbankFile
   def self.create_or_update
-    if @@mol_struct_cache.empty?
-      page = 1
-      while not page.nil?
-        response = request( 'GET', "alleles.json?page=#{page}" )
-        mol_struct_list = JSON.parse( response )
-        
-        if mol_struct_list.length > 0
-          mol_struct_list.each do |mol_struct_hash|
-            mol_struct = MolecularStructure.new( mol_struct_hash )
-            mol_struct.targeted_trap = mol_struct.design_type == 'KO' and mol_struct.loxp_start.nil?
-            push_to_idcc( mol_struct )
-          end
-          page += 1
-        else
-          page = nil
-        end
-      end
-    else
-      @@mol_struct_cache.each_pair do |mol_struct_id, mol_struct|
-        push_to_idcc( mol_struct )
-      end
+    @@mol_struct_cache.each_pair do |mol_struct_id, mol_struct|
+      genbank_file = 
+      get_genbank_file(
+        mol_struct.design_id,
+        mol_struct.cassette,
+        mol_struct.backbone,
+        mol_struct.targeted_trap
+      )
+      
+      json = JSON.generate({
+        'molecular_structure' => {
+          'id' => mol_struct.id,
+          'genbank_file' => genbank_file
+        }
+      })
+      
+      request( 'PUT', "alleles/#{mol_struct.id}.json", json )
     end
   end
   
@@ -1029,25 +1152,6 @@ class GenbankFile
       :escell_clone     => escell_file,
       :targeting_vector => targ_vec_file
     }
-  end
-  
-  def self.push_to_idcc( mol_struct )
-    genbank_file = 
-    get_genbank_file(
-      mol_struct.design_id,
-      mol_struct.cassette,
-      mol_struct.backbone,
-      mol_struct.targeted_trap
-    )
-    
-    json = JSON.generate({
-      'molecular_structure' => {
-        'id' => mol_struct.id,
-        'genbank_file' => genbank_file
-      }
-    })
-    
-    request( 'PUT', "alleles/#{mol_struct.id}.json", json )
   end
 end
 
@@ -1243,17 +1347,14 @@ def run
   
   unless @@changed_projects.empty?
     puts "\n-- Update IDCC --"
-    puts 'Updating molecular structures...'
-    MolecularStructure.create_or_update() unless @@skip_mol_struct
     
-    puts 'Updating targeting vectors...'
+    unless @@skip_mol_struct
+      MolecularStructure.create_or_update()
+      GenbankFile.create_or_update() unless @@skip_genbank_files
+    end
+    
     TargetingVector.create_or_update() unless @@skip_targ_vec
-    
-    puts 'Updating ES cells...'
     EsCell.create_or_update() unless @@skip_es_cell
-    
-    puts 'Updating Genbank Files...'
-    GenbankFile.create_or_update() unless @@skip_genbank_files
   else
     puts "Nothing has changed since the previous run!"
   end
