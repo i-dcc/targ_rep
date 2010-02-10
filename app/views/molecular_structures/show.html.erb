@@ -160,42 +160,25 @@
             <td><%= es_cell.targeting_vector.name %></td>
             <td><%= es_cell.allele_symbol_superscript %></td>
             <td><%= es_cell.parental_cell_line %></td>
-            <td>
-              <% if es_cell.upper_LR_check == 'Passed' %>
-                <%= image_tag "famfamfam/accept.png", :alt => "Passed", :title => "Passed" %>
-              <% elsif es_cell.upper_LR_check == 'Failed' %>
-                <%= image_tag "famfamfam/exclamation.png", :alt => "Failed", :title => "Failed" %>
-              <% else %>
-                <%= image_tag "famfamfam/help.png", :alt => "Not checked", :title => "Not checked" %>
-              <% end -%>
-            </td>
-            <td>
-              <% if es_cell.lower_LR_check == 'Passed' %>
-                <%= image_tag "famfamfam/accept.png", :alt => "Passed", :title => "Passed" %>
-              <% elsif es_cell.lower_LR_check == 'Failed' %>
-                <%= image_tag "famfamfam/exclamation.png", :alt => "Failed", :title => "Failed" %>
-              <% else %>
-                <%= image_tag "famfamfam/help.png", :alt => "Not checked", :title => "Not checked" %>
-              <% end -%>
-            </td>
-            <td>
-              <% if es_cell.upper_SR_check == 'Passed' %>
-                <%= image_tag "famfamfam/accept.png", :alt => "Passed", :title => "Passed" %>
-              <% elsif es_cell.upper_SR_check == 'Failed' %>
-                <%= image_tag "famfamfam/exclamation.png", :alt => "Failed", :title => "Failed" %>
-              <% else %>
-                <%= image_tag "famfamfam/help.png", :alt => "Not checked", :title => "Not checked" %>
-              <% end -%>
-            </td>
-            <td>
-              <% if es_cell.lower_SR_check == 'Passed' %>
-                <%= image_tag "famfamfam/accept.png", :alt => "Passed", :title => "Passed" %>
-              <% elsif es_cell.lower_SR_check == 'Failed' %>
-                <%= image_tag "famfamfam/exclamation.png", :alt => "Failed", :title => "Failed" %>
-              <% else %>
-                <%= image_tag "famfamfam/help.png", :alt => "Not checked", :title => "Not checked" %>
-              <% end -%>
-            </td>
+            <%
+              es_cell_checks = [
+                es_cell.upper_LR_check,
+                es_cell.lower_LR_check,
+                es_cell.upper_SR_check,
+                es_cell.lower_SR_check
+              ]
+            %>
+            <% es_cell_checks.each do |check| %>
+              <td>
+                <% if check === 'Passed' %>
+                  <%= image_tag "famfamfam/accept.png", :alt => "Passed", :title => "Passed" %>
+                <% elsif check === 'Failed' %>
+                  <%= image_tag "famfamfam/exclamation.png", :alt => "Failed", :title => "Failed" %>
+                <% else %>
+                  -
+                <% end %>
+              </td>
+            <% end %>
           </tr>
           <% end -%>
         </tbody>
