@@ -1415,23 +1415,28 @@ def run
   system("mkdir -p #{@@log_dir}/#{TODAY}")
   Dir.chdir(@@log_dir)
   
-  puts "-- Loading pipelines --"
-  Pipeline.get_or_create()
-  
-  puts "\n-- Retrieving designs --"
-  Design.retrieve_from_htgt()
-  
-  puts "\n-- Retrieving new and updated projects --"
-  @@changed_projects = get_changed_projects()
-  
-  unless @@changed_projects.empty?
-    puts "\n-- Update IDCC --"
-    MolecularStructure.create_or_update()   unless @@skip_mol_struct
-    GenbankFile.create_or_update()          unless @@skip_genbank_files
-    TargetingVector.create_or_update()      unless @@skip_targ_vec
-    EsCell.create_or_update()               unless @@skip_es_cell
+  if @@skip_mol_struct and @@skip_targ_vec and @@skip_es_cell
+    puts "-- Loading Genbank Files only --"
+    GenbankFile.create_or_update() unless @@skip_genbank_files
   else
-    puts "Nothing has changed since the previous run!"
+    puts "-- Loading pipelines --"
+    Pipeline.get_or_create()
+  
+    puts "\n-- Retrieving designs --"
+    Design.retrieve_from_htgt()
+  
+    puts "\n-- Retrieving new and updated projects --"
+    @@changed_projects = get_changed_projects()
+  
+    unless @@changed_projects.empty?
+      puts "\n-- Update IDCC --"
+      MolecularStructure.create_or_update()   unless @@skip_mol_struct
+      GenbankFile.create_or_update()          unless @@skip_genbank_files
+      TargetingVector.create_or_update()      unless @@skip_targ_vec
+      EsCell.create_or_update()               unless @@skip_es_cell
+    else
+      puts "Nothing has changed since the previous run!"
+    end
   end
   
   unless @@no_report
