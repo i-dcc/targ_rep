@@ -90,19 +90,19 @@
     <legend>Genbank Files</legend>
     <% genbank_file = @molecular_structure.genbank_file %>
     <p>
-      <strong>Targeting Vector Genbank File:</strong>
+      <strong>Targeting Vector Genbank File: </strong>
       <% unless genbank_file.nil? or genbank_file.targeting_vector.nil? %>
         <a href="<%= targeting_vector_genbank_file_url(:id => @molecular_structure.id) %>" target="_blank" class="ss_sprite ss_magnifier">view</a>
       <% else %>
-        None
+        <em>not available</em>
       <% end %>
     </p>
     <p>
-      <strong>ES Cell Clone Genbank File:</strong>
+      <strong>ES Cell Clone Genbank File: </strong>
       <% unless genbank_file.nil? or genbank_file.es_cell.nil? %>
         <a href="<%= escell_clone_genbank_file_url(:id => @molecular_structure.id) %>" target="_blank" class="ss_sprite ss_magnifier">view</a>
       <% else %>
-        None
+        <em>not available</em>
       <% end %>
     </p>
   </fieldset>
