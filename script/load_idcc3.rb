@@ -1121,8 +1121,11 @@ end
 class GenbankFile
   attr_accessor :id, :molecular_structure_id, :targeting_vector, :escell_clone
   
-  def initialize( mol_struct_id, design_id, cassette, backbone, targeted_trap )
-    @molecular_structure_id = mol_struct_id
+  def initialize( args )
+    @molecular_structure_id = args[:mol_struct_id]
+    
+    design_id = args[:design_id]
+    cassette, backbone = args[:cassette], args[:backbone]
     
     # Targeting vector file
     url = GENBANK_URL + "?design_id=#{design_id}&cassette=#{cassette}&backbone=#{backbone}"
@@ -1130,7 +1133,7 @@ class GenbankFile
     
     # ES Cell clone file
     url = GENBANK_URL + "?design_id=#{design_id}&cassette=#{cassette}"
-    url += "&targeted_trap=1" if targeted_trap
+    url += "&targeted_trap=1" if args[:targeted_trap]
     @escell_clone = RestClient::get( url ) rescue ''
     return self
   end
@@ -1146,8 +1149,12 @@ class GenbankFile
   end
   
   def eql?( genbank_file_hash )
-    return @targeting_vector == genbank_file_hash['targeting_vector'] \
-      and @escell_clone == genbank_file_hash['escell_clone']
+    if @targeting_vector == genbank_file_hash['targeting_vector'] \
+    and @escell_clone == genbank_file_hash['escell_clone']
+      return true
+    else
+      return false
+    end
   end
   
   def create
