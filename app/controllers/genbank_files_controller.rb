@@ -2,6 +2,20 @@ class GenbankFilesController < ApplicationController
   before_filter :require_user, :only => [:create, :update, :destroy]
   before_filter :find_genbank_file, :only => [:show, :update, :destroy]
   
+  def index
+    respond_to do |format|
+      if params.key? :molecular_structure_id
+        @genbank_file = GenbankFile.molecular_structure_id_equals(params[:molecular_structure_id]).first
+        format.xml  { render :xml   => @genbank_file }
+        format.json { render :json  => @genbank_file }
+      else
+        errors = { :molecular_structure_id => "is required" }
+        format.xml  { render :xml   => errors, :status => :unprocessable_entity }
+        format.json { render :json  => errors, :status => :unprocessable_entity }
+      end
+    end
+  end
+  
   # GET /genbank_files/1.xml
   # GET /genbank_files/1.json
   def show

@@ -6,8 +6,20 @@ class GenbankFilesControllerTest < ActionController::TestCase
     Factory.create( :genbank_file )
   end
   
-  should "not get index" do
-    assert_raise(ActionController::UnknownAction) { get :index }
+  should "not get index as html" do
+    get :index, :format => "html"
+    assert_response 406
+  end
+  
+  should "not get index if molecular_structure_id is not given" do
+    get :index, :format => "json"
+    assert_response :unprocessable_entity
+  end
+  
+  should "get index if molecular_structure_id is given" do
+    get :index, :format => "json",
+      :molecular_structure_id => GenbankFile.first.molecular_structure.id
+    assert_response :success
   end
 
   should "not get new" do

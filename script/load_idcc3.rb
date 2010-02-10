@@ -247,8 +247,8 @@ class Design
           :strand               => fetch_row[7],
           :assembly_name        => fetch_row[8],
           :chromosome           => fetch_row[9],
-          :floxed_start_exon    => 'unknown',
-          :floxed_end_exon      => 'unknown',
+          :floxed_start_exon    => nil,
+          :floxed_end_exon      => nil,
           :features             => {},
           :is_valid             => true
         }
@@ -343,7 +343,7 @@ class Design
       else
         chr_end = @homology_arm_end
       end
-    elsif @strand == '-'  
+    elsif @strand == '-'
       strand = '-1'
       chr_end = @cassette_end
       if @loxp_start
@@ -379,7 +379,7 @@ class Design
             AND chr_end <= #{chr_end}
         )
       )
-      ORDER BY chr_start, chr_end;
+      ORDER BY chr_start, chr_end
     """
     
     row_number = 1
@@ -391,6 +391,8 @@ class Design
       end
       row_number += 1
     end
+    
+    @floxed_end_exon = @floxed_start_exon if @floxed_end_exon.nil?
   end
   
   def validate
@@ -1076,7 +1078,7 @@ class EsCell
   
   def search
     begin
-      response = request( 'GET', "products.json?name=#{@name}" )
+      response = request( 'GET', "es_cells.json?name=#{@name}" )
       json_response = JSON.parse( response )
       return json_response[0] if json_response.length > 0
     rescue RestClient::ResourceNotFound
@@ -1086,7 +1088,7 @@ class EsCell
   
   def create
     begin
-      response = request( 'POST', 'products.json', to_json() )
+      response = request( 'POST', 'es_cells.json', to_json() )
     rescue RestClient::RequestFailed => e
       log "[ES CELL CREATION];#{to_json()};#{e.http_body}"
     rescue RestClient::ServerBrokeConnection
@@ -1102,7 +1104,7 @@ class EsCell
     @id = es_cell_hash['id']
     unless self.eql? es_cell_hash
       begin
-        response = request( 'PUT', "products/#{@id}.json", to_json() )
+        response = request( 'PUT', "es_cells/#{@id}.json", to_json() )
       rescue RestClient::RequestFailed => e
         log "[ES CELL UPDATE];#{to_json()};#{e.http_body}"
       rescue RestClient::ServerBrokeConnection
@@ -1117,41 +1119,118 @@ class EsCell
 end
 
 class GenbankFile
-  def self.create_or_update
-    @@mol_struct_cache.each_pair do |mol_struct_id, mol_struct|
-      genbank_file = 
-      get_genbank_file(
-        mol_struct.design_id,
-        mol_struct.cassette,
-        mol_struct.backbone,
-        mol_struct.targeted_trap
-      )
-      
-      json = JSON.generate({
-        'molecular_structure' => {
-          'id' => mol_struct.id,
-          'genbank_file' => genbank_file
-        }
-      })
-      
-      request( 'PUT', "alleles/#{mol_struct.id}.json", json )
+  attr_accessor :id, :molecular_structure_id, :targeting_vector, :escell_clone
+  
+  def initialize( mol_struct_id, design_id, cassette, backbone, targeted_trap )
+    @molecular_structure_id = mol_struct_id
+    
+    # Targeting vector file
+    url = GENBANK_URL + "?design_id=#{design_id}&cassette=#{cassette}&backbone=#{backbone}"
+    @targeting_vector = RestClient::get( url ) rescue ''
+    
+    # ES Cell clone file
+    url = GENBANK_URL + "?design_id=#{design_id}&cassette=#{cassette}"
+    url += "&targeted_trap=1" if targeted_trap
+    @escell_clone = RestClient::get( url ) rescue ''
+    return self
+  end
+  
+  def to_json
+    JSON.generate({
+      'genbank_file' => {
+        'molecular_structure_id' => @molecular_structure_id,
+        'targeting_vector'       => @targeting_vector,
+        'escell_clone'           => @escell_clone
+      }
+    })
+  end
+  
+  def eql?( genbank_file_hash )
+    return @targeting_vector == genbank_file_hash['targeting_vector'] \
+      and @escell_clone == genbank_file_hash['escell_clone']
+  end
+  
+  def create
+    begin
+      request( 'POST', 'genbank_files.json', to_json() )
+    rescue RestClient::RequestFailed => e
+      log "[GENBANK FILE CREATION];#{to_json()};#{e.http_body}"
+    rescue RestClient::ServerBrokeConnection
+      log "[GENBANK FILE CREATION];#{to_json()};The server broke the connection prior to the request completing."
+    rescue RestClient::RequestTimeout
+      log "[GENBANK FILE CREATION];#{to_json()};Request timed out"
+    rescue RestClient::Exception => e
+      log "[GENBANK FILE CREATION];#{to_json()};#{e}"
     end
   end
   
-  def self.get_genbank_file( design_id, cassette, backbone, targeted_trap )
-    # Targeting vector
-    url = GENBANK_URL + "?design_id=#{design_id}&cassette=#{cassette}&backbone=#{backbone}"
-    targ_vec_file = RestClient::get( url ) rescue ''
-    
-    # ES Cell clone
-    url = GENBANK_URL + "?design_id=#{design_id}&cassette=#{cassette}"
-    url += "&targeted_trap=1" if targeted_trap
-    escell_file = RestClient::get( url ) rescue ''
-    
-    genbank_file = {
-      :escell_clone     => escell_file,
-      :targeting_vector => targ_vec_file
-    }
+  def update( genbank_file_hash )
+    @id = genbank_file_hash['id']
+    unless self.eql? genbank_file_hash
+      begin
+        request( 'PUT', "genbank_files/#{@id}.json", to_json() )
+      rescue RestClient::RequestFailed => e
+        log "[GENBANK FILE UPDATE];#{to_json()};#{e.http_body}"
+      rescue RestClient::ServerBrokeConnection
+        log "[GENBANK FILE UPDATE];#{to_json()};The server broke the connection prior to the request completing."
+      rescue RestClient::RequestTimeout
+        log "[GENBANK FILE UPDATE];#{to_json()};Request timed out"
+      rescue RestClient::Exception => e
+        log "[GENBANK FILE UPDATE];#{to_json()};#{e}"
+      end
+    end
+  end
+  
+  def self.update_all
+    page = 1
+    while not page.nil?
+      response = request( 'GET', "alleles.json?page=#{page}" )
+      mol_struct_list = JSON.parse( response )
+      
+      if mol_struct_list.length > 0
+        mol_struct_list.each do |mol_struct_hash|
+          genbank_file = GenbankFile.new({
+            :mol_struct_id  => mol_struct_hash['id'],
+            :design_id      => mol_struct_hash['project_design_id'],
+            :cassette       => mol_struct_hash['cassette'],
+            :backbone       => mol_struct_hash['backbone'],
+            :targeted_trap  => mol_struct_hash['loxp_start'].nil?
+          })
+          
+          # CREATE or UPDATE Genbank File into IDCC
+          if mol_struct_hash.key? 'genbank_file'
+            genbank_file.update( mol_struct_hash['genbank_file'] )
+          else
+            genbank_file.create
+          end
+        end
+        page += 1
+      else
+        page = nil
+      end
+    end
+  end
+  
+  def self.create_or_update
+    if @@mol_struct_cache.empty?
+      GenbankFile.update_all()
+    else
+      @@mol_struct_cache.each_pair do |mol_struct_id, mol_struct|
+        genbank_file = GenbankFile.new({
+          :mol_struct_id  => mol_struct.id,
+          :design_id      => mol_struct.project_design_id,
+          :cassette       => mol_struct.cassette,
+          :backbone       => mol_struct.backbone,
+          :targeted_trap  => mol_struct.targeted_trap
+        })
+        
+        response = request( 'GET', "genbank_files.json?molecular_structure_id=#{mol_struct.id}" )
+        genbank_file_list = JSON.parse( response )
+        genbank_file_hash = genbank_file_list.length > 0 ? genbank_file_list[0] : nil
+        
+        genbank_file_hash.nil? ? create() : update( genbank_file_hash )
+      end
+    end
   end
 end
 
@@ -1347,14 +1426,10 @@ def run
   
   unless @@changed_projects.empty?
     puts "\n-- Update IDCC --"
-    
-    unless @@skip_mol_struct
-      MolecularStructure.create_or_update()
-      GenbankFile.create_or_update() unless @@skip_genbank_files
-    end
-    
-    TargetingVector.create_or_update() unless @@skip_targ_vec
-    EsCell.create_or_update() unless @@skip_es_cell
+    MolecularStructure.create_or_update()   unless @@skip_mol_struct
+    GenbankFile.create_or_update()          unless @@skip_genbank_files
+    TargetingVector.create_or_update()      unless @@skip_targ_vec
+    EsCell.create_or_update()               unless @@skip_es_cell
   else
     puts "Nothing has changed since the previous run!"
   end

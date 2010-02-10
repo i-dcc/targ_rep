@@ -99,7 +99,7 @@
     </p>
     <p>
       <strong>ES Cell Clone Genbank File: </strong>
-      <% unless genbank_file.nil? or genbank_file.es_cell.nil? %>
+      <% unless genbank_file.nil? or genbank_file.escell_clone.nil? %>
         <a href="<%= escell_clone_genbank_file_url(:id => @molecular_structure.id) %>" target="_blank" class="ss_sprite ss_magnifier">view</a>
       <% else %>
         <em>not available</em>
