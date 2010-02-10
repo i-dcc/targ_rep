@@ -47,6 +47,15 @@
             <div class="<%= status %>"><%= flash[status] %></div>
           <% end %>
         <% end %>
+        <% if ENV['RAILS_ENV'] === 'development' %>
+          <div class="notice">
+            <strong>PLEASE NOTE:</strong> This site is currently in <em>'development/testing'</em> mode.  This means that:
+            <ul>
+              <li>Performance will be reduced (as any form of caching is turned off)</li>
+              <li>The data in the database is <strong>INCORRECT</strong> - please do not trust the data in this instance (it is our development playground)</li>
+            </ul>
+          </div>
+        <% end %>
         <%= yield %>
       </div>
       
