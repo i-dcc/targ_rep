@@ -28,4 +28,5 @@ config.action_mailer.delivery_method = :test
 # config.active_record.schema_format = :sql
 
 # Use shoulda test environment
-config.gem "thoughtbot-shoulda", :lib => "shoulda", :source => "http://gems.github.com"
+config.gem "shoulda", :lib => "shoulda/rails"
+config.gem "factory_girl"
