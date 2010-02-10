@@ -1,5 +1,5 @@
 class MolecularStructuresController < ApplicationController
-  before_filter :require_user, :only => [:create, :update, :destroy]
+  before_filter :require_user, :only => [:create, :edit, :update, :destroy]
   before_filter :find_mol_struct, 
     :only => [
       :show, :edit, :update, :destroy, 
