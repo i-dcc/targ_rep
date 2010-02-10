@@ -5,3 +5,11 @@
 #   
 #   cities = City.create([{ :name => 'Chicago' }, { :name => 'Copenhagen' }])
 #   Major.create(:name => 'Daley', :city => cities.first)
+
+pipelines = Pipeline.create([
+  { :name => 'KOMP-CSD' },
+  { :name => 'KOMP-Regeneron' },
+  { :name => 'NorCOMM' },
+  { :name => 'EUCOMM' },
+  { :name => 'mirKO' }
+])
