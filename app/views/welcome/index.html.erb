@@ -65,13 +65,6 @@
         has been made into a targeting vector or ES cell.
       </dd>
     </di>
-    <di>
-      <dt>Product</dt>
-      <dd>
-        A 'product' is simply a unique ES cell clone name that belongs to a 
-        definition of an allele.
-      </dd>
-    </di>
   </dl>
   <h4>What Will Happen Once Your Data Is in Here</h4>
   <p>
@@ -112,7 +105,7 @@
       <tr>
         <th></th>
         <th>Alleles</th>
-        <th class="last">Products</th>
+        <th class="last">ES Cells</th>
       </tr>
     </thead>
     <tbody>
@@ -140,15 +133,15 @@
 <div class="span-12" style="text-align:center;">
   <h4>Alleles Per Project</h4>
   <%= Gchart.pie :size   => '400x175',
-                 :alt    => 'Alleles per Project',
+                 :alt    => 'Alleles Per Project',
                  :data   => allele_counts_for_chart,
                  :labels => project_labels_for_chart,
                  :format => 'image_tag' %>
 </div>
 <div class="span-12 last" style="text-align:center;">
-  <h4>Products Per Project</h4>
+  <h4>ES Cells Per Project</h4>
   <%= Gchart.pie :size   => '400x175',
-                 :alt    => 'Products per Project',
+                 :alt    => 'ES Cells Per Project',
                  :data   => product_counts_for_chart,
                  :labels => project_labels_for_chart,
                  :format => 'image_tag' %>
