@@ -562,15 +562,12 @@ class MolecularStructure
         next
       end
       
-      if prev_mgi_accession_id == mgi_accession_id \
-      and prev_design_id       == design_id        \
-      and prev_cassette        == cassette         \
-      and prev_backbone        == backbone         \
-      and not epd_distribute                       \
+      next if prev_mgi_accession_id == mgi_accession_id \
+      and prev_design_id            == design_id        \
+      and prev_cassette             == cassette         \
+      and prev_backbone             == backbone         \
+      and not epd_distribute                            \
       and not targeted_trap
-        log "[MOL STRUCT SKIP];#{design_id};Found epd_dist = targ_trap = null whereas epd_dist or targ_trap was 'yes' on previous loop"
-        next
-      end
       
       prev_mgi_accession_id, prev_design_id = mgi_accession_id, design_id
       prev_cassette, prev_backbone = cassette, backbone
@@ -803,9 +800,20 @@ class TargetingVector
       targeted_trap     = fetch_row[10] == 'yes'
       
       design = Design.get( design_id )
-      next if design.nil?
-      next unless design.is_valid
-      next unless @@changed_projects.include? project_id
+      if design.nil?
+        log "[TARG VEC SKIP] Could not find design #{design_id}"
+        next
+      end
+      
+      unless design.is_valid
+        log "[TARG VEC SKIP] Design #{design_id} is invalid"
+        next
+      end
+      
+      unless @@changed_projects.include? project_id
+        log "[TARG VEC SKIP] Project #{project_id} has not changed"
+        next
+      end
       
       # Get pipeline ID
       pipeline_id = 
