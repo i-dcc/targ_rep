@@ -316,7 +316,7 @@ class Design
     end
     
     #
-    # LoxP, unless targeted trap
+    # LoxP, unless Deletion
     #
     unless @design_type == 'Deletion'
       if @features['D5'] and @features['D3']
@@ -538,9 +538,20 @@ class MolecularStructure
       targeted_trap     = fetch_row[6] == 'yes'
       
       design = Design.get( design_id )
-      next if design.nil?
-      next unless design.is_valid
-      next unless @@changed_projects.include? project_id
+      if design.nil?
+        log "[MOL STRUCT SKIP] Could not find design #{design_id}"
+        next
+      end
+      
+      unless design.is_valid
+        log "[MOL STRUCT SKIP] Design #{design_id} is invalid"
+        next
+      end
+      
+      unless @@changed_projects.include? project_id
+        log "[MOL STRUCT SKIP] Project #{project_id} has not changed"
+        next
+      end
       
       if epd_distribute and targeted_trap
         log "[DATABASE ERROR];#{mgi_accession_id};design_id #{design_id};#{cassette};#{backbone};epd_distribute = targeted_trap = 'yes'"
@@ -574,7 +585,7 @@ class MolecularStructure
         :targeted_trap        => targeted_trap
       }
       
-      if targeted_trap or design.design_type == 'Deletion'
+      if design.design_type == 'Deletion' or targeted_trap
         mol_struct_hash.update({ :loxp_start => nil, :loxp_end => nil })
       else
         mol_struct_hash.update({
