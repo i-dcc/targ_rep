@@ -496,6 +496,9 @@ class MolecularStructure
       ws.targeted_trap
     FROM
       project
+      JOIN project_status ON
+        project_status.project_status_id = project.project_status_id
+        AND project_status.order_by >= 75
       JOIN well_summary_by_di ws ON ws.project_id = project.project_id
       JOIN mgi_gene              ON mgi_gene.mgi_gene_id = project.mgi_gene_id
     WHERE
@@ -558,13 +561,16 @@ class MolecularStructure
         next
       end
       
-      next if not mol_struct.nil?                           \
-        and mol_struct.mgi_accession_id == mgi_accession_id \
-        and mol_struct.design_id        == design_id        \
-        and mol_struct.cassette         == cassette         \
-        and mol_struct.backbone         == backbone         \
-        and not epd_distribute                              \
-        and not targeted_trap
+      if not mol_struct.nil?                              \
+      and mol_struct.mgi_accession_id == mgi_accession_id \
+      and mol_struct.design_id        == design_id        \
+      and mol_struct.cassette         == cassette         \
+      and mol_struct.backbone         == backbone         \
+      and not epd_distribute                              \
+      and not targeted_trap
+        log "[MOL STRUCT SKIP];#{design_id};Found epd_dist = targ_trap = null whereas epd_dist or targ_trap was 'yes' on previous loop"
+        next
+      end
       
       mol_struct_hash = {
         :mgi_accession_id     => mgi_accession_id,
@@ -755,6 +761,9 @@ class TargetingVector
       ws.targeted_trap
     FROM
       project
+      JOIN project_status ON
+        project_status.project_status_id = project.project_status_id
+        AND project_status.order_by >= 75
       JOIN well_summary_by_di ws ON ws.project_id = project.project_id
       JOIN mgi_gene              ON mgi_gene.mgi_gene_id = project.mgi_gene_id
     WHERE
@@ -1395,7 +1404,6 @@ def get_changed_projects
 end
 
 def report
-  designs_file = File.open "#{TODAY}/invalid_designs.txt"
   errors_file = File.open "#{TODAY}/errors.txt"
   send_to = REPORT_TO.collect { |name, email| "#{name} <#{email}>" }.join(', ')
   
@@ -1403,9 +1411,6 @@ def report
 From: I-DCC Loading Script <#{REPORT_FROM}>
 Subject: #{REPORT_SUBJECT}
 To: #{send_to}
-
-Invalid designs found:
-#{designs_file.readlines}
 
 Errors:
 #{errors_file.readlines}
