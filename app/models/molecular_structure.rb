@@ -159,43 +159,52 @@ class MolecularStructure < ActiveRecord::Base
       
       case strand
       when '+'
-        if cassette_start and cassette_end and cassette_start > cassette_end
-          errors.add( :cassette_start, error_msg % "cassette end" )
-        end
-        if homology_arm_start and homology_arm_end and homology_arm_start > homology_arm_end
-          errors.add( :homology_arm_start, error_msg % "homology arm end" )
-        end
-        if loxp_start and loxp_end and loxp_start > loxp_end
-          errors.add( :loxp_start, error_msg % "loxp end" )
-        end
         if homology_arm_start > cassette_start
-          errors.add( :homology_arm_start, error_msg % "cassette start")
+          errors.add( :homology_arm_start, error_msg % "cassette start" )
         end
-        if loxp_start and cassette_end > loxp_start
-          errors.add( :cassette_end, error_msg % "LoxP start")
-        end
-        if loxp_end and loxp_end > homology_arm_end
-          errors.add( :loxp_end, error_msg % "homology arm start")
-        end
-      
-      when '-'
-        if cassette_start and cassette_end and cassette_start < cassette_end
+        if cassette_start > cassette_end
           errors.add( :cassette_start, error_msg % "cassette end" )
         end
-        if homology_arm_start and homology_arm_end and homology_arm_start < homology_arm_end
-          errors.add( :homology_arm_start, error_msg % "homology arm end" )
+        # With LoxP site
+        if loxp_start and loxp_end
+          if cassette_end > loxp_start
+            errors.add( :cassette_end, error_msg % "loxp start" )
+          end
+          if loxp_start > loxp_end
+            errors.add( :loxp_start, error_msg % "loxp end" )
+          end
+          if loxp_end > homology_arm_end
+            errors.add( :loxp_end, error_msg % "homology arm end" )
+          end
+        # Without LoxP site
+        else
+          if cassette_end > homology_arm_end
+            errors.add( :cassette_end, error_msg % "homology arm end" )
+          end
         end
-        if loxp_start and loxp_end and loxp_start < loxp_end
-          errors.add( :loxp_start, error_msg % "loxp end" )
-        end
+      when '-'
         if homology_arm_start < cassette_start
-          errors.add( :homology_arm_start, error_msg % "cassette start")
+          errors.add( :cassette_start, error_msg % "homology arm start" )
         end
-        if loxp_start and cassette_end < loxp_start
-          errors.add( :cassette_end, error_msg % "LoxP start")
+        if cassette_start < cassette_end
+          errors.add( :cassette_end, error_msg % "cassette start" )
         end
-        if loxp_end and loxp_end < homology_arm_end
-          errors.add( :loxp_end, error_msg % "homology arm start")
+        # With LoxP site
+        if loxp_start and loxp_end
+          if cassette_end < loxp_start
+            errors.add( :loxp_start, error_msg % "cassette end" )
+          end
+          if loxp_start < loxp_end
+            errors.add( :loxp_end, error_msg % "loxp start" )
+          end
+          if loxp_end < homology_arm_end
+            errors.add( :homology_arm_end, error_msg % "loxp end" )
+          end
+        # Without LoxP site
+        else
+          if cassette_end < homology_arm_end
+            errors.add( :homology_arm_end, error_msg % "cassette end" )
+          end
         end
       end
       

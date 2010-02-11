@@ -31,12 +31,14 @@ class GenbankFilesControllerTest < ActionController::TestCase
   end
 
   should "create genbank_file" do
+    mol_struct = Factory.create( :molecular_structure )
+    
     assert_difference('GenbankFile.count') do
       attrs = Factory.attributes_for( :genbank_file )
       post :create, :genbank_file => {
         :escell_clone           => attrs[:escell_clone],
         :targeting_vector       => attrs[:targeting_vector],
-        :molecular_structure_id => GenbankFile.first.molecular_structure.id
+        :molecular_structure_id => mol_struct.id
       }
     end
     
