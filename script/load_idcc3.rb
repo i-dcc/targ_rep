@@ -529,7 +529,8 @@ class MolecularStructure
       raise
     end
     
-    mol_struct = nil
+    prev_mgi_accession_id, prev_design_id = nil, nil
+    prev_cassette, prev_backbone = nil, nil
     
     cursor.fetch do |fetch_row|
       mgi_accession_id  = fetch_row[0]
@@ -561,16 +562,18 @@ class MolecularStructure
         next
       end
       
-      if not mol_struct.nil?                              \
-      and mol_struct.mgi_accession_id == mgi_accession_id \
-      and mol_struct.design_id        == design_id        \
-      and mol_struct.cassette         == cassette         \
-      and mol_struct.backbone         == backbone         \
-      and not epd_distribute                              \
+      if prev_mgi_accession_id == mgi_accession_id \
+      and prev_design_id       == design_id        \
+      and prev_cassette        == cassette         \
+      and prev_backbone        == backbone         \
+      and not epd_distribute                       \
       and not targeted_trap
         log "[MOL STRUCT SKIP];#{design_id};Found epd_dist = targ_trap = null whereas epd_dist or targ_trap was 'yes' on previous loop"
         next
       end
+      
+      prev_mgi_accession_id, prev_design_id = mgi_accession_id, design_id
+      prev_cassette, prev_backbone = cassette, backbone
       
       mol_struct_hash = {
         :mgi_accession_id     => mgi_accession_id,
