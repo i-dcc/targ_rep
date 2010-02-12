@@ -636,10 +636,10 @@ class MolecularStructure
     end
     
     # Search through webservice
-    mol_struct = search( mgi_accession_id, design_id, cassette, backbone, targeted_trap )
+    mol_struct = search( mgi_accession_id, design_id, cassette, backbone, false )
     return MolecularStructure.new( mol_struct ) unless mol_struct.nil?
     
-    raise "Can't find molecular structure (#{design.design_type} - targeted trap #{targeted_trap})
+    raise "Can't find molecular structure (#{design.design_type})
     mgi_accession_id='#{mgi_accession_id}'
     AND project_design_id=#{design_id}
     AND cassette='#{cassette}'
@@ -757,8 +757,7 @@ class TargetingVector
       project.backbone,
       is_eucomm,
       is_komp_csd,
-      is_norcomm,
-      ws.targeted_trap
+      is_norcomm
     FROM
       project
       JOIN project_status ON
@@ -797,7 +796,6 @@ class TargetingVector
       design_id         = fetch_row[4]
       cassette          = fetch_row[5]
       backbone          = fetch_row[6]
-      targeted_trap     = fetch_row[10] == 'yes'
       
       design = Design.get( design_id )
       if design.nil?
@@ -825,7 +823,7 @@ class TargetingVector
       
       # Get molecular structure
       begin
-        mol_struct = MolecularStructure.find( mgi_accession_id, design_id, cassette, backbone, targeted_trap )
+        mol_struct = MolecularStructure.find( mgi_accession_id, design_id, cassette, backbone, false )
       rescue Exception => e
         log "[TARG VEC];#{targ_vec_name};#{e}"
         next
