@@ -507,8 +507,6 @@ class MolecularStructure
         OR project.is_komp_csd = 1
         OR project.is_norcomm = 1
       )
-      AND (ws.pgdgr_distribute = 'yes' OR ws.epd_distribute = 'yes')
-      AND (ws.pgdgr_well_name IS NOT NULL OR ws.epd_well_name IS NOT NULL)
     ORDER BY
       mgi_gene.mgi_accession_id,
       project.design_id,
