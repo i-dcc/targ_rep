@@ -584,7 +584,7 @@ class MolecularStructure
       prev_mgi_accession_id, prev_design_id = mgi_accession_id, design_id
       prev_cassette, prev_backbone = cassette, backbone
       
-      mol_struct_hash = {
+      conditional_hash = {
         :mgi_accession_id     => mgi_accession_id,
         :cassette             => cassette,
         :backbone             => backbone,
@@ -600,24 +600,32 @@ class MolecularStructure
         :homology_arm_end     => design.homology_arm_end,
         :cassette_start       => design.cassette_start,
         :cassette_end         => design.cassette_end,
+        :loxp_start           => design.loxp_start,
+        :loxp_end             => design.loxp_end,
         :targeted_trap        => targeted_trap
       }
       
+      non_conditional_hash = nil
       if targeted_trap
-        mol_struct_hash.update({ :loxp_start => nil, :loxp_end => nil })
-      else
-        mol_struct_hash.update({
-          :loxp_start => design.loxp_start,
-          :loxp_end   => design.loxp_end
+        non_conditional_hash = conditional_hash.clone
+        non_conditional_hash.update({
+          :targeted_trap => true,
+          :loxp_start => nil, 
+          :loxp_end => nil 
         })
       end
       
-      # Create molecular structure
-      mol_struct = MolecularStructure.new( mol_struct_hash )
-      mol_struct.push_to_idcc()
-      next unless mol_struct.id
+      # Create conditional ...
+      conditional = MolecularStructure.new( conditional_hash )
+      conditional.push_to_idcc()
+      push_to_cache( conditional ) unless conditional.id.nil?
       
-      push_to_cache( mol_struct )
+      # ... and non-conditional if targeted trap
+      if non_conditional_hash
+        non_conditional = MolecularStructure.new( non_conditional_hash )
+        non_conditional.push_to_idcc()
+        push_to_cache( non_conditional ) unless non_conditional.id.nil?
+      end
     end
   end
   
