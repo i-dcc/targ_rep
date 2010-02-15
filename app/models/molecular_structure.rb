@@ -84,8 +84,8 @@ class MolecularStructure < ActiveRecord::Base
     :allow_nil => true
   
   validates_inclusion_of :design_type,
-    :in => ['Knock Out', 'Deletion'],
-    :message => "should be 'Knockout' or 'Deletion'",
+    :in => ['Knock Out', 'Deletion', 'Insertion'],
+    :message => "should be 'Knockout', 'Deletion' or 'Insertion'.",
     :allow_nil => true
   
   validates_format_of :mgi_accession_id,

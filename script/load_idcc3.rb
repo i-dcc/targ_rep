@@ -238,8 +238,14 @@ class Design
           push_to_cache( current_design )
         end
         
-        #FIXME: What about 'Ins_Block/Ins_Location' as a design type? - treat as a deletion.
-        design_type = fetch_row[1] == 'Del_Block' ? 'Deletion' : 'Knock Out'
+        # Get design type
+        design_type =
+        case fetch_row[1]
+        when /Del_\*/ then 'Deletion'
+        when /Ins_\*/ then 'Insertion'
+        else 'Knock Out'
+        end
+        
         design_hash = {
           :id                   => design_id,
           :design_type          => design_type,
@@ -300,37 +306,40 @@ class Design
     #
     # Cassette
     #
-    #FIXME: Insertions?
     if (@design_type == 'Knock Out' and @features['U5'] and @features['U3']) \
-    or (@design_type == 'Deletion' and @features['U5'] and @features['D3'])
+    or (@design_type == 'Deletion'  and @features['U5'] and @features['D3']) \
+    or (@design_type == 'Insertion' and @features['U5'] and @features['D3'])
       case @strand
       when '+'
         @cassette_start  = @features['U5']['end']
-        @cassette_end    = @features['U3']['start'] if @design_type == 'Knock Out'
-        @cassette_end    = @features['D3']['start'] if @design_type == 'Deletion'
+        if @design_type == 'Knock Out'
+          @cassette_end = @features['U3']['start']
+        else
+          @cassette_end = @features['D3']['start']
+        end
       when '-'
         @cassette_start  = @features['U5']['start']
-        @cassette_end    = @features['U3']['end'] if @design_type == 'Knock Out'
-        @cassette_end    = @features['D3']['end'] if @design_type == 'Deletion'
+        if @design_type == 'Knock Out'
+          @cassette_end = @features['U3']['end']
+        else
+          @cassette_end = @features['D3']['end']
+        end
       end
     else
       @cassette_start, @cassette_end = nil, nil
     end
     
     #
-    # LoxP, unless Deletion
+    # LoxP, if Knock Out
     #
-    #FIXME: Insertions?
-    unless @design_type == 'Deletion'
-      if @features['D5'] and @features['D3']
-        case @strand
-        when '+'
-          @loxp_start  = @features['D5']['end']
-          @loxp_end    = @features['D3']['start']
-        when '-'
-          @loxp_start  = @features['D5']['start']
-          @loxp_end    = @features['D3']['end']
-        end
+    if @design_type == 'Knock Out' and @features['D5'] and @features['D3']
+      case @strand
+      when '+'
+        @loxp_start  = @features['D5']['end']
+        @loxp_end    = @features['D3']['start']
+      when '-'
+        @loxp_start  = @features['D5']['start']
+        @loxp_end    = @features['D3']['end']
       end
     else
       @loxp_start, @loxp_end = nil, nil
@@ -402,7 +411,6 @@ class Design
     return false unless @is_valid
     
     # Knockout type
-    #FIXME: Insertions?
     if @design_type == 'Knock Out'
       ['G3', 'G5', 'U3', 'U5', 'D3', 'D5'].each do |feature_name|
         feature = @features[feature_name]
@@ -419,8 +427,7 @@ class Design
         return false unless @is_valid
       end
       
-    # Deletion type
-    #FIXME: Insertions?
+    # Any other type - Deletion, Insertion
     else
       ['U5', 'D3', 'G3', 'G5'].each do |feature_name|
         feature = @features[feature_name]
@@ -512,6 +519,8 @@ class MolecularStructure
         OR project.is_komp_csd = 1
         OR project.is_norcomm = 1
       )
+      AND cassette IS NOT NULL
+      AND backbone IS NOT NULL
     ORDER BY
       mgi_gene.mgi_accession_id,
       project.design_id,
@@ -594,8 +603,6 @@ class MolecularStructure
         :targeted_trap        => targeted_trap
       }
       
-      #FIXME: Insertions? - put the loxp in as nil by default
-      #if design.design_type == 'Deletion' or targeted_trap
       if targeted_trap
         mol_struct_hash.update({ :loxp_start => nil, :loxp_end => nil })
       else
@@ -628,10 +635,9 @@ class MolecularStructure
       and mol_struct.cassette         == cassette          \
       and mol_struct.backbone         == backbone
 
-        #FIXME: What about insertions?
 
-        # Design is a Deletion or a targeted trap
-        if design.design_type == 'Deletion' or targeted_trap == true
+        # Design is a Deletion or an Insertion or a targeted trap
+        if design.design_type != 'Knock Out' or targeted_trap == true
           if mol_struct.loxp_start.nil? and mol_struct.loxp_end.nil?
             return mol_struct
           end
@@ -664,8 +670,7 @@ class MolecularStructure
     params += "&cassette=#{cassette}"
     params += "&backbone=#{CGI::escape( backbone )}"
     
-    # FIXME: Insertions?
-    if design.design_type == 'Deletion' or targeted_trap == true
+    if design.design_type != 'Knock Out' or targeted_trap == true
       params += "&loxp_start=null&loxp_end=null" # important!
     else
       params += "&loxp_start=#{design.loxp_start}&loxp_end=#{design.loxp_end}"

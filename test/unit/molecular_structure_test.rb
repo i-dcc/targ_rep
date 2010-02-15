@@ -178,5 +178,17 @@ class MolecularStructureTest < ActiveSupport::TestCase
         assert( !mol_struct.save, "Molecular structure validates presence of LoxP for design 'Deletion'" )
       end
     end
+    
+    context "with design type 'Insertion' and LoxP set" do
+      mol_struct = Factory.build( :molecular_structure, {
+                      :design_type        => 'Insertion',
+                      :strand             => '+',
+                      :loxp_start         => 100,
+                      :loxp_end           => 130
+                    })
+      should "not be saved" do
+        assert( !mol_struct.save, "Molecular structure validates presence of LoxP for design 'Insertion'" )
+      end
+    end
   end
 end

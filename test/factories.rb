@@ -39,7 +39,7 @@ Factory.define :molecular_structure do |f|
   f.assembly    "NCBIM37"
   f.chromosome  { [("1".."19").to_a + ['X', 'Y', 'MT']].flatten.choice }
   f.strand      { ['+', '-'].choice }
-  f.design_type { ['Knock Out', 'Deletion'].choice }
+  f.design_type { ['Knock Out', 'Deletion', 'Insertion'].choice }
   
   #     Features positions chose for this factory:
   #     They have been fixed so that complex tests can be cleaner. Otherwise,
