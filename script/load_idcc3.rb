@@ -602,7 +602,7 @@ class MolecularStructure
         :cassette_end         => design.cassette_end,
         :loxp_start           => design.loxp_start,
         :loxp_end             => design.loxp_end,
-        :targeted_trap        => targeted_trap
+        :targeted_trap        => false
       }
       
       non_conditional_hash = nil
