@@ -241,8 +241,8 @@ class Design
         # Get design type
         design_type =
         case fetch_row[1]
-        when /Del_\*/ then 'Deletion'
-        when /Ins_\*/ then 'Insertion'
+        when /^Del_/ then 'Deletion'
+        when /^Ins_/ then 'Insertion'
         else 'Knock Out'
         end
         
