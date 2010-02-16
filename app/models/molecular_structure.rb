@@ -150,7 +150,7 @@ class MolecularStructure < ActiveRecord::Base
     end
     
     def targeted_trap?
-      self.loxp_start.nil? ? 'Yes' : 'No'
+      (self.design_type == 'Knock Out' and self.loxp_start.nil?) ? 'Yes' : 'No'
     end
 
   protected

@@ -16,8 +16,6 @@ class ApplicationController < ActionController::Base
   
   before_filter :current_user
   
-  audit MolecularStructure, TargetingVector, EsCell
-  
   protected
     def current_user_session
       return @current_user_session if defined?(@current_user_session)

@@ -100,10 +100,10 @@ class MolecularStructuresController < ApplicationController
       mol_struct_params[:targeting_vectors].each do |attrs|
         attrs.update({ :nested => true })
         
-        # Copy es_cells Array related to this Targeting Vector
-        # into the es_cells_attributes Array created above.
+        # Copy ``es_cells`` Array values related to this Targeting Vector
+        # into the ``es_cells_attributes`` Array created for molecular structure.
         # es_cell hash will contain targeting_vector_name so that it can be
-        # related to the proper targeting_vector later - once it gets an ID.
+        # related to the proper targeting_vector when it gets an ID.
         if attrs.include? :es_cells
           attrs[:es_cells].each do |es_cell_attr|
             es_cell_attr.update({
@@ -124,6 +124,11 @@ class MolecularStructuresController < ApplicationController
       mol_struct_params[:genbank_file].update({ :nested => true })
       mol_struct_params[:genbank_file_attributes] = mol_struct_params[:genbank_file].dup
       mol_struct_params.delete(:genbank_file)
+    end
+    # Don't create genbank file object if its attributes are empty.
+    if mol_struct_params[:genbank_file_attributes][:escell_clone].empty? \
+    and mol_struct_params[:genbank_file_attributes][:targeting_vectors].empty?
+      mol_struct_params.delete(:genbank_file_attributes)
     end
     
     # End: web service interface

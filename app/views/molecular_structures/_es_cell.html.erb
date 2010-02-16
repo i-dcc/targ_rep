@@ -1,4 +1,4 @@
-<% options_for_checks = ['----------', 'Passed', 'Failed'] %>
+<% options_for_checks = ['', 'Passed', 'Failed'] %>
 
 <tr class="es_cell">
   <td><%= f.text_field :name %></td>
@@ -19,8 +19,7 @@
         {
           method: 'GET', 
           min_chars: 2, 
-          paramName: 'name',
-          parameters: 'mgi_accession_id=' + $('molecular_structure_mgi_accession_id').readAttribute('value')
+          paramName: 'name'
         }
       );
     </script>

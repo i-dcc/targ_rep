@@ -95,6 +95,7 @@
 <!-- Genbank files handling. -->
 
 <% f.fields_for :genbank_file do |genbank_form| -%>
+  <%= genbank_form.hidden_field :nested %>
   <div class="span-12">
     <label>Targeting Vectors Genbank File</label>
     <%= genbank_form.text_area :targeting_vector, :class => :text %>
