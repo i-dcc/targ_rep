@@ -1048,8 +1048,6 @@ class EsCell
       raise
     end
     
-    prev_mol_struct_args, prev_targ_vec_args = [], []
-    
     cursor.fetch do |fetch_row|
       epd_well_name     = fetch_row[0]
       es_cell_line      = fetch_row[1]
@@ -1068,31 +1066,8 @@ class EsCell
       next unless @@changed_projects.include? project_id
       
       begin
-        # Get molecular structure:
-        # 1- might be same as previous one
-        # 2- from the cache
-        # 3- from the webservice
-        mol_struct_args = [mgi_accession_id, design_id, cassette, backbone, targeted_trap]
-        if mol_struct_args == prev_mol_struct_args
-          mol_struct = prev_mol_struct
-        else
-          mol_struct = MolecularStructure.find( mgi_accession_id, design_id, cassette, backbone, targeted_trap )
-          prev_mol_struct = mol_struct.dup
-          prev_mol_struct_args = mol_struct_args
-        end
-        
-        # Get targeting vector:
-        # 1- might be same as previous one
-        # 2- from the cache
-        # 3- from the webservice
-        targ_vec_args = [targ_vec_name, project_id]
-        if targ_vec_args == prev_targ_vec_args
-          targ_vec = prev_targ_vec
-        else
-          targ_vec = TargetingVector.find( targ_vec_name, project_id )
-          prev_targ_vec = targ_vec.dup
-          prev_targ_vec_args = targ_vec_args
-        end
+        mol_struct = MolecularStructure.find( mgi_accession_id, design_id, cassette, backbone, targeted_trap )
+        targ_vec = TargetingVector.find( targ_vec_name, project_id )
       rescue Exception => e
         # molecular structure or targeting vector not found - don't create ES cell
         log "[ES CELL];#{e}"
@@ -1488,7 +1463,7 @@ end
 ##   Main script
 ##
 
-@@design_cache, @@mol_struct_cache, @@targ_vec_cache = {}, {}, {}
+@@design_cache, @@mol_struct_cache, @@targ_vec_cache, @@es_cell_cache = {}, {}, {}, {}
 
 def run
   system("rm -rf #{@@log_dir}/#{TODAY}")
