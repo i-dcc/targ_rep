@@ -126,7 +126,8 @@ class MolecularStructuresController < ApplicationController
       mol_struct_params.delete(:genbank_file)
     end
     # Don't create genbank file object if its attributes are empty.
-    if mol_struct_params[:genbank_file_attributes][:escell_clone].empty? \
+    if mol_struct_params[:genbank_file_attributes] \
+    and mol_struct_params[:genbank_file_attributes][:escell_clone].empty? \
     and mol_struct_params[:genbank_file_attributes][:targeting_vectors].empty?
       mol_struct_params.delete(:genbank_file_attributes)
     end
