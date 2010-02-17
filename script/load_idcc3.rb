@@ -880,7 +880,7 @@ class TargetingVector
     targ_vec = search( name, ikmc_project_id )
     return TargetingVector.new( targ_vec ) unless targ_vec.nil?
     
-    raise "Can't find targeting vector #{name}"
+    log "Can't find targeting vector #{name}"
   end
   
   def self.search( name, ikmc_project_id )
@@ -1054,8 +1054,12 @@ class EsCell
       end
       
       # Find targeting vector - An ES Cell might not be linked to a targ vec
-      targ_vec = TargetingVector.find( targ_vec_name, project_id )
-      targeting_vector_id = targ_vec.id unless targ_vec.nil?
+      if targ_vec_name.nil?
+        targeting_vector_id = nil
+      else
+        targ_vec = TargetingVector.find( targ_vec_name, project_id )
+        targeting_vector_id = targ_vec.id unless targ_vec.nil?
+      end
       
       es_cell = EsCell.new({
         :molecular_structure_id     => mol_struct.id,
