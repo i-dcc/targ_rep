@@ -347,64 +347,36 @@ class Design
   end
   
   def set_exons
-    if @strand == '+'
+    case @strand
+    when '+'
       strand = '1'
       chr_start = @cassette_end
-      if @loxp_start
-        chr_end = @loxp_start
-      else
-        chr_end = @homology_arm_end
-      end
-    elsif @strand == '-'
+      chr_end = @loxp_start.nil? ? @homology_arm_end : @loxp_start
+    when '-'
       strand = '-1'
+      chr_start = @loxp_start.nil? ? @homology_arm_end : @loxp_start
       chr_end = @cassette_end
-      if @loxp_start
-        chr_start = @loxp_start
-      else
-        chr_start = @homology_arm_end
-      end
     end
     
     query =
     """
-    SELECT ensembl_exon_stable_id
+    SELECT ensembl_exon_stable_id, MIN(chr_start), MAX(chr_end)
     FROM display_exon
     WHERE
       chr_name = '#{@chromosome}'
       AND chr_strand = #{strand}
-      AND 
-      (
-        chr_start = (
-          SELECT MIN(chr_start)
-          FROM display_exon
-          WHERE
-            chr_name = '#{@chromosome}'
-            AND chr_strand = #{strand}
-            AND chr_start >= #{chr_start}
-        )
-        OR chr_end = (
-          SELECT MAX(chr_end)
-          FROM display_exon
-          WHERE 
-            chr_name = '#{@chromosome}'
-            AND chr_strand = #{strand}
-            AND chr_end <= #{chr_end}
-        )
-      )
-      ORDER BY chr_start, chr_end
+      AND chr_start >= #{chr_start}
+      AND chr_end <= #{chr_end}
+    GROUP BY ensembl_exon_stable_id
+    ORDER BY MIN(chr_start), MAX(chr_end)
     """
-    
+    # We need the first and last rows of this query's results
     row_number = 1
     @@ora_dbh.exec( query ) do |fetch_row|
-      if row_number == 1
-        @floxed_start_exon = fetch_row[0]
-      else
-        @floxed_end_exon = fetch_row[0]
-      end
+      @floxed_start_exon = fetch_row[0] if row_number == 1
+      @floxed_end_exon = fetch_row[0] # Will have last row value (which might be the first one).
       row_number += 1
     end
-    
-    @floxed_end_exon = @floxed_start_exon if @floxed_end_exon.nil?
   end
   
   def validate
