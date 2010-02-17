@@ -950,15 +950,17 @@ class EsCell
   end
   
   def to_json
-    JSON.generate({ 
-      'es_cell' => {
-        'name'                      => @name,
-        'parental_cell_line'        => @parental_cell_line,
-        'allele_symbol_superscript' => @allele_symbol_superscript,
-        'molecular_structure_id'    => @molecular_structure_id,
-        'targeting_vector_id'       => @targeting_vector_id
-      }
-    })
+    es_cell_hash = {
+      'name'                      => @name,
+      'parental_cell_line'        => @parental_cell_line,
+      'allele_symbol_superscript' => @allele_symbol_superscript,
+      'molecular_structure_id'    => @molecular_structure_id
+    }
+    unless @targeting_vector_id.nil?
+      es_cell_hash.update({ 'targeting_vector_id' => @targeting_vector_id })
+    end
+    
+    JSON.generate({ 'es_cell' => es_cell_hash })
   end
   
   def self.format_allele_symbol_superscript( allele_name )

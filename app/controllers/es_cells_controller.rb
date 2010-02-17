@@ -88,7 +88,7 @@ class EsCellsController < ApplicationController
         
         # Check if targeting vector is link to a molecular structure that is
         # similar to the molecular structure provided
-        unless @targ_vec.molecular_structure.id == @mol_struct.id         \
+        unless @targ_vec.molecular_structure.id == @mol_struct.id                             \
         or (@mol_struct.mgi_accession_id  == @targ_vec.molecular_structure.mgi_accession_id   \
         and @mol_struct.project_design_id == @targ_vec.molecular_structure.project_design_id  \
         and @mol_struct.design_type       == @targ_vec.molecular_structure.design_type        \
