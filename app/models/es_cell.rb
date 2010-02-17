@@ -41,7 +41,6 @@ class EsCell < ActiveRecord::Base
   validates_associated  :targeting_vector
   
   validates_presence_of :molecular_structure_id,  :on => :save, :unless => :nested
-  validates_presence_of :targeting_vector_id,     :on => :save, :unless => :nested
   validates_presence_of :name,                    :on => :create
   
   attr_accessor :nested

@@ -657,8 +657,7 @@ class MolecularStructure
     end
     
     # Search through webservice
-    # FIXME: I'm ignoring targeted traps!!!!
-    mol_struct = search( mgi_accession_id, design_id, cassette, backbone, false )
+    mol_struct = search( mgi_accession_id, design_id, cassette, backbone, targeted_trap )
     return MolecularStructure.new( mol_struct ) unless mol_struct.nil?
     
     raise "Can't find molecular structure (#{design.design_type})
@@ -1059,23 +1058,36 @@ class EsCell
       targeted_trap     = fetch_row[9] == 'yes'
       
       design = Design.get( design_id )
-      next if design.nil?
-      # TODO: Add some logging here...
-      next unless design.is_valid
-      next unless @@changed_projects.include? project_id
+      
+      if design.nil?
+        log "[ES CELL SKIP] Could not find design #{design_id}"
+        next
+      end
+      
+      unless design.is_valid
+        log "[ES CELL SKIP] Design #{design_id} is invalid"
+        next
+      end
+      
+      unless @@changed_projects.include? project_id
+        log "[ES CELL SKIP] Project #{project_id} has not changed"
+        next
+      end
       
       begin
         mol_struct = MolecularStructure.find( mgi_accession_id, design_id, cassette, backbone, targeted_trap )
-        targ_vec = TargetingVector.find( targ_vec_name, project_id )
       rescue Exception => e
-        # molecular structure or targeting vector not found - don't create ES cell
         log "[ES CELL];#{e}"
         next
       end
       
+      # Find targeting vector - An ES Cell might not be linked to a targ vec
+      targ_vec = TargetingVector.find( targ_vec_name, project_id )
+      targeting_vector_id = targ_vec.id unless targ_vec.nil?
+      
       es_cell = EsCell.new({
         :molecular_structure_id     => mol_struct.id,
-        :targeting_vector_id        => targ_vec.id,
+        :targeting_vector_id        => targeting_vector_id,
         :name                       => epd_well_name,
         :parental_cell_line         => format_parental_cell_line( es_cell_line ),
         :allele_symbol_superscript  => format_allele_symbol_superscript( allele_name )
