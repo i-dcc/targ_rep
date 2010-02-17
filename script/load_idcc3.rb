@@ -643,7 +643,6 @@ class MolecularStructure
       and mol_struct.cassette         == cassette          \
       and mol_struct.backbone         == backbone
 
-
         # Design is a Deletion or an Insertion or a targeted trap
         if design.design_type != 'Knock Out' or targeted_trap == true
           if mol_struct.loxp_start.nil? and mol_struct.loxp_end.nil?
@@ -658,6 +657,7 @@ class MolecularStructure
     end
     
     # Search through webservice
+    # FIXME: I'm ignoring targeted traps!!!!
     mol_struct = search( mgi_accession_id, design_id, cassette, backbone, false )
     return MolecularStructure.new( mol_struct ) unless mol_struct.nil?
     
@@ -782,9 +782,7 @@ class TargetingVector
       is_norcomm
     FROM
       project
-      JOIN project_status ON
-        project_status.project_status_id = project.project_status_id
-        AND project_status.order_by >= 75
+      JOIN project_status        ON project_status.project_status_id = project.project_status_id AND project_status.order_by >= 75
       JOIN well_summary_by_di ws ON ws.project_id = project.project_id
       JOIN mgi_gene              ON mgi_gene.mgi_gene_id = project.mgi_gene_id
     WHERE
@@ -1028,13 +1026,13 @@ class EsCell
       ws.targeted_trap
     FROM
       project
+      JOIN project_status        ON project_status.project_status_id = project.project_status_id AND project_status.order_by >= 75
       JOIN well_summary_by_di ws ON ws.project_id = project.project_id
       JOIN mgi_gene              ON mgi_gene.mgi_gene_id = project.mgi_gene_id
     WHERE
-      ws.epd_well_name IS NOT NULL
-      AND ws.pgdgr_well_name IS NOT NULL
-      AND (ws.targeted_trap = 'yes' OR ws.epd_distribute = 'yes')
-    ORDER BY mgi_gene.mgi_accession_id, project.design_id, project.project_id
+      ws.epd_well_name is not null
+      AND ( project.is_eucomm = 1 OR project.is_komp_csd = 1 OR project.is_norcomm = 1 )
+      AND ( ws.targeted_trap = 'yes' OR ws.epd_distribute = 'yes' )
     """
   end
   
@@ -1062,6 +1060,7 @@ class EsCell
       
       design = Design.get( design_id )
       next if design.nil?
+      # TODO: Add some logging here...
       next unless design.is_valid
       next unless @@changed_projects.include? project_id
       
