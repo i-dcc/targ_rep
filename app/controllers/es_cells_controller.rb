@@ -76,13 +76,8 @@ class EsCellsController < ApplicationController
     
     if errors.empty?
       
-      if es_cell_hash.include? :targeting_vector_id and es_cell_hash[ :targeting_vector_id ].nil?
-        targ_vec_created = false
-        @targ_vec = nil
-        es_cell_hash.delete( :targeting_vector_id )
-      
       # GET targeting vector from ID
-      elsif es_cell_hash.include? :targeting_vector_id
+      if es_cell_hash.include? :targeting_vector_id
         targ_vec_created = false
         @targ_vec = TargetingVector.find( es_cell_hash[ :targeting_vector_id ] )
         
@@ -121,6 +116,12 @@ class EsCellsController < ApplicationController
           
           errors << { "Targeting Vector is invalid" => @targ_vec.errors }
         end
+      
+      # Don't link ES Cell to a targeting vector
+      else
+        targ_vec_created = false
+        @targ_vec = nil
+        es_cell_hash.delete( :targeting_vector_id )
       end
     end
     
