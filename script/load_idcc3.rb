@@ -1054,7 +1054,7 @@ class EsCell
       end
       
       # Find targeting vector - An ES Cell might not be linked to a targ vec
-      if targ_vec_name.nil?
+      if targ_vec_name == '_' # From concatenation (see SQL)
         targeting_vector_id = nil
       else
         targ_vec = TargetingVector.find( targ_vec_name, project_id )
