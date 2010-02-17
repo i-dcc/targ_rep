@@ -76,8 +76,13 @@ class EsCellsController < ApplicationController
     
     if errors.empty?
       
+      if es_cell_hash.include? :targeting_vector_id and es_cell_hash[ :targeting_vector_id ].nil?
+        targ_vec_created = false
+        @targ_vec = nil
+        es_cell_hash.delete( :targeting_vector_id )
+      
       # GET targeting vector from ID
-      if es_cell_hash.include? :targeting_vector_id
+      elsif es_cell_hash.include? :targeting_vector_id
         targ_vec_created = false
         @targ_vec = TargetingVector.find( es_cell_hash[ :targeting_vector_id ] )
         
