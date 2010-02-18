@@ -2,6 +2,10 @@ class EsCellsController < ApplicationController
   before_filter :require_user, :only => [:create, :edit, :update, :destroy]
   before_filter :find_escell, :only => [:show, :update, :destroy]
   
+  # Following both are located in application_controller.rb
+  before_filter :set_created_by, :only => :create
+  before_filter :set_updated_by, :only => :update
+  
   # GET /es_cells.xml
   # GET /es_cells.json
   def index

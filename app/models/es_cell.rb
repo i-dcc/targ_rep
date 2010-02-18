@@ -26,20 +26,19 @@ class EsCell < ActiveRecord::Base
   belongs_to :updated_by, :class_name => 'User', :foreign_key => 'updated_by'
   
   belongs_to :molecular_structure,
-    :class_name => 'MolecularStructure',
-    :foreign_key => 'molecular_structure_id'
+    :class_name   => 'MolecularStructure',
+    :foreign_key  => 'molecular_structure_id',
+    :validate     => true
   
   belongs_to :targeting_vector,
-    :class_name => 'TargetingVector',
-    :foreign_key => 'targeting_vector_id'
+    :class_name   => 'TargetingVector',
+    :foreign_key  => 'targeting_vector_id',
+    :validate     => true
   
   # Unique constraint
   validates_uniqueness_of :name
   
   # Data validation
-  validates_associated  :molecular_structure
-  validates_associated  :targeting_vector
-  
   validates_presence_of :molecular_structure_id,  :on => :save, :unless => :nested
   validates_presence_of :name,                    :on => :create
   

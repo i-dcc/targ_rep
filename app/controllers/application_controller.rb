@@ -2,6 +2,11 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
+  # See ActionController::RequestForgeryProtection for details
+  protect_from_forgery
+  
+  before_filter :current_user
+  
   helper :all # include all helpers, all the time
   helper_method :current_user_session, :current_user
   
@@ -11,11 +16,6 @@ class ApplicationController < ActionController::Base
   # Scrub genbank files from log as it is huge
   filter_parameter_logging :genbank_file
   
-  # See ActionController::RequestForgeryProtection for details
-  protect_from_forgery
-  
-  before_filter :current_user
-  
   protected
     def current_user_session
       return @current_user_session if defined?(@current_user_session)
@@ -24,7 +24,7 @@ class ApplicationController < ActionController::Base
     
     def current_user
       return @current_user if defined?(@current_user)
-      @current_user = current_user_session && current_user_session.record
+      @current_user = current_user_session && current_user_session.user
     end
     
     def require_user
@@ -61,5 +61,16 @@ class ApplicationController < ActionController::Base
         flash[:error] = "You are not allowed to access this page."
         redirect_to root_url
       end
+    end
+  
+  private
+    def set_created_by
+      controller_name = params['controller'][0..-2] # remove the ending 's'
+      params[controller_name].update({ :created_by => current_user })
+    end
+    
+    def set_updated_by
+      controller_name = params['controller'][0..-2] # remove the ending 's'
+      params[controller_name].update({ :updated_by => current_user })
     end
 end
