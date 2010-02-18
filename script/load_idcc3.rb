@@ -709,7 +709,7 @@ end
 
 class TargetingVector
   attr_accessor :id, :pipeline_id, :molecular_structure_id
-  attr_accessor :ikmc_project_id, :intermediate_vector, :name
+  attr_accessor :ikmc_project_id, :intermediate_vector, :name, :display
   
   def initialize( args )
     args.each_pair do | key, value |
@@ -732,7 +732,8 @@ class TargetingVector
         'molecular_structure_id'  => @molecular_structure_id,
         'ikmc_project_id'         => @ikmc_project_id,
         'intermediate_vector'     => @intermediate_vector,
-        'name'                    => @name
+        'name'                    => @name,
+        'display'                 => @display
       }
     })
   end
@@ -825,7 +826,8 @@ class TargetingVector
         :pipeline_id            => pipeline_id,
         :ikmc_project_id        => project_id,
         :intermediate_vector    => int_vec_name,
-        :name                   => targ_vec_name
+        :name                   => targ_vec_name,
+        :display                => true
       })
       
       targ_vec.push_to_idcc()
@@ -950,17 +952,15 @@ class EsCell
   end
   
   def to_json
-    es_cell_hash = {
-      'name'                      => @name,
-      'parental_cell_line'        => @parental_cell_line,
-      'allele_symbol_superscript' => @allele_symbol_superscript,
-      'molecular_structure_id'    => @molecular_structure_id
-    }
-    unless @targeting_vector_id.nil?
-      es_cell_hash.update({ 'targeting_vector_id' => @targeting_vector_id })
-    end
-    
-    JSON.generate({ 'es_cell' => es_cell_hash })
+    JSON.generate({
+      'es_cell' => {
+        'name'                      => @name,
+        'parental_cell_line'        => @parental_cell_line,
+        'allele_symbol_superscript' => @allele_symbol_superscript,
+        'molecular_structure_id'    => @molecular_structure_id,
+        'targeting_vector_id'       => @targeting_vector_id
+      }
+    })
   end
   
   def self.format_allele_symbol_superscript( allele_name )
@@ -991,12 +991,16 @@ class EsCell
       ws.es_cell_line,
       ws.allele_name,
       project.project_id,
+      ws.pcs_plate_name || '_' || ws.pcs_well_name,
       ws.pgdgr_plate_name || '_' || ws.pgdgr_well_name,
       mgi_gene.mgi_accession_id,
       project.design_id,
       project.cassette,
       project.backbone,
-      ws.targeted_trap
+      ws.targeted_trap,
+      is_eucomm,
+      is_komp_csd,
+      is_norcomm
     FROM
       project
       JOIN project_status        ON project_status.project_status_id = project.project_status_id AND project_status.order_by >= 75
@@ -1004,6 +1008,7 @@ class EsCell
       JOIN mgi_gene              ON mgi_gene.mgi_gene_id = project.mgi_gene_id
     WHERE
       ws.epd_well_name is not null
+      AND ws.pgdgr_well_name is not null
       AND ( project.is_eucomm = 1 OR project.is_komp_csd = 1 OR project.is_norcomm = 1 )
       AND ( ws.targeted_trap = 'yes' OR ws.epd_distribute = 'yes' )
     """
@@ -1024,12 +1029,13 @@ class EsCell
       es_cell_line      = fetch_row[1]
       allele_name       = fetch_row[2]
       project_id        = fetch_row[3]
-      targ_vec_name     = fetch_row[4]
-      mgi_accession_id  = fetch_row[5]
-      design_id         = fetch_row[6]
-      cassette          = fetch_row[7]
-      backbone          = fetch_row[8]
-      targeted_trap     = fetch_row[9] == 'yes'
+      int_vec_name      = fetch_row[4]
+      targ_vec_name     = fetch_row[5]
+      mgi_accession_id  = fetch_row[6]
+      design_id         = fetch_row[7]
+      cassette          = fetch_row[8]
+      backbone          = fetch_row[9]
+      targeted_trap     = fetch_row[10] == 'yes'
       
       design = Design.get( design_id )
       
@@ -1048,6 +1054,7 @@ class EsCell
         next
       end
       
+      # Get molecular structure or go to the next ES cell
       begin
         mol_struct = MolecularStructure.find( mgi_accession_id, design_id, cassette, backbone, targeted_trap )
       rescue Exception => e
@@ -1055,17 +1062,36 @@ class EsCell
         next
       end
       
-      # Find targeting vector - An ES Cell might not be linked to a targ vec
-      if targ_vec_name == '_' # From concatenation (see SQL)
-        targeting_vector_id = nil
-      else
+      # Get or create targeting vector
+      begin
         targ_vec = TargetingVector.find( targ_vec_name, project_id )
-        targeting_vector_id = targ_vec.id unless targ_vec.nil?
+      rescue Exception => e
+        log "[ES CELL];#{e} - will try to create it."
+        
+        #Get pipeline ID
+        pipeline_id = 
+        if fetch_row[11] == 1      then Pipeline.get_id_from( 'EUCOMM' )
+        elsif fetch_row[12] == 1   then Pipeline.get_id_from( 'KOMP-CSD' )
+        elsif fetch_row[13] == 1   then Pipeline.get_id_from( 'NorCOMM' )
+        end
+        raise "Pipeline can't be null" if pipeline_id.nil?
+        
+        targ_vec = TargetingVector.new({
+          :molecular_structure_id => mol_struct.id,
+          :pipeline_id            => pipeline_id,
+          :ikmc_project_id        => project_id,
+          :intermediate_vector    => int_vec_name,
+          :name                   => targ_vec_name,
+          :display                => false
+        })
+        
+        targ_vec.create()
+        TargetingVector.push_to_cache( targ_vec )
       end
       
       es_cell = EsCell.new({
         :molecular_structure_id     => mol_struct.id,
-        :targeting_vector_id        => targeting_vector_id,
+        :targeting_vector_id        => targ_vec.id,
         :name                       => epd_well_name,
         :parental_cell_line         => format_parental_cell_line( es_cell_line ),
         :allele_symbol_superscript  => format_allele_symbol_superscript( allele_name )
