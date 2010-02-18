@@ -882,7 +882,7 @@ class TargetingVector
     targ_vec = search( name, ikmc_project_id )
     return TargetingVector.new( targ_vec ) unless targ_vec.nil?
     
-    log "Can't find targeting vector #{name}"
+    raise "Can't find targeting vector #{name}"
   end
   
   def self.search( name, ikmc_project_id )
