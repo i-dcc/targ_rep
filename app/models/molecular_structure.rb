@@ -24,15 +24,17 @@ class MolecularStructure < ActiveRecord::Base
   #   floxed_start_exon   : string 
   #   floxed_end_exon     : string 
   #   project_design_id   : integer 
+  #   mutation_type       : string 
+  #   mutation_subtype    : string 
+  #   mutation_method     : string 
+  #   reporter            : string 
   # =======================
 
-  
   acts_as_audited
   
   # Associations
   belongs_to :created_by, :class_name => "User", :foreign_key => "created_by"
   belongs_to :updated_by, :class_name => "User", :foreign_key => "updated_by"
-  
   
   has_one :genbank_file,
     :class_name   => "GenbankFile",
@@ -103,6 +105,8 @@ class MolecularStructure < ActiveRecord::Base
   validate :has_right_features, 
     :unless => "[mgi_accession_id, assembly, chromosome, strand, design_type,
     homology_arm_start, homology_arm_end, cassette_start, cassette_end].any?(&:nil?)"
+  
+  before_validation :set_mutation_details
   
   public
     def to_json( options = {} )
@@ -214,5 +218,22 @@ class MolecularStructure < ActiveRecord::Base
           errors.add(:loxp_end,   "has to be blank for this design type")
         end
       end
+    end
+    
+    def set_mutation_details
+      self.mutation_type = 'targeted_mutation'
+      
+      self.mutation_subtype =
+      case design_type
+        when 'Deletion'   then 'deletion'
+        when 'Insertion'  then 'insertion'
+        when 'Knock Out'  then self.loxp_start.nil? ? 'targeted_non_conditional' : 'conditional_ready'
+      end
+      
+      if ['conditional_ready', 'insertion', 'deletion'].include? self.mutation_subtype
+        self.mutation_method = 'frameshift'
+      end
+      
+      self.reporter = nil
     end
 end

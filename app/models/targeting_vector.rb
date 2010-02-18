@@ -11,6 +11,7 @@ class TargetingVector < ActiveRecord::Base
   #   updated_by             : integer 
   #   created_at             : datetime 
   #   updated_at             : datetime 
+  #   display                : boolean 
   # =======================
 
   acts_as_audited
@@ -21,11 +22,13 @@ class TargetingVector < ActiveRecord::Base
 
   belongs_to :pipeline,
     :class_name   => "Pipeline",
-    :foreign_key  => "pipeline_id"
+    :foreign_key  => "pipeline_id",
+    :validate     => true
 
   belongs_to :molecular_structure,
     :class_name   => 'MolecularStructure',
-    :foreign_key  => 'molecular_structure_id'
+    :foreign_key  => 'molecular_structure_id',
+    :validate     => true
     
   has_many :es_cells,
     :class_name   => "EsCell",
@@ -36,15 +39,12 @@ class TargetingVector < ActiveRecord::Base
   validates_uniqueness_of :name, :scope => :pipeline_id
 
   # Data validation
-  validates_associated  :pipeline
-  validates_associated  :molecular_structure
-
   validates_presence_of :pipeline_id,             :on => :save
   validates_presence_of :molecular_structure_id,  :on => :save, :unless => :nested
   validates_presence_of :name,                    :on => :create
 
   attr_accessor :nested
-
+  
   public
     def to_json( options = {} )
       TargetingVector.include_root_in_json = false

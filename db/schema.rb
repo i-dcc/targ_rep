@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100208110320) do
+ActiveRecord::Schema.define(:version => 20100218101736) do
 
   create_table "audits", :force => true do |t|
     t.integer  "auditable_id"
@@ -76,6 +76,10 @@ ActiveRecord::Schema.define(:version => 20100208110320) do
     t.string   "floxed_start_exon"
     t.string   "floxed_end_exon"
     t.integer  "project_design_id"
+    t.string   "mutation_type"
+    t.string   "mutation_subtype"
+    t.string   "mutation_method"
+    t.string   "reporter"
   end
 
   add_index "molecular_structures", ["mgi_accession_id", "project_design_id", "assembly", "chromosome", "strand", "homology_arm_start", "homology_arm_end", "cassette_start", "cassette_end", "loxp_start", "loxp_end", "cassette", "backbone"], :name => "index_mol_struct", :unique => true
@@ -87,15 +91,16 @@ ActiveRecord::Schema.define(:version => 20100208110320) do
   end
 
   create_table "targeting_vectors", :force => true do |t|
-    t.integer  "pipeline_id",            :null => false
-    t.integer  "molecular_structure_id", :null => false
+    t.integer  "pipeline_id",                              :null => false
+    t.integer  "molecular_structure_id",                   :null => false
     t.string   "ikmc_project_id"
-    t.string   "name",                   :null => false
+    t.string   "name",                                     :null => false
     t.string   "intermediate_vector"
     t.integer  "created_by"
     t.integer  "updated_by"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "display",                :default => true
   end
 
   add_index "targeting_vectors", ["pipeline_id", "name"], :name => "index_targvec", :unique => true
