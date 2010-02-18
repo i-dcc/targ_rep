@@ -998,6 +998,7 @@ class EsCell
       project.cassette,
       project.backbone,
       ws.targeted_trap,
+      pgdgr_distribute,
       is_eucomm,
       is_komp_csd,
       is_norcomm
@@ -1036,6 +1037,7 @@ class EsCell
       cassette          = fetch_row[8]
       backbone          = fetch_row[9]
       targeted_trap     = fetch_row[10] == 'yes'
+      targ_vec_dist     = fetch_row[11] == 'yes'
       
       design = Design.get( design_id )
       
@@ -1070,25 +1072,40 @@ class EsCell
         
         #Get pipeline ID
         pipeline_id = 
-        if fetch_row[11] == 1      then Pipeline.get_id_from( 'EUCOMM' )
-        elsif fetch_row[12] == 1   then Pipeline.get_id_from( 'KOMP-CSD' )
-        elsif fetch_row[13] == 1   then Pipeline.get_id_from( 'NorCOMM' )
+        if fetch_row[12] == 1      then Pipeline.get_id_from( 'EUCOMM' )
+        elsif fetch_row[13] == 1   then Pipeline.get_id_from( 'KOMP-CSD' )
+        elsif fetch_row[14] == 1   then Pipeline.get_id_from( 'NorCOMM' )
         end
         raise "Pipeline can't be null" if pipeline_id.nil?
         
+        # Get molecular structure (conditional) specific to targeting vector
+        # Same as ES Cell's if not targeted trap
+        if targeted_trap
+          begin
+            mol_struct_for_targ_vec = MolecularStructure.find(
+              mgi_accession_id, design_id, cassette, backbone, false )
+          rescue Exception => e
+            log "[TARG VEC];#{targ_vec_name};#{e}"
+            next
+          end
+        else
+          mol_struct_for_targ_vec = mol_struct
+        end
+        
         targ_vec = TargetingVector.new({
-          :molecular_structure_id => mol_struct.id,
+          :molecular_structure_id => mol_struct_for_targ_vec.id,
           :pipeline_id            => pipeline_id,
           :ikmc_project_id        => project_id,
           :intermediate_vector    => int_vec_name,
           :name                   => targ_vec_name,
-          :display                => false
+          :display                => targ_vec_dist
         })
-        
-        targ_vec.create()
-        TargetingVector.push_to_cache( targ_vec )
+        targ_vec.push_to_idcc()
+        TargetingVector.push_to_cache( targ_vec ) if targ_vec.id
       end
       
+      
+      # Create or Update ES Cell
       es_cell = EsCell.new({
         :molecular_structure_id     => mol_struct.id,
         :targeting_vector_id        => targ_vec.id,
