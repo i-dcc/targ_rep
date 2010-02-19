@@ -163,8 +163,8 @@ class MolecularStructuresController < ApplicationController
       # Specific to create/update methods - webservice interface
       mol_struct_params = params[ :molecular_structure ]
       
-      # README:
-      # http://github.com/dazoakley/targ_rep2/issues#issue/1
+      # README: http://github.com/dazoakley/targ_rep2/issues#issue/1
+      #
       # ``accepts_nested_attributes_for`` (in model.rb) expects 
       # <child_model>_attributes as a key in params hash in order to 
       # create <child_model> objects.

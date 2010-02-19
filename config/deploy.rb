@@ -1,7 +1,7 @@
 set :application, "idcc_targ_rep"
 set :repository,  "git://github.com/dazoakley/targ_rep2.git"
 set :branch, "master"
-set :user, "do2"
+set :user, "sb25"
 
 set :scm, :git
 set :deploy_via, :export

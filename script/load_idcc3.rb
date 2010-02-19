@@ -53,32 +53,25 @@ REPORT_TO       = {
   'Sebastien Briois'  => 'sb25@sanger.ac.uk'
 }
 
-ORA_USER    = 'eucomm_vector'
-ORA_PASS    = 'eucomm_vector'
-ORA_DB      = 'migp_ha.world'
-IDCC_SITE   = 'http://htgt:htgt@htgt.internal.sanger.ac.uk:4002/labs/targ_rep'
-LOG_DIR     = '/software/team87/logs/idcc/htgt_load'
-GENBANK_URL = 'http://www.sanger.ac.uk/htgt/qc/seq_view_file'
+# Database and web service interface settings
+ORA_USER        = 'eucomm_vector'
+ORA_PASS        = 'eucomm_vector'
+ORA_DB          = 'migp_ha.world'
+IDCC_SITE_TEST  = 'http://htgt:htgt@htgt.internal.sanger.ac.uk:4002/labs/targ_rep'
+IDCC_SITE_PROD  = 'http://htgt:htgt@www.i-dcc.org/targ_rep'
+LOG_DIR_TEST    = '/software/team87/logs/idcc/htgt_load'
+LOG_DIR_PROD    = 'htgt_load'
+GENBANK_URL     = 'http://www.sanger.ac.uk/htgt/qc/seq_view_file'
+
+# Use test settings by default
+@@idcc_site = IDCC_SITE_TEST
+@@ora_dbh   = OCI8.new(ORA_USER, ORA_PASS, ORA_DB)
+@@log_dir   = LOG_DIR_TEST
 
 ##
 ## Set the script options
 ##
 
-@@skip_mol_struct     = false # Will exclude molecular structures loading
-@@skip_genbank_files  = false # Will exclude genbank files loading
-@@skip_targ_vec       = false # Will exclude targeting vectors loading
-@@skip_es_cell        = false # Will exclude ES cells loading
-
-@@no_report = false # Will exclude email report
-@@debug     = false # Won't print logs on screen
-@@start_date, @@end_date = nil, nil
-
-# When test only
-@@idcc_site = 'http://htgt:htgt@localhost:3000/'
-@@ora_dbh   = OCI8.new(ORA_USER, ORA_PASS, 'migp_ha.world')
-@@log_dir   = 'htgt_load'
-
-# TODO: Remove "production" and "test" options when pushing live
 opts = GetoptLong.new(
   [ '--help',               '-h',   GetoptLong::NO_ARGUMENT ],
   [ '--production',         '-p',   GetoptLong::NO_ARGUMENT ],
@@ -97,9 +90,9 @@ opts.each do |opt, arg|
     when '--help'
       RDoc::usage
     when '--production'
-      @@idcc_site = IDCC_SITE
+      @@idcc_site = IDCC_SITE_PROD
       @@ora_dbh   = OCI8.new(ORA_USER, ORA_PASS, ORA_DB)
-      @@log_dir   = LOG_DIR
+      @@log_dir   = LOG_DIR_PROD
     when '--debug'
       @@debug = true
     when '--skip_mol_struct'
@@ -835,7 +828,7 @@ class TargetingVector
       push_to_cache( targ_vec )
     end
     
-    TargetingVector.delete_obsoletes()
+    # TargetingVector.delete_obsoletes()
   end
   
   def self.delete_obsoletes
@@ -1118,9 +1111,9 @@ class EsCell
       next unless es_cell.id
       EsCell.push_to_cache( es_cell )
     end
-    TargetingVector.flush_cache()
-    EsCell.delete_obsoletes()
-    EsCell.flush_cache()
+    # TargetingVector.flush_cache()
+    # EsCell.delete_obsoletes()
+    # EsCell.flush_cache()
   end
   
   def self.delete_obsoletes
