@@ -536,10 +536,7 @@ class MolecularStructure
         next
       end
       
-      unless @@changed_projects.include? project_id
-        log "[MOL STRUCT SKIP] Project #{project_id} has not changed"
-        next
-      end
+      next unless @@changed_projects.include? project_id
       
       if epd_distribute and targeted_trap
         log "[DATABASE ERROR];#{mgi_accession_id};design_id #{design_id};#{cassette};#{backbone};epd_distribute = targeted_trap = 'yes'"
@@ -800,10 +797,7 @@ class TargetingVector
         next
       end
       
-      unless @@changed_projects.include? project_id
-        log "[TARG VEC SKIP] Project #{project_id} has not changed"
-        next
-      end
+      next unless @@changed_projects.include? project_id
       
       # Get pipeline ID
       pipeline_id = 
@@ -1051,10 +1045,7 @@ class EsCell
         next
       end
       
-      unless @@changed_projects.include? project_id
-        log "[ES CELL SKIP] Project #{project_id} has not changed"
-        next
-      end
+      next unless @@changed_projects.include? project_id
       
       # Get molecular structure or go to the next ES cell
       begin
