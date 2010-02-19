@@ -72,6 +72,13 @@ GENBANK_URL     = 'http://www.sanger.ac.uk/htgt/qc/seq_view_file'
 ## Set the script options
 ##
 
+@@skip_mol_struct     = false
+@@skip_genbank_files  = false
+@@skip_targ_vec       = false
+@@skip_es_cell        = false
+@@debug               = false
+@@no_report           = false
+
 opts = GetoptLong.new(
   [ '--help',               '-h',   GetoptLong::NO_ARGUMENT ],
   [ '--production',         '-p',   GetoptLong::NO_ARGUMENT ],
