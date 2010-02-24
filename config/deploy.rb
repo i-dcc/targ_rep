@@ -1,7 +1,7 @@
 set :application, "idcc_targ_rep"
 set :repository,  "git://github.com/dazoakley/targ_rep2.git"
 set :branch, "master"
-set :user, "sb25"
+set :user, "do2"
 
 set :scm, :git
 set :deploy_via, :export
@@ -12,6 +12,7 @@ set :use_sudo, false
 
 role :web, "localhost"
 role :app, "localhost"
+role :db,  "localhost", :primary => true
 set :ssh_options, { :port => 10025 }
 
 namespace :deploy do
