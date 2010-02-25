@@ -3,91 +3,19 @@
   <p>
     Welcome to the I-DCC Targeting Repository. This repository was put together 
     to collect information on targeting vectors (DNA constructs) and alleles 
-    (mutations in ES cells) as they are produced by the pipelines making up the 
+    (mutations in ES cells) as they are made available by the pipelines making up the 
     <a href="http://www.knockoutmouse.org">International Knockout Mouse Consortium 
     (IKMC)</a>.
   </p>
-</div>
-
-<hr />
-
-<div class="span-24">
-  <h3>Using This Site</h3>
-</div>
-
-<div class="span-12">
-  <h4>How to Get Your Data in Here</h4>
   <p>
-    To load your data into the repository, you will first need an account.  Please 
-    email <a href="mailto:htgt@sanger.ac.uk">htgt@sanger.ac.uk</a> with some basic 
-    information on your project and mutations and we'll happily set up an account 
-    for you.
-  </p>
-  <p>
-    Once you have an account, there are two approaches that can be used to insert 
-    data into the repository:
-    <ul>
-      <li>
-        Manual data entry via the website - ideal for small numbers of alleles 
-        and products.
-      </li>
-      <li>
-        Automated data entry using our
-        <a href="http://wiki.github.com/dazoakley/targ_rep/rest-web-services">RESTful</a> 
-        web services - suitable for bulk data loading and editing.
-      </li>
-    </ul>
-  </p>
-  <h5>Manual Data Entry (via the Web Site)</h5>
-  <p>
-    To enter small numbers of alleles and products manually, simply 
-    <%= link_to "log-in", login_path %> then head to the 
-    <%= link_to "Alleles", molecular_structures_path %> page and follow the on-screen 
-    instructions for entering data.
-  </p>
-  <h5>Automated Data Entry (via the Web Services)</h5>
-  <p>
-    For entering bulk data insertion and maintenance we recommend using web 
-    services.  For more details on this please look at the 
-    <a href="http://wiki.github.com/dazoakley/targ_rep/i-dcc-web-services">
-    tutorial page</a> on our wiki.
+    <strong>Please note:</strong>
+    This site is mainly intended as a resource for members of the IKMC to enter 
+    data about their products.  If you would like to explore this data more easily, 
+    we would strongly suggest using either the <a href="http://www.i-dcc.org/biomart">IKMC 
+    Biomart</a> or visiting <a href="http://www.knockoutmouse.org">knockoutmouse.org</a>.
   </p>
 </div>
 
-<div class="span-12 last">
-  <h4>Our Terminology</h4>
-  <dl>
-    <di>
-      <dt>Allele</dt>
-      <dd>
-        The term 'allele' typically infers a mutated ES cell clone.  In this 
-        repository however an allele represents a 'unique' mutant construct that 
-        has been made into a targeting vector or ES cell.
-      </dd>
-    </di>
-  </dl>
-  <h4>What Will Happen Once Your Data Is in Here</h4>
-  <p>
-    Once your data is loaded into this repository, after approximately 24 hours 
-    the data you have entered will automatically be transferred into the 
-    <a href="http://www.knockoutmouse.org/mart">IKMC Biomart</a>.  From here:
-    
-    <ul>
-      <li>
-        it will be linked with and displayed alongside all other data that is 
-        part of the <a href="http://www.knockoutmouse.org">IKMC consortium</a>.
-      </li>
-      <li>
-        In addition to this, your alleles will appear on the IKMC 
-        <a href="http://en.wikipedia.org/wiki/Distributed_Annotation_System">DAS</a> 
-        track within the <a href="http://www.ensembl.org">Ensembl genome browser</a>. 
-        Thus advertising the existence of your alleles to a wide audience.
-      </li>
-    </ul>
-  </p>
-</div>
-
-<div class="clear"></div>
 <hr />
 
 <div class="span-12">
@@ -114,7 +42,7 @@
         allele_counts_for_chart  = []
         product_counts_for_chart = []
       %>
-      <% @pipeline_counts.each do |pipeline_name, count| %>
+      <% @pipeline_counts.sort{|a,b| a[0]<=>b[0]}.each do |pipeline_name, count| %>
         <%
           project_labels_for_chart.push( pipeline_name )
           allele_counts_for_chart.push( count[:molecular_structures] )
@@ -146,3 +74,82 @@
                  :labels => project_labels_for_chart,
                  :format => 'image_tag' %>
 </div>
+
+<div class="clear"></div>
+
+<% if @current_user %>
+
+  <hr />
+
+  <div class="span-24">
+    <h3>IKMC Members: Using This Site</h3>
+  </div>
+
+  <div class="span-12">
+    <h4>How to Get Your Data in Here</h4>
+    <p>
+      There are two approaches that can be used to insert data into 
+      this repository:
+      <ul>
+        <li>
+          Manual data entry via the website - ideal for small numbers of alleles 
+          and products.
+        </li>
+        <li>
+          Automated data entry using our
+          <a href="http://wiki.github.com/dazoakley/targ_rep2/restful-web-services">RESTful  
+          web services</a> - suitable for bulk data loading and editing.
+        </li>
+      </ul>
+    </p>
+    <h5>Manual Data Entry (via the Web Site)</h5>
+    <p>
+      To enter small numbers of alleles and products manually, simply head to 
+      the <%= link_to "Alleles", molecular_structures_path %> page and follow 
+      the on-screen instructions for entering data.
+    </p>
+    <h5>Automated Data Entry (via the Web Services)</h5>
+    <p>
+      For bulk data insertion and maintenance we recommend using web 
+      services.  More details on this (along with code examples) is available 
+      on the 
+      <a href="http://wiki.github.com/dazoakley/targ_rep2/using-the-web-services">
+      tutorial page</a> in the <a href="http://wiki.github.com/dazoakley/targ_rep2">repository 
+      wiki</a>.
+    </p>
+  </div>
+
+  <div class="span-12 last">
+    <h4>Our Terminology</h4>
+    <dl>
+      <di>
+        <dt>Allele</dt>
+        <dd>
+          The term 'allele' typically infers a mutated ES cell clone.  In this 
+          repository however an allele represents a 'unique' mutant construct that 
+          has been made into a targeting vector or ES cell.
+        </dd>
+      </di>
+    </dl>
+    <h4>What Will Happen Once Your Data Is in Here</h4>
+    <p>
+      Once your data is loaded into this repository, after approximately 24 hours 
+      the data you have entered will automatically be transferred into the 
+      <a href="http://www.i-dcc.org/biomart">IKMC Biomart</a>.  From here:
+    
+      <ul>
+        <li>
+          it will be linked with and displayed alongside all other data that is 
+          part of the <a href="http://www.knockoutmouse.org">IKMC consortium</a>.
+        </li>
+        <li>
+          In addition to this, your alleles will appear on the IKMC 
+          <a href="http://en.wikipedia.org/wiki/Distributed_Annotation_System">DAS</a> 
+          track within the <a href="http://www.ensembl.org">Ensembl genome browser</a>. 
+          Thus advertising the existence of your alleles to a wide audience.
+        </li>
+      </ul>
+    </p>
+  </div>
+
+<% end %>
