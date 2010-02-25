@@ -93,9 +93,9 @@
 <div class="span-12">
   <h3>Summary Statistics</h3>
   <p>
-    This repository currently tracks information on <%= MolecularStructure.all.count %> alleles 
-    that have been made into <%= EsCell.all.count %> mutant ES cells, from 
-    <%= Pipeline.all.count %> different production pipelines.
+    This repository currently tracks information on <%= @total_counts[:molecular_structures] %> alleles 
+    that have been made into <%= @total_counts[:es_cells] %> mutant ES cells, from 
+    <%= @total_counts[:pipelines] %> different production pipelines.
   </p>
 </div>
 
@@ -114,7 +114,7 @@
         allele_counts_for_chart  = []
         product_counts_for_chart = []
       %>
-      <% @counts.each do |pipeline_name, count| %>
+      <% @pipeline_counts.each do |pipeline_name, count| %>
         <%
           project_labels_for_chart.push( pipeline_name )
           allele_counts_for_chart.push( count[:molecular_structures] )
