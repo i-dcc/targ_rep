@@ -23,7 +23,7 @@
       <div id="userbox" class="prepend-1 span-6 last">
         <div id="userbox-inner" class="box">
           <% if @current_user %>
-            <%= link_to "profile (#{@current_user.username})", users_path, :class => "ss_sprite ss_user" %> | 
+            <%= link_to "profile (#{@current_user.username})", user_path(@current_user), :class => "ss_sprite ss_user" %> | 
             <%= link_to "logout", logout_path, :method => :delete, :class => "ss_sprite ss_door_open" %>
           <% else %>
             <%= link_to "login", login_path, :class => "ss_sprite ss_key" %>
