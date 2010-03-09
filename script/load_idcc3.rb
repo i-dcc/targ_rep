@@ -1300,7 +1300,7 @@ class GenbankFile
       @@mol_struct_cache.each_pair do |mol_struct_id, mol_struct|
         genbank_file = GenbankFile.new({
           :mol_struct_id  => mol_struct.id,
-          :design_id      => mol_struct.project_design_id,
+          :design_id      => mol_struct.design_id,
           :cassette       => mol_struct.cassette,
           :backbone       => mol_struct.backbone,
           :targeted_trap  => mol_struct.targeted_trap
