@@ -15,10 +15,26 @@ class EsCellTest < ActiveSupport::TestCase
   
   context "ES Cell" do
     context "with empty attributes" do
-      escell = Factory.build( :invalid_escell )
       should "not be saved" do
-        assert( !escell.valid?, "ES Cell validates an empty entry" )
-        assert( !escell.save, "ES Cell validates the creation of an empty entry" )
+        es_cell = Factory.build( :invalid_escell )
+        
+        assert( !es_cell.valid?, "ES Cell validates an empty entry" )
+        assert( !es_cell.save, "ES Cell validates the creation of an empty entry" )
+      end
+    end
+    
+    context "with molecular structure consistency issue" do
+      should "not be saved" do
+        targ_vec    = Factory.create( :targeting_vector )
+        mol_struct  = Factory.create( :molecular_structure )
+        es_cell = EsCell.new({
+          :name                   => 'INVALID',
+          :targeting_vector_id    => targ_vec.id,
+          :molecular_structure_id => mol_struct.id
+        })
+        
+        assert( !es_cell.valid?, "ES Cell validates an invalid entry" )
+        assert( !es_cell.save, "ES Cell validates the creation of an invalid entry" )
       end
     end
   end

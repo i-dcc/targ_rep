@@ -22,173 +22,17 @@ class TargetingVectorsControllerTest < ActionController::TestCase
   
   should "create targeting vector" do
     assert_difference('TargetingVector.count') do
-      attrs = Factory.attributes_for( :targeting_vector )
       post :create, :targeting_vector => {
-        :name                   => attrs[:name],
-        :intermediate_vector    => attrs[:intermediate_vector],
-        :ikmc_project_id        => attrs[:ikmc_project_id],
-        :pipeline_id            => TargetingVector.find(:first).pipeline_id,
-        :molecular_structure_id => TargetingVector.find(:first).molecular_structure_id
+        :name                   => Factory.attributes_for( :targeting_vector )[:name],
+        :pipeline_id            => TargetingVector.first.pipeline_id,
+        :molecular_structure_id => TargetingVector.first.molecular_structure_id
       }
     end
+    
     assert_response :success
   end
   
-  should "create targeting vector and molecular structure" do
-    targ_vec_count    = TargetingVector.count
-    mol_struct_count  = MolecularStructure.count
-    mol_struct_attrs  = Factory.attributes_for( :molecular_structure )
-    targ_vec_attrs    = Factory.attributes_for( :targeting_vector )
-    
-    post :create, :targeting_vector => {
-      :name                => targ_vec_attrs[:name],
-      :intermediate_vector => targ_vec_attrs[:intermediate_vector],
-      :ikmc_project_id     => targ_vec_attrs[:ikmc_project_id],
-      :pipeline_id         => TargetingVector.find(:first).pipeline_id,
-      :molecular_structure => {
-        :mgi_accession_id     => mol_struct_attrs[:mgi_accession_id],
-        :assembly             => mol_struct_attrs[:assembly],
-        :chromosome           => mol_struct_attrs[:chromosome],
-        :strand               => mol_struct_attrs[:strand],
-        :design_type          => mol_struct_attrs[:design_type],
-        :homology_arm_start   => mol_struct_attrs[:homology_arm_start],
-        :homology_arm_end     => mol_struct_attrs[:homology_arm_end],
-        :cassette_start       => mol_struct_attrs[:cassette_start],
-        :cassette_end         => mol_struct_attrs[:cassette_end]
-      }
-    }
-    
-    assert_not_equal(
-      mol_struct_count, MolecularStructure.count,
-      "controller should allow creation of valid molecular structure"
-    )
-    assert_not_equal(
-      targ_vec_count, TargetingVector.count,
-      "controller should allow creation of valid targeting vector"
-    )
-    assert_response :success
-  end
-  
-  should "not create anything if both molecular structure hash and id are given" do
-    mol_struct_count  = MolecularStructure.count
-    targ_vec_count    = TargetingVector.count
-    mol_struct_attrs  = Factory.attributes_for( :molecular_structure )
-    targ_vec_attrs    = Factory.attributes_for( :targeting_vector )
-    
-    post :create, :targeting_vector => {
-      :name                   => targ_vec_attrs[:name],
-      :intermediate_vector    => targ_vec_attrs[:intermediate_vector],
-      :ikmc_project_id        => targ_vec_attrs[:ikmc_project_id],
-      :pipeline_id            => TargetingVector.find(:first).pipeline_id,
-      :molecular_structure_id => TargetingVector.find(:first).molecular_structure_id,
-      :molecular_structure    => {
-        :mgi_accession_id    => mol_struct_attrs[:mgi_accession_id],
-        :assembly            => mol_struct_attrs[:assembly],
-        :chromosome          => mol_struct_attrs[:chromosome],
-        :strand              => mol_struct_attrs[:strand],
-        :design_type         => mol_struct_attrs[:design_type],
-        :homology_arm_start  => mol_struct_attrs[:homology_arm_start],
-        :homology_arm_end    => mol_struct_attrs[:homology_arm_end],
-        :cassette_start      => mol_struct_attrs[:cassette_start],
-        :cassette_end        => mol_struct_attrs[:cassette_end]
-      }
-    }
-    
-    assert_equal(MolecularStructure.count, mol_struct_count, "controller allows creation of a molecular structure that goes with an invalid targeting vector")
-    assert_equal(TargetingVector.count, targ_vec_count, "controller allows creation of a targeting vector related to both new and existing molecular structures")
-    assert_response 400
-  end
-  
-  should "not create anything if molecular_structure is invalid" do
-    assert_no_difference('TargetingVector.count') do
-      attrs = Factory.attributes_for( :targeting_vector )
-      post :create, :targeting_vector => {
-        :name                   => attrs[:name],
-        :intermediate_vector    => attrs[:intermediate_vector],
-        :ikmc_project_id        => attrs[:ikmc_project_id],
-        :pipeline_id            => TargetingVector.find(:first).pipeline_id,
-        :molecular_structure    => Factory.attributes_for( :invalid_molecular_structure )
-      }
-    end
-    assert_response 400
-  end
-  
-  should "not create anything if targeting_vector is invalid" do
-    mol_struct_count  = MolecularStructure.count
-    targ_vec_count    = TargetingVector.count
-    
-    attrs = Factory.attributes_for( :molecular_structure )
-    post :create, :targeting_vector => {
-      :molecular_structure => {
-        :mgi_accession_id    => attrs[:mgi_accession_id],
-        :assembly            => attrs[:assembly],
-        :chromosome          => attrs[:chromosome],
-        :strand              => attrs[:strand],
-        :design_type         => attrs[:design_type],
-        :homology_arm_start  => attrs[:homology_arm_start],
-        :homology_arm_end    => attrs[:homology_arm_end],
-        :cassette_start      => attrs[:cassette_start],
-        :cassette_end        => attrs[:cassette_end]
-      }
-    }
-    
-    assert_equal(
-      MolecularStructure.count, mol_struct_count, 
-      "Targeting vector controller allows creation of a molecular structure that goes with a wrong targeting vector"
-    )
-    assert_equal(
-      TargetingVector.count, targ_vec_count, 
-      "Targeting vector controller allows creation of an invalid targeting vector"
-    )
-    assert_response 400
-  end
-  
-  should "not create anything if es_cells information is given" do
-    targ_vec_count    = TargetingVector.count
-    mol_struct_count  = MolecularStructure.count
-    es_cell_count     = EsCell.count
-    mol_struct_attrs  = Factory.attributes_for( :molecular_structure )
-    targ_vec_attrs    = Factory.attributes_for( :targeting_vector )
-    
-    post :create, :targeting_vector => {
-      :name                 => targ_vec_attrs[:name],
-      :intermediate_vector  => targ_vec_attrs[:intermediate_vector],
-      :ikmc_project_id      => targ_vec_attrs[:ikmc_project_id],
-      :pipeline_id          => TargetingVector.find(:first).pipeline_id,
-      :molecular_structure    => {
-        :mgi_accession_id     => mol_struct_attrs[:mgi_accession_id],
-        :assembly             => mol_struct_attrs[:assembly],
-        :chromosome           => mol_struct_attrs[:chromosome],
-        :strand               => mol_struct_attrs[:strand],
-        :design_type          => mol_struct_attrs[:design_type],
-        :homology_arm_start   => mol_struct_attrs[:homology_arm_start],
-        :homology_arm_end     => mol_struct_attrs[:homology_arm_end],
-        :cassette_start       => mol_struct_attrs[:cassette_start],
-        :cassette_end         => mol_struct_attrs[:cassette_end]
-      },
-      :es_cells_attributes => [
-        { :name => Factory.attributes_for( :es_cell )[:name] },
-        { :name => Factory.attributes_for( :es_cell )[:name] },
-        { :name => Factory.attributes_for( :es_cell )[:name] }
-      ]
-    }
-    
-    assert_equal(
-      mol_struct_count, MolecularStructure.count,
-      "controller should not allow creation of valid molecular structure"
-    )
-    assert_equal(
-      TargetingVector.count, targ_vec_count,
-      "controller should not allow creation of valid targeting vector"
-    )
-    assert_equal(
-      EsCell.count, es_cell_count,
-      "controller should not allow creation of valid ES cell"
-    )
-    assert_response 400
-  end
-  
-  should "show targeting_vector" do
+  should "show targeting vector" do
     targ_vec_id = TargetingVector.find(:first).to_param
     
     get :show, :format => "html", :id => targ_vec_id
@@ -230,7 +74,7 @@ class TargetingVectorsControllerTest < ActionController::TestCase
   
   should "destroy targeting_vector" do
     assert_difference('TargetingVector.count', -1) do
-      delete :destroy, :id => TargetingVector.find(:first).to_param
+      delete :destroy, :id => TargetingVector.first
     end
     assert_response :success
   end

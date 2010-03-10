@@ -31,6 +31,7 @@ end
 
 Factory.define :molecular_structure do |f|
   f.sequence(:mgi_accession_id)           { |n| "MGI:#{n}" }
+  f.sequence(:project_design_id)          { |n| "design id #{n}"}
   f.sequence(:design_subtype)             { |n| "subtype #{n}" }
   f.sequence(:subtype_description)        { |n| "subtype description #{n}" }
   f.sequence(:cassette)                   { |n| "cassette #{n}"}
@@ -135,8 +136,9 @@ Factory.define :es_cell do |f|
   f.sequence(:allele_symbol_superscript)  { |n| "allele_symbol_#{n}" }
   f.parental_cell_line { ['JM8 parental', 'JM8.F6', 'JM8.N19'].choice }
   
-  f.association :targeting_vector
-  f.association :molecular_structure
+  targ_vec = Factory.new( :targeting_vector )
+  f.targeting_vector_id targ_vec.id
+  f.molecular_structure_id targ_vec.molecular_structure_id
 end
 
 Factory.define :invalid_escell, :class => EsCell do |f|

@@ -42,6 +42,9 @@ class EsCell < ActiveRecord::Base
   validates_presence_of :molecular_structure_id,  :on => :save, :unless => :nested
   validates_presence_of :name,                    :on => :create
   
+  validate :molecular_structure_consistency,
+      :unless => "[molecular_structure,targeting_vector].any?(&:nil?)"
+  
   attr_accessor :nested
   
   def targeting_vector_name
@@ -72,5 +75,22 @@ class EsCell < ActiveRecord::Base
           :updated_by => { :only => [:id, :username] }
         }
       )
+    end
+  
+  protected
+    # Compares targeting vector's molecular structure to
+    # ES cell's molecular structure
+    def molecular_structure_consistency
+      my_mol_struct = self.molecular_structure
+      targ_vec_mol_struct = self.targeting_vector.molecular_structure
+      
+      unless targ_vec_mol_struct.id == my_mol_struct.id \
+      or (my_mol_struct.mgi_accession_id  == targ_vec_mol_struct.mgi_accession_id   \
+      and my_mol_struct.project_design_id == targ_vec_mol_struct.project_design_id  \
+      and my_mol_struct.design_type       == targ_vec_mol_struct.design_type        \
+      and my_mol_struct.cassette          == targ_vec_mol_struct.cassette           \
+      and my_mol_struct.backbone          == targ_vec_mol_struct.backbone)
+        errors.add( :targeting_vector_id, "targeting vector's molecular structure differs from ES cell's molecular structure" )
+      end
     end
 end

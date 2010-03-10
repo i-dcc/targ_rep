@@ -29,20 +29,24 @@ class WelcomeController < ApplicationController
   def molecular_structure_count_by_pipeline
     sql = <<-SQL
       select
-        mol_str_counts.id,
-        count( distinct mol_str_counts.molecular_structure_id ) count
+        pipeline_id as id,
+        count( distinct molecular_structure_id ) as count
       from 
         (
-          select distinct pipelines.id, targeting_vectors.molecular_structure_id
+          select distinct
+            pipelines.id as pipeline_id,
+            targeting_vectors.molecular_structure_id as molecular_structure_id
           from pipelines 
           left join targeting_vectors on pipelines.id = targeting_vectors.pipeline_id
           union
-          select distinct pipelines.id,	es_cells.molecular_structure_id
+          select distinct
+            pipelines.id as pipeline_id,
+            es_cells.molecular_structure_id as molecular_structure_id
           from pipelines
           join targeting_vectors on pipelines.id = targeting_vectors.pipeline_id
           join es_cells on targeting_vectors.id = es_cells.targeting_vector_id
         ) mol_str_counts
-      group by mol_str_counts.id
+      group by id
     SQL
     run_count_sql(sql)
   end
@@ -50,13 +54,13 @@ class WelcomeController < ApplicationController
   def escell_count_by_pipeline
     sql = <<-SQL
       select
-        pipelines.id,
-        count(es_cells.id) count
+        pipelines.id as id,
+        count(es_cells.id) as count
       from
         pipelines
         join targeting_vectors on pipelines.id = targeting_vectors.pipeline_id
         join es_cells on targeting_vectors.id = es_cells.targeting_vector_id
-      group by pipelines.id
+      group by id
     SQL
     run_count_sql(sql)
   end
@@ -65,7 +69,7 @@ class WelcomeController < ApplicationController
     counts  = {}
     results = ActiveRecord::Base.connection.execute(sql)
     
-    results.each_hash do |res|
+    results.each do |res|
       counts[ res["id"].to_i ] = res["count"].to_i
     end
     

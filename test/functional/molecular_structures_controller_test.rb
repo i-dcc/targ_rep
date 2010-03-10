@@ -41,6 +41,7 @@ class MolecularStructuresControllerTest < ActionController::TestCase
     post :create, :molecular_structure => {
       :assembly            => mol_struct[:assembly],
       :mgi_accession_id    => mol_struct[:mgi_accession_id],
+      :project_design_id   => mol_struct[:project_design_id],
       :chromosome          => mol_struct[:chromosome],
       :strand              => mol_struct[:strand],
       :design_type         => mol_struct[:design_type],
@@ -98,11 +99,11 @@ class MolecularStructuresControllerTest < ActionController::TestCase
     )
     assert_equal(
       unlinked_es_cells + 3, EsCell.targeting_vector_id_null.count,
-      "Controller should have create 3 more ES cells not linked to a targeting vector"
+      "Controller should have created 3 more ES cells not linked to a targeting vector"
     )
     assert_equal(
       linked_es_cells + 3, EsCell.targeting_vector_id_not_null.count,
-      "Controller should have create 3 more ES cells linked to a targeting vector"
+      "Controller should have created 3 more ES cells linked to a targeting vector"
     )
   end
 
