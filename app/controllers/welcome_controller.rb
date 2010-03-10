@@ -69,7 +69,7 @@ class WelcomeController < ApplicationController
     counts  = {}
     results = ActiveRecord::Base.connection.execute(sql)
     
-    results.each do |res|
+    results.each_hash do |res|
       counts[ res["id"].to_i ] = res["count"].to_i
     end
     
