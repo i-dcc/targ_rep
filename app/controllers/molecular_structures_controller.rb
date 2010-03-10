@@ -1,6 +1,7 @@
 class MolecularStructuresController < ApplicationController
   before_filter :require_user, :only => [:create, :edit, :update, :destroy]
-  before_filter :find_mol_struct, 
+  before_filter :find_molecular_structures, :only => :index
+  before_filter :find_molecular_structure,
     :only => [
       :show, :edit, :update, :destroy, 
       :get_escell_clone_genbank_file,
@@ -18,32 +19,7 @@ class MolecularStructuresController < ApplicationController
   # GET /molecular_structures.xml
   # GET /molecular_structures.json
   def index
-    mol_struct_params = params.dup
-    
-    # Just keep params that are Molecular Structure attributes. 
-    # A molecular structure will be search from this params
-    mol_struct_params.delete( "controller" )
-    mol_struct_params.delete( "action" )
-    mol_struct_params.delete( "format" )
-    mol_struct_params.delete( "page" )
-    
-    if mol_struct_params.nil? or mol_struct_params.empty?
-      @molecular_structures = MolecularStructure.all.paginate(:page => params[:page])
-    else
-      if mol_struct_params[ :loxp_start ] == 'null' and mol_struct_params[ :loxp_end ] == 'null'
-        # If you don't delete these, it will try to search with loxp_start = 0
-        # instead of loxp_start IS NULL
-        mol_struct_params.delete( :loxp_start )
-        mol_struct_params.delete( :loxp_end )
-        
-        # Don't break this line in multiple lines or you will get a wrong result
-        search = MolecularStructure.loxp_start_null.loxp_end_null.search( mol_struct_params )
-      else
-        search = MolecularStructure.search( mol_struct_params )
-      end
-      
-      @molecular_structures = search.paginate(:page => params[:page])
-    end
+    @molecular_structures = @molecular_structures.paginate(:page => params[:page])
     
     respond_to do |format|
       format.html # index.html.erb
@@ -143,7 +119,6 @@ class MolecularStructuresController < ApplicationController
   end
   
   #--- Custom controllers
-  # FIXME: Ugly way of retrieving genbank files. Use nice routing instead
   # GET /molecular_structures/1/escell-clone-genbank-file/
   def get_escell_clone_genbank_file
     render :inline => "<pre><%= @molecular_structure.genbank_file.escell_clone %></pre>"
@@ -155,8 +130,37 @@ class MolecularStructuresController < ApplicationController
   end
 
   private
-    def find_mol_struct
+    def find_molecular_structure
       @molecular_structure = MolecularStructure.find(params[:id])
+    end
+    
+    def find_molecular_structures
+      mol_struct_params = params.dup
+      
+      # Just keep params that are Molecular Structure attributes.
+      # A molecular structure will be searched from this params
+      mol_struct_params.delete( "controller" )
+      mol_struct_params.delete( "action" )
+      mol_struct_params.delete( "format" )
+      mol_struct_params.delete( "page" )
+      
+      if mol_struct_params.nil? or mol_struct_params.empty?
+        @molecular_structures = MolecularStructure.all
+      else
+        if mol_struct_params[ :loxp_start ] == 'null' and mol_struct_params[ :loxp_end ] == 'null'
+          # If you don't delete these, it will try to search with loxp_start = 0
+          # instead of loxp_start IS NULL
+          mol_struct_params.delete( :loxp_start )
+          mol_struct_params.delete( :loxp_end )
+
+          # Don't break this line in multiple lines or you will get a wrong result
+          search = MolecularStructure.loxp_start_null.loxp_end_null.search( mol_struct_params )
+        else
+          search = MolecularStructure.search( mol_struct_params )
+        end
+
+        @molecular_structures = search.all
+      end
     end
     
     def format_nested_params
@@ -172,19 +176,17 @@ class MolecularStructuresController < ApplicationController
       # instead of the expected ``es_cell_attributes`` Array.
       # This function will rename/move ``es_cells`` to ``es_cell_attributes``.
       #
-      # Issue: http://github.com/dazoakley/targ_rep2/issues#issue/1
+      # Because of the rails issue (see ticket):
       # This function will also add the ``nested => true`` key/value pair to each 
       # hash contained in the Array so that the model does not try to validate
       # the ES Cell before the molecular structure gets its ID (creation only).
-
+      
       ##
       ##  ES Cells
       ##
       
       if mol_struct_params.include? :es_cells
-        mol_struct_params[:es_cells].each do |attrs| 
-          attrs[:nested] = true
-        end
+        mol_struct_params[:es_cells].each { |attrs| attrs[:nested] = true }
         mol_struct_params[:es_cells_attributes] = mol_struct_params.delete(:es_cells)
       
       elsif not mol_struct_params.include? :es_cells_attributes

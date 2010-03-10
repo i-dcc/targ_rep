@@ -6,6 +6,9 @@ class TargetingVectorsController < ApplicationController
   before_filter :set_created_by, :only => :create
   before_filter :set_updated_by, :only => :update
   
+  # For webservice interface
+  before_filter :format_nested_params, :only => [:create, :update]
+  
   # GET /targeting_vectors.js
   # GET /targeting_vectors.xml
   # GET /targeting_vectors.json
@@ -40,62 +43,15 @@ class TargetingVectorsController < ApplicationController
   # POST /targeting_vectors.xml
   # POST /targeting_vectors.json
   def create
-    targ_vec_hash = params[:targeting_vector]
-    
-    errors = []
-    
-    #
-    # Basic checks
-    #
-    
-    if targ_vec_hash.include? :molecular_structure and targ_vec_hash.include? :molecular_structure_id
-      errors << { "Targeting vector is invalid" =>
-        "should have only one molecular structure representation (id or hash)"
-      }
-      targ_vec_hash.delete( :molecular_structure )
-    
-    elsif !targ_vec_hash.include? :molecular_structure and !targ_vec_hash.include? :molecular_structure_id
-      errors << { "Targeting vector is invalid" =>
-        "should have at least one molecular structure representation (id or hash)"
-      }
-    end
-    
-    #
-    # Create molecular structure
-    #
-    
-    if targ_vec_hash.include? :molecular_structure
-      mol_struct = MolecularStructure.new( targ_vec_hash[:molecular_structure] )
-      
-      if mol_struct.save
-        targ_vec_hash.delete( :molecular_structure )
-        targ_vec_hash.update( { :molecular_structure_id => mol_struct.id } )
-      else
-        errors << { "Molecular Structure is invalid" => mol_struct.errors }
-      end
-    end
-    
-    #
-    # Create targeting vector
-    #
-    
-    if errors.empty?
-      # molecular_structure_id should be in targ_vec_hash anyway
-      @targeting_vector = TargetingVector.new( targ_vec_hash )
-      
-      unless @targeting_vector.save
-        mol_struct.delete if mol_struct
-        errors << { "Targeting Vector is invalid" => @targeting_vector.errors }
-      end
-    end
+    @targeting_vector = TargetingVector.new( params[:targeting_vector] )
     
     respond_to do |format|
-      if errors.empty?
+      if @targeting_vector.save
         format.xml  { render :xml  => @targeting_vector, :status => :created, :location => @targeting_vector }
         format.json { render :json => @targeting_vector, :status => :created, :location => @targeting_vector }
       else
-        format.xml  { render :xml  => errors, :status => 400, :location => @targeting_vector }
-        format.json { render :json => errors, :status => 400, :location => @targeting_vector }
+        format.xml  { render :xml  => @targeting_vector.errors, :status => 400, :location => @targeting_vector }
+        format.json { render :json => @targeting_vector.errors, :status => 400, :location => @targeting_vector }
       end
     end
   end
@@ -103,15 +59,8 @@ class TargetingVectorsController < ApplicationController
   # PUT /targeting_vectors/1.xml
   # PUT /targeting_vectors/1.json
   def update
-    targ_vec_params = params[:targeting_vector]
-    if targ_vec_params.include? :es_cells 
-      if targ_vec_params[:es_cells].nil? or targ_vec_params[:es_cells].empty?
-        targ_vec_params.delete :es_cells
-      end
-    end
-    
     respond_to do |format|
-      if @targeting_vector.update_attributes(params[:targeting_vector])
+      if @targeting_vector.update_attributes( params[:targeting_vector] )
         format.xml  { head :ok }
         format.json { head :ok }
       else
@@ -135,5 +84,31 @@ class TargetingVectorsController < ApplicationController
   private
     def find_targ_vec
       @targeting_vector = TargetingVector.find(params[:id])
+    end
+    
+    def format_nested_params
+      # Specific to create/update methods - webservice interface
+      targ_vec_params = params[ :targeting_vector ]
+      
+      # README: http://github.com/dazoakley/targ_rep2/issues#issue/1
+      #
+      # ``accepts_nested_attributes_for`` (in model.rb) expects 
+      # es_cell_attributes as a key in params hash in order to 
+      # create ES cell objects.
+      # For now, it is allowed to send a nested Array such as ``es_cells``
+      # instead of the expected ``es_cell_attributes`` Array.
+      # This function will rename/move ``es_cells`` to ``es_cell_attributes``.
+      #
+      # Because of the rails issue (see ticket):
+      # This function will also add the ``nested => true`` key/value pair to each
+      # hash contained in the Array so that the model does not try to validate
+      # the ES Cell before the targeting vector gets its ID (creation only).
+      
+      if targ_vec_params.include? :es_cells
+        targ_vec_params[:es_cells].each { |attrs| attrs[:nested] = true }
+        targ_vec_params[:es_cells_attributes] = targ_vec_params.delete(:es_cells)
+      elsif not targ_vec_params.include? :es_cells_attributes
+        targ_vec_params[:es_cells_attributes] = []
+      end
     end
 end
