@@ -58,7 +58,7 @@ ORA_USER        = 'eucomm_vector'
 ORA_PASS        = 'eucomm_vector'
 ORA_DB          = 'migp_ha.world'
 IDCC_SITE_TEST  = 'http://htgt:htgt@htgt.internal.sanger.ac.uk:4002/labs/targ_rep'
-IDCC_SITE_PROD  = 'http://htgt:htgt@www.i-dcc.org/targ_rep'
+IDCC_SITE_PROD  = 'http://htgt:WPbjGHdG@www.i-dcc.org/targ_rep'
 LOG_DIR_TEST    = '/software/team87/logs/idcc/htgt_load'
 LOG_DIR_PROD    = 'htgt_load'
 GENBANK_URL     = 'http://www.sanger.ac.uk/htgt/qc/seq_view_file'
@@ -1299,18 +1299,20 @@ class GenbankFile
     else
       @@mol_struct_cache.each_pair do |mol_struct_id, mol_struct|
         genbank_file = GenbankFile.new({
-          :mol_struct_id  => mol_struct.id,
+          :mol_struct_id  => mol_struct_id,
           :design_id      => mol_struct.design_id,
           :cassette       => mol_struct.cassette,
           :backbone       => mol_struct.backbone,
           :targeted_trap  => mol_struct.targeted_trap
         })
         
-        response = request( 'GET', "genbank_files.json?molecular_structure_id=#{mol_struct.id}" )
-        genbank_file_list = JSON.parse( response )
-        genbank_file_hash = genbank_file_list.length > 0 ? genbank_file_list[0] : nil
-        
-        genbank_file_hash.nil? ? create() : update( genbank_file_hash )
+        response = request( 'GET', "genbank_files.json?molecular_structure_id=#{mol_struct_id}" )
+        if response.nil? or response == 'null'
+          genbank_file.create()
+        else
+          json_response = JSON.parse( response )
+          json_response.nil? ? genbank_file.create() : genbank_file.update( json_response[0] )
+        end
       end
     end
   end
