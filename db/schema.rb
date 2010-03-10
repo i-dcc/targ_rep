@@ -54,19 +54,19 @@ ActiveRecord::Schema.define(:version => 20100218101736) do
   end
 
   create_table "molecular_structures", :force => true do |t|
-    t.string   "assembly",            :default => "NCBIM37", :null => false
-    t.string   "chromosome",                                 :null => false
-    t.string   "strand",                                     :null => false
-    t.string   "mgi_accession_id",                           :null => false
-    t.integer  "homology_arm_start",                         :null => false
-    t.integer  "homology_arm_end",                           :null => false
+    t.string   "assembly",            :limit => 50,  :default => "NCBIM37", :null => false
+    t.string   "chromosome",          :limit => 2,                          :null => false
+    t.string   "strand",              :limit => 1,                          :null => false
+    t.string   "mgi_accession_id",    :limit => 50,                         :null => false
+    t.integer  "homology_arm_start",                                        :null => false
+    t.integer  "homology_arm_end",                                          :null => false
     t.integer  "loxp_start"
     t.integer  "loxp_end"
     t.integer  "cassette_start"
     t.integer  "cassette_end"
-    t.string   "cassette"
-    t.string   "backbone"
-    t.string   "design_type",                                :null => false
+    t.string   "cassette",            :limit => 100
+    t.string   "backbone",            :limit => 100
+    t.string   "design_type",                                               :null => false
     t.string   "design_subtype"
     t.string   "subtype_description"
     t.integer  "created_by"

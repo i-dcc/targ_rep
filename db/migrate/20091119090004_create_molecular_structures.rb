@@ -1,10 +1,10 @@
 class CreateMolecularStructures < ActiveRecord::Migration
   def self.up
     create_table :molecular_structures do |t|
-      t.string    :assembly,            :null => false, :default => "NCBIM37"
-      t.string    :chromosome,          :null => false
-      t.string    :strand,              :null => false
-      t.string    :mgi_accession_id,    :null => false
+      t.string    :assembly,            :null => false, :default => "NCBIM37", :limit => 50
+      t.string    :chromosome,          :null => false, :limit => 2
+      t.string    :strand,              :null => false, :limit => 1
+      t.string    :mgi_accession_id,    :null => false, :limit => 50
       
       t.integer   :homology_arm_start,  :null => false
       t.integer   :homology_arm_end,    :null => false
@@ -12,8 +12,8 @@ class CreateMolecularStructures < ActiveRecord::Migration
       t.integer   :loxp_end
       t.integer   :cassette_start
       t.integer   :cassette_end
-      t.string    :cassette
-      t.string    :backbone
+      t.string    :cassette,            :limit => 100
+      t.string    :backbone,            :limit => 100
       
       t.string    :design_type,         :null => false
       t.string    :design_subtype
