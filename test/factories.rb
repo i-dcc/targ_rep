@@ -137,7 +137,7 @@ Factory.define :es_cell do |f|
   f.parental_cell_line { ['JM8 parental', 'JM8.F6', 'JM8.N19'].choice }
   
   targ_vec = Factory.new( :targeting_vector )
-  f.targeting_vector_id targ_vec.id
+  f.targeting_vector_id targ_vec
   f.molecular_structure_id targ_vec.molecular_structure_id
 end
 

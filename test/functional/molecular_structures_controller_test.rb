@@ -26,7 +26,7 @@ class MolecularStructuresControllerTest < ActionController::TestCase
     assert_response :success
   end
   
-  should "create molecular structure, targeting vector and es_cell" do
+  should "create molecular structure, targeting vector, es cell and genbank files" do
     mol_struct    = Factory.attributes_for( :molecular_structure )
     targ_vec1     = Factory.build( :targeting_vector )
     targ_vec2     = Factory.build( :targeting_vector )
@@ -144,7 +144,63 @@ class MolecularStructuresControllerTest < ActionController::TestCase
     )
     assert_equal(
       genbank_file_count + 1, GenbankFile.count,
-      "Controller should have create 1 more genbank file"
+      "Controller should have created 1 more genbank file"
+    )
+  end
+
+  should "create molecular structure only if genbank file is empty" do
+    mol_struct = Factory.attributes_for( :molecular_structure )
+    
+    mol_struct_count    = MolecularStructure.count
+    genbank_file_count  = GenbankFile.count
+    
+    post :create, :molecular_structure => {
+      :assembly           => mol_struct[:assembly],
+      :mgi_accession_id   => mol_struct[:mgi_accession_id],
+      :chromosome         => mol_struct[:chromosome],
+      :strand             => mol_struct[:strand],
+      :design_type        => mol_struct[:design_type],
+      :homology_arm_start => mol_struct[:homology_arm_start],
+      :homology_arm_end   => mol_struct[:homology_arm_end],
+      :cassette_start     => mol_struct[:cassette_start],
+      :cassette_end       => mol_struct[:cassette_end],
+      :genbank_file       => { :escell_clone => '', :targeting_vector => '' }
+    }
+    assert_equal(
+      mol_struct_count + 1, MolecularStructure.count,
+      "Controller should have created 1 valid molecular structure."
+    )
+    assert_equal(
+      genbank_file_count, GenbankFile.count,
+      "Controller should not have created any genbank file"
+    )
+  end
+
+  should "create molecular structure only if genbank file is nil" do
+    mol_struct = Factory.attributes_for( :molecular_structure )
+
+    mol_struct_count    = MolecularStructure.count
+    genbank_file_count  = GenbankFile.count
+
+    post :create, :molecular_structure => {
+      :assembly           => mol_struct[:assembly],
+      :mgi_accession_id   => mol_struct[:mgi_accession_id],
+      :chromosome         => mol_struct[:chromosome],
+      :strand             => mol_struct[:strand],
+      :design_type        => mol_struct[:design_type],
+      :homology_arm_start => mol_struct[:homology_arm_start],
+      :homology_arm_end   => mol_struct[:homology_arm_end],
+      :cassette_start     => mol_struct[:cassette_start],
+      :cassette_end       => mol_struct[:cassette_end],
+      :genbank_file       => { :escell_clone => nil, :targeting_vector => nil }
+    }
+    assert_equal(
+      mol_struct_count + 1, MolecularStructure.count,
+      "Controller should have created 1 valid molecular structure."
+    )
+    assert_equal(
+      genbank_file_count, GenbankFile.count,
+      "Controller should not have created any genbank file"
     )
   end
   

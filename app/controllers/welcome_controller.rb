@@ -29,24 +29,24 @@ class WelcomeController < ApplicationController
   def molecular_structure_count_by_pipeline
     sql = <<-SQL
       select
-        pipeline_id as id,
-        count( distinct molecular_structure_id ) as count
+        mol_str_counts.id,
+        count( distinct mol_str_counts.molecular_structure_id ) count
       from 
         (
           select distinct
-            pipelines.id as pipeline_id,
-            targeting_vectors.molecular_structure_id as molecular_structure_id
+            pipelines.id,
+            targeting_vectors.molecular_structure_id
           from pipelines 
           left join targeting_vectors on pipelines.id = targeting_vectors.pipeline_id
           union
           select distinct
-            pipelines.id as pipeline_id,
-            es_cells.molecular_structure_id as molecular_structure_id
+            pipelines.id,
+            es_cells.molecular_structure_id
           from pipelines
           join targeting_vectors on pipelines.id = targeting_vectors.pipeline_id
           join es_cells on targeting_vectors.id = es_cells.targeting_vector_id
         ) mol_str_counts
-      group by id
+      group by mol_str_counts.id
     SQL
     run_count_sql(sql)
   end
@@ -54,13 +54,13 @@ class WelcomeController < ApplicationController
   def escell_count_by_pipeline
     sql = <<-SQL
       select
-        pipelines.id as id,
-        count(es_cells.id) as count
+        pipelines.id,
+        count(es_cells.id) count
       from
         pipelines
         join targeting_vectors on pipelines.id = targeting_vectors.pipeline_id
         join es_cells on targeting_vectors.id = es_cells.targeting_vector_id
-      group by id
+      group by pipelines.id
     SQL
     run_count_sql(sql)
   end

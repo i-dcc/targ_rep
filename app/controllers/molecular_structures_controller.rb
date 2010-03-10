@@ -232,10 +232,17 @@ class MolecularStructuresController < ApplicationController
       end
       
       # Don't create genbank file object if its attributes are empty.
-      if mol_struct_params[:genbank_file_attributes]                        \
-      and mol_struct_params[:genbank_file_attributes][:escell_clone].empty? \
-      and mol_struct_params[:genbank_file_attributes][:targeting_vector].empty?
-        mol_struct_params.delete(:genbank_file_attributes)
+      gb_files_attrs = mol_struct_params[:genbank_file_attributes]
+      if gb_files_attrs
+        gb_escell = gb_files_attrs[:escell_clone]
+        gb_targ_vec = gb_files_attrs[:targeting_vector]
+        
+        if gb_escell.nil? and gb_targ_vec.nil?
+          mol_struct_params.delete(:genbank_file_attributes)
+        elsif !gb_escell.nil? and !gb_targ_vec.nil? \
+          and gb_escell.empty? and gb_targ_vec.empty?
+          mol_struct_params.delete(:genbank_file_attributes)
+        end
       end
     end
   
