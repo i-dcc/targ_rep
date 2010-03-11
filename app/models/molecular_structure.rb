@@ -36,19 +36,13 @@ class MolecularStructure < ActiveRecord::Base
   belongs_to :created_by, :class_name => "User", :foreign_key => "created_by"
   belongs_to :updated_by, :class_name => "User", :foreign_key => "updated_by"
   
-  has_one :genbank_file,
-    :class_name   => "GenbankFile",
-    :foreign_key  => "molecular_structure_id"
+  has_one :genbank_file, :class_name => "GenbankFile", :foreign_key => "molecular_structure_id"
   accepts_nested_attributes_for :genbank_file, :allow_destroy  => true
   
-  has_many :targeting_vectors,
-    :class_name   => "TargetingVector",
-    :foreign_key  => "molecular_structure_id"
+  has_many :targeting_vectors, :class_name => "TargetingVector", :foreign_key => "molecular_structure_id"
   accepts_nested_attributes_for :targeting_vectors, :allow_destroy  => true
   
-  has_many :es_cells,
-    :class_name   => "EsCell",
-    :foreign_key  => "molecular_structure_id"
+  has_many :es_cells, :class_name => "EsCell", :foreign_key => "molecular_structure_id"
   accepts_nested_attributes_for :es_cells, :allow_destroy  => true
   
   # Unique constraint
@@ -223,15 +217,18 @@ class MolecularStructure < ActiveRecord::Base
     def set_mutation_details
       self.mutation_type = 'targeted_mutation'
       
-      self.mutation_subtype =
-      case design_type
+      self.mutation_subtype = case self.design_type
         when 'Deletion'   then 'deletion'
         when 'Insertion'  then 'insertion'
         when 'Knock Out'  then self.loxp_start.nil? ? 'targeted_non_conditional' : 'conditional_ready'
       end
       
       if ['conditional_ready', 'insertion', 'deletion'].include? self.mutation_subtype
-        self.mutation_method = 'frameshift'
+        if self.design_subtype and self.design_subtype === 'domain'
+          self.mutation_method = 'domain_disruption'
+        else
+          self.mutation_method = 'frameshift'
+        end
       end
       
       self.reporter = nil
