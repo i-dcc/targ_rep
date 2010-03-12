@@ -1266,7 +1266,10 @@ class GenbankFile
   def self.update_all
     page = 1
     while not page.nil?
-      response = request( 'GET', "alleles.json?page=#{page}" )
+      filter_pipeline = 'search[targeting_vectors_pipeline_name_equals_any][]'
+      url = "alleles.json?page=#{page}&#{filter_pipeline}=EUCOMM&#{filter_pipeline}=KOMP-CSD&#{filter_pipeline}=NorCOMM"
+      
+      response = request( 'GET', url )
       mol_struct_list = JSON.parse( response )
       
       if mol_struct_list.length > 0
