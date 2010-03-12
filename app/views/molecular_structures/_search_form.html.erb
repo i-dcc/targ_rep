@@ -1,0 +1,54 @@
+<%
+  pipeline_array = Pipeline.all.map { |pipeline| [pipeline.name, pipeline.id.to_s] }
+  pipeline_options = options_for_select( [['All','']] + pipeline_array, params[:targeting_vectors_pipeline_id_is] )
+  
+  design_type_array = 
+  MolecularStructure.all(:select => 'DISTINCT design_type').map do |ms| 
+    [ms.design_type, ms.design_type]
+  end
+  design_type_options = options_for_select( [['All','']] + design_type_array, params[:design_type] )
+  
+  cassette_array = 
+  MolecularStructure.all(:select => 'DISTINCT cassette').map do |ms| 
+    [ms.cassette, ms.cassette]
+  end
+  cassette_options = options_for_select( [['All','']] + cassette_array, params[:cassette] )
+  
+  backbone_array = 
+  MolecularStructure.all(:select => 'DISTINCT backbone').map do |ms| 
+    [ms.backbone, ms.backbone]
+  end
+  backbone_options = options_for_select( [['All','']] + backbone_array, params[:backbone] )
+%>
+
+<% form_tag molecular_structures_path, :method => 'get', :id => 'search_form' do %>
+  <table class="no-border">
+    <tr>
+      <td>Pipeline</td>
+      <td><%= select_tag :targeting_vectors_pipeline_id_is, pipeline_options %></td>
+      
+      <td>MGI Accession ID</td>
+      <td><%= text_field_tag :mgi_accession_id, params[:mgi_accession_id] %></td>
+      
+      <td>Design Type</td>
+      <td><%= select_tag :design_type, design_type_options %></td>
+    </tr>
+    
+    <tr>
+      <td>Cassette</td>
+      <td><%= select_tag :cassette, cassette_options %></td>
+      
+      <td>Backbone</td>
+      <td><%= select_tag :backbone, backbone_options %></td>
+      
+      <td></td>
+      <td></td>
+    </tr>
+    
+    <tr>
+      <td colspan="6"><%= submit_tag "Search", :name => nil %></td>
+    </tr>
+  </table>
+  
+  <div class="cleaner"></div>
+<% end %>

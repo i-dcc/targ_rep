@@ -60,7 +60,7 @@
 <div class="span-12 last">
   <fieldset>
     <legend>Molecular Structure</legend>
-    <table>
+    <table class="list">
       <thead>
         <th>Feature</th>
         <th>Start</th>
@@ -113,7 +113,7 @@
     <legend>Targeting Vectors</legend>
     
     <% unless @molecular_structure.targeting_vectors.empty? %>
-      <table>
+      <table class="list">
         <thead>
           <th>Pipeline</th>
           <th>IKMC Project ID</th>
@@ -142,7 +142,7 @@
     <legend>ES Cells</legend>
     
     <% unless @es_cells.empty? %>
-      <table>
+      <table class="list">
         <thead>
           <th>ES Cell</th>
           <th>Targeting Vector</th>

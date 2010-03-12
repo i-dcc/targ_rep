@@ -30,7 +30,7 @@ body {
 #userbox-inner {
   -webkit-border-radius: 5px;
   border: 1px solid #ccc;
-  background-color: #eaf2f5;
+  background-color: #e7ecfb;
   padding: 10px;
   text-align: center;
 }
@@ -56,6 +56,10 @@ div.clear {
   clear: both;
   height: 10px;
   padding-bottom: 15px;
+}
+
+div.cleaner {
+  clear: both;
 }
 
 /* Notices */
@@ -126,34 +130,38 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Table */
 
-table {
+table.list {
   border-collapse:collapse;
   border: 1px solid #ccc;
 }
 
-thead {
+table.list thead {
   background: #c3d9ff url(../images/bg_thead.png) repeat-x left bottom;
   color: #fff;
 }
 
-thead th {
+table.list thead th {
   background: url(../images/bg_th.png) no-repeat right bottom;
   padding-left: 10px;
 }
 
-thead th.last {
+table.list thead th.last {
   background: none;
 }
 
-tbody tr:hover td {
+table.list tbody tr:hover td {
   background-color: #fdfecc;
 }
 
-tbody tr {
+table.list tbody tr {
   border-bottom: 1px solid #ccc;
 }
 
-tbody td {
+table.list tbody tr.even {
+  background: #e7ecfb;
+}
+
+table.list tbody td {
   padding: 4px 8px;
 }
 
@@ -203,4 +211,20 @@ div.pagination span.current{
 
 div.pagination .disabled {
   color: #ccc;
+}
+
+/* Search Box */
+
+#search_box {
+  background: #e7ecfb;
+  border: 2px solid #88b7e6;
+  margin-bottom: 10px;
+}
+
+#search_box h2 {
+  background-color: #88b7e6;
+  color: #fff;
+  padding: 3px 0px 3px 10px;
+  margin-bottom: 10px;
+  font-size: 15px;
 }
