@@ -30,23 +30,26 @@
       <td>MGI Accession ID</td>
       <td><%= text_field_tag :mgi_accession_id, params[:mgi_accession_id] %></td>
       
-      <td>Design Type</td>
-      <td><%= select_tag :design_type, design_type_options %></td>
+      <td>Project Design ID</td>
+      <td><%= text_field_tag :project_design_id, params[:project_design_id] %></td>
     </tr>
     
     <tr>
+      <td>Design Type</td>
+      <td><%= select_tag :design_type, design_type_options %></td>
+      
       <td>Cassette</td>
       <td><%= select_tag :cassette, cassette_options %></td>
       
       <td>Backbone</td>
       <td><%= select_tag :backbone, backbone_options %></td>
-      
-      <td></td>
-      <td></td>
     </tr>
     
     <tr>
-      <td colspan="6"><%= submit_tag "Search", :name => nil %></td>
+      <td colspan="6">
+        <%= submit_tag "Search", :name => nil %>
+        <input type="reset" value="Reset" />
+      </td>
     </tr>
   </table>
   
