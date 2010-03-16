@@ -39,21 +39,21 @@ class MolecularStructuresControllerTest < ActionController::TestCase
     linked_es_cells   = EsCell.targeting_vector_id_not_null.count
     
     post :create, :molecular_structure => {
-      :assembly            => mol_struct[:assembly],
-      :mgi_accession_id    => mol_struct[:mgi_accession_id],
-      :project_design_id   => mol_struct[:project_design_id],
-      :chromosome          => mol_struct[:chromosome],
-      :strand              => mol_struct[:strand],
-      :design_type         => mol_struct[:design_type],
-      :homology_arm_start  => mol_struct[:homology_arm_start],
-      :homology_arm_end    => mol_struct[:homology_arm_end],
-      :cassette_start      => mol_struct[:cassette_start],
-      :cassette_end        => mol_struct[:cassette_end],
+      :pipeline_id        => MolecularStructure.first.pipeline_id,
+      :assembly           => mol_struct[:assembly],
+      :mgi_accession_id   => mol_struct[:mgi_accession_id],
+      :project_design_id  => mol_struct[:project_design_id],
+      :chromosome         => mol_struct[:chromosome],
+      :strand             => mol_struct[:strand],
+      :design_type        => mol_struct[:design_type],
+      :homology_arm_start => mol_struct[:homology_arm_start],
+      :homology_arm_end   => mol_struct[:homology_arm_end],
+      :cassette_start     => mol_struct[:cassette_start],
+      :cassette_end       => mol_struct[:cassette_end],
       
       :targeting_vectors => [
         # Targeting vector 1 with its ES cells
         {
-          :pipeline_id         => targ_vec1[:pipeline_id],
           :ikmc_project_id     => targ_vec1[:ikmc_project_id],
           :name                => targ_vec1[:name],
           :intermediate_vector => targ_vec1[:intermediate_vector],
@@ -66,7 +66,6 @@ class MolecularStructuresControllerTest < ActionController::TestCase
         
         # Targeting vector 2 without ES Cells
         {
-          :pipeline_id         => targ_vec2[:pipeline_id],
           :ikmc_project_id     => targ_vec2[:ikmc_project_id],
           :name                => targ_vec2[:name],
           :intermediate_vector => targ_vec2[:intermediate_vector]     
@@ -108,22 +107,27 @@ class MolecularStructuresControllerTest < ActionController::TestCase
   end
 
   should "create molecular structure" do
+    mol_struct_attrs = Factory.attributes_for( :molecular_structure )
+    mol_struct_attrs.update({
+      :pipeline_id => MolecularStructure.first.pipeline_id
+    })
+    
     assert_difference('MolecularStructure.count') do
-      post :create,
-      :molecular_structure => Factory.attributes_for( :molecular_structure )
+      post :create, :molecular_structure => mol_struct_attrs
     end
-
+    
     assert_redirected_to molecular_structure_path(assigns(:molecular_structure))
   end
   
   should "create molecular structure and genbank file" do
     mol_struct    = Factory.attributes_for( :molecular_structure )
-    genbank_file  = Factory.build( :genbank_file )
+    genbank_file  = Factory.attributes_for( :genbank_file )
     
     mol_struct_count    = MolecularStructure.count
     genbank_file_count  = GenbankFile.count
     
     post :create, :molecular_structure => {
+      :pipeline_id        => MolecularStructure.first.pipeline_id,
       :assembly           => mol_struct[:assembly],
       :mgi_accession_id   => mol_struct[:mgi_accession_id],
       :chromosome         => mol_struct[:chromosome],
@@ -155,6 +159,7 @@ class MolecularStructuresControllerTest < ActionController::TestCase
     genbank_file_count  = GenbankFile.count
     
     post :create, :molecular_structure => {
+      :pipeline_id        => MolecularStructure.first.pipeline_id,
       :assembly           => mol_struct[:assembly],
       :mgi_accession_id   => mol_struct[:mgi_accession_id],
       :chromosome         => mol_struct[:chromosome],
@@ -183,6 +188,7 @@ class MolecularStructuresControllerTest < ActionController::TestCase
     genbank_file_count  = GenbankFile.count
 
     post :create, :molecular_structure => {
+      :pipeline_id        => MolecularStructure.first.pipeline_id,
       :assembly           => mol_struct[:assembly],
       :mgi_accession_id   => mol_struct[:mgi_accession_id],
       :chromosome         => mol_struct[:chromosome],

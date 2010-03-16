@@ -28,6 +28,7 @@ class MolecularStructure < ActiveRecord::Base
   #   mutation_subtype    : string 
   #   mutation_method     : string 
   #   reporter            : string 
+  #   pipeline_id         : integer 
   # =======================
 
   acts_as_audited
@@ -35,6 +36,11 @@ class MolecularStructure < ActiveRecord::Base
   # Associations
   belongs_to :created_by, :class_name => "User", :foreign_key => "created_by"
   belongs_to :updated_by, :class_name => "User", :foreign_key => "updated_by"
+  
+  belongs_to :pipeline,
+    :class_name   => "Pipeline",
+    :foreign_key  => "pipeline_id",
+    :validate     => true
   
   has_one :genbank_file, :class_name => "GenbankFile", :foreign_key => "molecular_structure_id"
   accepts_nested_attributes_for :genbank_file, :allow_destroy  => true
@@ -68,6 +74,7 @@ class MolecularStructure < ActiveRecord::Base
     :cassette_start,
     :cassette_end
   ]
+  validates_presence_of :pipeline_id, :on => :save
   
   validates_inclusion_of :strand,
     :in => ["+", "-"],

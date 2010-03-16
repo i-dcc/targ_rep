@@ -9,7 +9,7 @@ class EsCellTest < ActiveSupport::TestCase
   should_belong_to :created_by, :updated_by
   should_belong_to :molecular_structure, :targeting_vector
   
-  should_validate_uniqueness_of :name
+  should_validate_uniqueness_of :name, :message => 'This ES Cell name has already been taken'
   should_validate_presence_of :name
   should_validate_presence_of :molecular_structure_id
   
@@ -27,6 +27,7 @@ class EsCellTest < ActiveSupport::TestCase
       should "not be saved" do
         targ_vec    = Factory.create( :targeting_vector )
         mol_struct  = Factory.create( :molecular_structure )
+        
         es_cell = EsCell.new({
           :name                   => 'INVALID',
           :targeting_vector_id    => targ_vec.id,

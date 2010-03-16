@@ -1,10 +1,7 @@
 class CreateTargetingVectors < ActiveRecord::Migration
   def self.up
     create_table :targeting_vectors do |t|
-      t.foreign_key :pipelines,               :dependent => :delete
       t.integer     :pipeline_id,             :null => false
-      
-      t.foreign_key :molecular_structures,    :dependent => :delete
       t.integer     :molecular_structure_id,  :null => false
       
       t.string      :ikmc_project_id
@@ -16,6 +13,9 @@ class CreateTargetingVectors < ActiveRecord::Migration
       t.timestamps
     end
     
+    add_foreign_key( :targeting_vectors, :molecular_structures, :dependent => :delete, :name => 'targeting_vectors_molecular_structure_id_fk')
+    add_foreign_key( :targeting_vectors, :pipelines,            :dependent => :delete, :name => 'targeting_vectors_pipeline_id_fk')
+      
     add_index :targeting_vectors,
       [:pipeline_id, :name],
       :name => "index_targvec",

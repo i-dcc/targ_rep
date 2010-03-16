@@ -24,7 +24,6 @@ class TargetingVectorsControllerTest < ActionController::TestCase
     assert_difference('TargetingVector.count') do
       post :create, :targeting_vector => {
         :name                   => Factory.attributes_for( :targeting_vector )[:name],
-        :pipeline_id            => TargetingVector.first.pipeline_id,
         :molecular_structure_id => TargetingVector.first.molecular_structure_id
       }
     end
@@ -60,13 +59,11 @@ class TargetingVectorsControllerTest < ActionController::TestCase
     another_targ_vec = Factory.create( :targeting_vector )
 
     put :update, :id => TargetingVector.first.id, :targeting_vector => {
-      :pipeline_id  => another_targ_vec.pipeline.id,
       :name         => another_targ_vec.name
     }
     assert_response :unprocessable_entity
     
     put :update, :id => TargetingVector.first.id, :targeting_vector => {
-      :pipeline_id            => nil,
       :molecular_structure_id => nil
     }
     assert_response :unprocessable_entity

@@ -2,7 +2,6 @@ class TargetingVector < ActiveRecord::Base
 
   # === List of columns ===
   #   id                     : integer 
-  #   pipeline_id            : integer 
   #   molecular_structure_id : integer 
   #   ikmc_project_id        : string 
   #   name                   : string 
@@ -20,11 +19,6 @@ class TargetingVector < ActiveRecord::Base
   belongs_to :created_by, :class_name => 'User', :foreign_key => 'created_by'
   belongs_to :updated_by, :class_name => 'User', :foreign_key => 'updated_by'
 
-  belongs_to :pipeline,
-    :class_name   => "Pipeline",
-    :foreign_key  => "pipeline_id",
-    :validate     => true
-
   belongs_to :molecular_structure,
     :class_name   => 'MolecularStructure',
     :foreign_key  => 'molecular_structure_id',
@@ -36,10 +30,9 @@ class TargetingVector < ActiveRecord::Base
   accepts_nested_attributes_for :es_cells, :allow_destroy => true
 
   # Unique constraint
-  validates_uniqueness_of :name, :scope => :pipeline_id
+  validates_uniqueness_of :name, :message => 'This Targeting Vector name has already been taken'
 
   # Data validation
-  validates_presence_of :pipeline_id,             :on => :save
   validates_presence_of :molecular_structure_id,  :on => :save, :unless => :nested
   validates_presence_of :name,                    :on => :create
 

@@ -36,7 +36,7 @@ class EsCell < ActiveRecord::Base
     :validate     => true
   
   # Unique constraint
-  validates_uniqueness_of :name
+  validates_uniqueness_of :name, :message => 'This ES Cell name has already been taken'
   
   # Data validation
   validates_presence_of :molecular_structure_id,  :on => :save, :unless => :nested

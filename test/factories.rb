@@ -1,4 +1,11 @@
 ##
+##  Factory helpers
+##
+Factory.sequence(:pgdgr_plate_name) { |n| "PGDGR_#{n}" }
+Factory.sequence(:epd_plate_name) { |n| "EPD_#{n}" }
+Factory.sequence(:pipeline_name) { |n| "pipeline_name_#{n}" }
+
+##
 ## Users
 ##
 
@@ -19,7 +26,7 @@ end
 ##
 
 Factory.define :pipeline do |f|
-  f.sequence(:name) { |n| "pipeline#{n}" }
+  f.name { Factory.next(:pipeline_name) }
 end
 
 Factory.define :invalid_pipeline, :class => Pipeline do |f|
@@ -36,6 +43,8 @@ Factory.define :molecular_structure do |f|
   f.sequence(:subtype_description)        { |n| "subtype description #{n}" }
   f.sequence(:cassette)                   { |n| "cassette #{n}"}
   f.sequence(:backbone)                   { |n| "backbone #{n}"}
+  
+  f.association :pipeline
   
   f.assembly    "NCBIM37"
   f.chromosome  { [("1".."19").to_a + ['X', 'Y', 'MT']].flatten.choice }
@@ -116,11 +125,7 @@ end
 ##
 
 Factory.define :targeting_vector do |f|
-  f.sequence(:name)                 { |n| "PRPGS#{n}"}
-  f.sequence(:intermediate_vector)  { |n| "PCS#{n}" }
-  f.sequence(:ikmc_project_id)      { |n| "#{n}" }
-  
-  f.association :pipeline
+  f.name { Factory.next(:pgdgr_plate_name) }
   f.association :molecular_structure
 end
 
@@ -132,13 +137,14 @@ end
 ##
 
 Factory.define :es_cell do |f|
-  f.sequence(:name) { |n| "EPD#{n}" }
-  f.sequence(:allele_symbol_superscript)  { |n| "allele_symbol_#{n}" }
-  f.parental_cell_line { ['JM8 parental', 'JM8.F6', 'JM8.N19'].choice }
+  f.name                { Factory.next(:epd_plate_name) }
+  f.parental_cell_line  { ['JM8 parental', 'JM8.F6', 'JM8.N19'].choice }
   
-  targ_vec = Factory.new( :targeting_vector )
-  f.targeting_vector_id targ_vec
-  f.molecular_structure_id targ_vec.molecular_structure_id
+  f.association :molecular_structure
+  
+  f.targeting_vector { |es_cell|
+    es_cell.association( :targeting_vector, :molecular_structure_id => es_cell.molecular_structure_id )
+  }
 end
 
 Factory.define :invalid_escell, :class => EsCell do |f|

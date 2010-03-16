@@ -66,10 +66,7 @@ class PipelinesControllerTest < ActionController::TestCase
   end
   
   should "not update pipeline" do
-    put :update, :id => Pipeline.first.id,
-      :pipeline => {
-        :name => nil
-      }
+    put :update, :id => Pipeline.first.id, :pipeline => { :name => nil }
   end
 
   should "destroy pipeline" do

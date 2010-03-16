@@ -1,4 +1,5 @@
 <h2>
+  <%=h @molecular_structure.pipeline.name %> |
   <%=h @molecular_structure.mgi_accession_id %> |
   Project Design ID: <%=h @molecular_structure.project_design_id %>
 </h2>
@@ -115,7 +116,6 @@
     <% unless @molecular_structure.targeting_vectors.empty? %>
       <table class="list">
         <thead>
-          <th>Pipeline</th>
           <th>IKMC Project ID</th>
           <th>Targeting Vector</th>
           <th class="last">Intermediate Vector</th>
@@ -123,7 +123,6 @@
         <tbody>
           <% @molecular_structure.targeting_vectors.each do |targ_vec| %>
           <tr class="<%= cycle("odd", "even") %>">
-            <td><%= targ_vec.pipeline.name %></td>
             <td><%= targ_vec.ikmc_project_id %></td>
             <td><%= targ_vec.name %></td>
             <td><%= targ_vec.intermediate_vector %></td>

@@ -6,6 +6,7 @@ class MolecularStructureTest < ActiveSupport::TestCase
     # Molecular structure has been saved successfully here
   end
   
+  should_belong_to :pipeline
   should_belong_to :created_by, :updated_by
   should_have_many :targeting_vectors
   should_have_many :es_cells
@@ -20,6 +21,7 @@ class MolecularStructureTest < ActiveSupport::TestCase
     ],
     :message => "must have unique design features"
   
+  should_validate_presence_of :pipeline_id
   should_validate_presence_of :mgi_accession_id
   should_validate_presence_of :assembly
   should_validate_presence_of :chromosome
@@ -44,28 +46,28 @@ class MolecularStructureTest < ActiveSupport::TestCase
     end
     
     context "with wrong MGI" do
-      mol_struct = Factory.build( :molecular_structure, :mgi_accession_id => 'WRONG MGI' )
       should "not be saved" do
+        mol_struct = Factory.build( :molecular_structure, :mgi_accession_id => 'WRONG MGI' )
         assert( !mol_struct.save, "Molecular structure is saved with a wrong MGI accession ID" )
       end
     end
     
     context "with wrong strand" do
-      mol_struct = Factory.build( :molecular_structure, :strand => 'WRONG STRAND' )
       should "not be saved" do
+        mol_struct = Factory.build( :molecular_structure, :strand => 'WRONG STRAND' )
         assert( !mol_struct.save, "Molecular structure is saved with a wrong strand" )
       end
     end
     
     context "with wrong chromosome" do
-      mol_struct = Factory.build( :molecular_structure, :chromosome => 'WRONG CHROMOSOME' )
       should "not be saved" do
+        mol_struct = Factory.build( :molecular_structure, :chromosome => 'WRONG CHROMOSOME' )
         assert( !mol_struct.save, "Molecular structure is saved with a wrong chromosome" )
       end
     end
     
     context "with wrong homology arm position" do
-      setup do
+      should "not be saved" do
         # Wrong start and end positions for the given strand
         @wrong_position1  = Factory.build( :molecular_structure, {
                               :strand             => '+',
@@ -89,9 +91,7 @@ class MolecularStructureTest < ActiveSupport::TestCase
                               :homology_arm_start => 120,
                               :homology_arm_end   => 50
                             })
-      end
-      
-      should "not be saved" do
+        
         assert( !@wrong_position1.save, "Homology arm start cannot be greater than LoxP end on strand '+'" )
         assert( !@wrong_position2.save, "Homology arm end cannot be greater than LoxP start on strand '-'" )
         assert( !@wrong_position3.save, "Homology arm cannot overlap other features (strand '+')" )
@@ -133,7 +133,7 @@ class MolecularStructureTest < ActiveSupport::TestCase
     end
     
     context "with wrong LoxP position" do
-      setup do
+      should "not be saved" do
         # Wrong start and end positions for the given strand
         @wrong_position1  = Factory.build( :molecular_structure, {
                               :strand     => '+',
@@ -157,9 +157,7 @@ class MolecularStructureTest < ActiveSupport::TestCase
                               :loxp_start         => 170,
                               :loxp_end           => 5
                             })
-      end
-      
-      should "not be saved" do
+        
         assert( !@wrong_position1.save, "LoxP start cannot be greater than LoxP end (strand '+')" )
         assert( !@wrong_position2.save, "LoxP end cannot be greater than LoxP start (strand '-')" )
         assert( !@wrong_position3.save, "LoxP site cannot overlap other features (strand '+')" )
@@ -168,25 +166,25 @@ class MolecularStructureTest < ActiveSupport::TestCase
     end
     
     context "with design type 'Deletion' and LoxP set" do
-      mol_struct = Factory.build( :molecular_structure, {
-                      :design_type        => 'Deletion',
-                      :strand             => '+',
-                      :loxp_start         => 100,
-                      :loxp_end           => 130
-                    })
       should "not be saved" do
+        mol_struct = Factory.build( :molecular_structure, {
+                        :design_type        => 'Deletion',
+                        :strand             => '+',
+                        :loxp_start         => 100,
+                        :loxp_end           => 130
+                      })
         assert( !mol_struct.save, "Molecular structure validates presence of LoxP for design 'Deletion'" )
       end
     end
     
     context "with design type 'Insertion' and LoxP set" do
-      mol_struct = Factory.build( :molecular_structure, {
-                      :design_type        => 'Insertion',
-                      :strand             => '+',
-                      :loxp_start         => 100,
-                      :loxp_end           => 130
-                    })
       should "not be saved" do
+        mol_struct = Factory.build( :molecular_structure, {
+                        :design_type        => 'Insertion',
+                        :strand             => '+',
+                        :loxp_start         => 100,
+                        :loxp_end           => 130
+                      })
         assert( !mol_struct.save, "Molecular structure validates presence of LoxP for design 'Insertion'" )
       end
     end

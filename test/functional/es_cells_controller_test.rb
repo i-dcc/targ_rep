@@ -3,7 +3,7 @@ require 'test_helper'
 class EsCellsControllerTest < ActionController::TestCase
   setup do
     UserSession.create Factory.build( :user )
-    Factory.create( :es_cell )
+    Factory.create(:es_cell)
   end
   
   should "get index" do
@@ -16,15 +16,14 @@ class EsCellsControllerTest < ActionController::TestCase
   end
   
   should "create es_cell" do
-    targ_vec = Factory.create( :targeting_vector )
     es_cell_attrs = Factory.attributes_for( :es_cell )
     
     assert_difference('EsCell.count') do
       post :create, :es_cell => {
         :name                    => es_cell_attrs[:name],
         :parental_cell_line      => es_cell_attrs[:parental_cell_line],
-        :targeting_vector_id     => targ_vec.id,
-        :molecular_structure_id  => targ_vec.molecular_structure_id
+        :targeting_vector_id     => EsCell.first.targeting_vector_id,
+        :molecular_structure_id  => EsCell.first.molecular_structure_id
       }
     end
     assert_response :success

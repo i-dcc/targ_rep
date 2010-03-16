@@ -8,31 +8,17 @@ class Pipeline < ActiveRecord::Base
   # =======================
 
   # Associations
-  has_many :targeting_vectors, 
-    :class_name => "TargetingVector",
+  has_many :molecular_structures,
+    :class_name => "MolecularStructure",
     :foreign_key => "pipeline_id"
   
-  has_many :es_cells, :through => :targeting_vectors, :uniq => true
+  has_many :es_cells, :through => :molecular_structures, :uniq => true
   
   # Unique constraints
-  validates_uniqueness_of :name
+  validates_uniqueness_of :name, :message => 'This pipeline name has already been taken'
   
   # Data validation
   validates_presence_of :name
   
   Pipeline.include_root_in_json = false
-  
-  def molecular_structures_id
-    tv_mol_structs = targeting_vectors.collect(&:molecular_structure_id).uniq
-    ec_mol_structs = es_cells.collect(&:molecular_structure_id).uniq
-    (tv_mol_structs + ec_mol_structs).uniq
-  end
-  
-  def molecular_structures
-    MolecularStructure.find( molecular_structures_id )
-  end
-  
-  def molecular_structure_count
-    molecular_structures_id.count
-  end
 end

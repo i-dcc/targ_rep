@@ -1,8 +1,17 @@
+<% pipeline_list = Pipeline.find(:all, :order => "name").collect {|p| [ p.name, p.id ] } %>
+
 <% unless f.error_messages.empty? %>
   <div class="error">
     <%= f.error_messages %>
   </div>
 <% end %>
+
+<div class="span-24 last">
+  <p>
+    <%= f.label :pipeline_id, "Pipeline" %>
+    <%= f.select :pipeline_id, pipeline_list %>
+  </p>
+</div>
 
 <div class="span-12">
   <p>
@@ -114,7 +123,6 @@
   <h3>Targeting Vectors</h3>
   <table class="list">
     <thead>
-      <th>Pipeline</th>
       <th>IKMC Project ID</th>
       <th>Targeting Vector</th>
       <th>Intermediate Vector</th>
