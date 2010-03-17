@@ -8,6 +8,7 @@
 <table class="list">
   <thead>
     <tr>
+      <th>Pipeline</th>
       <th>MGI Accession ID</th>
       <th>Design Type</th>
       <th>Cassette</th>
@@ -19,6 +20,7 @@
   <tbody>
     <% @molecular_structures.each do |mol_struct| %>
       <tr class="<%= cycle("odd", "even") %>">
+        <td><%= mol_struct.pipeline.name %></td>
         <td><%= mol_struct.mgi_accession_id %></td>
         <td><%= mol_struct.design_type %></td>
         <td><%= mol_struct.cassette %></td>

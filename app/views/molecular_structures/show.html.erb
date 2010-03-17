@@ -122,11 +122,13 @@
         </thead>
         <tbody>
           <% @molecular_structure.targeting_vectors.each do |targ_vec| %>
-          <tr class="<%= cycle("odd", "even") %>">
-            <td><%= targ_vec.ikmc_project_id %></td>
-            <td><%= targ_vec.name %></td>
-            <td><%= targ_vec.intermediate_vector %></td>
-          </tr>
+            <% if targ_vec.display == true %>
+              <tr class="<%= cycle("odd", "even") %>">
+                <td><%= targ_vec.ikmc_project_id %></td>
+                <td><%= targ_vec.name %></td>
+                <td><%= targ_vec.intermediate_vector %></td>
+              </tr>
+            <% end %>
           <% end -%>
         </tbody>
       </table>
