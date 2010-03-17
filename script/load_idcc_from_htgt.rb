@@ -57,10 +57,10 @@ REPORT_TO       = {
 ORA_USER        = 'eucomm_vector'
 ORA_PASS        = 'eucomm_vector'
 ORA_DB          = 'migp_ha.world'
-IDCC_SITE_TEST  = 'http://htgt:htgt@htgt.internal.sanger.ac.uk:4002/labs/targ_rep'
+IDCC_SITE_TEST  = 'http://htgt:htgt@www.i-dcc.org/labs/targ_rep'
 IDCC_SITE_PROD  = 'http://htgt:WPbjGHdG@www.i-dcc.org/targ_rep'
-LOG_DIR_TEST    = '/software/team87/logs/idcc/htgt_load'
-LOG_DIR_PROD    = 'htgt_load'
+LOG_DIR_TEST    = 'htgt_load'
+LOG_DIR_PROD    = '/software/team87/logs/idcc/htgt_load'
 GENBANK_URL     = 'http://www.sanger.ac.uk/htgt/qc/seq_view_file'
 
 # Use test settings by default
@@ -78,6 +78,8 @@ GENBANK_URL     = 'http://www.sanger.ac.uk/htgt/qc/seq_view_file'
 @@skip_es_cell        = false
 @@debug               = false
 @@no_report           = false
+@@start_date          = nil
+@@end_date            = nil
 
 opts = GetoptLong.new(
   [ '--help',               '-h',   GetoptLong::NO_ARGUMENT ],
@@ -205,6 +207,10 @@ class Design
     FROM
       design
       JOIN project ON project.design_id = design.design_id
+      JOIN project_history ON (
+        project.project_id = project_history.project_id
+        #{get_sql_date_filter}
+      )
       JOIN project_status ON 
         project_status.project_status_id = project.project_status_id 
         AND project_status.order_by >= 75
@@ -234,7 +240,7 @@ class Design
       else
         if current_design and current_design.validate()
           current_design.set_features()
-          current_design.set_exons()
+          # current_design.set_exons()
           push_to_cache( current_design )
         end
         
@@ -422,7 +428,7 @@ class Design
 end
 
 class MolecularStructure
-  attr_accessor :id, :mgi_accession_id
+  attr_accessor :id, :pipeline_id, :mgi_accession_id
   attr_accessor :design_id, :design_type, :design_subtype, :subtype_description
   attr_accessor :chromosome, :strand, :cassette, :backbone
   attr_accessor :floxed_start_exon, :floxed_end_exon
@@ -447,6 +453,7 @@ class MolecularStructure
   def to_json
     JSON.generate({
       'molecular_structure' => {
+        'pipeline_id'          => @pipeline_id,
         'mgi_accession_id'     => @mgi_accession_id,
         'project_design_id'    => @design_id,
         'cassette'             => @cassette,
@@ -472,32 +479,39 @@ class MolecularStructure
     """
     SELECT DISTINCT
       mgi_gene.mgi_accession_id,
-      project.design_id,
-      project.project_id,
-      project.cassette,
-      project.backbone,
+      ph.design_id,
+      ph.project_id,
+      ph.cassette,
+      ph.backbone,
       ws.epd_distribute,
-      ws.targeted_trap
+      ws.targeted_trap,
+      ph.is_eucomm,
+      ph.is_komp_csd,
+      ph.is_norcomm
     FROM
-      project
-      JOIN project_status ON
-        project_status.project_status_id = project.project_status_id
+      well_summary ws
+      JOIN project_history ph ON (
+        ws.project_id = ph.project_id
+        #{get_sql_date_filter}
+      )
+      JOIN project_status ON (
+        project_status.project_status_id = ph.project_status_id
         AND project_status.order_by >= 75
-      JOIN well_summary_by_di ws ON ws.project_id = project.project_id
-      JOIN mgi_gene              ON mgi_gene.mgi_gene_id = project.mgi_gene_id
+      )
+      JOIN mgi_gene ON mgi_gene.mgi_gene_id = ph.mgi_gene_id
     WHERE
       (
-        project.is_eucomm = 1
-        OR project.is_komp_csd = 1
-        OR project.is_norcomm = 1
+        ph.is_eucomm = 1
+        OR ph.is_komp_csd = 1
+        OR ph.is_norcomm = 1
       )
-      AND cassette IS NOT NULL
-      AND backbone IS NOT NULL
+      AND ph.cassette IS NOT NULL
+      AND ph.backbone IS NOT NULL
     ORDER BY
       mgi_gene.mgi_accession_id,
-      project.design_id,
-      project.cassette,
-      project.backbone,
+      ph.design_id,
+      ph.cassette,
+      ph.backbone,
       ws.epd_distribute,
       ws.targeted_trap
     """
@@ -505,7 +519,7 @@ class MolecularStructure
   
   def self.create_or_update
     begin
-      puts "Querying HTGT..."
+      puts "Querying HTGT for Molecular Structures..."
       cursor = @@ora_dbh.exec( get_sql_query_htgt )
       puts "Done."
     rescue
@@ -536,8 +550,6 @@ class MolecularStructure
         next
       end
       
-      next unless @@changed_projects.include? project_id
-      
       if epd_distribute and targeted_trap
         log "[DATABASE ERROR];#{mgi_accession_id};design_id #{design_id};#{cassette};#{backbone};epd_distribute = targeted_trap = 'yes'"
         next
@@ -553,7 +565,16 @@ class MolecularStructure
       prev_mgi_accession_id, prev_design_id = mgi_accession_id, design_id
       prev_cassette, prev_backbone = cassette, backbone
       
+      # Get pipeline ID
+      pipeline_id = 
+      if fetch_row[7] == 1      then Pipeline.get_id_from( 'EUCOMM' )
+      elsif fetch_row[8] == 1   then Pipeline.get_id_from( 'KOMP-CSD' )
+      elsif fetch_row[9] == 1   then Pipeline.get_id_from( 'NorCOMM' )
+      end
+      raise "Pipeline can't be null" if pipeline_id.nil?
+      
       conditional_hash = {
+        :pipeline_id          => pipeline_id,
         :mgi_accession_id     => mgi_accession_id,
         :cassette             => cassette,
         :backbone             => backbone,
@@ -705,7 +726,7 @@ class MolecularStructure
 end
 
 class TargetingVector
-  attr_accessor :id, :pipeline_id, :molecular_structure_id
+  attr_accessor :id, :molecular_structure_id
   attr_accessor :ikmc_project_id, :intermediate_vector, :name, :display
   
   def initialize( args )
@@ -725,7 +746,6 @@ class TargetingVector
   def to_json
     JSON.generate({ 
       'targeting_vector' => {
-        'pipeline_id'             => @pipeline_id,
         'molecular_structure_id'  => @molecular_structure_id,
         'ikmc_project_id'         => @ikmc_project_id,
         'intermediate_vector'     => @intermediate_vector,
@@ -736,40 +756,41 @@ class TargetingVector
   end
   
   def self.get_sql_query_htgt
-    query =
     """
     SELECT DISTINCT
-      project.project_id,
-      ws.pcs_plate_name || '_' || ws.pcs_well_name as intermediate_vector,
-      ws.pgdgr_plate_name || '_' || ws.pgdgr_well_name as targeting_vector,
       mgi_gene.mgi_accession_id,
-      project.design_id,
-      project.cassette,
-      project.backbone,
-      is_eucomm,
-      is_komp_csd,
-      is_norcomm
+      ph.design_id,
+      ph.project_id,
+      ph.cassette,
+      ph.backbone,
+      ws.pcs_plate_name || '_' || ws.pcs_well_name as intermediate_vector,
+      ws.pgdgr_plate_name || '_' || ws.pgdgr_well_name as targeting_vector
     FROM
-      project
-      JOIN project_status        ON project_status.project_status_id = project.project_status_id AND project_status.order_by >= 75
-      JOIN well_summary_by_di ws ON ws.project_id = project.project_id
-      JOIN mgi_gene              ON mgi_gene.mgi_gene_id = project.mgi_gene_id
+      well_summary ws
+      JOIN project_history ph ON (
+        ws.project_id = ph.project_id
+        #{get_sql_date_filter}
+      )
+      JOIN project_status ON (
+        project_status.project_status_id = ph.project_status_id 
+        AND project_status.order_by >= 75
+      )
+      JOIN mgi_gene ON mgi_gene.mgi_gene_id = ph.mgi_gene_id
     WHERE
       (
-        project.is_eucomm = 1
-        OR project.is_komp_csd = 1
-        OR project.is_norcomm = 1
+        ph.is_eucomm = 1
+        OR ph.is_komp_csd = 1
+        OR ph.is_norcomm = 1
       )
-      AND pgdgr_distribute = 'yes'
-      AND pgdgr_well_name IS NOT NULL
-    ORDER BY mgi_gene.mgi_accession_id
+      AND ws.pgdgr_distribute = 'yes'
+      AND ws.pgdgr_well_name IS NOT NULL
     """
   end
   
   def self.create_or_update
     query = TargetingVector.get_sql_query_htgt()
     begin
-      puts "Querying HTGT..."
+      puts "Querying HTGT for Targeting Vectors..."
       cursor = @@ora_dbh.exec( query )
       puts "Done."
     rescue
@@ -778,13 +799,13 @@ class TargetingVector
     end
     
     cursor.fetch do |fetch_row|
-      project_id        = fetch_row[0]
-      int_vec_name      = fetch_row[1]
-      targ_vec_name     = fetch_row[2]
-      mgi_accession_id  = fetch_row[3]
-      design_id         = fetch_row[4]
-      cassette          = fetch_row[5]
-      backbone          = fetch_row[6]
+      mgi_accession_id  = fetch_row[0]
+      design_id         = fetch_row[1]
+      project_id        = fetch_row[2]
+      cassette          = fetch_row[3]
+      backbone          = fetch_row[4]
+      int_vec_name      = fetch_row[5]
+      targ_vec_name     = fetch_row[6]
       
       design = Design.get( design_id )
       if design.nil?
@@ -797,16 +818,6 @@ class TargetingVector
         next
       end
       
-      next unless @@changed_projects.include? project_id
-      
-      # Get pipeline ID
-      pipeline_id = 
-      if fetch_row[7] == 1      then Pipeline.get_id_from( 'EUCOMM' )
-      elsif fetch_row[8] == 1   then Pipeline.get_id_from( 'KOMP-CSD' )
-      elsif fetch_row[9] == 1   then Pipeline.get_id_from( 'NorCOMM' )
-      end
-      raise "Pipeline can't be null" if pipeline_id.nil?
-      
       # Get molecular structure
       begin
         mol_struct = MolecularStructure.find( mgi_accession_id, design_id, cassette, backbone, false )
@@ -817,7 +828,6 @@ class TargetingVector
       
       targ_vec = TargetingVector.new({
         :molecular_structure_id => mol_struct.id,
-        :pipeline_id            => pipeline_id,
         :ikmc_project_id        => project_id,
         :intermediate_vector    => int_vec_name,
         :name                   => targ_vec_name,
@@ -829,29 +839,47 @@ class TargetingVector
       push_to_cache( targ_vec )
     end
     
-    # TargetingVector.delete_obsoletes()
+    TargetingVector.handle_obsoletes()
   end
   
-  def self.delete_obsoletes
-    page = 1
-    while not page.nil?
-      response = request( 'GET', "targeting_vectors.json?page=#{page}" )
-      targ_vec_list = JSON.parse( response )
+  def self.handle_obsoletes
+    query =
+    """
+    SELECT DISTINCT
+      ph.project_id,
+      ph.pgdgr_plate_name || '_' || ph.pgdgr_well_name,
+      ph.epd_distribute,
+      ph.targeted_trap
+    FROM
+      project_history
+    WHERE
+      ph.targvec_distribute is null
+      AND ph.pgdgr_well_name is not null
+      #{get_sql_date_filter}
+    """
+    
+    @@ora_dbh.exec( query ).fetch do |fetch_row|
+      project_id    = fetch_row[0]
+      targ_vec_name = fetch_row[1]
+      nb_es_cells   = fetch_row[2]
+      nb_targ_traps = fetch_row[3]
       
-      if targ_vec_list.length > 0
-        targ_vec_list.each do |targ_vec_hash|
-          found = 
-          @@targ_vec_cache.values.any? do |targ_vec|
-            targ_vec.name == targ_vec_hash['name']
-          end
-          
-          if not found
-            request( 'DELETE', "targeting_vectors/#{targ_vec_hash['id']}" )
-          end
-        end
-        page += 1
+      # Find targeting vector in cache or I-DCC
+      begin
+        targ_vec = TargetingVector.find( targ_vec_name, project_id )
+      rescue Exception => e
+        log "[TARG VEC];#{targ_vec_name};Could not find obsolete targ vec;#{e}"
+        next
+      end
+      
+      # Delete targeting vector if not linked to any ES Cell ...
+      if nb_es_cells == 0 and nb_targ_traps == 0
+        targ_vec.delete_from_idcc()
+      
+      # ... or set targeting vector as hidden in I-DCC.
       else
-        page = nil
+        targ_vec.display = false
+        targ_vec.update()
       end
     end
   end
@@ -902,27 +930,42 @@ class TargetingVector
     end
   end
   
-  def update( targ_vec_hash )
-    @id = targ_vec_hash['id']
-    
-    unless self.eql? targ_vec_hash
-      begin
-        response = request( 'PUT', "targeting_vectors/#{@id}.json", to_json() )
-      rescue RestClient::RequestFailed => e
-        log "[TARG VEC UPDATE];#{to_json()};#{e.http_body}"
-      rescue RestClient::ServerBrokeConnection
-        log "[TARG VEC UPDATE];#{to_json()};The server broke the connection prior to the request completing."
-      rescue RestClient::RequestTimeout
-        log "[TARG VEC UPDATE];#{to_json()};Request timed out"
-      rescue RestClient::Exception => e
-        log "[TARG VEC UPDATE];#{to_json()};#{e}"
-      end
+  def update
+    begin
+      request( 'PUT', "targeting_vectors/#{@id}.json", to_json() )
+    rescue RestClient::RequestFailed => e
+      log "[TARG VEC UPDATE];#{to_json()};#{e.http_body}"
+    rescue RestClient::ServerBrokeConnection
+      log "[TARG VEC UPDATE];#{to_json()};The server broke the connection prior to the request completing."
+    rescue RestClient::RequestTimeout
+      log "[TARG VEC UPDATE];#{to_json()};Request timed out"
+    rescue RestClient::Exception => e
+      log "[TARG VEC UPDATE];#{to_json()};#{e}"
+    end
+  end
+  
+  def delete_from_idcc
+    begin
+      request( 'DELETE', "targeting_vectors/#{@id}" )
+    rescue RestClient::RequestFailed => e
+      log "[TARG VEC DELETE];#{to_json()};#{e.http_body}"
+    rescue RestClient::ServerBrokeConnection
+      log "[TARG VEC DELETE];#{to_json()};The server broke the connection prior to the request completing."
+    rescue RestClient::RequestTimeout
+      log "[TARG VEC DELETE];#{to_json()};Request timed out"
+    rescue RestClient::Exception => e
+      log "[TARG VEC DELETE];#{to_json()};#{e}"
     end
   end
   
   def push_to_idcc
     existing_targ_vec = TargetingVector.search( @name, @ikmc_project_id )
-    existing_targ_vec.nil? ? create() : update( existing_targ_vec )
+    if existing_targ_vec.nil?
+      create()
+    else
+      @id = existing_targ_vec['id']
+      update() unless self.eql? existing_targ_vec
+    end
   end
 end
 
@@ -981,37 +1024,37 @@ class EsCell
   def self.get_sql_query_htgt
     """
     SELECT DISTINCT
+      mgi_gene.mgi_accession_id,
+      ph.design_id,
+      ph.project_id,
+      ph.cassette,
+      ph.backbone,
+      ws.pcs_plate_name || '_' || ws.pcs_well_name as intermediate_vector,
+      ws.pgdgr_plate_name || '_' || ws.pgdgr_well_name as targeting_vector,      
       ws.epd_well_name,
       ws.es_cell_line,
       ws.allele_name,
-      project.project_id,
-      ws.pcs_plate_name || '_' || ws.pcs_well_name,
-      ws.pgdgr_plate_name || '_' || ws.pgdgr_well_name,
-      mgi_gene.mgi_accession_id,
-      project.design_id,
-      project.cassette,
-      project.backbone,
       ws.targeted_trap,
-      pgdgr_distribute,
-      is_eucomm,
-      is_komp_csd,
-      is_norcomm
+      ws.pgdgr_distribute
     FROM
-      project
-      JOIN project_status        ON project_status.project_status_id = project.project_status_id AND project_status.order_by >= 75
-      JOIN well_summary_by_di ws ON ws.project_id = project.project_id
-      JOIN mgi_gene              ON mgi_gene.mgi_gene_id = project.mgi_gene_id
+      well_summary ws
+      JOIN project_history ph ON (
+        ws.project_id = ph.project_id
+        #{get_sql_date_filter}
+      )
+      JOIN project_status ON project_status.project_status_id = ph.project_status_id AND project_status.order_by >= 75
+      JOIN mgi_gene       ON mgi_gene.mgi_gene_id = ph.mgi_gene_id
     WHERE
       ws.epd_well_name is not null
       AND ws.pgdgr_well_name is not null
-      AND ( project.is_eucomm = 1 OR project.is_komp_csd = 1 OR project.is_norcomm = 1 )
+      AND ( ph.is_eucomm = 1 OR ph.is_komp_csd = 1 OR ph.is_norcomm = 1 )
       AND ( ws.targeted_trap = 'yes' OR ws.epd_distribute = 'yes' )
     """
   end
   
   def self.create_or_update
     begin
-      puts "Querying HTGT..."
+      puts "Querying HTGT for ES Cells..."
       cursor = @@ora_dbh.exec( get_sql_query_htgt )
       puts "Done."
     rescue
@@ -1020,16 +1063,16 @@ class EsCell
     end
     
     cursor.fetch do |fetch_row|
-      epd_well_name     = fetch_row[0]
-      es_cell_line      = fetch_row[1]
-      allele_name       = fetch_row[2]
-      project_id        = fetch_row[3]
-      int_vec_name      = fetch_row[4]
-      targ_vec_name     = fetch_row[5]
-      mgi_accession_id  = fetch_row[6]
-      design_id         = fetch_row[7]
-      cassette          = fetch_row[8]
-      backbone          = fetch_row[9]
+      mgi_accession_id  = fetch_row[0]
+      design_id         = fetch_row[1]
+      project_id        = fetch_row[2]
+      cassette          = fetch_row[3]
+      backbone          = fetch_row[4]
+      int_vec_name      = fetch_row[5]
+      targ_vec_name     = fetch_row[6]
+      epd_well_name     = fetch_row[7]
+      es_cell_line      = fetch_row[8]
+      allele_name       = fetch_row[9]
       targeted_trap     = fetch_row[10] == 'yes'
       targ_vec_dist     = fetch_row[11] == 'yes'
       
@@ -1045,8 +1088,6 @@ class EsCell
         next
       end
       
-      next unless @@changed_projects.include? project_id
-      
       # Get molecular structure or go to the next ES cell
       begin
         mol_struct = MolecularStructure.find( mgi_accession_id, design_id, cassette, backbone, targeted_trap )
@@ -1060,14 +1101,6 @@ class EsCell
         targ_vec = TargetingVector.find( targ_vec_name, project_id )
       rescue Exception => e
         log "[ES CELL];#{e} - will try to create it."
-        
-        #Get pipeline ID
-        pipeline_id = 
-        if fetch_row[12] == 1      then Pipeline.get_id_from( 'EUCOMM' )
-        elsif fetch_row[13] == 1   then Pipeline.get_id_from( 'KOMP-CSD' )
-        elsif fetch_row[14] == 1   then Pipeline.get_id_from( 'NorCOMM' )
-        end
-        raise "Pipeline can't be null" if pipeline_id.nil?
         
         # Get molecular structure (conditional) specific to targeting vector
         # Same as ES Cell's if not targeted trap
@@ -1085,7 +1118,6 @@ class EsCell
         
         targ_vec = TargetingVector.new({
           :molecular_structure_id => mol_struct_for_targ_vec.id,
-          :pipeline_id            => pipeline_id,
           :ikmc_project_id        => project_id,
           :intermediate_vector    => int_vec_name,
           :name                   => targ_vec_name,
@@ -1093,6 +1125,8 @@ class EsCell
         })
         targ_vec.push_to_idcc()
         TargetingVector.push_to_cache( targ_vec ) if targ_vec.id
+        
+        log "[ES CELL];#{e} - created successfully!"
       end
       
       
@@ -1109,31 +1143,35 @@ class EsCell
       next unless es_cell.id
       EsCell.push_to_cache( es_cell )
     end
-    # TargetingVector.flush_cache()
-    # EsCell.delete_obsoletes()
-    # EsCell.flush_cache()
+    
+    EsCell.handle_obsoletes()
   end
   
-  def self.delete_obsoletes
-    page = 1
-    while not page.nil?
-      response = request( 'GET', "es_cells.json?page=#{page}" )
-      es_cell_list = JSON.parse( response )
-      
-      if es_cell_list.length > 0
-        es_cell_list.each do |es_cell_hash|
-          found = 
-          @@es_cell_cache.values.any? do |es_cell_name|
-            es_cell_name == es_cell_hash['name']
-          end
-          
-          if not found
-            request( 'DELETE', "es_cells/#{es_cell_hash['id']}" )
-          end
-        end
-        page += 1
-      else
-        page = nil
+  def self.handle_obsoletes
+    query =
+    """
+    SELECT DISTINCT
+      ws.epd_well_name
+    FROM
+      well_summary ws
+      JOIN project_history ph ON (
+        ws.project_id = ph.project_id
+        #{get_sql_date_filter}
+      )
+    WHERE
+      ws.epd_well_name is not null
+      AND ws.pgdgr_well_name is not null
+      AND ( ph.is_eucomm = 1 OR ph.is_komp_csd = 1 OR ph.is_norcomm = 1 )
+      AND ws.targeted_trap IS NULL
+      AND ws.epd_distribute IS NULL
+    """
+    
+    @@ora_dbh.exec( query ).fetch do |fetch_row|
+      es_cell = EsCell.new({ :name => fetch_row[0] })
+      es_cell_hash = es_cell.search
+      unless es_cell_hash.nil?
+        es_cell.id = es_cell_hash['id']
+        es_cell.delete_from_idcc()
       end
     end
   end
@@ -1189,6 +1227,20 @@ class EsCell
       rescue RestClient::Exception => e
         log "[ES CELL UPDATE];#{to_json()};#{e}"
       end
+    end
+  end
+  
+  def delete_from_idcc
+    begin
+      response = request( 'DELETE', "es_cells/#{@id}.json", to_json() )
+    rescue RestClient::RequestFailed => e
+      log "[ES CELL DELETE];#{to_json()};#{e.http_body}"
+    rescue RestClient::ServerBrokeConnection
+      log "[ES CELL DELETE];#{to_json()};The server broke the connection prior to the request completing."
+    rescue RestClient::RequestTimeout
+      log "[ES CELL DELETE];#{to_json()};Request timed out"
+    rescue RestClient::Exception => e
+      log "[ES CELL DELETE];#{to_json()};#{e}"
     end
   end
 end
@@ -1266,9 +1318,10 @@ class GenbankFile
   def self.update_all
     page = 1
     while not page.nil?
-      filter_pipeline = 'search[targeting_vectors_pipeline_name_equals_any][]'
+      filter_pipeline = 'search[pipeline_name_equals_any][]'
       url = "alleles.json?page=#{page}&#{filter_pipeline}=EUCOMM&#{filter_pipeline}=KOMP-CSD&#{filter_pipeline}=NorCOMM"
       
+      puts "Page: #{page}"
       response = request( 'GET', url )
       mol_struct_list = JSON.parse( response )
       
@@ -1346,123 +1399,6 @@ def log(message)
   puts "#{message}\n" if @@debug
 end
 
-# Will get the project ids to filter on for finding new or udpated alleles
-def get_changed_projects
-  changed_projects = []
-  
-  # 1- Look in project_history table. This table holds added and updated
-  #   projects along with a timestamp.
-  
-  # Filter on a period or on the last two days
-  if @@start_date and @@end_date
-    query_join_cond = "
-      AND history_date >= TO_DATE('#{@@start_date}', 'YYYY-MM-DD')
-      AND history_date <= TO_DATE('#{@@end_date}', 'YYYY-MM-DD')
-    "
-  else
-    query_join_cond = "AND history_date >= current_date - 2"
-  end
-  
-  query =
-  """
-  SELECT DISTINCT
-    project.project_id
-  FROM
-    project
-    JOIN project_history ON (
-      project_history.project_id = project.project_id
-      #{query_join_cond}
-    )
-  """
-  
-  @@ora_dbh.exec(query) { |row| changed_projects.push( row[0] ) }
-
-  # 2- Compare today's dump of well_summary_by_di table to yesterday's dump.
-  #   -> No timestamp in this table so need to put yesterday's dump in a file
-  #      and compare to today's file
-  # old_file = File.new('previous_epd_dump.txt', 'r') rescue nil
-  #   new_file = File.new('current_epd_dump.txt', 'w+') # Read-write mode
-  # 
-  #   # Dumping today's data
-  #   query =
-  #   """
-  #   SELECT DISTINCT project_id, epd_well_name
-  #   FROM well_summary_by_di
-  #   WHERE project_id IS NOT NULL AND epd_well_name IS NOT NULL
-  #   ORDER BY project_id, epd_well_name
-  #   """
-  #   @@ora_dbh.exec(query) { |row| new_file << row.join(';') + "\n" }
-  # 
-  #   if old_file.nil?
-  #     system('mv current_epd_dump.txt previous_epd_dump.txt')
-  #     return
-  #   end
-  # 
-  #   # Go to beginning of new_file for reading
-  #   new_file.seek(0)
-  # 
-  # 
-  #   ## Start: helpers
-  #   def self.get_next_line( file )
-  #     return file.readline.chomp.split(';') rescue nil
-  #   end
-  # 
-  #   def self.add_project_id( project_id )
-  #     changed_projects.push( project_id ) unless changed_projects.include? project_id
-  #   end
-  #   ## End: Helpers
-  # 
-  # 
-  #   # Compare old and new files
-  #   finished = false
-  #   new_line = get_next_line( new_file )
-  #   old_line = get_next_line( old_file )
-  # 
-  #   while not finished
-  #     finished = true if new_line.nil? and old_line.nil?
-  # 
-  #     # EOF new_file
-  #     if new_line.nil?
-  #       old_line = get_next_line( old_file )
-  #       add_project_id( old_line[0] ) if old_line
-  # 
-  #     # EOF old_file
-  #     elsif old_line.nil?
-  #       new_line = get_next_line( new_file )
-  #       add_project_id( new_line[0] ) if new_line
-  # 
-  #     elsif new_line == old_line
-  #       new_line = get_next_line(new_file)
-  #       old_line = get_next_line(old_file)
-  # 
-  #     else
-  #       new_project_id = new_line[0]
-  #       old_project_id = old_line[0]
-  # 
-  #       if new_project_id > old_project_id
-  #         add_project_id( old_project_id )
-  #         old_line = get_next_line( old_file )
-  # 
-  #       elsif new_project_id < old_project_id
-  #         add_project_id( new_project_id )
-  #         new_line = get_next_line( new_file )
-  # 
-  #       else
-  #         add_project_id( new_project_id )
-  #         if new_line[1] < old_line[1]
-  #           new_line = get_next_line( new_file )
-  #         else
-  #           old_line = get_next_line( old_file )
-  #         end
-  #       end
-  #     end
-  #   end
-  #   
-  #   system('mv current_epd_dump.txt previous_epd_dump.txt')
-
-  return changed_projects
-end
-
 def report
   errors_file = File.open "#{TODAY}/errors.txt"
   send_to = REPORT_TO.collect { |name, email| "#{name} <#{email}>" }.join(', ')
@@ -1476,7 +1412,6 @@ Errors:
 #{errors_file.readlines}
 END_OF_MESSAGE
 
-  designs_file.close
   errors_file.close
   begin
     Net::SMTP.start(SMTP_SERVER, SMTP_PORT) do |smtp|
@@ -1484,6 +1419,15 @@ END_OF_MESSAGE
     end
   rescue Exception => e
     log "Error: " + e
+  end
+end
+
+def get_sql_date_filter
+  if @@start_date and @@end_date
+    "AND history_date >= TO_DATE('#{@@start_date}', 'YYYY-MM-DD')
+     AND history_date <= TO_DATE('#{@@end_date}', 'YYYY-MM-DD')"
+  else
+    "AND history_date >= current_date - 2"
   end
 end
 
@@ -1504,22 +1448,15 @@ def run
   else
     puts "-- Loading pipelines --"
     Pipeline.get_or_create()
-  
+    
     puts "\n-- Retrieving designs --"
     Design.retrieve_from_htgt()
-  
-    puts "\n-- Retrieving new and updated projects --"
-    @@changed_projects = get_changed_projects()
-  
-    unless @@changed_projects.empty?
-      puts "\n-- Update IDCC --"
-      MolecularStructure.create_or_update()   unless @@skip_mol_struct
-      GenbankFile.create_or_update()          unless @@skip_genbank_files
-      TargetingVector.create_or_update()      unless @@skip_targ_vec
-      EsCell.create_or_update()               unless @@skip_es_cell
-    else
-      puts "Nothing has changed since the previous run!"
-    end
+    
+    puts "\n-- Update IDCC --"
+    MolecularStructure.create_or_update()   unless @@skip_mol_struct
+    GenbankFile.create_or_update()          unless @@skip_genbank_files
+    TargetingVector.create_or_update()      unless @@skip_targ_vec
+    EsCell.create_or_update()               unless @@skip_es_cell
   end
   
   unless @@no_report
