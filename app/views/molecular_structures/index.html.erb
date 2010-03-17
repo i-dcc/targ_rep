@@ -22,7 +22,13 @@
   <tbody>
     <% @molecular_structures.each do |mol_struct| %>
       <tr class="<%= cycle("odd", "even") %>">
-        <td><%= mol_struct.pipeline.name %></td>
+        <td>
+          <% if mol_struct.pipeline %>
+            <%= mol_struct.pipeline.name %>
+          <% else %>
+            -
+          <% end %>
+        </td>
         <td><%= mol_struct.mgi_accession_id %></td>
         <td><%= mol_struct.design_type %></td>
         <td><%= mol_struct.cassette %></td>
