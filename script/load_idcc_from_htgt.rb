@@ -212,8 +212,8 @@ class Design
         AND project_status.order_by >= 75
       JOIN feature ON feature.design_id = design.design_id
       JOIN display_feature ON
-        display_feature.feature_id = feature.feature_id 
-        AND display_feature.assembly_id = 11 
+        display_feature.feature_id = feature.feature_id
+        AND display_feature.assembly_id = 11
         AND display_feature.display_feature_type IN ('G3','G5','U3','U5','D3','D5')
       JOIN mig.gnm_assembly ON mig.gnm_assembly.id = display_feature.assembly_id
       JOIN chromosome_dict ON chromosome_dict.chr_id = feature.chr_id
@@ -475,40 +475,37 @@ class MolecularStructure
     """
     SELECT DISTINCT
       mgi_gene.mgi_accession_id,
-      ph.design_id,
-      ws.project_id,
-      ws.cassette,
-      ws.backbone,
+      project.design_id,
+      project.project_id,
+      project.cassette,
+      project.backbone,
       ws.epd_distribute,
       ws.targeted_trap,
-      ph.is_eucomm,
-      ph.is_komp_csd,
-      ph.is_norcomm
+      project.is_eucomm,
+      project.is_komp_csd,
+      project.is_norcomm
     FROM
       well_summary ws
+      JOIN project ON project.project_id = ws.project_id
+      JOIN project_status ON (
+        project_status.project_status_id = project.project_status_id
+        AND project_status.order_by >= 75
+      )
       JOIN project_history ph ON (
-        ws.project_id = ph.project_id
+        ph.project_id = project.project_id
         AND ph.design_id IS NOT NULL
         #{get_sql_date_filter}
       )
-      JOIN project_status ON (
-        project_status.project_status_id = ph.project_status_id
-        AND project_status.order_by >= 75
-      )
       JOIN mgi_gene ON mgi_gene.mgi_gene_id = ph.mgi_gene_id
     WHERE
-      (
-        ph.is_eucomm = 1
-        OR ph.is_komp_csd = 1
-        OR ph.is_norcomm = 1
-      )
-      AND ph.cassette IS NOT NULL
-      AND ph.backbone IS NOT NULL
+      ( project.is_eucomm = 1 OR project.is_komp_csd = 1 OR project.is_norcomm = 1 )
+      AND project.cassette IS NOT NULL
+      AND project.backbone IS NOT NULL
     ORDER BY
       mgi_gene.mgi_accession_id,
-      ph.design_id,
-      ph.cassette,
-      ph.backbone,
+      project.design_id,
+      project.cassette,
+      project.backbone,
       ws.epd_distribute,
       ws.targeted_trap
     """
@@ -764,22 +761,19 @@ class TargetingVector
       ws.pgdgr_plate_name || '_' || ws.pgdgr_well_name as targeting_vector
     FROM
       well_summary ws
+      JOIN project ON project.project_id = ws.project_id
+      JOIN project_status ON (
+        project_status.project_status_id = project.project_status_id
+        AND project_status.order_by >= 75
+      )
       JOIN project_history ph ON (
-        ws.project_id = ph.project_id
+        ph.project_id = project.project_id
         AND ph.design_id IS NOT NULL
         #{get_sql_date_filter}
       )
-      JOIN project_status ON (
-        project_status.project_status_id = ph.project_status_id 
-        AND project_status.order_by >= 75
-      )
       JOIN mgi_gene ON mgi_gene.mgi_gene_id = ph.mgi_gene_id
     WHERE
-      (
-        ph.is_eucomm = 1
-        OR ph.is_komp_csd = 1
-        OR ph.is_norcomm = 1
-      )
+      ( project.is_eucomm = 1 OR project.is_komp_csd = 1 OR project.is_norcomm = 1 )
       AND ws.pgdgr_distribute = 'yes'
       AND ws.pgdgr_well_name IS NOT NULL
     """
@@ -1023,10 +1017,10 @@ class EsCell
     """
     SELECT DISTINCT
       mgi_gene.mgi_accession_id,
-      ph.design_id,
-      ph.project_id,
-      ph.cassette,
-      ph.backbone,
+      project.design_id,
+      project.project_id,
+      project.cassette,
+      project.backbone,
       ws.pcs_plate_name || '_' || ws.pcs_well_name as intermediate_vector,
       ws.pgdgr_plate_name || '_' || ws.pgdgr_well_name as targeting_vector,      
       ws.epd_well_name,
@@ -1036,20 +1030,21 @@ class EsCell
       ws.pgdgr_distribute
     FROM
       well_summary ws
+      JOIN project ON project.project_id = ws.project_id
+      JOIN project_status ON (
+        project_status.project_status_id = project.project_status_id
+        AND project_status.order_by >= 75
+      )
       JOIN project_history ph ON (
-        ws.project_id = ph.project_id
+        ph.project_id = project.project_id
         AND ph.design_id IS NOT NULL
         #{get_sql_date_filter}
       )
-      JOIN project_status ON (
-        project_status.project_status_id = ph.project_status_id 
-        AND project_status.order_by >= 75
-      )
       JOIN mgi_gene ON mgi_gene.mgi_gene_id = ph.mgi_gene_id
     WHERE
-      ws.epd_well_name is not null
+      ( project.is_eucomm = 1 OR project.is_komp_csd = 1 OR project.is_norcomm = 1 )
       AND ws.pgdgr_well_name is not null
-      AND ( ph.is_eucomm = 1 OR ph.is_komp_csd = 1 OR ph.is_norcomm = 1 )
+      AND ws.epd_well_name is not null
       AND ( ws.targeted_trap = 'yes' OR ws.epd_distribute = 'yes' )
     """
   end
