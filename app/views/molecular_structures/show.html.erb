@@ -1,5 +1,5 @@
 <h2>
-  <%=h @molecular_structure.pipeline.name %> |
+  <% if @molecular_structure.pipeline %><%=h @molecular_structure.pipeline.name %> |<% end %>
   <%=h @molecular_structure.mgi_accession_id %> |
   Project Design ID: <%=h @molecular_structure.project_design_id %>
 </h2>
