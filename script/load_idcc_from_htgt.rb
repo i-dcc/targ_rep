@@ -207,10 +207,6 @@ class Design
     FROM
       design
       JOIN project ON project.design_id = design.design_id
-      JOIN project_history ON (
-        project.project_id = project_history.project_id
-        #{get_sql_date_filter}
-      )
       JOIN project_status ON 
         project_status.project_status_id = project.project_status_id 
         AND project_status.order_by >= 75
@@ -240,7 +236,7 @@ class Design
       else
         if current_design and current_design.validate()
           current_design.set_features()
-          # current_design.set_exons()
+          current_design.set_exons()
           push_to_cache( current_design )
         end
         
@@ -480,9 +476,9 @@ class MolecularStructure
     SELECT DISTINCT
       mgi_gene.mgi_accession_id,
       ph.design_id,
-      ph.project_id,
-      ph.cassette,
-      ph.backbone,
+      ws.project_id,
+      ws.cassette,
+      ws.backbone,
       ws.epd_distribute,
       ws.targeted_trap,
       ph.is_eucomm,
@@ -492,6 +488,7 @@ class MolecularStructure
       well_summary ws
       JOIN project_history ph ON (
         ws.project_id = ph.project_id
+        AND ph.design_id IS NOT NULL
         #{get_sql_date_filter}
       )
       JOIN project_status ON (
@@ -759,16 +756,17 @@ class TargetingVector
     """
     SELECT DISTINCT
       mgi_gene.mgi_accession_id,
-      ph.design_id,
-      ph.project_id,
-      ph.cassette,
-      ph.backbone,
+      project.design_id,
+      project.project_id,
+      project.cassette,
+      project.backbone,
       ws.pcs_plate_name || '_' || ws.pcs_well_name as intermediate_vector,
       ws.pgdgr_plate_name || '_' || ws.pgdgr_well_name as targeting_vector
     FROM
       well_summary ws
       JOIN project_history ph ON (
         ws.project_id = ph.project_id
+        AND ph.design_id IS NOT NULL
         #{get_sql_date_filter}
       )
       JOIN project_status ON (
@@ -1040,10 +1038,14 @@ class EsCell
       well_summary ws
       JOIN project_history ph ON (
         ws.project_id = ph.project_id
+        AND ph.design_id IS NOT NULL
         #{get_sql_date_filter}
       )
-      JOIN project_status ON project_status.project_status_id = ph.project_status_id AND project_status.order_by >= 75
-      JOIN mgi_gene       ON mgi_gene.mgi_gene_id = ph.mgi_gene_id
+      JOIN project_status ON (
+        project_status.project_status_id = ph.project_status_id 
+        AND project_status.order_by >= 75
+      )
+      JOIN mgi_gene ON mgi_gene.mgi_gene_id = ph.mgi_gene_id
     WHERE
       ws.epd_well_name is not null
       AND ws.pgdgr_well_name is not null
@@ -1469,7 +1471,7 @@ begin
   start = Time.now
   run()
 rescue Exception => e
-  log "#{e}"
+  raise
 ensure
   stop = Time.now
   diff_time = stop - start.to_i
