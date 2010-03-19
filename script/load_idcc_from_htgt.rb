@@ -57,7 +57,7 @@ REPORT_TO       = {
 ORA_USER        = 'eucomm_vector'
 ORA_PASS        = 'eucomm_vector'
 ORA_DB          = 'migp_ha.world'
-IDCC_SITE_TEST  = 'http://htgt:htgt@www.i-dcc.org/labs/targ_rep'
+IDCC_SITE_TEST  = 'http://htgt:WPbjGHdG@www.i-dcc.org/labs/targ_rep'
 IDCC_SITE_PROD  = 'http://htgt:WPbjGHdG@www.i-dcc.org/targ_rep'
 LOG_DIR_TEST    = 'htgt_load'
 LOG_DIR_PROD    = '/software/team87/logs/idcc/htgt_load'
@@ -496,7 +496,7 @@ class MolecularStructure
         AND ph.design_id IS NOT NULL
         #{get_sql_date_filter}
       )
-      JOIN mgi_gene ON mgi_gene.mgi_gene_id = ph.mgi_gene_id
+      JOIN mgi_gene ON mgi_gene.mgi_gene_id = project.mgi_gene_id
     WHERE
       ( project.is_eucomm = 1 OR project.is_komp_csd = 1 OR project.is_norcomm = 1 )
       AND project.cassette IS NOT NULL
@@ -771,7 +771,7 @@ class TargetingVector
         AND ph.design_id IS NOT NULL
         #{get_sql_date_filter}
       )
-      JOIN mgi_gene ON mgi_gene.mgi_gene_id = ph.mgi_gene_id
+      JOIN mgi_gene ON mgi_gene.mgi_gene_id = project.mgi_gene_id
     WHERE
       ( project.is_eucomm = 1 OR project.is_komp_csd = 1 OR project.is_norcomm = 1 )
       AND ws.pgdgr_distribute = 'yes'
@@ -838,16 +838,25 @@ class TargetingVector
     query =
     """
     SELECT DISTINCT
-      ph.project_id,
-      ph.pgdgr_plate_name || '_' || ph.pgdgr_well_name,
-      ph.epd_distribute,
-      ph.targeted_trap
+      ws.project_id,
+      ws.pgdgr_plate_name || '_' || ws.pgdgr_well_name,
+      ws.epd_distribute,
+      ws.targeted_trap
     FROM
-      project_history
+      well_summary ws
+      JOIN project ON project.project_id = ws.project_id
+      JOIN project_status ON (
+        project_status.project_status_id = project.project_status_id
+        AND project_status.order_by >= 75
+      )
+      JOIN project_history ph ON (
+        ph.project_id = project.project_id
+        AND ph.design_id IS NOT NULL
+        #{get_sql_date_filter}
+      )
     WHERE
-      ph.targvec_distribute is null
-      AND ph.pgdgr_well_name is not null
-      #{get_sql_date_filter}
+      project.targvec_distribute is null
+      AND project.pgdgr_well_name is not null
     """
     
     @@ora_dbh.exec( query ).fetch do |fetch_row|
@@ -1040,7 +1049,7 @@ class EsCell
         AND ph.design_id IS NOT NULL
         #{get_sql_date_filter}
       )
-      JOIN mgi_gene ON mgi_gene.mgi_gene_id = ph.mgi_gene_id
+      JOIN mgi_gene ON mgi_gene.mgi_gene_id = project.mgi_gene_id
     WHERE
       ( project.is_eucomm = 1 OR project.is_komp_csd = 1 OR project.is_norcomm = 1 )
       AND ws.pgdgr_well_name is not null
@@ -1151,14 +1160,20 @@ class EsCell
       ws.epd_well_name
     FROM
       well_summary ws
+      JOIN project ON project.project_id = ws.project_id
+      JOIN project_status ON (
+        project_status.project_status_id = project.project_status_id
+        AND project_status.order_by >= 75
+      )
       JOIN project_history ph ON (
-        ws.project_id = ph.project_id
+        ph.project_id = project.project_id
+        AND ph.design_id IS NOT NULL
         #{get_sql_date_filter}
       )
     WHERE
       ws.epd_well_name is not null
       AND ws.pgdgr_well_name is not null
-      AND ( ph.is_eucomm = 1 OR ph.is_komp_csd = 1 OR ph.is_norcomm = 1 )
+      AND ( project.is_eucomm = 1 OR project.is_komp_csd = 1 OR project.is_norcomm = 1 )
       AND ws.targeted_trap IS NULL
       AND ws.epd_distribute IS NULL
     """
