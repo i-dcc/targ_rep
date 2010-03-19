@@ -856,7 +856,7 @@ class TargetingVector
       )
     WHERE
       project.targvec_distribute is null
-      AND project.pgdgr_well_name is not null
+      AND ws.pgdgr_well_name is not null
     """
     
     @@ora_dbh.exec( query ).fetch do |fetch_row|
