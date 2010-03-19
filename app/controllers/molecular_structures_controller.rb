@@ -5,7 +5,8 @@ class MolecularStructuresController < ApplicationController
     :only => [
       :show, :edit, :update, :destroy, 
       :get_escell_clone_genbank_file,
-      :get_targeting_vector_genbank_file
+      :get_targeting_vector_genbank_file,
+      :get_allele_image
     ]
   
   # Following both are located in application_controller.rb
@@ -123,7 +124,10 @@ class MolecularStructuresController < ApplicationController
     end
   end
   
-  #--- Custom controllers
+  ##
+  ## Custom controllers
+  ##
+  
   # GET /molecular_structures/1/escell-clone-genbank-file/
   def get_escell_clone_genbank_file
     render :inline => "<pre><%= @molecular_structure.genbank_file.escell_clone %></pre>"
@@ -132,6 +136,15 @@ class MolecularStructuresController < ApplicationController
   # GET /molecular_structures/1/targeting-vector-genbank-file/
   def get_targeting_vector_genbank_file
     render :inline => "<pre><%= @molecular_structure.genbank_file.targeting_vector %></pre>"
+  end
+
+  # GET /molecular_structures/1/allele-image/
+  def get_allele_image
+    send_data(
+      AlleleImage::Image.new( @molecular_structure.genbank_file.escell_clone ).render.to_blob { self.format = "PNG" }, 
+        :disposition => "inline",
+        :type => "image/png"
+    )
   end
 
   private

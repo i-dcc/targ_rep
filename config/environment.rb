@@ -25,6 +25,7 @@ Rails::Initializer.run do |config|
   config.gem "googlecharts", :lib => "gchart"
   config.gem 'acts_as_audited', :lib => false
   config.gem "matthuhiggins-foreigner", :lib => "foreigner"
+  config.gem "allele_image"
   
   config.gem "newrelic_rpm"
 
