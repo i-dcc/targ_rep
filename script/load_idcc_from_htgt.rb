@@ -947,7 +947,7 @@ class TargetingVector
   
   def delete_from_idcc
     begin
-      request( 'DELETE', "targeting_vectors/#{@id}" )
+      request( 'DELETE', "targeting_vectors/#{@id}.json" )
     rescue RestClient::RequestFailed => e
       log "[TARG VEC DELETE];#{to_json()};#{e.http_body}"
     rescue RestClient::ServerBrokeConnection
@@ -1244,7 +1244,7 @@ class EsCell
   
   def delete_from_idcc
     begin
-      response = request( 'DELETE', "es_cells/#{@id}.json", to_json() )
+      request( 'DELETE', "es_cells/#{@id}.json" )
     rescue RestClient::RequestFailed => e
       log "[ES CELL DELETE];#{to_json()};#{e.http_body}"
     rescue RestClient::ServerBrokeConnection
