@@ -33,22 +33,22 @@ chdir($TMPDIR);
 my $prod_db   = $DBCONF->{production}->{database};
 my $prod_host = $DBCONF->{production}->{host};
 my $prod_port = $DBCONF->{production}->{port};
+my $prod_user = $DBCONF->{production}->{username};
+my $prod_pass = $DBCONF->{production}->{password};
 
 my $production_dbh = DBI->connect(
-  "dbi:mysql:database=$prod_db;host=$prod_host;port=$prod_port",
-  $DBCONF->{production}->{username},
-  $DBCONF->{production}->{password},
+  "dbi:mysql:database=$prod_db;host=$prod_host;port=$prod_port", $prod_user, $prod_pass,
   { RaiseError => 1, AutoCommit => 0, FetchHashKeyName => "NAME_lc" }
 ) or die "Cannot connect to production db! $!";
 
 my $stag_db   = $DBCONF->{staging}->{database};
 my $stag_host = $DBCONF->{staging}->{host};
 my $stag_port = $DBCONF->{staging}->{port};
+my $stag_user = $DBCONF->{staging}->{username};
+my $stag_pass = $DBCONF->{staging}->{password};
 
 my $staging_dbh = DBI->connect(
-  "dbi:mysql:database=$stag_db;host=$stag_host;port=$stag_port",
-  $DBCONF->{staging}->{username},
-  $DBCONF->{staging}->{password},
+  "dbi:mysql:database=$stag_db;host=$stag_host;port=$stag_port", $stag_user, $stag_pass,
   { RaiseError => 1, AutoCommit => 1, FetchHashKeyName => "NAME_lc" }
 ) or die "Cannot connect to staging db! $!";
 
@@ -60,7 +60,6 @@ my @tables = qw/
   users
   pipelines
   molecular_structures
-  genbank_files
   targeting_vectors
   es_cells
 /;
@@ -77,6 +76,16 @@ foreach my $table ( @tables ) {
   import_csv( $staging_dbh, $table, $cols );
   check_transfer( $production_dbh, $staging_dbh, $table, $table );
 }
+
+##
+## Now finally, transfer the genbank_files table using MySQL dump, 
+## as the CSV export/import removes all the newline characters and 
+## corrupts the formatting.
+##
+
+system("mysqldump -h $prod_host -P $prod_port -u $prod_user --password=$prod_pass --no-create-db $prod_db genbank_files > genbank_files.sql");
+truncate_tables( $staging_dbh, ["genbank_files"] );
+system("mysql -h $stag_host -P $stag_port -u $stag_user --password=$stag_pass $stag_db < genbank_files.sql");
 
 ## Finish off...
 
