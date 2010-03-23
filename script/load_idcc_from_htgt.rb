@@ -483,7 +483,8 @@ class MolecularStructure
       ws.targeted_trap,
       project.is_eucomm,
       project.is_komp_csd,
-      project.is_norcomm
+      project.is_norcomm,
+      project.targvec_distribute
     FROM
       well_summary ws
       JOIN project ON project.project_id = ws.project_id
@@ -532,6 +533,10 @@ class MolecularStructure
       backbone          = fetch_row[4]
       epd_distribute    = fetch_row[5] == 'yes'
       targeted_trap     = fetch_row[6] == 'yes'
+      targvec_dist      = fetch_row[10] == 'yes'
+      
+      # Skip this molecular structure unless a product can be associated
+      next unless epd_distribute or targeted_trap or targvec_dist
       
       design = Design.get( design_id )
       if design.nil?
