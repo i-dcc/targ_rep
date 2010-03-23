@@ -15,61 +15,40 @@
 
 <hr />
 
-<div class="span-12">
+<div class="span-8">
   <h3>Summary Statistics</h3>
   <p>
-    This repository currently tracks information on <%= @total_counts[:molecular_structures] %> alleles 
-    that have been made into <%= @total_counts[:es_cells] %> mutant ES cells, from 
+    This repository currently tracks information on <%= @total_counts[:molecular_structures] %> alleles, 
+    covering <%= @total_counts[:genes] %> mouse genes, that have 
+    been made into <%= @total_counts[:vectors] %> targeting vectors and 
+    <%= @total_counts[:es_cells] %> mutant ES cells, over 
     <%= @total_counts[:pipelines] %> different production pipelines.
   </p>
 </div>
 
-<div class="span-12 last">
+<div class="span-16 last">
   <table class="list">
     <thead>
       <tr>
         <th></th>
+        <th>Genes</th>
         <th>Alleles</th>
+        <th>Vectors</th>
         <th class="last">ES Cells</th>
       </tr>
     </thead>
     <tbody>
-      <%
-        project_labels_for_chart = []
-        allele_counts_for_chart  = []
-        product_counts_for_chart = []
-      %>
       <% @pipeline_counts.sort{|a,b| a[0]<=>b[0]}.each do |pipeline_name, count| %>
-        <%
-          project_labels_for_chart.push( pipeline_name )
-          allele_counts_for_chart.push( count[:molecular_structures] )
-          product_counts_for_chart.push( count[:es_cells] )
-        %>
         <tr class="<%= cycle("even", "odd") %>">
           <td><strong><%= pipeline_name %></strong></td>
+          <td><%= count[:genes] %></td>
           <td><%= count[:molecular_structures] %></td>
+          <td><%= count[:vectors] %></td>
           <td><%= count[:es_cells] %></td>
         </tr>
       <% end %>
     </tbody>
   </table>
-</div>
-
-<div class="span-12" style="text-align:center;">
-  <h4>Alleles Per Project</h4>
-  <%= Gchart.pie :size   => '400x175',
-                 :alt    => 'Alleles Per Project',
-                 :data   => allele_counts_for_chart,
-                 :labels => project_labels_for_chart,
-                 :format => 'image_tag' %>
-</div>
-<div class="span-12 last" style="text-align:center;">
-  <h4>ES Cells Per Project</h4>
-  <%= Gchart.pie :size   => '400x175',
-                 :alt    => 'ES Cells Per Project',
-                 :data   => product_counts_for_chart,
-                 :labels => project_labels_for_chart,
-                 :format => 'image_tag' %>
 </div>
 
 <div class="clear"></div>
