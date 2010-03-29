@@ -481,10 +481,10 @@ class MolecularStructure
       project.backbone,
       ws.epd_distribute,
       ws.targeted_trap,
+      ws.pgdgr_distribute,
       project.is_eucomm,
       project.is_komp_csd,
-      project.is_norcomm,
-      project.targvec_distribute
+      project.is_norcomm
     FROM
       well_summary ws
       JOIN project ON project.project_id = ws.project_id
@@ -502,6 +502,11 @@ class MolecularStructure
       ( project.is_eucomm = 1 OR project.is_komp_csd = 1 OR project.is_norcomm = 1 )
       AND project.cassette IS NOT NULL
       AND project.backbone IS NOT NULL
+      AND (
+        ws.epd_distribute IS NOT NULL
+        OR ws.targeted_trap IS NOT NULL
+        OR ws.pgdgr_distribute IS NOT NULL
+      )
     ORDER BY
       mgi_gene.mgi_accession_id,
       project.design_id,
@@ -533,10 +538,7 @@ class MolecularStructure
       backbone          = fetch_row[4]
       epd_distribute    = fetch_row[5] == 'yes'
       targeted_trap     = fetch_row[6] == 'yes'
-      targvec_dist      = fetch_row[10] == 'yes'
-      
-      # Skip this molecular structure unless a product can be associated
-      next unless epd_distribute or targeted_trap or targvec_dist
+      targvec_dist      = fetch_row[7] == 'yes'
       
       design = Design.get( design_id )
       if design.nil?
@@ -566,9 +568,9 @@ class MolecularStructure
       
       # Get pipeline ID
       pipeline_id = 
-      if fetch_row[7] == 1      then Pipeline.get_id_from( 'EUCOMM' )
-      elsif fetch_row[8] == 1   then Pipeline.get_id_from( 'KOMP-CSD' )
-      elsif fetch_row[9] == 1   then Pipeline.get_id_from( 'NorCOMM' )
+      if fetch_row[8] == 1      then Pipeline.get_id_from( 'EUCOMM' )
+      elsif fetch_row[9] == 1   then Pipeline.get_id_from( 'KOMP-CSD' )
+      elsif fetch_row[10] == 1  then Pipeline.get_id_from( 'NorCOMM' )
       end
       raise "Pipeline can't be null" if pipeline_id.nil?
       
@@ -860,8 +862,8 @@ class TargetingVector
         #{get_sql_date_filter}
       )
     WHERE
-      project.targvec_distribute is null
-      AND ws.pgdgr_well_name is not null
+      project.targvec_distribute IS NULL
+      AND ws.pgdgr_well_name IS NOT NULL
     """
     
     @@ora_dbh.exec( query ).fetch do |fetch_row|
@@ -1179,8 +1181,8 @@ class EsCell
       ws.epd_well_name is not null
       AND ws.pgdgr_well_name is not null
       AND ( project.is_eucomm = 1 OR project.is_komp_csd = 1 OR project.is_norcomm = 1 )
-      AND ws.targeted_trap IS NULL
-      AND ws.epd_distribute IS NULL
+      AND ( project.targeted_trap IS NULL OR project.targeted_trap = 0 )
+      AND ( project.epd_distribute IS NULL OR project.epd_distribute = 0 )
     """
     
     @@ora_dbh.exec( query ).fetch do |fetch_row|
@@ -1440,11 +1442,22 @@ END_OF_MESSAGE
 end
 
 def get_sql_date_filter
-  if @@start_date and @@end_date
-    "AND history_date >= TO_DATE('#{@@start_date}', 'YYYY-MM-DD')
-     AND history_date <= TO_DATE('#{@@end_date}', 'YYYY-MM-DD')"
-  else
-    "AND history_date >= current_date - 2"
+  if @@start_date
+    "
+    AND history_date >= TO_DATE('#{@@start_date}', 'YYYY-MM-DD')
+    "
+  end
+  
+  if @@end_date
+    "
+    AND history_date <= TO_DATE('#{@@end_date}', 'YYYY-MM-DD')
+    "
+  end
+  
+  unless @@start_date or @@end_date
+    "
+    AND history_date >= current_date - 2
+    "
   end
 end
 
