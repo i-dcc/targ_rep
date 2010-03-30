@@ -1255,14 +1255,8 @@ class GenbankFile
   def create
     begin
       request( 'POST', 'genbank_files.json', to_json() )
-    rescue RestClient::RequestFailed => e
-      log "[GENBANK FILE CREATION];#{to_json()};#{e.http_body}"
-    rescue RestClient::ServerBrokeConnection
-      log "[GENBANK FILE CREATION];#{to_json()};The server broke the connection prior to the request completing."
-    rescue RestClient::RequestTimeout
-      log "[GENBANK FILE CREATION];#{to_json()};Request timed out"
     rescue RestClient::Exception => e
-      log "[GENBANK FILE CREATION];#{to_json()};#{e}"
+      log "[GENBANK FILE CREATION];mol_struct_id:#{@molecular_structure_id};#{e.response}\n"
     end
   end
   
@@ -1271,14 +1265,8 @@ class GenbankFile
     unless self.eql? genbank_file_hash
       begin
         request( 'PUT', "genbank_files/#{@id}.json", to_json() )
-      rescue RestClient::RequestFailed => e
-        log "[GENBANK FILE UPDATE];#{to_json()};#{e.http_body}"
-      rescue RestClient::ServerBrokeConnection
-        log "[GENBANK FILE UPDATE];#{to_json()};The server broke the connection prior to the request completing."
-      rescue RestClient::RequestTimeout
-        log "[GENBANK FILE UPDATE];#{to_json()};Request timed out"
       rescue RestClient::Exception => e
-        log "[GENBANK FILE UPDATE];#{to_json()};#{e}"
+        log "[GENBANK FILE UPDATE];mol_struct_id:#{@molecular_structure_id};#{e.response}\n"
       end
     end
   end
@@ -1330,12 +1318,16 @@ class GenbankFile
           :targeted_trap  => mol_struct.targeted_trap
         })
         
-        response = request( 'GET', "genbank_files.json?molecular_structure_id=#{mol_struct_id}" )
-        if response.nil? or response == 'null'
-          genbank_file.create()
-        else
-          json_response = JSON.parse( response.body )
-          json_response.nil? ? genbank_file.create() : genbank_file.update( json_response[0] )
+        begin
+          response = request( 'GET', "genbank_files.json?molecular_structure_id=#{mol_struct_id}" )
+          if response.nil? or response.body == 'null'
+            genbank_file.create()
+          else
+            json_response = JSON.parse( response.body )
+            json_response.nil? ? genbank_file.create() : genbank_file.update( json_response[0] )
+          end
+        rescue Exception => e
+          log "[GENBANK FILE CREATE OR UPDATE];#{e}"
         end
       end
     end
@@ -1433,9 +1425,9 @@ def run
     
     puts "\n-- Update IDCC --"
     MolecularStructure.create_or_update()   unless @@skip_mol_struct
-    GenbankFile.create_or_update()          unless @@skip_genbank_files
     TargetingVector.create_or_update()      unless @@skip_targ_vec
     EsCell.create_or_update()               unless @@skip_es_cell
+    GenbankFile.create_or_update()          unless @@skip_genbank_files
   end
   
   unless @@no_report
