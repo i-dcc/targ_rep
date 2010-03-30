@@ -138,7 +138,7 @@ class Pipeline
   
   def self.get_or_create
     response = request( 'GET', 'pipelines.json' )
-    pipeline_list = JSON.parse(response)
+    pipeline_list = JSON.parse( response.body )
     
     # GET 
     if pipeline_list.size > 0
@@ -150,7 +150,7 @@ class Pipeline
       ['KOMP-CSD', 'EUCOMM', 'KOMP-Regeneron', 'NorCOMM'].each do |pipeline|
         json = JSON.generate({ 'pipeline' => { 'name' => pipeline } })
         response = request( 'POST', 'pipelines.json', json )
-        pipeline = JSON.parse( response )
+        pipeline = JSON.parse( response.body )
         Pipeline.new( pipeline['id'], pipeline['name'] )
       end
     end
@@ -236,7 +236,7 @@ class Design
       else
         if current_design and current_design.validate()
           current_design.set_features()
-          current_design.set_exons()
+          current_design.set_exons() unless @@skip_mol_struct
           push_to_cache( current_design )
         end
         
@@ -504,8 +504,8 @@ class MolecularStructure
       AND project.backbone IS NOT NULL
       AND (
         ws.epd_distribute IS NOT NULL
-        OR ws.targeted_trap IS NOT NULL
-        OR ws.pgdgr_distribute IS NOT NULL
+        OR ( ws.targeted_trap IS NOT NULL AND project.targeted_trap > 0 )
+        OR ( ws.pgdgr_distribute IS NOT NULL AND ws.targeted_trap IS NULL )
       )
     ORDER BY
       mgi_gene.mgi_accession_id,
@@ -640,7 +640,7 @@ class MolecularStructure
             return mol_struct
           end
         
-        # Design is a Knock Out
+        # Design is a conditional Knock Out
         elsif mol_struct.loxp_start == design.loxp_start and mol_struct.loxp_end == design.loxp_end
           return mol_struct
         end
@@ -674,22 +674,16 @@ class MolecularStructure
       params += "&loxp_start=#{design.loxp_start}&loxp_end=#{design.loxp_end}"
     end
     
-    json_response = JSON.parse(request( 'GET', "alleles.json?#{params}" ))
+    json_response = JSON.parse(request( 'GET', "alleles.json?#{params}" ).body)
     return json_response[0] if json_response.length > 0
   end
   
   def create
     begin
       response = request( 'POST', 'alleles.json', to_json() )
-      @id = JSON.parse( response )['id']
-    rescue RestClient::RequestFailed => e
-      log "[MOL STRUCT CREATION];#{to_json()};#{e.http_body}\n"
-    rescue RestClient::ServerBrokeConnection
-      log "[MOL STRUCT CREATION];#{to_json()};The server broke the connection prior to the request completing."
-    rescue RestClient::RequestTimeout
-      log "[MOL STRUCT CREATION];#{to_json()};Request timed out"
+      @id = JSON.parse( response.body )['id']
     rescue RestClient::Exception => e
-      log "[MOL STRUCT CREATION];#{to_json()};#{e}"
+      log "[MOL STRUCT CREATION];#{to_json()};#{e.response}\n"
     end
   end
   
@@ -698,19 +692,9 @@ class MolecularStructure
     
     unless self.eql? mol_struct_hash
       begin
-        response = request( 'PUT', "alleles/#{@id}.json", to_json() )
-      rescue RestClient::RequestFailed => e
-        if response
-          log "[MOL STRUCT UPDATE];#{JSON.parse(response)}\n"
-        else
-          log "[MOL STRUCT UPDATE];#{to_json()};#{e.http_body}\n"
-        end
-      rescue RestClient::ServerBrokeConnection
-        log "[MOL STRUCT UPDATE];#{to_json()};The server broke the connection prior to the request completing."
-      rescue RestClient::RequestTimeout
-        log "[MOL STRUCT UPDATE];#{to_json()};Request timed out"
+        request( 'PUT', "alleles/#{@id}.json", to_json() )
       rescue RestClient::Exception => e
-        log "[MOL STRUCT UPDATE];#{to_json()};#{e}"
+        log "[MOL STRUCT UPDATE];#{to_json()};#{e.response}\n"
       end
     end
   end
@@ -919,50 +903,32 @@ class TargetingVector
     params = "name=#{name}&ikmc_project_id=#{ikmc_project_id}"
     
     response = request( 'GET', "targeting_vectors.json?#{params}" )
-    json_response = JSON.parse( response )
+    json_response = JSON.parse( response.body )
     return json_response[0] if json_response.length > 0
   end
   
   def create
     begin
       response = request( 'POST', 'targeting_vectors.json', to_json() )
-      @id = JSON.parse(response)['id']
-    rescue RestClient::RequestFailed => e
-      log "[TARG VEC CREATION];#{to_json()};#{e.http_body}"
-    rescue RestClient::ServerBrokeConnection
-      log "[TARG VEC CREATION];#{to_json()};The server broke the connection prior to the request completing."
-    rescue RestClient::RequestTimeout
-      log "[TARG VEC CREATION];#{to_json()};Request timed out"
+      @id = JSON.parse( response.body )['id']
     rescue RestClient::Exception => e
-      log "[TARG VEC CREATION];#{to_json()};#{e}"
+      log "[TARG VEC CREATION];#{to_json()};#{e.response}\n"
     end
   end
   
   def update
     begin
       request( 'PUT', "targeting_vectors/#{@id}.json", to_json() )
-    rescue RestClient::RequestFailed => e
-      log "[TARG VEC UPDATE];#{to_json()};#{e.http_body}"
-    rescue RestClient::ServerBrokeConnection
-      log "[TARG VEC UPDATE];#{to_json()};The server broke the connection prior to the request completing."
-    rescue RestClient::RequestTimeout
-      log "[TARG VEC UPDATE];#{to_json()};Request timed out"
     rescue RestClient::Exception => e
-      log "[TARG VEC UPDATE];#{to_json()};#{e}"
+      log "[TARG VEC UPDATE];#{to_json()};#{e.response}\n"
     end
   end
   
   def delete_from_idcc
     begin
       request( 'DELETE', "targeting_vectors/#{@id}.json" )
-    rescue RestClient::RequestFailed => e
-      log "[TARG VEC DELETE];#{to_json()};#{e.http_body}"
-    rescue RestClient::ServerBrokeConnection
-      log "[TARG VEC DELETE];#{to_json()};The server broke the connection prior to the request completing."
-    rescue RestClient::RequestTimeout
-      log "[TARG VEC DELETE];#{to_json()};Request timed out"
     rescue RestClient::Exception => e
-      log "[TARG VEC DELETE];#{to_json()};#{e}"
+      log "[TARG VEC DELETE];#{to_json()};#{e.response}\n"
     end
   end
   
@@ -1211,7 +1177,7 @@ class EsCell
   def search
     begin
       response = request( 'GET', "es_cells.json?name=#{@name}" )
-      json_response = JSON.parse( response )
+      json_response = JSON.parse( response.body )
       return json_response[0] if json_response.length > 0
     rescue RestClient::ResourceNotFound
       return nil
@@ -1221,14 +1187,9 @@ class EsCell
   def create
     begin
       response = request( 'POST', 'es_cells.json', to_json() )
-    rescue RestClient::RequestFailed => e
-      log "[ES CELL CREATION];#{to_json()};#{e.http_body}"
-    rescue RestClient::ServerBrokeConnection
-      log "[ES CELL CREATION];#{to_json()};The server broke the connection prior to the request completing."
-    rescue RestClient::RequestTimeout
-      log "[ES CELL CREATION];#{to_json()};Request timed out"
+      @id = JSON.parse( response.body )['id']
     rescue RestClient::Exception => e
-      log "[ES CELL CREATION];#{to_json()};#{e}"
+      log "[ES CELL CREATION];#{to_json()};#{e.response}\n"
     end
   end
   
@@ -1236,15 +1197,9 @@ class EsCell
     @id = es_cell_hash['id']
     unless self.eql? es_cell_hash
       begin
-        response = request( 'PUT', "es_cells/#{@id}.json", to_json() )
-      rescue RestClient::RequestFailed => e
-        log "[ES CELL UPDATE];#{to_json()};#{e.http_body}"
-      rescue RestClient::ServerBrokeConnection
-        log "[ES CELL UPDATE];#{to_json()};The server broke the connection prior to the request completing."
-      rescue RestClient::RequestTimeout
-        log "[ES CELL UPDATE];#{to_json()};Request timed out"
+        request( 'PUT', "es_cells/#{@id}.json", to_json() )
       rescue RestClient::Exception => e
-        log "[ES CELL UPDATE];#{to_json()};#{e}"
+        log "[ES CELL UPDATE];#{to_json()};#{e.response}\n"
       end
     end
   end
@@ -1252,14 +1207,8 @@ class EsCell
   def delete_from_idcc
     begin
       request( 'DELETE', "es_cells/#{@id}.json" )
-    rescue RestClient::RequestFailed => e
-      log "[ES CELL DELETE];#{to_json()};#{e.http_body}"
-    rescue RestClient::ServerBrokeConnection
-      log "[ES CELL DELETE];#{to_json()};The server broke the connection prior to the request completing."
-    rescue RestClient::RequestTimeout
-      log "[ES CELL DELETE];#{to_json()};Request timed out"
     rescue RestClient::Exception => e
-      log "[ES CELL DELETE];#{to_json()};#{e}"
+      log "[ES CELL DELETE];#{to_json()};#{e.response}\n"
     end
   end
 end
@@ -1342,7 +1291,7 @@ class GenbankFile
       
       puts "Page: #{page}"
       response = request( 'GET', url )
-      mol_struct_list = JSON.parse( response )
+      mol_struct_list = JSON.parse( response.body )
       
       if mol_struct_list.length > 0
         mol_struct_list.each do |mol_struct_hash|
@@ -1385,7 +1334,7 @@ class GenbankFile
         if response.nil? or response == 'null'
           genbank_file.create()
         else
-          json_response = JSON.parse( response )
+          json_response = JSON.parse( response.body )
           json_response.nil? ? genbank_file.create() : genbank_file.update( json_response[0] )
         end
       end
