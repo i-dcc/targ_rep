@@ -20,8 +20,7 @@ class MolecularStructuresController < ApplicationController
   # GET /molecular_structures.xml
   # GET /molecular_structures.json
   def index
-    @molecular_structures = @search.all( :include => :pipeline )
-    @molecular_structures = @molecular_structures.paginate(:page => params[:page])
+    @molecular_structures = @search.all( :include => :pipeline ).paginate(:page => params[:page])
     
     respond_to do |format|
       format.html # index.html.erb
