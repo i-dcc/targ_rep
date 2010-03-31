@@ -1224,12 +1224,12 @@ class GenbankFile
     
     # Targeting vector file
     url = GENBANK_URL + "?design_id=#{design_id}&cassette=#{cassette}&backbone=#{backbone}"
-    @targeting_vector = RestClient::get( url ) rescue ''
+    @targeting_vector = RestClient::get( url ).body rescue ''
     
     # ES Cell clone file
     url = GENBANK_URL + "?design_id=#{design_id}&cassette=#{cassette}"
     url += "&targeted_trap=1" if args[:targeted_trap]
-    @escell_clone = RestClient::get( url ) rescue ''
+    @escell_clone = RestClient::get( url ).body rescue ''
     return self
   end
   
@@ -1324,7 +1324,7 @@ class GenbankFile
             genbank_file.create()
           else
             json_response = JSON.parse( response.body )
-            json_response.nil? ? genbank_file.create() : genbank_file.update( json_response[0] )
+            json_response.nil? ? genbank_file.create() : genbank_file.update( json_response )
           end
         rescue Exception => e
           log "[GENBANK FILE CREATE OR UPDATE];#{e}"
