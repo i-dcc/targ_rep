@@ -895,15 +895,15 @@ class TargetingVector
     end
     
     # Search through webservice
-    targ_vec = search()
+    targ_vec = TargetingVector.search( name )
     return TargetingVector.new( targ_vec ) unless targ_vec.nil?
     
     raise "Can't find targeting vector #{name}"
   end
   
-  def self.search
+  def self.search( name )
     begin
-      response = request( 'GET', "targeting_vectors.json?name=#{@name}" )
+      response = request( 'GET', "targeting_vectors.json?name=#{name}" )
       json_response = JSON.parse( response.body )
       return json_response[0] if json_response.length > 0
     rescue RestClient::ResourceNotFound
@@ -940,7 +940,7 @@ class TargetingVector
   end
   
   def push_to_idcc
-    existing_targ_vec = search()
+    existing_targ_vec = TargetingVector.search( @name )
     existing_targ_vec.nil? ? create() : update( existing_targ_vec )
   end
 end
