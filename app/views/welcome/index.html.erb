@@ -30,15 +30,12 @@
 <div class="span-12">
   <h4>Catalogue</h4>
   <p>
-    This repository is designed and intended to catalogue <strong>complete and 
-    available</strong> gene targeting products and supply access to this data 
-    via the <a href="http://knockoutmouse.org/mart">IKMC Biomart Portal</a>.
+    This repository is a <em>catalogue</em> of targeted mutant alleles produced by the IKMC members and the mirKO program.
   </p>
   
   <h4>Allele Maps</h4>
   <p>
-    All alleles (with molecular structure details) stored in this repository,
-    will automatically have allele map images generated based on the molecular 
+    All alleles stored in this repository will have allele map images generated based on the molecular 
     structure information supplied.  Examples of such images can be seen 
     <%= link_to 'here', allele_image_url(:id => 164) %> and 
     <%= link_to 'here', allele_image_url(:id => 141) %>.  <em>Note: this 
@@ -49,11 +46,11 @@
 <div class="span-12 last">
   <h4>Genome Browser Track</h4>
   <p>
-    In addition to the maps, all alleles in this repository will appear on the IKMC 
-    <a href="http://en.wikipedia.org/wiki/Distributed_Annotation_System">DAS</a> 
-    track within the <a href="http://www.ensembl.org">Ensembl genome browser</a>. 
-    Thus advertising the existence of the alleles to a wide audience in the context 
-    of their genomic location.
+    All alleles in this repository will appear in the <a href="http://das.sanger.ac.uk/das/ikmc_products">IKMC DAS Track</a>, see 
+    <a href="http://www.ensembl.org/Mus_musculus/Location/View?g=ENSMUSG00000030217;r=6:136792397-136810696&contigviewbottom=das:http://das.sanger.ac.uk/das/ikmc_products=normal">here</a> 
+    for an example (the gene Art4). (See <a href="http://en.wikipedia.org/wiki/Distributed_Annotation_System">wikipedia</a> 
+    for information on the DAS specification.) This track can be included into any DAS-aware genome browser 
+    (in particular the <a href="http://www.ensembl.org/Mus_musculus">Ensembl</a> genome browser).
   </p>
 </div>
 
