@@ -503,9 +503,9 @@ class MolecularStructure
       AND project.cassette IS NOT NULL
       AND project.backbone IS NOT NULL
       AND (
-        ws.epd_distribute IS NOT NULL
-        OR ( ws.targeted_trap IS NOT NULL AND project.targeted_trap > 0 )
-        OR ( ws.pgdgr_distribute IS NOT NULL AND ws.targeted_trap IS NULL )
+        ( ws.epd_distribute = 'yes' AND project.epd_distribute > 0 )
+        OR ( ws.targeted_trap = 'yes' AND project.targeted_trap > 0 )
+        OR ( ws.pgdgr_distribute = 'yes' AND ws.targeted_trap IS NULL AND ws.epd_distribute IS NULL )
       )
     ORDER BY
       mgi_gene.mgi_accession_id,
@@ -853,25 +853,29 @@ class TargetingVector
     @@ora_dbh.exec( query ).fetch do |fetch_row|
       project_id    = fetch_row[0]
       targ_vec_name = fetch_row[1]
-      nb_es_cells   = fetch_row[2]
-      nb_targ_traps = fetch_row[3]
+      has_es_cells   = fetch_row[2] == 'yes'
+      has_targ_traps = fetch_row[3] == 'yes'
       
       # Find targeting vector in cache or I-DCC
       begin
-        targ_vec = TargetingVector.find( targ_vec_name, project_id )
+        targ_vec = TargetingVector.find( targ_vec_name )
       rescue Exception => e
         log "[TARG VEC];#{targ_vec_name};Could not find obsolete targ vec;#{e}"
         next
       end
       
       # Delete targeting vector if not linked to any ES Cell ...
-      if nb_es_cells == 0 and nb_targ_traps == 0
+      unless has_targ_traps or has_es_cells
         targ_vec.delete_from_idcc()
       
       # ... or set targeting vector as hidden in I-DCC.
       else
-        targ_vec.display = false
-        targ_vec.update()
+        begin
+          targ_vec.display = false
+          request( 'PUT', "targeting_vectors/#{@id}.json", to_json() )
+        rescue RestClient::Exception => e
+          log "[TARG VEC OBSOLETES];#{to_json()};#{e.response}\n"
+        end
       end
     end
   end
@@ -884,27 +888,27 @@ class TargetingVector
     @@targ_vec_cache = nil
   end
   
-  def self.find( name, ikmc_project_id )
+  def self.find( name )
     # Search in cache
     @@targ_vec_cache.each_pair do |id, targ_vec|
-      if targ_vec.name == name and targ_vec.ikmc_project_id == ikmc_project_id
-        return targ_vec
-      end
+      return targ_vec if targ_vec.name == name
     end
     
     # Search through webservice
-    targ_vec = search( name, ikmc_project_id )
+    targ_vec = TargetingVector.search( name )
     return TargetingVector.new( targ_vec ) unless targ_vec.nil?
     
     raise "Can't find targeting vector #{name}"
   end
   
-  def self.search( name, ikmc_project_id )
-    params = "name=#{name}&ikmc_project_id=#{ikmc_project_id}"
-    
-    response = request( 'GET', "targeting_vectors.json?#{params}" )
-    json_response = JSON.parse( response.body )
-    return json_response[0] if json_response.length > 0
+  def self.search( name )
+    begin
+      response = request( 'GET', "targeting_vectors.json?name=#{name}" )
+      json_response = JSON.parse( response.body )
+      return json_response[0] if json_response.length > 0
+    rescue RestClient::ResourceNotFound
+      return nil
+    end
   end
   
   def create
@@ -916,11 +920,14 @@ class TargetingVector
     end
   end
   
-  def update
-    begin
-      request( 'PUT', "targeting_vectors/#{@id}.json", to_json() )
-    rescue RestClient::Exception => e
-      log "[TARG VEC UPDATE];#{to_json()};#{e.response}\n"
+  def update( targ_vec_hash )
+    @id = targ_vec_hash['id']
+    unless self.eql? targ_vec_hash
+      begin
+        request( 'PUT', "targeting_vectors/#{@id}.json", to_json() )
+      rescue RestClient::Exception => e
+        log "[TARG VEC UPDATE];#{to_json()};#{e.response}\n"
+      end
     end
   end
   
@@ -933,13 +940,8 @@ class TargetingVector
   end
   
   def push_to_idcc
-    existing_targ_vec = TargetingVector.search( @name, @ikmc_project_id )
-    if existing_targ_vec.nil?
-      create()
-    else
-      @id = existing_targ_vec['id']
-      update() unless self.eql? existing_targ_vec
-    end
+    existing_targ_vec = TargetingVector.search( @name )
+    existing_targ_vec.nil? ? create() : update( existing_targ_vec )
   end
 end
 
@@ -1077,7 +1079,7 @@ class EsCell
       
       # Get or create targeting vector
       begin
-        targ_vec = TargetingVector.find( targ_vec_name, project_id )
+        targ_vec = TargetingVector.find( targ_vec_name )
       rescue Exception => e
         log "[ES CELL];#{e} - will try to create it."
         
