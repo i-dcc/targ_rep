@@ -1,25 +1,72 @@
 <div class="span-24">
   <h3>Welcome</h3>
+<div>
+
+<div class="span-12">
   <p>
     Welcome to the I-DCC Targeting Repository. This repository 
-    compiles information on mutant ES Cells and Targeting vectors made by the pipelines in the  
-    <a href="http://www.knockoutmouse.org">International Knockout Mouse Consortium 
-    (IKMC)</a>.
+    compiles information on mutant ES Cells and Targeting vectors made by 
+    the pipelines in the <a href="http://knockoutmouse.org">International 
+    Knockout Mouse Consortium (IKMC)</a>.
   </p>
+</div>
+
+<div class="span-12 last">
   <p>
     <strong>Please note:</strong>
-    This site is provided to enable IKMC members to <em>enter</em> product data. To <em>browse</em> this data you should use  
-    the <a href="http://www.i-dcc.org/biomart">IKMC Biomart</a> or visit <a href="http://www.knockoutmouse.org">knockoutmouse.org</a>.
+    This site is provided to enable IKMC members to <em>enter</em> product data. 
+    To <em>browse</em> this data you should use the 
+    <a href="http://knockoutmouse.org/mart">IKMC Biomart Portal</a> at 
+    <a href="http://knockoutmouse.org">knockoutmouse.org</a>.
   </p>
 </div>
 
 <hr />
 
-<div class="span-8">
-  <h3>Summary Statistics</h3>
+<div class="span-24">
+  <h3>About</h3>
+<div>
+  
+<div class="span-12">
+  <h4>Catalogue</h4>
   <p>
-    This repository currently tracks information on <%= @total_counts[:molecular_structures] %> alleles, 
-    covering <%= @total_counts[:genes] %> mouse genes, that have 
+    This repository is designed and intended to catalogue <strong>complete and 
+    available</strong> gene targeting products and supply access to this data 
+    via the <a href="http://knockoutmouse.org/mart">IKMC Biomart Portal</a>.
+  </p>
+  
+  <h4>Allele Maps</h4>
+  <p>
+    All alleles (with molecular structure details) stored in this repository,
+    will automatically have allele map images generated based on the molecular 
+    structure information supplied.  Examples of such images can be seen 
+    <%= link_to 'here', allele_image_url(:id => 164) %> and 
+    <%= link_to 'here', allele_image_url(:id => 141) %>.  <em>Note: this 
+    functionality is still in active development</em>.
+  </p>
+</div>
+
+<div class="span-12 last">
+  <h4>Genome Browser Track</h4>
+  <p>
+    In addition to the maps, all alleles in this repository will appear on the IKMC 
+    <a href="http://en.wikipedia.org/wiki/Distributed_Annotation_System">DAS</a> 
+    track within the <a href="http://www.ensembl.org">Ensembl genome browser</a>. 
+    Thus advertising the existence of the alleles to a wide audience in the context 
+    of their genomic location.
+  </p>
+</div>
+
+<hr />
+
+<div class="span-24">
+  <h3>Summary</h3>
+<div>
+
+<div class="span-8">
+  <p>
+    This repository currently houses information on <%= @total_counts[:molecular_structures] %>
+    alleles, covering <%= @total_counts[:genes] %> mouse genes, that have 
     been made into <%= @total_counts[:vectors] %> targeting vectors and 
     <%= @total_counts[:es_cells] %> mutant ES cells, over 
     <%= @total_counts[:pipelines] %> different production pipelines.
