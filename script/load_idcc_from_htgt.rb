@@ -499,6 +499,7 @@ class MolecularStructure
       )
       JOIN mgi_gene ON mgi_gene.mgi_gene_id = project.mgi_gene_id
     WHERE
+      design_design_instance_id = epd_design_instance_id
       ( project.is_eucomm = 1 OR project.is_komp_csd = 1 OR project.is_norcomm = 1 )
       AND project.cassette IS NOT NULL
       AND project.backbone IS NOT NULL
@@ -651,7 +652,7 @@ class MolecularStructure
     mol_struct = search( mgi_accession_id, design_id, cassette, backbone, targeted_trap )
     return MolecularStructure.new( mol_struct ) unless mol_struct.nil?
     
-    raise "Can't find molecular structure (#{design.design_type})
+    raise "Can't find molecular structure (#{design.design_type} - targ_trap: #{targeted_trap})
     mgi_accession_id='#{mgi_accession_id}'
     AND project_design_id=#{design_id}
     AND cassette='#{cassette}'
@@ -764,9 +765,9 @@ class TargetingVector
       )
       JOIN mgi_gene ON mgi_gene.mgi_gene_id = project.mgi_gene_id
     WHERE
+      design_design_instance_id = epd_design_instance_id
       ( project.is_eucomm = 1 OR project.is_komp_csd = 1 OR project.is_norcomm = 1 )
       AND ws.pgdgr_distribute = 'yes'
-      AND ws.pgdgr_well_name IS NOT NULL
     """
   end
   
@@ -846,7 +847,7 @@ class TargetingVector
         #{get_sql_date_filter}
       )
     WHERE
-      project.targvec_distribute IS NULL
+      ws.pgdgr_distribute IS NULL
       AND ws.pgdgr_well_name IS NOT NULL
     """
     
@@ -1026,10 +1027,14 @@ class EsCell
       )
       JOIN mgi_gene ON mgi_gene.mgi_gene_id = project.mgi_gene_id
     WHERE
+      design_design_instance_id = epd_design_instance_id
       ( project.is_eucomm = 1 OR project.is_komp_csd = 1 OR project.is_norcomm = 1 )
       AND ws.pgdgr_well_name is not null
       AND ws.epd_well_name is not null
-      AND ( ws.targeted_trap = 'yes' OR ws.epd_distribute = 'yes' )
+      AND ( 
+        ( ws.targeted_trap = 'yes' AND project.targeted_trap > 0 )
+        OR ( ws.epd_distribute = 'yes' AND project.epd_distribute > 0 )
+      )
     """
   end
   
@@ -1146,11 +1151,10 @@ class EsCell
         #{get_sql_date_filter}
       )
     WHERE
-      ws.epd_well_name is not null
-      AND ws.pgdgr_well_name is not null
+      design_design_instance_id = epd_design_instance_id
       AND ( project.is_eucomm = 1 OR project.is_komp_csd = 1 OR project.is_norcomm = 1 )
-      AND ( project.targeted_trap IS NULL OR project.targeted_trap = 0 )
-      AND ( project.epd_distribute IS NULL OR project.epd_distribute = 0 )
+      AND ws.targeted_trap IS NULL
+      AND ws.epd_distribute IS NULL
     """
     
     @@ora_dbh.exec( query ).fetch do |fetch_row|
