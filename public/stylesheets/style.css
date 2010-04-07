@@ -1,4 +1,3 @@
-
 body {
   font-family: "Lucida Grande", Lucida, Verdana, sans-serif;
 }
@@ -176,6 +175,10 @@ table input[type="text"] {
 }
 
 /* Pagination */
+
+div.pagination {
+  margin: 15px 0px;
+}
 
 div.pagination a {
   padding: 2px 5px;

@@ -5,7 +5,7 @@
   <%= render :partial => 'search_form' %>
 </div>
 
-<p><%= will_paginate @molecular_structures %></p>
+<%= will_paginate @molecular_structures %>
 
 <table class="list">
   <thead>
@@ -47,8 +47,6 @@
 </table>
 
 <%= will_paginate @molecular_structures %>
-
-<div class="clear"></div>
 
 <% if @current_user %>
 <a href="<%= url_for(new_molecular_structure_path) %>" class="button positive">

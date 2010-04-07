@@ -4,8 +4,6 @@
   Project Design ID: <%=h @molecular_structure.project_design_id %>
 </h2>
 
-<p><a href="<%= allele_image_url(:id => @molecular_structure.id) %>">View picture</a></p>
-
 <div class="span-12">
   <fieldset>
     <legend>Genomic Position</legend>
@@ -90,7 +88,7 @@
   </fieldset>
   
   <fieldset id="genbank_files">
-    <legend>Genbank Files</legend>
+    <legend>Genbank Files / Images</legend>
     <% genbank_file = @molecular_structure.genbank_file %>
     <p>
       <strong>Targeting Vector Genbank File: </strong>
@@ -101,9 +99,10 @@
       <% end %>
     </p>
     <p>
-      <strong>ES Cell Clone Genbank File: </strong>
+      <strong>ES Cell Clone / Allele Genbank File: </strong>
       <% unless genbank_file.nil? or genbank_file.escell_clone.nil? %>
-        <a href="<%= escell_clone_genbank_file_url(:id => @molecular_structure.id) %>" target="_blank" class="ss_sprite ss_magnifier">view</a>
+        <a href="<%= escell_clone_genbank_file_url(:id => @molecular_structure.id) %>" target="_blank" class="ss_sprite ss_magnifier">view</a> | 
+        <a href="<%= allele_image_url(:id => @molecular_structure.id) %>" target="_blank" class="ss_sprite ss_image">allele image</a>
       <% else %>
         <em>not available</em>
       <% end %>
