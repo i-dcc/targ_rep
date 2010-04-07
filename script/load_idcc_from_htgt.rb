@@ -500,7 +500,7 @@ class MolecularStructure
       JOIN mgi_gene ON mgi_gene.mgi_gene_id = project.mgi_gene_id
     WHERE
       design_design_instance_id = epd_design_instance_id
-      ( project.is_eucomm = 1 OR project.is_komp_csd = 1 OR project.is_norcomm = 1 )
+      AND ( project.is_eucomm = 1 OR project.is_komp_csd = 1 OR project.is_norcomm = 1 )
       AND project.cassette IS NOT NULL
       AND project.backbone IS NOT NULL
       AND (
@@ -766,7 +766,7 @@ class TargetingVector
       JOIN mgi_gene ON mgi_gene.mgi_gene_id = project.mgi_gene_id
     WHERE
       design_design_instance_id = epd_design_instance_id
-      ( project.is_eucomm = 1 OR project.is_komp_csd = 1 OR project.is_norcomm = 1 )
+      AND ( project.is_eucomm = 1 OR project.is_komp_csd = 1 OR project.is_norcomm = 1 )
       AND ws.pgdgr_distribute = 'yes'
     """
   end
@@ -1028,7 +1028,7 @@ class EsCell
       JOIN mgi_gene ON mgi_gene.mgi_gene_id = project.mgi_gene_id
     WHERE
       design_design_instance_id = epd_design_instance_id
-      ( project.is_eucomm = 1 OR project.is_komp_csd = 1 OR project.is_norcomm = 1 )
+      AND ( project.is_eucomm = 1 OR project.is_komp_csd = 1 OR project.is_norcomm = 1 )
       AND ws.pgdgr_well_name is not null
       AND ws.epd_well_name is not null
       AND ( 
