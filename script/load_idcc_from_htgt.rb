@@ -749,8 +749,10 @@ class TargetingVector
       project.project_id,
       project.cassette,
       project.backbone,
-      ws.pcs_plate_name || '_' || ws.pcs_well_name as intermediate_vector,
-      ws.pgdgr_plate_name || '_' || ws.pgdgr_well_name as targeting_vector
+      ws.pcs_plate_name,
+      ws.pcs_well_name,
+      ws.pgdgr_plate_name,
+      ws.pgdgr_well_name
     FROM
       well_summary ws
       JOIN project ON project.project_id = ws.project_id
@@ -767,6 +769,7 @@ class TargetingVector
     WHERE
       design_design_instance_id = epd_design_instance_id
       AND ( project.is_eucomm = 1 OR project.is_komp_csd = 1 OR project.is_norcomm = 1 )
+      AND ws.pgdgr_well_name IS NOT NULL
       AND ws.pgdgr_distribute = 'yes'
     """
   end
@@ -788,8 +791,8 @@ class TargetingVector
       project_id        = fetch_row[2]
       cassette          = fetch_row[3]
       backbone          = fetch_row[4]
-      int_vec_name      = fetch_row[5]
-      targ_vec_name     = fetch_row[6]
+      int_vec_name      = fetch_row[5] + "_" + fetch_row[6][-3..-1]
+      targ_vec_name     = fetch_row[7] + "_" + fetch_row[8][-3..-1]
       
       design = Design.get( design_id )
       if design.nil?
@@ -1054,13 +1057,13 @@ class EsCell
       project_id        = fetch_row[2]
       cassette          = fetch_row[3]
       backbone          = fetch_row[4]
-      int_vec_name      = fetch_row[5]
-      targ_vec_name     = fetch_row[6]
-      epd_well_name     = fetch_row[7]
-      es_cell_line      = fetch_row[8]
-      allele_name       = fetch_row[9]
-      targeted_trap     = fetch_row[10] == 'yes'
-      targ_vec_dist     = fetch_row[11] == 'yes'
+      int_vec_name      = fetch_row[5] + "_" + fetch_row[6][-3..-1]
+      targ_vec_name     = fetch_row[7] + "_" + fetch_row[8][-3..-1]
+      epd_well_name     = fetch_row[9]
+      es_cell_line      = fetch_row[10]
+      allele_name       = fetch_row[11]
+      targeted_trap     = fetch_row[12] == 'yes'
+      targ_vec_dist     = fetch_row[13] == 'yes'
       
       design = Design.get( design_id )
       
