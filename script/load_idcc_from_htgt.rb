@@ -1009,8 +1009,8 @@ class EsCell
       project.project_id,
       project.cassette,
       project.backbone,
-      ws.pcs_plate_name || '_' || ws.pcs_well_name as intermediate_vector,
-      ws.pgdgr_plate_name || '_' || ws.pgdgr_well_name as targeting_vector,      
+      ws.pcs_plate_name, ws.pcs_well_name,
+      ws.pgdgr_plate_name, ws.pgdgr_well_name,
       ws.epd_well_name,
       ws.es_cell_line,
       ws.allele_name,
@@ -1156,6 +1156,7 @@ class EsCell
     WHERE
       design_design_instance_id = epd_design_instance_id
       AND ( project.is_eucomm = 1 OR project.is_komp_csd = 1 OR project.is_norcomm = 1 )
+      AND ws.epd_well_name is not null
       AND ws.targeted_trap IS NULL
       AND ws.epd_distribute IS NULL
     """
