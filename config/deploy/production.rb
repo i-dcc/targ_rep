@@ -3,9 +3,18 @@ set :deploy_to, "/software/team87/brave_new_world/capistrano_managed_apps/produc
 namespace :deploy do
   desc "Symlink shared configs and folders on each release."
   task :symlink_shared do
+    var_run_path = '/var/run/team87/idcc_targ_rep/production'
+    
     run "ln -nfs #{shared_path}/database.yml #{release_path}/config/database.yml"
-    run "mkdir -m 777 -p /var/tmp/idcc_targ_rep/production"
-    run "cd #{release_path} && rm -rf tmp && ln -nfs /var/tmp/idcc_targ_rep/production tmp"
+    
+    # /tmp
+    run "mkdir -m 777 -p #{var_run_path}/tmp"
+    run "cd #{release_path} && rm -rf tmp && ln -nfs #{var_run_path}/tmp tmp"
+    
+    # /public/javascripts - the server needs write access...
+    run "rm -rf #{var_run_path}/javascripts"
+    run "cd #{release_path}/public && mv javascripts #{var_run_path}/javascripts && ln -nfs #{var_run_path}/javascripts javascripts"
+    run "chgrp -R team87 #{var_run_path}/javascripts && chmod g+w #{var_run_path}/javascripts"
   end
 end
 

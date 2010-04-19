@@ -19,6 +19,8 @@ namespace :deploy do
   desc "Restart Passenger"
   task :restart, :roles => :app, :except => { :no_release => true } do
     run "touch #{File.join(current_path,'tmp','restart.txt')}"
+    sleep 10
+    run "rm #{File.join(current_path,'tmp','restart.txt')}"
   end
   
   desc "Set the permissions of the filesystem so that others in the team can deploy, and the team87 user can do their stuff"
