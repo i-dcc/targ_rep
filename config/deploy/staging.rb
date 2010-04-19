@@ -13,7 +13,7 @@ namespace :deploy do
     
     # /public/javascripts - the server needs write access...
     run "rm -rf #{var_run_path}/javascripts"
-    run "cd #{release_path}/public && cp -r javascripts #{var_run_path}/javascripts && ln -nfs #{var_run_path}/javascripts javascripts"
+    run "cd #{release_path}/public && mv javascripts #{var_run_path}/javascripts && ln -nfs #{var_run_path}/javascripts javascripts"
     run "chmod g+w #{var_run_path}/javascripts"
   end
 end
