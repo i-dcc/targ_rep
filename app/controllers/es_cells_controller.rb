@@ -1,6 +1,7 @@
 class EsCellsController < ApplicationController
   before_filter :require_user, :only => [:create, :edit, :update, :destroy]
   before_filter :find_escell, :only => [:show, :update, :destroy]
+  before_filter :find_escells, :only => :index
   
   # Following both are located in application_controller.rb
   before_filter :set_created_by, :only => :create
@@ -9,13 +10,7 @@ class EsCellsController < ApplicationController
   # GET /es_cells.xml
   # GET /es_cells.json
   def index
-    if params.include? :name
-      @es_cells = EsCell.name_like( params[:name] )
-      @es_cells = @es_cells.all
-    else
-      @es_cells = EsCell.all
-    end
-    @es_cells = @es_cells.paginate(:page => params[:page])
+    @es_cells = @search.all()
     
     respond_to do |format|
       format.xml  { render :xml   => @es_cells }
@@ -76,5 +71,17 @@ class EsCellsController < ApplicationController
   private
     def find_escell # makes our views "cleaner" and more consistent
       @es_cell = EsCell.find(params[:id])
+    end
+
+    def find_escells
+      escell_params = params.dup
+
+      # Just keep TargetingVector params.
+      escell_params.delete( "controller" )
+      escell_params.delete( "action" )
+      escell_params.delete( "format" )
+      escell_params.delete( "page" )
+
+      @search = EsCell.search( escell_params )
     end
 end

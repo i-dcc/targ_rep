@@ -1,6 +1,7 @@
 class TargetingVectorsController < ApplicationController
   before_filter :require_user, :only => [:create, :edit, :update, :destroy]
   before_filter :find_targ_vec, :only => [:show, :update, :destroy]
+  before_filter :find_targeting_vectors, :only => :index
   
   # Following both are located in application_controller.rb
   before_filter :set_created_by, :only => :create
@@ -13,16 +14,7 @@ class TargetingVectorsController < ApplicationController
   # GET /targeting_vectors.xml
   # GET /targeting_vectors.json
   def index
-    targ_vec_params = params.dup
-    
-    # Just keep params that are Molecular Structure attributes. 
-    # A molecular structure will be search from this params
-    targ_vec_params.delete( "controller" )
-    targ_vec_params.delete( "action" )
-    targ_vec_params.delete( "format" )
-    targ_vec_params.delete( "page" )
-    
-    @targeting_vectors = TargetingVector.search( targ_vec_params ).all
+    @targeting_vectors = @search.all()
     
     respond_to do |format|
       format.js # index.js.erb
@@ -84,6 +76,18 @@ class TargetingVectorsController < ApplicationController
   private
     def find_targ_vec
       @targeting_vector = TargetingVector.find(params[:id])
+    end
+    
+    def find_targeting_vectors
+      targ_vec_params = params.dup
+      
+      # Just keep TargetingVector params.
+      targ_vec_params.delete( "controller" )
+      targ_vec_params.delete( "action" )
+      targ_vec_params.delete( "format" )
+      targ_vec_params.delete( "page" )
+      
+      @search = TargetingVector.search( targ_vec_params )
     end
     
     def format_nested_params
