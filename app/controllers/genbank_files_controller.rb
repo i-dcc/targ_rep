@@ -5,7 +5,7 @@ class GenbankFilesController < ApplicationController
   def index
     respond_to do |format|
       if params.key? :molecular_structure_id
-        @genbank_file = GenbankFile.molecular_structure_id_equals(params[:molecular_structure_id]).first
+        @genbank_file = GenbankFile.search(:molecular_structure_id => params[:molecular_structure_id]).all
         format.xml  { render :xml   => @genbank_file }
         format.json { render :json  => @genbank_file }
       else
