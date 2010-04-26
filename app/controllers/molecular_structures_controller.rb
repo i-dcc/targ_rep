@@ -96,8 +96,8 @@ class MolecularStructuresController < ApplicationController
           flash[:notice] = 'Allele successfully updated.'
           redirect_to @molecular_structure 
         }
-        format.xml  { head :ok }
-        format.json { head :ok }
+        format.xml  { render :xml  => @molecular_structure }
+        format.json { render :json => @molecular_structure }
       else
         format.html {
           if @molecular_structure.genbank_file.nil?
