@@ -1,5 +1,5 @@
 set :application, "idcc_targ_rep"
-set :repository,  "git://github.com/dazoakley/targ_rep2.git"
+set :repository,  "git://github.com/dazoakley/targ_rep.git"
 set :branch, "master"
 set :user, "do2"
 
