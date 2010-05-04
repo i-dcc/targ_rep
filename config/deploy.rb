@@ -13,7 +13,7 @@ set :use_sudo, false
 role :web, "localhost"
 role :app, "localhost"
 role :db,  "localhost", :primary => true
-set :ssh_options, { :port => 10025 }
+set :ssh_options, { :port => 10027 }
 
 namespace :deploy do
   desc "Restart Passenger"
