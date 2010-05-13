@@ -1,5 +1,4 @@
 class TargetingVectorsController < ApplicationController
-  before_filter :require_user, :only => [:create, :edit, :update, :destroy]
   before_filter :find_targ_vec, :only => [:show, :update, :destroy]
   before_filter :find_targeting_vectors, :only => :index
   

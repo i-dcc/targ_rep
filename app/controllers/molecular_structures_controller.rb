@@ -1,5 +1,4 @@
 class MolecularStructuresController < ApplicationController
-  before_filter :require_user, :only => [:create, :edit, :update, :destroy]
   before_filter :find_molecular_structures, :only => :index
   before_filter :find_molecular_structure,
     :only => [

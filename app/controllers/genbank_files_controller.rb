@@ -1,5 +1,4 @@
 class GenbankFilesController < ApplicationController
-  before_filter :require_user, :only => [:create, :update, :destroy]
   before_filter :find_genbank_file, :only => [:show, :update, :destroy]
   
   def index

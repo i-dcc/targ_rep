@@ -1,5 +1,4 @@
 class PipelinesController < ApplicationController
-  before_filter :require_user, :only => [:create, :update, :destroy]
   before_filter :find_pipeline, :only => [:show, :edit, :update, :destroy]
   
   # GET /pipelines

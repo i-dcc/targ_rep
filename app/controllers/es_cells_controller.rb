@@ -1,5 +1,4 @@
 class EsCellsController < ApplicationController
-  before_filter :require_user, :only => [:create, :edit, :update, :destroy]
   before_filter :find_escell, :only => [:show, :update, :destroy]
   before_filter :find_escells, :only => :index
   
