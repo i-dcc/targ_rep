@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
-  before_filter :require_user,  :only => [:index, :show, :edit, :update]
-  before_filter :require_admin, :only => [:new, :create, :destroy]
+  before_filter :require_user,  :only => [:show, :edit, :update]
+  before_filter :require_admin, :only => [:index, :new, :create, :destroy]
   before_filter :find_user,     :only => [:show, :edit, :update]
 
   def index
@@ -46,7 +46,7 @@ class UsersController < ApplicationController
       if params[:id]
         if @current_user.is_admin
           @user = User.find( params[:id] )
-        elsif params[:id] == current_user.id
+        elsif params[:id] == current_user.id.to_s
           @user = current_user
         else
           flash[:error] = "Access restricted - you need to be admin"
