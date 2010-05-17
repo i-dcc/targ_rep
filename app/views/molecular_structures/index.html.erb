@@ -15,7 +15,9 @@
       <th>Design Type</th>
       <th>Cassette</th>
       <th>Backbone</th>
-      <th>Targeted trap</th>
+      <th>Vectors</th>
+      <th>ES Cells</th>
+      <th>Targeted Trap</th>
       <th class="last"></th>
     </tr>
   </thead>
@@ -33,6 +35,20 @@
         <td><%= mol_struct.design_type %></td>
         <td><%= mol_struct.cassette %></td>
         <td><%= mol_struct.backbone %></td>
+        <td>
+          <% if mol_struct.targeting_vectors.size > 0 %>
+            <span class="ss_sprite ss_tick">&nbsp;</span>
+          <% else %>
+            <span class="ss_sprite ss_cross">&nbsp;</span>
+          <% end %>
+        </td>
+        <td>
+          <% if mol_struct.es_cells.size > 0 %>
+            <span class="ss_sprite ss_tick">&nbsp;</span>
+          <% else %>
+            <span class="ss_sprite ss_cross">&nbsp;</span>
+          <% end %>
+        </td>
         <td><%= mol_struct.targeted_trap? %></td>
         <td>
           <%= link_to 'view', mol_struct, :class => "ss_sprite ss_magnifier" %>
