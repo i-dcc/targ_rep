@@ -2,6 +2,9 @@ class EsCellsController < ApplicationController
   before_filter :find_escell, :only => [:show, :update, :destroy]
   before_filter :find_escells, :only => :index
   
+  # Must be after "find_escell" filter (as it requires an object)
+  before_filter :ensure_permission, :only => [:update, :destroy]
+  
   # Following both are located in application_controller.rb
   before_filter :set_created_by, :only => :create
   before_filter :set_updated_by, :only => :update

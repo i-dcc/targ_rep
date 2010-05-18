@@ -106,17 +106,29 @@ class MolecularStructuresControllerTest < ActionController::TestCase
     )
   end
 
-  should "create molecular structure" do
+  should "create, update and delete molecular structure" do
     mol_struct_attrs = Factory.attributes_for( :molecular_structure )
     mol_struct_attrs.update({
       :pipeline_id => MolecularStructure.first.pipeline_id
     })
     
+    # CREATE
     assert_difference('MolecularStructure.count') do
       post :create, :molecular_structure => mol_struct_attrs
     end
-    
     assert_redirected_to molecular_structure_path(assigns(:molecular_structure))
+    
+    created_mol_struct = MolecularStructure.search( :mgi_accession_id => mol_struct_attrs[:mgi_accession_id] ).first
+    
+    # UPDATE
+    put :update, :id => created_mol_struct.id, :molecular_structure => Factory.attributes_for( :molecular_structure )
+    assert_redirected_to molecular_structure_path(assigns(:molecular_structure))
+    
+    # DELETE
+    assert_difference('MolecularStructure.count', -1) do
+      delete :destroy, :id => created_mol_struct.id
+    end
+    assert_redirected_to molecular_structures_path
   end
   
   should "create molecular structure and genbank file" do
@@ -239,14 +251,22 @@ class MolecularStructuresControllerTest < ActionController::TestCase
     assert_response :success
   end
 
-  should "update molecular structure" do
-    put :update, :id => MolecularStructure.find(:first).to_param, 
-      :molecular_structure => Factory.attributes_for( :molecular_structure )
-    assert_redirected_to molecular_structure_path(assigns(:molecular_structure))
-  end
-
   should "not update molecular structure" do
-    put :update, :id => MolecularStructure.first.id,
+    mol_struct_attrs = Factory.attributes_for( :molecular_structure )
+    mol_struct_attrs.update({
+      :pipeline_id => MolecularStructure.first.pipeline_id
+    })
+    
+    # CREATE a valid Molecular Structure
+    assert_difference('MolecularStructure.count') do
+      post :create, :molecular_structure => mol_struct_attrs
+    end
+    assert_redirected_to molecular_structure_path(assigns(:molecular_structure))
+    
+    created_mol_struct = MolecularStructure.search( :mgi_accession_id => mol_struct_attrs[:mgi_accession_id] ).first
+    
+    # UPDATE - should fail but not with permission denied
+    put :update, :id => created_mol_struct.id,
       :molecular_structure => {
         :chromosome => "WRONG CHROMOSOME",
         :strand     => "WRONG STRAND"
@@ -254,11 +274,18 @@ class MolecularStructuresControllerTest < ActionController::TestCase
     assert_template :edit
   end
 
-  should "destroy molecular_structure" do
-    assert_difference('MolecularStructure.count', -1) do
-      delete :destroy, :id => MolecularStructure.find(:first).to_param
-    end
+  should "not update molecular_structure when permission is denied" do
+    # Permission will be denied here because we are not updating with the owner
+    put :update, :id => MolecularStructure.first.id, 
+      :molecular_structure => { :mgi_accession_id => 'new mgi_accession_id' }
+    assert_response 302
+  end
 
-    assert_redirected_to molecular_structures_path
+  should "not destroy molecular_structure when permission is denied" do
+    # Permission will be denied here because we are not deleting with the owner
+    assert_no_difference('MolecularStructure.count') do
+      delete :destroy, :id => MolecularStructure.first.id
+    end
+    assert_response 302
   end
 end

@@ -9,6 +9,9 @@ class MolecularStructuresController < ApplicationController
       :get_allele_image
     ]
   
+  # Must be after "find_molecular_structure" filter (as it requires an object)
+  before_filter :ensure_permission, :only => [:update, :destroy]
+  
   # Following both are located in application_controller.rb
   before_filter :set_created_by, :only => :create
   before_filter :set_updated_by, :only => :update

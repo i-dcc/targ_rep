@@ -63,6 +63,34 @@ class ApplicationController < ActionController::Base
         redirect_to root_url
       end
     end
+    
+    def ensure_permission
+      changed_object =
+        if @molecular_structure then @molecular_structure
+        elsif @targeting_vector then @targeting_vector
+        elsif @es_cell          then @es_cell
+        elsif @genbank_file     then @genbank_file
+        else
+          raise "Expecting one of the following objects: @molecular_structure, @targeting_vector, @es_cell or @genbank_file"
+        end
+      
+      if not changed_object.has_attribute? 'created_by'
+        raise "Expecting the object to have a 'created_by' attribute."
+      end
+      
+      if current_user != changed_object.created_by and !@current_user.is_admin
+        error_msg = "You are not allowed to perform this action"
+        
+        respond_to do |format|
+          format.html {
+            flash[:error] = error_msg
+            redirect_to root_url
+          }
+          format.xml  { render :xml   => error_msg, :status => :forbidden }
+          format.json { render :json  => error_msg, :status => :forbidden }
+        end
+      end
+    end
   
   private
     def set_created_by

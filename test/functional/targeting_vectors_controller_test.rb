@@ -20,14 +20,28 @@ class TargetingVectorsControllerTest < ActionController::TestCase
     assert_not_nil assigns(:targeting_vectors)
   end
   
-  should "create targeting vector" do
+  should "create, update and delete targeting vector" do
+    # CREATE
+    targ_vec_attrs = Factory.attributes_for( :targeting_vector )
     assert_difference('TargetingVector.count') do
       post :create, :targeting_vector => {
-        :name                   => Factory.attributes_for( :targeting_vector )[:name],
+        :name                   => targ_vec_attrs[:name],
         :molecular_structure_id => TargetingVector.first.molecular_structure_id
       }
     end
+    assert_response :success
     
+    created_targ_vec = TargetingVector.search( :name => targ_vec_attrs[:name] ).first
+    
+    # UPDATE
+    attrs = Factory.attributes_for( :targeting_vector )
+    put :update, :id => created_targ_vec.id, :targeting_vector => { :name => 'new name' }
+    assert_response :success
+    
+    # DELETE
+    assert_difference('TargetingVector.count', -1) do
+      delete :destroy, :id => created_targ_vec.id
+    end
     assert_response :success
   end
   
@@ -44,35 +58,40 @@ class TargetingVectorsControllerTest < ActionController::TestCase
     assert_response :success, "Controller does not allow XML display"
   end
   
-  should "update targeting_vector" do
-    attrs = Factory.attributes_for( :targeting_vector )
-    put :update, :id => TargetingVector.first.id,
-      :targeting_vector => {
-        :ikmc_project_id     => attrs[:ikmc_project_id],
-        :name                => attrs[:name],
-        :intermediate_vector => attrs[:intermediate_vector]
-      }
-    assert_response :success
-  end
-
-  should "not update targeting vector" do
+  should "not update targeting_vector" do
+    targ_vec_attrs   = Factory.attributes_for( :targeting_vector )
     another_targ_vec = Factory.create( :targeting_vector )
-
-    put :update, :id => TargetingVector.first.id, :targeting_vector => {
-      :name         => another_targ_vec.name
-    }
-    assert_response :unprocessable_entity
     
-    put :update, :id => TargetingVector.first.id, :targeting_vector => {
-      :molecular_structure_id => nil
-    }
+    # CREATE a valid Targeting Vector
+    targ_vec_attrs = Factory.attributes_for( :targeting_vector )
+    assert_difference('TargetingVector.count') do
+      post :create, :targeting_vector => {
+        :name                   => targ_vec_attrs[:name],
+        :molecular_structure_id => TargetingVector.first.molecular_structure_id
+      }
+    end
+    assert_response :success
+    
+    created_targ_vec = TargetingVector.search( :name => targ_vec_attrs[:name] ).first
+    
+    # UPDATE - should fail but not with permission denied
+    put :update, :id => created_targ_vec.id, :targeting_vector => { :name => another_targ_vec.name }
+    assert_response :unprocessable_entity
+    put :update, :id => created_targ_vec.id, :targeting_vector => { :molecular_structure_id => nil }
     assert_response :unprocessable_entity
   end
   
-  should "destroy targeting_vector" do
-    assert_difference('TargetingVector.count', -1) do
-      delete :destroy, :id => TargetingVector.first
+  should "not update targeting_vector when permission is denied" do
+    # Permission will be denied here because we are not updating with the owner
+    put :update, :id => TargetingVector.first.id, :targeting_vector => { :name => 'new name' }
+    assert_response 302
+  end
+
+  should "not destroy targeting_vector when permission is denied" do
+    # Permission will be denied here because we are not deleting with the owner
+    assert_no_difference('TargetingVector.count') do
+      delete :destroy, :id => TargetingVector.first.id
     end
-    assert_response :success
+    assert_response 302
   end
 end
