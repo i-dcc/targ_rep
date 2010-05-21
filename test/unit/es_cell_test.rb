@@ -38,5 +38,21 @@ class EsCellTest < ActiveSupport::TestCase
         assert( !es_cell.save, "ES Cell validates the creation of an invalid entry" )
       end
     end
+    
+    context "with IKMC Project ID consistency issue" do
+      should "not be saved" do
+        targ_vec = Factory.create( :targeting_vector )
+        
+        es_cell = EsCell.new({
+          :name                   => "EPD001",
+          :ikmc_project_id        => "DIFFERENT FROM TARG_VEC'S ONE",
+          :targeting_vector_id    => targ_vec.id,
+          :molecular_structure_id => targ_vec.molecular_structure_id,
+        })
+        
+        assert( !es_cell.valid?, "ES Cell validates an invalid entry" )
+        assert( !es_cell.save, "ES Cell validates the creation of an invalid entry" )
+      end
+    end
   end
 end

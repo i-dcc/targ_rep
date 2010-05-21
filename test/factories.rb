@@ -4,6 +4,7 @@
 Factory.sequence(:pgdgr_plate_name) { |n| "PGDGR_#{n}" }
 Factory.sequence(:epd_plate_name) { |n| "EPD_#{n}" }
 Factory.sequence(:pipeline_name) { |n| "pipeline_name_#{n}" }
+Factory.sequence(:ikmc_project_id) { |n| "project_000#{n}" }
 
 ##
 ## Users
@@ -126,6 +127,7 @@ end
 
 Factory.define :targeting_vector do |f|
   f.name { Factory.next(:pgdgr_plate_name) }
+  f.ikmc_project_id { Factory.next(:ikmc_project_id) }
   f.association :molecular_structure
 end
 
@@ -140,11 +142,16 @@ Factory.define :es_cell do |f|
   f.name                { Factory.next(:epd_plate_name) }
   f.parental_cell_line  { ['JM8 parental', 'JM8.F6', 'JM8.N19'].choice }
   
-  f.association :molecular_structure
+  ikmc_project_id = Factory.next( :ikmc_project_id )
   
+  f.association :molecular_structure
   f.targeting_vector { |es_cell|
-    es_cell.association( :targeting_vector, :molecular_structure_id => es_cell.molecular_structure_id )
+    es_cell.association( :targeting_vector, { 
+      :molecular_structure_id => es_cell.molecular_structure_id,
+      :ikmc_project_id => ikmc_project_id
+    })
   }
+  f.ikmc_project_id { ikmc_project_id }
 end
 
 Factory.define :invalid_escell, :class => EsCell do |f|

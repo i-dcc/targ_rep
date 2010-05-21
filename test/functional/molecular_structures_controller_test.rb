@@ -58,9 +58,9 @@ class MolecularStructuresControllerTest < ActionController::TestCase
           :name                => targ_vec1[:name],
           :intermediate_vector => targ_vec1[:intermediate_vector],
           :es_cells => [
-            Factory.attributes_for( :es_cell ),
-            Factory.attributes_for( :es_cell ),
-            Factory.attributes_for( :es_cell )
+            Factory.attributes_for( :es_cell, :ikmc_project_id => targ_vec1[:ikmc_project_id] ),
+            Factory.attributes_for( :es_cell, :ikmc_project_id => targ_vec1[:ikmc_project_id] ),
+            Factory.attributes_for( :es_cell, :ikmc_project_id => targ_vec1[:ikmc_project_id] )
           ]
         },
         

@@ -43,7 +43,10 @@ class EsCell < ActiveRecord::Base
   validates_presence_of :name,                    :on => :create
   
   validate :molecular_structure_consistency,
-      :unless => "[molecular_structure,targeting_vector].any?(&:nil?)"
+    :unless => "[molecular_structure,targeting_vector].any?(&:nil?)"
+  
+  validate :ikmc_project_id_consistency, :on => :save,
+    :unless => "[ikmc_project_id,targeting_vector].any?(&:nil?)"
   
   attr_accessor :nested
   
@@ -91,6 +94,12 @@ class EsCell < ActiveRecord::Base
       and my_mol_struct.cassette          == targ_vec_mol_struct.cassette           \
       and my_mol_struct.backbone          == targ_vec_mol_struct.backbone)
         errors.add( :targeting_vector_id, "targeting vector's molecular structure differs from ES cell's molecular structure" )
+      end
+    end
+    
+    def ikmc_project_id_consistency
+      if ikmc_project_id != self.targeting_vector.ikmc_project_id
+        errors.add( :ikmc_project_id, "targeting vector's IKMC Project ID is different.")
       end
     end
 end

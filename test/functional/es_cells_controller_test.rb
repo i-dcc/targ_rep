@@ -46,6 +46,19 @@ class EsCellsControllerTest < ActionController::TestCase
     assert_response :success
   end
   
+  should "create without providing a targeting vector" do
+    es_cell_attrs = Factory.attributes_for( :es_cell )
+    
+    assert_difference('EsCell.count') do
+      post :create, :es_cell => {
+        :name                    => es_cell_attrs[:name],
+        :parental_cell_line      => es_cell_attrs[:parental_cell_line],
+        :molecular_structure_id  => EsCell.first.molecular_structure_id
+      }
+    end
+    assert_response :success
+  end
+  
   should "show es_cell" do
     es_cell_id = EsCell.first.id
     
