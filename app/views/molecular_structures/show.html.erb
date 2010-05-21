@@ -150,6 +150,7 @@
           <th>Targeting Vector</th>
           <th>Allele Symbol Superscript</th>
           <th>Parental Cell Line</th>
+          <th>IKMC Project ID</th>
           <th>5' LR Check</th>
           <th>3' LR Check</th>
           <th>5' SR Check</th>
@@ -162,6 +163,7 @@
             <td><% if es_cell.targeting_vector %><%= es_cell.targeting_vector.name %><% end %></td>
             <td><%= es_cell.allele_symbol_superscript %></td>
             <td><%= es_cell.parental_cell_line %></td>
+            <td><%= es_cell.ikmc_project_id %></td>
             <%
               es_cell_checks = [
                 es_cell.upper_LR_check,
