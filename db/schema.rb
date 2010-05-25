@@ -46,6 +46,9 @@ ActiveRecord::Schema.define(:version => 20100521095311) do
     t.string   "ikmc_project_id"
   end
 
+  add_index "es_cells", ["molecular_structure_id"], :name => "es_cells_molecular_structure_id_fk"
+  add_index "es_cells", ["targeting_vector_id"], :name => "es_cells_targeting_vector_id_fk"
+
   create_table "genbank_files", :force => true do |t|
     t.integer  "molecular_structure_id",                       :null => false
     t.text     "escell_clone",           :limit => 2147483647
@@ -53,6 +56,8 @@ ActiveRecord::Schema.define(:version => 20100521095311) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "genbank_files", ["molecular_structure_id"], :name => "genbank_files_molecular_structure_id_fk"
 
   create_table "molecular_structures", :force => true do |t|
     t.string   "assembly",            :limit => 50,  :default => "NCBIM37", :null => false
@@ -105,6 +110,7 @@ ActiveRecord::Schema.define(:version => 20100521095311) do
     t.boolean  "display",                :default => true
   end
 
+  add_index "targeting_vectors", ["molecular_structure_id"], :name => "targeting_vectors_molecular_structure_id_fk"
   add_index "targeting_vectors", ["name"], :name => "index_targvec", :unique => true
 
   create_table "users", :force => true do |t|
@@ -119,6 +125,13 @@ ActiveRecord::Schema.define(:version => 20100521095311) do
     t.datetime "updated_at"
   end
 
+  add_foreign_key "es_cells", "molecular_structures", :name => "es_cells_molecular_structure_id_fk", :dependent => :delete
+  add_foreign_key "es_cells", "targeting_vectors", :name => "es_cells_targeting_vector_id_fk", :dependent => :delete
+
+  add_foreign_key "genbank_files", "molecular_structures", :name => "genbank_files_molecular_structure_id_fk", :dependent => :delete
+
   add_foreign_key "molecular_structures", "pipelines", :name => "molecular_structures_pipeline_id_fk", :dependent => :delete
+
+  add_foreign_key "targeting_vectors", "molecular_structures", :name => "targeting_vectors_molecular_structure_id_fk", :dependent => :delete
 
 end
