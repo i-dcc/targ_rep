@@ -1,6 +1,6 @@
 log/*.log
 tmp/*
 config/database.yml
-coverage*
+coverage.data
+coverage/*
 db/*.sqlite3
-vendor/plugins/what_column/*

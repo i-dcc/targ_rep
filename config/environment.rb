@@ -22,8 +22,7 @@ Rails::Initializer.run do |config|
   config.gem "will_paginate"
   config.gem "authlogic"
   config.gem "searchlogic"
-  config.gem "googlecharts", :lib => "gchart"
-  config.gem 'acts_as_audited', :lib => false
+  config.gem "acts_as_audited", :lib => false
   config.gem "matthuhiggins-foreigner", :lib => "foreigner"
   config.gem "allele_image"
   
