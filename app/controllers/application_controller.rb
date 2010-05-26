@@ -31,9 +31,14 @@ class ApplicationController < ActionController::Base
     def require_user
       unless current_user
         store_location
-        flash[:notice] = "You must be logged in to access this page"
-        redirect_to new_user_session_url
-        return false
+        respond_to do |format|
+          format.html {
+            flash[:notice] = "You must be logged in to access this page"
+            redirect_to new_user_session_url
+          }
+          # Send back a 401 unauthorized if requesting for JSON or XML.
+          format.any(:xml, :json) { head :unauthorized }
+        end
       end
     end
     
