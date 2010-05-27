@@ -36,7 +36,6 @@ class ApplicationController < ActionController::Base
             flash[:notice] = "You must be logged in to access this page"
             redirect_to new_user_session_url
           }
-          # Send back a 401 unauthorized if requesting for JSON or XML.
           format.all {
             headers['WWW-Authenticate'] = 'Basic realm="IKMC Targeting Repository"'
             head :unauthorized

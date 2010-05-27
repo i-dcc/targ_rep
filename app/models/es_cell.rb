@@ -20,6 +20,7 @@ class EsCell < ActiveRecord::Base
   # =======================
   
   acts_as_audited
+  attr_accessor :nested
   
   # Associations
   belongs_to :created_by, :class_name => 'User', :foreign_key => 'created_by'
@@ -48,7 +49,11 @@ class EsCell < ActiveRecord::Base
   validate :ikmc_project_id_consistency, :on => :save,
     :unless => "[ikmc_project_id,targeting_vector].any?(&:nil?)"
   
-  attr_accessor :nested
+  def before_validation
+    if ikmc_project_id.nil? and targeting_vector
+      self.ikmc_project_id = targeting_vector.ikmc_project_id
+    end
+  end
   
   def targeting_vector_name
     targeting_vector.name if targeting_vector

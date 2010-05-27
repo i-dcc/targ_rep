@@ -39,6 +39,23 @@ class EsCellTest < ActiveSupport::TestCase
       end
     end
     
+    context "with an IKMC Project ID copied from its targeting vector's" do
+      should "be saved" do
+        targ_vec = Factory.create( :targeting_vector )
+        
+        # ikmc_project_id is not provided
+        es_cell = EsCell.new({
+          :name                   => 'EPD001',
+          :targeting_vector_id    => targ_vec.id,
+          :molecular_structure_id => targ_vec.molecular_structure_id
+        })
+        
+        assert( es_cell.valid?, "ES Cell does not validate a valid entry" )
+        assert( es_cell.save, "ES Cell does not validate the creation of a valid entry" )
+        assert( es_cell.ikmc_project_id == targ_vec.ikmc_project_id, "ES Cell should have copied the ikmc_project_id from its targeting vector's" )
+      end
+    end
+    
     context "with IKMC Project ID consistency issue" do
       should "not be saved" do
         targ_vec = Factory.create( :targeting_vector )
