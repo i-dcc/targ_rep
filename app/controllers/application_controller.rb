@@ -37,7 +37,10 @@ class ApplicationController < ActionController::Base
             redirect_to new_user_session_url
           }
           # Send back a 401 unauthorized if requesting for JSON or XML.
-          format.any(:xml, :json) { head :unauthorized }
+          format.all {
+            headers['WWW-Authenticate'] = 'Basic realm="IKMC Targeting Repository"'
+            head :unauthorized
+          }
         end
       end
     end
