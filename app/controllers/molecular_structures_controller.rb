@@ -183,17 +183,17 @@ class MolecularStructuresController < ApplicationController
       # Specific to create/update methods - webservice interface
       mol_struct_params = params[ :molecular_structure ]
       
-      # README: http://github.com/dazoakley/targ_rep2/issues#issue/1
+      # README: http://htgt.internal.sanger.ac.uk:4005/issues/257
       #
-      # ``accepts_nested_attributes_for`` (in model.rb) expects 
+      # 'accepts_nested_attributes_for' (in model.rb) expects 
       # <child_model>_attributes as a key in params hash in order to 
       # create <child_model> objects.
-      # For now, it is allowed to send a nested Array such as ``es_cells``
-      # instead of the expected ``es_cell_attributes`` Array.
-      # This function will rename/move ``es_cells`` to ``es_cell_attributes``.
+      # For now, it is allowed to send a nested Array such as 'es_cells'
+      # instead of the expected 'es_cell_attributes' Array.
+      # This function will rename/move 'es_cells' to 'es_cell_attributes'.
       #
       # Because of the rails issue (see ticket):
-      # This function will also add the ``nested => true`` key/value pair to each 
+      # This function will also add the 'nested => true' key/value pair to each 
       # hash contained in the Array so that the model does not try to validate
       # the ES Cell before the molecular structure gets its ID (creation only).
       
@@ -218,8 +218,8 @@ class MolecularStructuresController < ApplicationController
         mol_struct_params[:targeting_vectors].each do |attrs|
           attrs.update({ :nested => true })
           
-          # Move ``es_cells`` Array related to this Targeting Vector
-          # into the ``es_cells_attributes`` Array created above.
+          # Move 'es_cells' Array related to this Targeting Vector
+          # into the 'es_cells_attributes' Array created above.
           # es_cell hash will contain targeting_vector_name so that it can be
           # related to the proper targeting_vector when it gets an ID.
           if attrs.include? :es_cells
