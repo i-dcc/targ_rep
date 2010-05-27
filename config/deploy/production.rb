@@ -3,7 +3,7 @@ set :deploy_to, "/software/team87/brave_new_world/capistrano_managed_apps/produc
 namespace :deploy do
   desc "Symlink shared configs and folders on each release."
   task :symlink_shared do
-    var_run_path = '/var/run/team87/idcc_targ_rep/production'
+    var_run_path = '/nfs/team87/services/var/idcc_targ_rep/production'
     
     run "ln -nfs #{shared_path}/database.yml #{release_path}/config/database.yml"
     
