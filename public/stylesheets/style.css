@@ -135,17 +135,13 @@ table.list {
 }
 
 table.list thead {
-  background: #c3d9ff url(../images/bg_thead.png) repeat-x left bottom;
   color: #fff;
 }
 
 table.list thead th {
-  background: url(../images/bg_th.png) no-repeat right bottom;
-  padding-left: 10px;
-}
-
-table.list thead th.last {
-  background: none;
+  background-color: #88b7e6;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-style: italic;
 }
 
 table.list tbody tr:hover td {
