@@ -30,3 +30,4 @@ config.action_mailer.delivery_method = :test
 # Use shoulda test environment
 config.gem "shoulda", :lib => "shoulda/rails"
 config.gem "factory_girl"
+config.gem 'test-unit', :lib => 'test/unit'
