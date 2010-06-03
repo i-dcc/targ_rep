@@ -176,6 +176,22 @@ class MolecularStructuresController < ApplicationController
         })
       end
       
+      # Search on marker_symbol against SolR and returns 
+      if mol_struct_params.include? :marker_symbol
+        marker_symbol = mol_struct_params.delete( :marker_symbol )
+        solr_results = search_solr({
+          :q   => "marker_symbol:#{marker_symbol}",
+          :fl  => "mgi_accession_id"
+        })
+        docs = solr_results['response']['docs']
+        
+        unless docs.empty?
+          mol_struct_params.update({ :mgi_accession_id => docs[0]['mgi_accession_id'] })
+        else
+          mol_struct_params = {}
+        end
+      end
+      
       @search = MolecularStructure.search( mol_struct_params )
     end
     

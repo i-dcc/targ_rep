@@ -98,6 +98,17 @@ class ApplicationController < ActionController::Base
         end
       end
     end
+    
+    # Helper function that search against the SolR index according to the given solr_args 
+    def search_solr( solr_args )
+      raise "solr_args should at least contain a ':q' key" unless solr_args.has_key? :q
+      
+      unless defined? @solr
+        @solr = RSolr.connect :url => 'http://www.sanger.ac.uk/mouseportal/solr'
+      end
+      
+      @solr.select( solr_args )
+    end
   
   private
     def set_created_by

@@ -19,8 +19,8 @@ class EsCellsControllerTest < ActionController::TestCase
     es_cell_attrs = Factory.attributes_for( :es_cell )
     
     # As each test is run with a different user,
-    # we need the user to create, update and delete the same allele 
-    # so that the permissions for updating and deleting are granted
+    # we need the user to create, update and delete the same allele in a
+    # single test so that the permissions are granted for all actions.
     
     # CREATE
     assert_difference('EsCell.count') do
@@ -31,19 +31,19 @@ class EsCellsControllerTest < ActionController::TestCase
         :molecular_structure_id  => EsCell.first.molecular_structure_id
       }
     end
-    assert_response :success
+    assert_response :success, "Could not create ES Cell"
     
     created_es_cell = EsCell.search(:name => es_cell_attrs[:name]).first
     
     # UPDATE
-    put :update, :id => created_es_cell.id, :es_cell => Factory.attributes_for( :es_cell )
-    assert_response :success
+    put :update, :id => created_es_cell.id, :es_cell => { :name => 'new name' }
+    assert_response :success, "Could not update ES Cell"
     
     # DELETE
     assert_difference('EsCell.count', -1) do
       delete :destroy, :id => created_es_cell.id
     end
-    assert_response :success
+    assert_response :success, "Could not delete ES Cell"
   end
   
   should "create without providing a targeting vector" do

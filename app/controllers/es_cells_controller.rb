@@ -50,8 +50,8 @@ class EsCellsController < ApplicationController
   def update
     respond_to do |format|
       if @es_cell.update_attributes( params[:es_cell] )
-        format.xml  { head :ok }
-        format.json { head :ok }
+        format.xml  { render :xml  => @es_cell, :location => @es_cell }
+        format.json { render :json => @es_cell, :location => @es_cell }
       else
         format.xml  { render :xml  => @es_cell.errors, :status => 400 }
         format.json { render :json => @es_cell.errors, :status => 400 }

@@ -246,6 +246,15 @@ class MolecularStructuresControllerTest < ActionController::TestCase
     assert_response :success, "should show molecular structure as xml"
   end
 
+  should "return molecular structure when searching on marker_symbol" do
+    mol_struct = Factory.create( :molecular_structure, :mgi_accession_id => 'MGI:105369')
+    
+    get :index, { :marker_symbol => 'cbx1' }
+    assert_response :success
+    assert_select 'tbody tr', 1, "HTML <table> should only have one row/result."
+    assert_select 'td', { :text => 'MGI:105369' }
+  end
+
   should "get edit" do
     get :edit, :id => MolecularStructure.find(:first).to_param
     assert_response :success
