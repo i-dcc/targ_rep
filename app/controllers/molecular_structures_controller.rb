@@ -177,7 +177,9 @@ class MolecularStructuresController < ApplicationController
       end
       
       # Search on marker_symbol against SolR and returns 
-      if mol_struct_params.include? :marker_symbol
+      if mol_struct_params.include? :marker_symbol    \
+      and not mol_struct_params[:marker_symbol].nil?  \
+      and not mol_struct_params[:marker_symbol].empty?
         marker_symbol = mol_struct_params.delete( :marker_symbol )
         solr_results = search_solr({
           :q   => "marker_symbol:#{marker_symbol}",
