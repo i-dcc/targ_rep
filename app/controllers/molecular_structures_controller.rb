@@ -120,7 +120,7 @@ class MolecularStructuresController < ApplicationController
     @molecular_structure.destroy
 
     respond_to do |format|
-      format.html { redirect_to(molecular_structures_url) }
+      format.html { redirect_to :back }
       format.xml  { head :ok }
       format.json { head :ok }
     end
