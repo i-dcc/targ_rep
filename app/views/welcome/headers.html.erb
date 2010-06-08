@@ -1,0 +1,17 @@
+<h2>Request Headers</h2>
+<table class="list">
+  <thead>
+    <tr>
+      <th>Header</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% request.env.each do |header| %>
+      <tr>
+        <td><%=header[0].split('_',2)[1]%></td>
+        <td><%=header[1]%></td>    
+      </tr>
+    <% end %>
+  </tbody>
+</table>
