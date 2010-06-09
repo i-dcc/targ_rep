@@ -6,7 +6,7 @@ class MolecularStructuresController < ApplicationController
       :show, :edit, :update, :destroy, 
       :get_escell_clone_genbank_file,
       :get_targeting_vector_genbank_file,
-      :get_allele_image
+      :get_allele_image, :get_vector_image
     ]
   
   # Must be after "find_molecular_structure" filter (as it requires an object)
@@ -144,6 +144,14 @@ class MolecularStructuresController < ApplicationController
   def get_allele_image
     send_data(
       AlleleImage::Image.new( @molecular_structure.genbank_file.escell_clone ).render.to_blob { self.format = "PNG" }, 
+        :disposition => "inline",
+        :type => "image/png"
+    )
+  end
+
+  def get_vector_image
+    send_data(
+      AlleleImage::Image.new( @molecular_structure.genbank_file.targeting_vector ).render.to_blob { self.format = "PNG" }, 
         :disposition => "inline",
         :type => "image/png"
     )
