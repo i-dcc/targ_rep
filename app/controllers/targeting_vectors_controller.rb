@@ -55,8 +55,8 @@ class TargetingVectorsController < ApplicationController
   def update
     respond_to do |format|
       if @targeting_vector.update_attributes( params[:targeting_vector] )
-        format.xml  { head :ok }
-        format.json { head :ok }
+        format.xml  { render :xml  => @targeting_vector, :status => :ok, :location => @targeting_vector }
+        format.json { render :json => @targeting_vector, :status => :ok, :location => @targeting_vector }
       else
         format.xml  { render :xml  => @targeting_vector.errors, :status => :unprocessable_entity }
         format.json { render :json => @targeting_vector.errors, :status => :unprocessable_entity }
