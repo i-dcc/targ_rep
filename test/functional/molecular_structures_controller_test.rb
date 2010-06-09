@@ -1,6 +1,11 @@
 require 'test_helper'
 
 class MolecularStructuresControllerTest < ActionController::TestCase
+  # Note: to make sure url_for works in a functional test,
+  # we need to include the two files below
+  include ActionView::Helpers::UrlHelper
+  include ActionView::Helpers::TagHelper
+  
   setup do
     UserSession.create Factory.build( :user )
     Factory.create( :molecular_structure )
@@ -125,10 +130,12 @@ class MolecularStructuresControllerTest < ActionController::TestCase
     assert_redirected_to molecular_structure_path(assigns(:molecular_structure))
     
     # DELETE
+    back_url = url_for( :controller => 'alleles', :action => 'index' )
+    @request.env['HTTP_REFERER'] = back_url
     assert_difference('MolecularStructure.count', -1) do
       delete :destroy, :id => created_mol_struct.id
     end
-    assert_redirected_to molecular_structures_path
+    assert_redirected_to back_url
   end
   
   should "create molecular structure and genbank file" do
