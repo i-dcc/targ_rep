@@ -149,6 +149,7 @@ class MolecularStructuresController < ApplicationController
     )
   end
 
+  # GET /molecular_structures/1/vector-image/
   def get_vector_image
     send_data(
       AlleleImage::Image.new( @molecular_structure.genbank_file.targeting_vector ).render.to_blob { self.format = "PNG" }, 
