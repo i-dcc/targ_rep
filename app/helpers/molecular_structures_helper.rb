@@ -21,7 +21,7 @@ module MolecularStructuresHelper
       # However if it's a "real" record it has to be deleted from the database,
       # for this reason the new fields_for, accept_nested_attributes helpers give us _delete,
       # a virtual attribute that tells rails to delete the child record.
-      form_builder.hidden_field(:_delete) +
+      form_builder.hidden_field(:_destroy) +
       link_to_function("remove", "$(this).up('.es_cell').hide(); $(this).previous().value = '1'")
     end
   end
@@ -45,7 +45,7 @@ module MolecularStructuresHelper
       # However if it's a "real" record it has to be deleted from the database,
       # for this reason the new fields_for, accept_nested_attributes helpers give us _delete,
       # a virtual attribute that tells rails to delete the child record.
-      form_builder.hidden_field(:_delete) +
+      form_builder.hidden_field(:_destroy) +
       link_to_function("remove", "$(this).up('.targeting_vector').hide(); $(this).previous().value = '1'")
     end
   end
