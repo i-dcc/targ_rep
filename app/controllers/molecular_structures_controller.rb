@@ -6,7 +6,8 @@ class MolecularStructuresController < ApplicationController
       :show, :edit, :update, :destroy, 
       :get_escell_clone_genbank_file,
       :get_targeting_vector_genbank_file,
-      :get_allele_image, :get_vector_image
+      :get_allele_image, :get_vector_image,
+      :allele_history
     ]
   
   # Must be after "find_molecular_structure" filter (as it requires an object)
@@ -158,6 +159,11 @@ class MolecularStructuresController < ApplicationController
     )
   end
 
+  # GET /molecular_structures/1/history/
+  def allele_history
+    render :allele_history, :layout => false
+  end
+
   private
     def find_molecular_structure
       @molecular_structure = MolecularStructure.find(params[:id])
@@ -307,6 +313,8 @@ class MolecularStructuresController < ApplicationController
       end
       
       es_cells_attrs.each do |attrs|
+        next if attrs.include? :_destroy and attrs[:_destroy] == "1"
+        
         if attrs.include? :targeting_vector_name
           
           # Find ES Cell from its 'id' or its 'name' + 'molecular_structure_id'

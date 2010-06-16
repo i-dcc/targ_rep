@@ -204,37 +204,3 @@
   </a>
 </div>
 <% end %>
-
-<div class="clear"></div>
-
-<% if @molecular_structure.methods.include? :revisions %>
-  <h3>History</h3>
-  <div class="span-24">
-    <table>
-      <thead>
-        <th>Version</th>
-        <th>Chromosome</th>
-        <th>Strand</th>
-        <th>Cassette</th>
-        <th>Backbone</th>
-        <th>Homology Arm</th>
-        <th>Cassette</th>
-        <th class="last">LoxP</th>
-      </thead>
-      <tbody>
-        <% for revision in @molecular_structure.revisions %>
-          <tr class="<%= cycle("odd", "even") %>">
-            <td><%= revision.version %></td>
-            <td><%= revision.chromosome %></td>
-            <td><%= revision.strand %></td>
-            <td><%= revision.cassette %></td>
-            <td><%= revision.backbone %></td>
-            <td><%= revision.homology_arm_start%> -> <%= revision.homology_arm_end %></td>
-            <td><%= revision.cassette_start%> -> <%= revision.cassette_end %></td>
-            <td><%= revision.loxp_start%> -> <%= revision.loxp_end %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
-<% end -%>
