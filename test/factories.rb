@@ -48,9 +48,9 @@ Factory.define :molecular_structure do |f|
   f.association :pipeline
   
   f.assembly    "NCBIM37"
-  f.chromosome  { [("1".."19").to_a + ['X', 'Y', 'MT']].flatten.choice }
-  f.strand      { ['+', '-'].choice }
-  f.design_type { ['Knock Out', 'Deletion', 'Insertion'].choice }
+  f.chromosome  { [("1".."19").to_a + ['X', 'Y', 'MT']].flatten[rand(22)] }
+  f.strand      { ['+', '-'][rand(2)] }
+  f.design_type { ['Knock Out', 'Deletion', 'Insertion'][rand(3)] }
   
   #     Features positions chose for this factory:
   #     They have been fixed so that complex tests can be cleaner. Otherwise,
@@ -140,7 +140,7 @@ end
 
 Factory.define :es_cell do |f|
   f.name                { Factory.next(:epd_plate_name) }
-  f.parental_cell_line  { ['JM8 parental', 'JM8.F6', 'JM8.N19'].choice }
+  f.parental_cell_line  { ['JM8 parental', 'JM8.F6', 'JM8.N19'][rand(3)] }
   
   ikmc_project_id = Factory.next( :ikmc_project_id )
   
