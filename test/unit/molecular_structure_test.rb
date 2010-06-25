@@ -6,36 +6,35 @@ class MolecularStructureTest < ActiveSupport::TestCase
     # Molecular structure has been saved successfully here
   end
   
-  should_belong_to :pipeline
-  should_belong_to :created_by, :updated_by
-  should_have_many :targeting_vectors
-  should_have_many :es_cells
+  should belong_to(:pipeline)
+  should belong_to(:created_by)
+  should belong_to(:updated_by)
+  should have_many(:targeting_vectors)
+  should have_many(:es_cells)
   
-  should_validate_uniqueness_of :project_design_id,
-    :scoped_to => [
+  should validate_uniqueness_of(:project_design_id).scoped_to([
       :mgi_accession_id, :assembly, :chromosome, :strand,
       :cassette, :backbone,
       :homology_arm_start, :homology_arm_end,
       :cassette_start, :cassette_end,
       :loxp_start, :loxp_end
-    ],
-    :message => "must have unique design features"
+    ]).with_message("must have unique design features")
   
-  should_validate_presence_of :pipeline_id
-  should_validate_presence_of :mgi_accession_id
-  should_validate_presence_of :assembly
-  should_validate_presence_of :chromosome
-  should_validate_presence_of :strand
-  should_validate_presence_of :design_type
-  should_validate_presence_of :homology_arm_start
-  should_validate_presence_of :homology_arm_end
+  should validate_presence_of(:pipeline_id)
+  should validate_presence_of(:mgi_accession_id)
+  should validate_presence_of(:assembly)
+  should validate_presence_of(:chromosome)
+  should validate_presence_of(:strand)
+  should validate_presence_of(:design_type)
+  should validate_presence_of(:homology_arm_start)
+  should validate_presence_of(:homology_arm_end)
   
-  should_validate_numericality_of :homology_arm_start
-  should_validate_numericality_of :homology_arm_end
-  should_validate_numericality_of :cassette_start
-  should_validate_numericality_of :cassette_end
-  should_validate_numericality_of :loxp_start
-  should_validate_numericality_of :loxp_end
+  should validate_numericality_of(:homology_arm_start)
+  should validate_numericality_of(:homology_arm_end)
+  should validate_numericality_of(:cassette_start)
+  should validate_numericality_of(:cassette_end)
+  should validate_numericality_of(:loxp_start)
+  should validate_numericality_of(:loxp_end)
   
   context "Molecular structure" do
     context "with empty attributes" do

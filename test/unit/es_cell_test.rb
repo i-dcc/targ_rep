@@ -6,12 +6,14 @@ class EsCellTest < ActiveSupport::TestCase
     # ES Cell has been validated and saved successfully
   end
   
-  should_belong_to :created_by, :updated_by
-  should_belong_to :molecular_structure, :targeting_vector
+  should belong_to(:created_by)
+  should belong_to(:updated_by)
+  should belong_to(:molecular_structure)
+  should belong_to(:targeting_vector)
   
-  should_validate_uniqueness_of :name, :message => 'This ES Cell name has already been taken'
-  should_validate_presence_of :name
-  should_validate_presence_of :molecular_structure_id
+  should validate_uniqueness_of(:name).with_message('This ES Cell name has already been taken')
+  should validate_presence_of(:name)
+  should validate_presence_of(:molecular_structure_id)
   
   context "ES Cell" do
     context "with empty attributes" do

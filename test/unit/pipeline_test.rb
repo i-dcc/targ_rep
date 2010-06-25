@@ -6,9 +6,9 @@ class PipelineTest < ActiveSupport::TestCase
     # Pipeline has been validated and saved successfully
   end
   
-  should_have_many :molecular_structures
-  should_validate_uniqueness_of :name, :message => 'This pipeline name has already been taken'
-  should_validate_presence_of :name
+  should have_many(:molecular_structures)
+  should validate_uniqueness_of(:name).with_message('This pipeline name has already been taken')
+  should validate_presence_of(:name)
   
   context "Pipeline with empty attributes" do
     pipeline = Factory.build( :invalid_pipeline )
