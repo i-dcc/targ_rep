@@ -60,8 +60,6 @@ system("mysql -h $stag_host -P $stag_port --user=$stag_user --password=$stag_pas
 
 ## Finish off...
 
-$production_dbh->disconnect();
-$staging_dbh->disconnect();
 chdir($SCRIPT_DIR);
 
 exit;
