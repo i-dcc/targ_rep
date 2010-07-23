@@ -71,7 +71,7 @@ class ApplicationController < ActionController::Base
       end
     end
     
-    def ensure_permission
+    def ensure_creator_or_admin
       changed_object =
         if @molecular_structure then @molecular_structure
         elsif @targeting_vector then @targeting_vector

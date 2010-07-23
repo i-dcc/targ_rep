@@ -3,7 +3,7 @@ class GenbankFilesController < ApplicationController
 
   # Must be after "find_genbank_file" filter (as it requires an object)
   # FIXME: Genbank File must have a 'created_by' field for this filter to run
-  # before_filter :ensure_permission, :only => [:update, :destroy]
+  # before_filter :ensure_creator_or_admin, :only => [:destroy]
   
   def index
     respond_to do |format|

@@ -6,21 +6,21 @@ class TargetingVectorsControllerTest < ActionController::TestCase
     Factory.create( :targeting_vector )
   end
   
-  should "not get edit" do
+  should "not allow us to GET /edit" do
     assert_raise(ActionController::UnknownAction) { get :edit }
   end
   
-  should "not get new" do
+  should "not allow us to GET /new" do
     assert_raise(ActionController::UnknownAction) { get :new }
   end
   
-  should "get index" do
+  should "allow us to GET /index" do
     get :index
     assert_response :success
     assert_not_nil assigns(:targeting_vectors)
   end
   
-  should "create, update and delete targeting vector" do
+  should "allow us to create, update and delete a targeting vector we made" do
     # CREATE
     targ_vec_attrs = Factory.attributes_for( :targeting_vector )
     assert_difference('TargetingVector.count') do
@@ -58,7 +58,7 @@ class TargetingVectorsControllerTest < ActionController::TestCase
     assert_response :success, "Controller does not allow XML display"
   end
   
-  should "not update targeting_vector" do
+  should "not allow us to update a targeting_vector with invalid parameters" do
     targ_vec_attrs   = Factory.attributes_for( :targeting_vector )
     another_targ_vec = Factory.create( :targeting_vector )
     
@@ -74,21 +74,17 @@ class TargetingVectorsControllerTest < ActionController::TestCase
     
     created_targ_vec = TargetingVector.search( :name => targ_vec_attrs[:name] ).first
     
-    # UPDATE - should fail but not with permission denied
+    # UPDATE - should fail as the name is already taken
     put :update, :id => created_targ_vec.id, :targeting_vector => { :name => another_targ_vec.name }
     assert_response :unprocessable_entity
+    
+    # UPDATE - should fail as we're not allowed a nil molecular_structure_id
     put :update, :id => created_targ_vec.id, :targeting_vector => { :molecular_structure_id => nil }
     assert_response :unprocessable_entity
   end
   
-  should "not update targeting_vector when permission is denied" do
-    # Permission will be denied here because we are not updating with the owner
-    put :update, :id => TargetingVector.first.id, :targeting_vector => { :name => 'new name' }
-    assert_response 302
-  end
-
-  should "not destroy targeting_vector when permission is denied" do
-    # Permission will be denied here because we are not deleting with the owner
+  should "not allow us to delete a targeting_vector when we are not the creator" do
+    # Permission will be denied here because we are not deleting with the creator
     assert_no_difference('TargetingVector.count') do
       delete :destroy, :id => TargetingVector.first.id
     end

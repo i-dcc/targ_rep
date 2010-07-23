@@ -19,7 +19,7 @@ class UserSessionsController < ApplicationController
   def destroy
     @user_session = UserSession.find
     @user_session.destroy
-    flash[:notice] = "Successfully logged out."
+    flash[:notice] = 'Successfully logged out.'
     redirect_back_or_default login_path
   end
 end

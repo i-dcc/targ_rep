@@ -6,7 +6,7 @@ class UserSessionsControllerTest < ActionController::TestCase
     assert_response :success
   end
 
-  should "create user session" do
+  should "create a user session" do
     user = User.first || Factory.build( :user )
     post :create, :user_session => {
       :username => user.username,
@@ -17,7 +17,7 @@ class UserSessionsControllerTest < ActionController::TestCase
     assert_equal( user, @user_session.user, "User is unknown" )
   end
   
-  should "not create user session" do
+  should "not create a user session" do
     post :create, :user_session => {
       :login    => nil,
       :password => nil
@@ -25,7 +25,7 @@ class UserSessionsControllerTest < ActionController::TestCase
     assert_template :new
   end
 
-  should "delete session" do
+  should "delete a session" do
     UserSession.create Factory.build( :user )
     delete :destroy
     assert_nil UserSession.find

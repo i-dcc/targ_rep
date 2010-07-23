@@ -11,7 +11,7 @@ class MolecularStructuresControllerTest < ActionController::TestCase
     Factory.create( :molecular_structure )
   end
   
-  should "get index" do
+  should "allow us to GET /index" do
     # html
     get :index, :format => "html"
     assert_response :success
@@ -26,12 +26,17 @@ class MolecularStructuresControllerTest < ActionController::TestCase
     assert_response :success
   end
   
-  should "get new" do
+  should "allow us to GET /new" do
     get :new
     assert_response :success
   end
   
-  should "create molecular structure, targeting vector, es cell and genbank files" do
+  should "allow us to GET /edit" do
+    get :edit, :id => MolecularStructure.find(:first).to_param
+    assert_response :success
+  end
+  
+  should "allow us to create molecular structure, targeting vector, es cell and genbank files" do
     mol_struct    = Factory.attributes_for( :molecular_structure )
     targ_vec1     = Factory.build( :targeting_vector )
     targ_vec2     = Factory.build( :targeting_vector )
@@ -89,33 +94,17 @@ class MolecularStructuresControllerTest < ActionController::TestCase
         :targeting_vector => genbank_file[:targeting_vector]
       }
     }
-    assert_equal(
-      mol_struct_count + 1, MolecularStructure.all.count,
-      "Controller should have created 1 valid molecular structure."
-    )
-    assert_equal(
-      targ_vec_count + 2, TargetingVector.all.count,
-      "Controller should have created 2 valid targeting vectors."
-    )
-    assert_equal(
-      es_cell_count + 6, EsCell.all.count,
-      "Controller should have created 6 valid ES cells."
-    )
-    assert_equal(
-      unlinked_es_cells + 3, EsCell.targeting_vector_id_null.count,
-      "Controller should have created 3 more ES cells not linked to a targeting vector"
-    )
-    assert_equal(
-      linked_es_cells + 3, EsCell.targeting_vector_id_not_null.count,
-      "Controller should have created 3 more ES cells linked to a targeting vector"
-    )
+    
+    assert_equal( mol_struct_count + 1, MolecularStructure.all.count, "Controller should have created 1 valid molecular structure." )
+    assert_equal( targ_vec_count + 2, TargetingVector.all.count, "Controller should have created 2 valid targeting vectors." )
+    assert_equal( es_cell_count + 6, EsCell.all.count, "Controller should have created 6 valid ES cells." )
+    assert_equal( unlinked_es_cells + 3, EsCell.targeting_vector_id_null.count, "Controller should have created 3 more ES cells not linked to a targeting vector" )
+    assert_equal( linked_es_cells + 3, EsCell.targeting_vector_id_not_null.count, "Controller should have created 3 more ES cells linked to a targeting vector" )
   end
 
-  should "create, update and delete molecular structure" do
+  should "allow us to create, update and delete a molecular structure we made" do
     mol_struct_attrs = Factory.attributes_for( :molecular_structure )
-    mol_struct_attrs.update({
-      :pipeline_id => MolecularStructure.first.pipeline_id
-    })
+    mol_struct_attrs.update({ :pipeline_id => MolecularStructure.first.pipeline_id })
     
     # CREATE
     assert_difference('MolecularStructure.count') do
@@ -138,7 +127,7 @@ class MolecularStructuresControllerTest < ActionController::TestCase
     assert_redirected_to back_url
   end
   
-  should "create molecular structure and genbank file" do
+  should "allow us to create a molecular structure and genbank file" do
     mol_struct    = Factory.attributes_for( :molecular_structure )
     genbank_file  = Factory.attributes_for( :genbank_file )
     
@@ -161,17 +150,12 @@ class MolecularStructuresControllerTest < ActionController::TestCase
         :targeting_vector => genbank_file[:targeting_vector]
       }
     }
-    assert_equal(
-      mol_struct_count + 1, MolecularStructure.count,
-      "Controller should have created 1 valid molecular structure."
-    )
-    assert_equal(
-      genbank_file_count + 1, GenbankFile.count,
-      "Controller should have created 1 more genbank file"
-    )
+    
+    assert_equal( mol_struct_count + 1, MolecularStructure.count, "Controller should have created 1 valid molecular structure." )
+    assert_equal( genbank_file_count + 1, GenbankFile.count, "Controller should have created 1 more genbank file" )
   end
 
-  should "create molecular structure only if genbank file is empty" do
+  should "not create genbank file database entries if the genbank file arguments are empty" do
     mol_struct = Factory.attributes_for( :molecular_structure )
     
     mol_struct_count    = MolecularStructure.count
@@ -190,17 +174,12 @@ class MolecularStructuresControllerTest < ActionController::TestCase
       :cassette_end       => mol_struct[:cassette_end],
       :genbank_file       => { :escell_clone => '', :targeting_vector => '' }
     }
-    assert_equal(
-      mol_struct_count + 1, MolecularStructure.count,
-      "Controller should have created 1 valid molecular structure."
-    )
-    assert_equal(
-      genbank_file_count, GenbankFile.count,
-      "Controller should not have created any genbank file"
-    )
+    
+    assert_equal( mol_struct_count + 1, MolecularStructure.count, "Controller should have created 1 valid molecular structure." )
+    assert_equal( genbank_file_count, GenbankFile.count, "Controller should not have created any genbank file" )
   end
 
-  should "create molecular structure only if genbank file is nil" do
+  should "not create genbank file database entries if the genbank file arguments are nil" do
     mol_struct = Factory.attributes_for( :molecular_structure )
 
     mol_struct_count    = MolecularStructure.count
@@ -219,17 +198,12 @@ class MolecularStructuresControllerTest < ActionController::TestCase
       :cassette_end       => mol_struct[:cassette_end],
       :genbank_file       => { :escell_clone => nil, :targeting_vector => nil }
     }
-    assert_equal(
-      mol_struct_count + 1, MolecularStructure.count,
-      "Controller should have created 1 valid molecular structure."
-    )
-    assert_equal(
-      genbank_file_count, GenbankFile.count,
-      "Controller should not have created any genbank file"
-    )
+    
+    assert_equal( mol_struct_count + 1, MolecularStructure.count, "Controller should have created 1 valid molecular structure." )
+    assert_equal( genbank_file_count, GenbankFile.count, "Controller should not have created any genbank file" )
   end
   
-  should "not create molecular structure" do
+  should "not create an invalid molecular structure" do
     assert_no_difference('MolecularStructure.count') do
       post :create,
       :molecular_structure => Factory.attributes_for( :invalid_molecular_structure )
@@ -237,7 +211,7 @@ class MolecularStructuresControllerTest < ActionController::TestCase
     assert_template :new
   end
 
-  should "show molecular structure" do
+  should "show a molecular structure" do
     mol_struct_id = MolecularStructure.find(:first).id
     
     # html
@@ -253,7 +227,7 @@ class MolecularStructuresControllerTest < ActionController::TestCase
     assert_response :success, "should show molecular structure as xml"
   end
 
-  should "return molecular structure when searching on marker_symbol" do
+  should "find and return molecular structure when searching by marker_symbol" do
     mol_struct = Factory.create( :molecular_structure, :mgi_accession_id => 'MGI:105369')
     
     get :index, { :marker_symbol => 'cbx1' }
@@ -262,16 +236,9 @@ class MolecularStructuresControllerTest < ActionController::TestCase
     assert_select 'td', { :text => 'MGI:105369' }
   end
 
-  should "get edit" do
-    get :edit, :id => MolecularStructure.find(:first).to_param
-    assert_response :success
-  end
-
-  should "not update molecular structure" do
+  should "not allow us to update a molecular structure with invalid parameters" do
     mol_struct_attrs = Factory.attributes_for( :molecular_structure )
-    mol_struct_attrs.update({
-      :pipeline_id => MolecularStructure.first.pipeline_id
-    })
+    mol_struct_attrs.update({ :pipeline_id => MolecularStructure.first.pipeline_id })
     
     # CREATE a valid Molecular Structure
     assert_difference('MolecularStructure.count') do
@@ -281,7 +248,7 @@ class MolecularStructuresControllerTest < ActionController::TestCase
     
     created_mol_struct = MolecularStructure.search( :mgi_accession_id => mol_struct_attrs[:mgi_accession_id] ).first
     
-    # UPDATE - should fail but not with permission denied
+    # UPDATE - should fail
     put :update, :id => created_mol_struct.id,
       :molecular_structure => {
         :chromosome => "WRONG CHROMOSOME",
@@ -290,14 +257,7 @@ class MolecularStructuresControllerTest < ActionController::TestCase
     assert_template :edit
   end
 
-  should "not update molecular_structure when permission is denied" do
-    # Permission will be denied here because we are not updating with the owner
-    put :update, :id => MolecularStructure.first.id, 
-      :molecular_structure => { :mgi_accession_id => 'new mgi_accession_id' }
-    assert_response 302
-  end
-
-  should "not destroy molecular_structure when permission is denied" do
+  should "not allow us to delete a molecular_structure when we're not the creator" do
     # Permission will be denied here because we are not deleting with the owner
     assert_no_difference('MolecularStructure.count') do
       delete :destroy, :id => MolecularStructure.first.id

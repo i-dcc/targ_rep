@@ -6,12 +6,13 @@ class MolecularStructuresController < ApplicationController
       :show, :edit, :update, :destroy, 
       :get_escell_clone_genbank_file,
       :get_targeting_vector_genbank_file,
-      :get_allele_image, :get_vector_image,
+      :get_allele_image,
+      :get_vector_image,
       :allele_history
     ]
   
   # Must be after "find_molecular_structure" filter (as it requires an object)
-  before_filter :ensure_permission, :only => [:update, :destroy]
+  before_filter :ensure_creator_or_admin, :only => [:destroy]
   
   # Following both are located in application_controller.rb
   before_filter :set_created_by, :only => :create

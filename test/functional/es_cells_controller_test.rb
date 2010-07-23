@@ -6,21 +6,21 @@ class EsCellsControllerTest < ActionController::TestCase
     Factory.create(:es_cell)
   end
   
-  should "get index" do
+  should "allow us to GET /index" do
     get :index
     assert_response :success
   end
   
-  should "not get new" do
+  should "not allow us to GET /new" do
     assert_raise(ActionController::UnknownAction) { get :new }
   end
   
-  should "create, update and delete es_cell when user is allowed" do
+  should "not allow us to GET /edit without a cell id" do
+    assert_raise(ActionController::UnknownAction) { get :edit }
+  end
+  
+  should "allow us to create, update and delete an es_cell we made" do
     es_cell_attrs = Factory.attributes_for( :es_cell )
-    
-    # As each test is run with a different user,
-    # we need the user to create, update and delete the same allele in a
-    # single test so that the permissions are granted for all actions.
     
     # CREATE
     assert_difference('EsCell.count') do
@@ -45,8 +45,8 @@ class EsCellsControllerTest < ActionController::TestCase
     end
     assert_response :success, "Could not delete ES Cell"
   end
-  
-  should "create without providing a targeting vector" do
+    
+  should "allow us to create without providing a targeting vector" do
     es_cell_attrs = Factory.attributes_for( :es_cell )
     
     assert_difference('EsCell.count') do
@@ -59,7 +59,7 @@ class EsCellsControllerTest < ActionController::TestCase
     assert_response :success
   end
   
-  should "show es_cell" do
+  should "show an es_cell" do
     es_cell_id = EsCell.first.id
     
     get :show, :format => "html", :id => es_cell_id
@@ -72,11 +72,7 @@ class EsCellsControllerTest < ActionController::TestCase
     assert_response :success, "Controller does not allow XML display"
   end
 
-  should "not get edit" do
-    assert_raise(ActionController::UnknownAction) { get :edit }
-  end
-
-  should "not update es_cell" do
+  should "not allow us to rename an existing cell to the same name as another cell" do
     es_cell_attrs   = Factory.attributes_for( :es_cell )
     another_escell  = Factory.create( :es_cell )
     
@@ -93,19 +89,13 @@ class EsCellsControllerTest < ActionController::TestCase
     
     created_es_cell = EsCell.search(:name => es_cell_attrs[:name]).first
     
-    # UPDATE - should fail but not with permission denied
+    # UPDATE - should fail as we're trying to enter a duplicate name
     put :update, :id => created_es_cell.id, :es_cell => { :name => another_escell.name }
     assert_response 400
   end
 
-  should "not update es_cell when permission is denied" do
-    # Permission will be denied here because we are not updating with the owner
-    put :update, :id => EsCell.first.id, :es_cell => { :name => 'new name' }
-    assert_response 302
-  end
-
-  should "not destroy es_cell when permission is denied" do
-    # Permission will be denied here because we are not deleting with the owner
+  should "not allow us to delete an es_cell when we're not the creator" do
+    # Permission will be denied here because we are not deleting as the creator
     assert_no_difference('EsCell.count') do
       delete :destroy, :id => EsCell.first.id
     end
