@@ -1,36 +1,4 @@
 class MolecularStructure < ActiveRecord::Base
-
-  # === List of columns ===
-  #   id                  : integer 
-  #   assembly            : string 
-  #   chromosome          : string 
-  #   strand              : string 
-  #   mgi_accession_id    : string 
-  #   homology_arm_start  : integer 
-  #   homology_arm_end    : integer 
-  #   loxp_start          : integer 
-  #   loxp_end            : integer 
-  #   cassette_start      : integer 
-  #   cassette_end        : integer 
-  #   cassette            : string 
-  #   backbone            : string 
-  #   design_type         : string 
-  #   design_subtype      : string 
-  #   subtype_description : string 
-  #   created_by          : integer 
-  #   updated_by          : integer 
-  #   created_at          : datetime 
-  #   updated_at          : datetime 
-  #   floxed_start_exon   : string 
-  #   floxed_end_exon     : string 
-  #   project_design_id   : integer 
-  #   mutation_type       : string 
-  #   mutation_subtype    : string 
-  #   mutation_method     : string 
-  #   reporter            : string 
-  #   pipeline_id         : integer 
-  # =======================
-
   acts_as_audited
   
   # Associations

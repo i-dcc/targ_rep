@@ -1,22 +1,4 @@
-class EsCell < ActiveRecord::Base
-
-  # === List of columns ===
-  #   id                        : integer 
-  #   molecular_structure_id    : integer 
-  #   targeting_vector_id       : integer 
-  #   parental_cell_line        : string 
-  #   allele_symbol_superscript : string 
-  #   name                      : string 
-  #   created_by                : integer 
-  #   updated_by                : integer 
-  #   created_at                : datetime 
-  #   updated_at                : datetime 
-  #   comment                   : string 
-  #   contact                   : string 
-  #   qc_five_prime_lr_pcr      : string 
-  #   qc_three_prime_lr_pcr     : string 
-  # =======================
-  
+class EsCell < ActiveRecord::Base  
   acts_as_audited
   attr_accessor :nested
   

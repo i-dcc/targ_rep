@@ -1,18 +1,4 @@
 class TargetingVector < ActiveRecord::Base
-
-  # === List of columns ===
-  #   id                     : integer 
-  #   molecular_structure_id : integer 
-  #   ikmc_project_id        : string 
-  #   name                   : string 
-  #   intermediate_vector    : string 
-  #   created_by             : integer 
-  #   updated_by             : integer 
-  #   created_at             : datetime 
-  #   updated_at             : datetime 
-  #   display                : boolean 
-  # =======================
-
   acts_as_audited
 
   # Associations
