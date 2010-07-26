@@ -18,19 +18,9 @@ class AddQcFieldsToCells < ActiveRecord::Migration
     
     remove_column :es_cells, :upper_SR_check
     remove_column :es_cells, :lower_SR_check
-        
-    create_table :qc_field_descriptions, :force => true do |t|
-      t.column :qc_field, :string, :null => false
-      t.column :description, :text, :null => false
-      t.column :url, :string
-    end
-    add_index :qc_field_descriptions, [:qc_field], :unique => true
   end
 
   def self.down
-    remove_index :qc_field_descriptions, :column => [:qc_field]
-    drop_table :qc_field_descriptions
-    
     add_column :es_cells, :lower_SR_check, :string
     add_column :es_cells, :upper_SR_check, :string
     

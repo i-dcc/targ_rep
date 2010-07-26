@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100723094719) do
+ActiveRecord::Schema.define(:version => 20100726120958) do
 
   create_table "audits", :force => true do |t|
     t.integer  "auditable_id"
@@ -57,6 +57,7 @@ ActiveRecord::Schema.define(:version => 20100723094719) do
   end
 
   add_index "es_cells", ["molecular_structure_id"], :name => "es_cells_molecular_structure_id_fk"
+  add_index "es_cells", ["targeting_vector_id"], :name => "es_cells_targeting_vector_id_fk"
 
   create_table "genbank_files", :force => true do |t|
     t.integer  "molecular_structure_id",                       :null => false
@@ -108,9 +109,11 @@ ActiveRecord::Schema.define(:version => 20100723094719) do
   end
 
   create_table "qc_field_descriptions", :force => true do |t|
-    t.string "qc_field",    :null => false
-    t.text   "description", :null => false
-    t.string "url"
+    t.string   "qc_field",    :null => false
+    t.text     "description", :null => false
+    t.string   "url"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "qc_field_descriptions", ["qc_field"], :name => "index_qc_field_descriptions_on_qc_field", :unique => true
@@ -143,6 +146,7 @@ ActiveRecord::Schema.define(:version => 20100723094719) do
   end
 
   add_foreign_key "es_cells", "molecular_structures", :name => "es_cells_molecular_structure_id_fk", :dependent => :delete
+  add_foreign_key "es_cells", "targeting_vectors", :name => "es_cells_targeting_vector_id_fk", :dependent => :delete
 
   add_foreign_key "genbank_files", "molecular_structures", :name => "genbank_files_molecular_structure_id_fk", :dependent => :delete
 
