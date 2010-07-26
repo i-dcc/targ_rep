@@ -29,6 +29,42 @@ class EsCell < ActiveRecord::Base
   validate :ikmc_project_id_consistency, :on => :save,
     :unless => "[ikmc_project_id,targeting_vector].any?(&:nil?)"
   
+  # Validate QC fields
+  pass_fail_only_qc_fields = [
+    :qc_five_prime_lr_pcr,
+    :qc_three_prime_lr_pcr,
+    :qc_map_test,
+    :qc_tv_backbone_assay,
+    :qc_loxp_confirmation,
+    :qc_loss_of_wt_allele,
+    :qc_neo_count_qpcr,
+    :qc_lacz_sr_pcr,
+    :qc_mutant_specific_sr_pcr,
+    :qc_five_prime_cassette_integrity,
+    :qc_neo_sr_pcr
+  ]
+  
+  pass_fail_only_qc_fields.each do |qc_field|
+    validates_inclusion_of qc_field,
+      :in        => %w( pass fail ),
+      :allow_nil => true,
+      :on        => :create,
+      :message   => "This QC metric can only be set as 'pass' or 'fail'"
+  end
+  
+  validates_inclusion_of :qc_karyotype,
+    :in        => %w( pass fail limit ),
+    :allow_nil => true,
+    :on        => :create,
+    :message   => "This QC metric can only be set as 'pass', 'fail' or 'limit'"
+  
+  validates_inclusion_of :qc_southern_blot,
+    :in        => ["pass","fail 5' end","fail 3' end","fail both ends","double integration"],
+    :allow_nil => true,
+    :on        => :create,
+    :message   => "This QC metric can only be set as \"pass\", \"fail 5' end\", \"fail 3' end\", \"fail both ends\" or \"double integration\""
+  
+  
   def before_validation
     if ikmc_project_id.nil? and targeting_vector
       self.ikmc_project_id = targeting_vector.ikmc_project_id

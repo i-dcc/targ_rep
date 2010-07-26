@@ -57,7 +57,6 @@ ActiveRecord::Schema.define(:version => 20100726120958) do
   end
 
   add_index "es_cells", ["molecular_structure_id"], :name => "es_cells_molecular_structure_id_fk"
-  add_index "es_cells", ["targeting_vector_id"], :name => "es_cells_targeting_vector_id_fk"
 
   create_table "genbank_files", :force => true do |t|
     t.integer  "molecular_structure_id",                       :null => false
@@ -146,7 +145,6 @@ ActiveRecord::Schema.define(:version => 20100726120958) do
   end
 
   add_foreign_key "es_cells", "molecular_structures", :name => "es_cells_molecular_structure_id_fk", :dependent => :delete
-  add_foreign_key "es_cells", "targeting_vectors", :name => "es_cells_targeting_vector_id_fk", :dependent => :delete
 
   add_foreign_key "genbank_files", "molecular_structures", :name => "genbank_files_molecular_structure_id_fk", :dependent => :delete
 

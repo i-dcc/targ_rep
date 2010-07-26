@@ -170,3 +170,12 @@ end
 
 Factory.define :invalid_genbank_file, :class => GenbankFile do |f|
 end
+
+##
+## QcFieldDescription
+##
+
+Factory.define :qc_field_description do |f|
+  f.sequence(:qc_field) { |n| "qc_#{n}_foobar" }
+  f.description "w00t wibble blibble blip"
+end

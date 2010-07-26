@@ -16,6 +16,11 @@ class AddQcFieldsToCells < ActiveRecord::Migration
     rename_column :es_cells, :upper_LR_check, :qc_five_prime_lr_pcr
     rename_column :es_cells, :lower_LR_check, :qc_three_prime_lr_pcr
     
+    execute "update es_cells set qc_five_prime_lr_pcr = 'pass' where qc_five_prime_lr_pcr = 'Passed'"
+    execute "update es_cells set qc_five_prime_lr_pcr = 'fail' where qc_five_prime_lr_pcr = 'Failed'"
+    execute "update es_cells set qc_three_prime_lr_pcr = 'pass' where qc_three_prime_lr_pcr = 'Passed'"
+    execute "update es_cells set qc_three_prime_lr_pcr = 'fail' where qc_three_prime_lr_pcr = 'Failed'"
+    
     remove_column :es_cells, :upper_SR_check
     remove_column :es_cells, :lower_SR_check
   end
@@ -23,6 +28,11 @@ class AddQcFieldsToCells < ActiveRecord::Migration
   def self.down
     add_column :es_cells, :lower_SR_check, :string
     add_column :es_cells, :upper_SR_check, :string
+    
+    execute "update es_cells set qc_five_prime_lr_pcr = 'Passed' where qc_five_prime_lr_pcr = 'pass'"
+    execute "update es_cells set qc_five_prime_lr_pcr = 'Failed' where qc_five_prime_lr_pcr = 'fail'"
+    execute "update es_cells set qc_three_prime_lr_pcr = 'Passed' where qc_three_prime_lr_pcr = 'pass'"
+    execute "update es_cells set qc_three_prime_lr_pcr = 'Failed' where qc_three_prime_lr_pcr = 'fail'"
     
     rename_column :es_cells, :qc_three_prime_lr_pcr, :lower_LR_check
     rename_column :es_cells, :qc_five_prime_lr_pcr, :upper_LR_check

@@ -15,6 +15,26 @@ class EsCellTest < ActiveSupport::TestCase
   should validate_presence_of(:name)
   should validate_presence_of(:molecular_structure_id)
   
+  pass_fail_only_qc_fields = [
+    :qc_five_prime_lr_pcr,
+    :qc_three_prime_lr_pcr,
+    :qc_map_test,
+    :qc_tv_backbone_assay,
+    :qc_loxp_confirmation,
+    :qc_loss_of_wt_allele,
+    :qc_neo_count_qpcr,
+    :qc_lacz_sr_pcr,
+    :qc_mutant_specific_sr_pcr,
+    :qc_five_prime_cassette_integrity,
+    :qc_neo_sr_pcr
+  ]
+  
+  pass_fail_only_qc_fields.each do |qc_field|
+    should allow_value('pass').for(qc_field)
+    should allow_value('fail').for(qc_field)
+    should_not allow_value('wibble').for(qc_field)
+  end
+  
   context "ES Cell" do
     context "with empty attributes" do
       should "not be saved" do
