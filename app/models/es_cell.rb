@@ -13,10 +13,8 @@ class EsCell < ActiveRecord::Base
   #   updated_at                : datetime 
   #   comment                   : string 
   #   contact                   : string 
-  #   upper_LR_check            : string 
-  #   upper_SR_check            : string 
-  #   lower_LR_check            : string 
-  #   lower_SR_check            : string 
+  #   qc_five_prime_lr_pcr      : string 
+  #   qc_three_prime_lr_pcr     : string 
   # =======================
   
   acts_as_audited

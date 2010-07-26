@@ -152,10 +152,8 @@
           <th>Allele Symbol Superscript</th>
           <th>Parental Cell Line</th>
           <th>IKMC Project ID</th>
-          <th>5' LR Check</th>
-          <th>3' LR Check</th>
-          <th>5' SR Check</th>
-          <th>3' SR Check</th>
+          <th>5' LR-PCR Check</th>
+          <th>3' LR-PCR Check</th>
         </thead>
         <tbody>
           <% @es_cells.each do |es_cell| %>
@@ -167,10 +165,8 @@
             <td><%= es_cell.ikmc_project_id %></td>
             <%
               es_cell_checks = [
-                es_cell.upper_LR_check,
-                es_cell.lower_LR_check,
-                es_cell.upper_SR_check,
-                es_cell.lower_SR_check
+                es_cell.qc_five_prime_lr_pcr,
+                es_cell.qc_three_prime_lr_pcr
               ]
             %>
             <% es_cell_checks.each do |check| %>

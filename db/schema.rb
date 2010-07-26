@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100521095311) do
+ActiveRecord::Schema.define(:version => 20100723094719) do
 
   create_table "audits", :force => true do |t|
     t.integer  "auditable_id"
@@ -28,26 +28,35 @@ ActiveRecord::Schema.define(:version => 20100521095311) do
   add_index "audits", ["user_id", "user_type"], :name => "user_index"
 
   create_table "es_cells", :force => true do |t|
-    t.integer  "molecular_structure_id",    :null => false
+    t.integer  "molecular_structure_id",           :null => false
     t.integer  "targeting_vector_id"
     t.string   "parental_cell_line"
     t.string   "allele_symbol_superscript"
-    t.string   "name",                      :null => false
+    t.string   "name",                             :null => false
     t.integer  "created_by"
     t.integer  "updated_by"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "comment"
     t.string   "contact"
-    t.string   "upper_LR_check"
-    t.string   "upper_SR_check"
-    t.string   "lower_LR_check"
-    t.string   "lower_SR_check"
+    t.string   "qc_five_prime_lr_pcr"
+    t.string   "qc_three_prime_lr_pcr"
     t.string   "ikmc_project_id"
+    t.string   "qc_map_test"
+    t.string   "qc_karyotype"
+    t.string   "qc_tv_backbone_assay"
+    t.string   "qc_loxp_confirmation"
+    t.string   "qc_southern_blot"
+    t.string   "qc_loss_of_wt_allele"
+    t.string   "qc_neo_count_qpcr"
+    t.string   "qc_lacz_sr_pcr"
+    t.string   "qc_mutant_specific_sr_pcr"
+    t.string   "qc_five_prime_cassette_integrity"
+    t.string   "qc_neo_sr_pcr"
+    t.text     "qc_comment"
   end
 
   add_index "es_cells", ["molecular_structure_id"], :name => "es_cells_molecular_structure_id_fk"
-  add_index "es_cells", ["targeting_vector_id"], :name => "es_cells_targeting_vector_id_fk"
 
   create_table "genbank_files", :force => true do |t|
     t.integer  "molecular_structure_id",                       :null => false
@@ -98,6 +107,14 @@ ActiveRecord::Schema.define(:version => 20100521095311) do
     t.datetime "updated_at"
   end
 
+  create_table "qc_field_descriptions", :force => true do |t|
+    t.string "qc_field",    :null => false
+    t.text   "description", :null => false
+    t.string "url"
+  end
+
+  add_index "qc_field_descriptions", ["qc_field"], :name => "index_qc_field_descriptions_on_qc_field", :unique => true
+
   create_table "targeting_vectors", :force => true do |t|
     t.integer  "molecular_structure_id",                   :null => false
     t.string   "ikmc_project_id"
@@ -126,7 +143,6 @@ ActiveRecord::Schema.define(:version => 20100521095311) do
   end
 
   add_foreign_key "es_cells", "molecular_structures", :name => "es_cells_molecular_structure_id_fk", :dependent => :delete
-  add_foreign_key "es_cells", "targeting_vectors", :name => "es_cells_targeting_vector_id_fk", :dependent => :delete
 
   add_foreign_key "genbank_files", "molecular_structures", :name => "genbank_files_molecular_structure_id_fk", :dependent => :delete
 
