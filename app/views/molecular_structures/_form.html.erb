@@ -144,14 +144,15 @@
   <h3>ES Cells</h3>
   <table class="list">
     <thead>
-      <th>ES Cell</th>
-      <th>Targeting Vector</th>
-      <th>Allele Symbol Superscript</th>
-      <th>Parental Cell Line</th>
-      <th>IKMC Project ID</th>
-      <th>5' LR Passed ?</th>
-      <th>3' LR Passed ?</th>
-      <th class="last"></th>
+      <tr>
+        <th>ES Cell</th>
+        <th>Targeting Vector</th>
+        <th>Allele Symbol Superscript</th>
+        <th>Parental Cell Line</th>
+        <th>IKMC Project ID</th>
+        <th></th>
+        <th class="last"></th>
+      </tr>
     </thead>
     <tbody id="es_cells">
       <% f.fields_for :es_cells do |es_cell_form| %>

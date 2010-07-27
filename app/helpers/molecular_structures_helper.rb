@@ -15,14 +15,23 @@ module MolecularStructuresHelper
   # Display the remove link for a targeting vector form
   def remove_es_cell_link(form_builder)
     if form_builder.object.new_record?
-      # If the targeting vector is a new record, we can just remove the div from the dom
-      link_to_function("remove", "$(this).up('.es_cell').remove();");
+      # If the es cell is a new record, we can just remove from the dom
+      link_to_function("remove", nil) do |page|
+        page << "$(this).up('tr.es_cell').next('tr.es_cell_qc').remove();"
+        page << "$(this).up('tr.es_cell').remove();"
+      end
     else
       # However if it's a "real" record it has to be deleted from the database,
       # for this reason the new fields_for, accept_nested_attributes helpers give us _destroy,
       # a virtual attribute that tells rails to delete the child record.
-      form_builder.hidden_field(:_destroy) +
-      link_to_function("remove", "$(this).up('.es_cell').hide(); $(this).previous().value = '1'")
+      form_elm = form_builder.hidden_field(:_destroy)
+      link_elm = link_to_function("remove", nil) do |page|
+        page << "$(this).up('tr.es_cell').next('tr.es_cell_qc').hide();"
+        page << "$(this).up('tr.es_cell').hide();"
+        page << "$(this).previous().value = '1'"
+      end
+      
+      return form_elm + link_elm
     end
   end
   
