@@ -171,10 +171,10 @@
             %>
             <% es_cell_checks.each do |check| %>
               <td>
-                <% if check === 'Passed' %>
-                  <%= image_tag "famfamfam/accept.png", :alt => "Passed", :title => "Passed" %>
-                <% elsif check === 'Failed' %>
-                  <%= image_tag "famfamfam/exclamation.png", :alt => "Failed", :title => "Failed" %>
+                <% if check === 'pass' %>
+                  <%= image_tag "famfamfam/accept.png", :alt => "pass", :title => "pass" %>
+                <% elsif check === 'fail' %>
+                  <%= image_tag "famfamfam/exclamation.png", :alt => "fail", :title => "fail" %>
                 <% else %>
                   -
                 <% end %>
