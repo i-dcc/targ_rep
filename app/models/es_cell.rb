@@ -95,21 +95,6 @@ class EsCell < ActiveRecord::Base
       end
     end
     
-    def test_ikmc_project_id_consistency?
-      test_me = true
-      
-      if ikmc_project_id.nil? or ikmc_project_id.empty?
-        
-      end
-      
-      
-      if ikmc_project_id != nil or self.targeting_vector.ikmc_project_id != nil
-        return true
-      else
-        return false
-      end
-    end
-    
     def ikmc_project_id_consistency
       if ikmc_project_id != self.targeting_vector.ikmc_project_id
         errors.add( :ikmc_project_id, "targeting vector's IKMC Project ID is different.")
