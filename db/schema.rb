@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100726120958) do
+ActiveRecord::Schema.define(:version => 20100727154252) do
 
   create_table "audits", :force => true do |t|
     t.integer  "auditable_id"
@@ -57,6 +57,8 @@ ActiveRecord::Schema.define(:version => 20100726120958) do
   end
 
   add_index "es_cells", ["molecular_structure_id"], :name => "es_cells_molecular_structure_id_fk"
+  add_index "es_cells", ["name"], :name => "index_es_cells_on_name", :unique => true
+  add_index "es_cells", ["targeting_vector_id"], :name => "es_cells_targeting_vector_id_fk"
 
   create_table "genbank_files", :force => true do |t|
     t.integer  "molecular_structure_id",                       :null => false
@@ -99,6 +101,7 @@ ActiveRecord::Schema.define(:version => 20100726120958) do
   end
 
   add_index "molecular_structures", ["mgi_accession_id", "project_design_id", "assembly", "chromosome", "strand", "homology_arm_start", "homology_arm_end", "cassette_start", "cassette_end", "loxp_start", "loxp_end", "cassette", "backbone"], :name => "index_mol_struct", :unique => true
+  add_index "molecular_structures", ["mgi_accession_id"], :name => "index_molecular_structures_on_mgi_accession_id"
   add_index "molecular_structures", ["pipeline_id"], :name => "molecular_structures_pipeline_id_fk"
 
   create_table "pipelines", :force => true do |t|
@@ -106,6 +109,8 @@ ActiveRecord::Schema.define(:version => 20100726120958) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "pipelines", ["name"], :name => "index_pipelines_on_name"
 
   create_table "qc_field_descriptions", :force => true do |t|
     t.string   "qc_field",    :null => false
@@ -145,6 +150,7 @@ ActiveRecord::Schema.define(:version => 20100726120958) do
   end
 
   add_foreign_key "es_cells", "molecular_structures", :name => "es_cells_molecular_structure_id_fk", :dependent => :delete
+  add_foreign_key "es_cells", "targeting_vectors", :name => "es_cells_targeting_vector_id_fk", :dependent => :delete
 
   add_foreign_key "genbank_files", "molecular_structures", :name => "genbank_files_molecular_structure_id_fk", :dependent => :delete
 
