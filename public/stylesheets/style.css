@@ -127,6 +127,25 @@ h1, h2, h3, h4, h5, h6 {
   color: #973629;
 }
 
+.autocomplete {
+  border: 1px solid #bbb;
+  color: #666;
+  background-color: #fff;
+}
+
+.autocomplete ul {
+  list-style-type: none;
+  margin: 0;
+}
+
+.autocomplete ul li {
+  padding: 0 3px;
+}
+
+.autocomplete ul li.even {
+  background-color: #fbfb93;
+}
+
 /* Table */
 
 table.list {
@@ -227,3 +246,4 @@ div.pagination .disabled {
   margin-bottom: 10px;
   font-size: 15px;
 }
+

@@ -13,17 +13,22 @@
         input_field_id,
         'autocomplete_for_' + input_field_id,
         '/targeting_vectors.js',
-        { method: 'GET', min_chars: 2, paramName: 'name' }
+        {
+          method: 'GET',
+          min_chars: 2,
+          paramName: 'name_like',
+          parameters: 'molecular_structure_id=<%= @molecular_structure.id %>'
+        }
       );
     </script>
   </td>
   <td><%= f.text_field :allele_symbol_superscript %></td>
   <td><%= f.text_field :parental_cell_line %></td>
   <td><%= f.text_field :ikmc_project_id %></td>
-  <td></td>
+  <td><a href="#" onclick="$(this).up('tr.es_cell').next('tr.es_cell_qc').toggle(); return false;">show/hide QC metrics</a></td>
   <td><%= remove_es_cell_link(f) %></td>
 </tr>
-<tr class="es_cell_qc">
+<tr class="es_cell_qc" style="display:none;">
   <td colspan="7">
     <table>
       <caption>QC Metrics</caption>

@@ -5,8 +5,7 @@
 </h2>
 
 <% form_for @molecular_structure do |f| %>
-  <%= render :partial => 'form', :locals =>
-    { :f => f, :molecular_structure => @molecular_structure } %>
+  <%= render :partial => 'form', :locals => { :f => f, :molecular_structure => @molecular_structure } %>
   <p>
     <button type="submit" class="button positive">
       <%= image_tag "led-icons/accept.png", :alt => "" %> Update
