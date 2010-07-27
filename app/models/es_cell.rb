@@ -26,16 +26,15 @@ class EsCell < ActiveRecord::Base
   validate :molecular_structure_consistency,
     :unless => "[molecular_structure,targeting_vector].any?(&:nil?)"
   
-  validate :ikmc_project_id_consistency, :on => :save,
+  validate :ikmc_project_id_consistency,
     :unless => "[ikmc_project_id,targeting_vector].any?(&:nil?)"
-  
+    
   # Validate QC fields - the ESCELL_QC_OPTIONS constant comes from the 
   # es_cell_qc_options.rb initializer.
   ESCELL_QC_OPTIONS.each_key do |qc_field|
     validates_inclusion_of qc_field,
       :in        => ESCELL_QC_OPTIONS[qc_field],
-      :allow_nil => true,
-      :on        => :create,
+      :unless    => Proc.new { |a| a.attributes[qc_field.to_s].nil? || a.attributes[qc_field.to_s].empty? },
       :message   => "This QC metric can only be set as: #{ESCELL_QC_OPTIONS[qc_field].join(', ')}"
   end
 
@@ -83,13 +82,31 @@ class EsCell < ActiveRecord::Base
       my_mol_struct = self.molecular_structure
       targ_vec_mol_struct = self.targeting_vector.molecular_structure
       
-      unless targ_vec_mol_struct.id == my_mol_struct.id \
-      or (my_mol_struct.mgi_accession_id  == targ_vec_mol_struct.mgi_accession_id   \
-      and my_mol_struct.project_design_id == targ_vec_mol_struct.project_design_id  \
-      and my_mol_struct.design_type       == targ_vec_mol_struct.design_type        \
-      and my_mol_struct.cassette          == targ_vec_mol_struct.cassette           \
-      and my_mol_struct.backbone          == targ_vec_mol_struct.backbone)
+      unless \
+           targ_vec_mol_struct.id == my_mol_struct.id \
+        or ( \
+              my_mol_struct.mgi_accession_id  == targ_vec_mol_struct.mgi_accession_id   \
+          and my_mol_struct.project_design_id == targ_vec_mol_struct.project_design_id  \
+          and my_mol_struct.design_type       == targ_vec_mol_struct.design_type        \
+          and my_mol_struct.cassette          == targ_vec_mol_struct.cassette           \
+          and my_mol_struct.backbone          == targ_vec_mol_struct.backbone           \
+        )
         errors.add( :targeting_vector_id, "targeting vector's molecular structure differs from ES cell's molecular structure" )
+      end
+    end
+    
+    def test_ikmc_project_id_consistency?
+      test_me = true
+      
+      if ikmc_project_id.nil? or ikmc_project_id.empty?
+        
+      end
+      
+      
+      if ikmc_project_id != nil or self.targeting_vector.ikmc_project_id != nil
+        return true
+      else
+        return false
       end
     end
     
