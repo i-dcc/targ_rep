@@ -147,41 +147,77 @@
     <% unless @es_cells.empty? %>
       <table class="list">
         <thead>
-          <th>ES Cell</th>
-          <th>Targeting Vector</th>
-          <th>Allele Symbol Superscript</th>
-          <th>Parental Cell Line</th>
-          <th>IKMC Project ID</th>
-          <th>5' LR-PCR Check</th>
-          <th>3' LR-PCR Check</th>
+          <tr>
+            <th>ES Cell</th>
+            <th>Targeting Vector</th>
+            <th>Allele Symbol Superscript</th>
+            <th>Parental Cell Line</th>
+            <th>IKMC Project ID</th>
+            <th></th>
+          </tr>
         </thead>
         <tbody>
           <% @es_cells.each do |es_cell| %>
-          <tr class="<%= cycle("odd", "even") %>">
-            <td><%= es_cell.name %></td>
-            <td><% if es_cell.targeting_vector %><%= es_cell.targeting_vector.name %><% end %></td>
-            <td><%= es_cell.allele_symbol_superscript %></td>
-            <td><%= es_cell.parental_cell_line %></td>
-            <td><%= es_cell.ikmc_project_id %></td>
-            <%
-              es_cell_checks = [
-                es_cell.qc_five_prime_lr_pcr,
-                es_cell.qc_three_prime_lr_pcr
-              ]
-            %>
-            <% es_cell_checks.each do |check| %>
-              <td>
-                <% if check === 'pass' %>
-                  <%= image_tag "famfamfam/accept.png", :alt => "pass", :title => "pass" %>
-                <% elsif check === 'fail' %>
-                  <%= image_tag "famfamfam/exclamation.png", :alt => "fail", :title => "fail" %>
-                <% else %>
-                  -
-                <% end %>
+            <% da_class = cycle("odd", "even") %>
+            <tr class="<%= da_class %>">
+              <td><%= es_cell.name %></td>
+              <td><% if es_cell.targeting_vector %><%= es_cell.targeting_vector.name %><% end %></td>
+              <td><%= es_cell.allele_symbol_superscript %></td>
+              <td><%= es_cell.parental_cell_line %></td>
+              <td><%= es_cell.ikmc_project_id %></td>
+              <td><a href="#" onclick="$(this).up('tr').next('tr.es_cell_qc').toggle(); return false;">show/hide QC metrics</a></td>
+            </tr>
+            <tr class="es_cell_qc" style="display:none;">
+              <td colspan="6">
+                <table class="es_cell_qc_info">
+                  <caption>QC Metrics</caption>
+                  <tr>
+                    <th>Southern Blot</th>
+                    <td><%= es_cell.qc_southern_blot.empty? ? '-' : es_cell.qc_southern_blot %></td>
+                    <th>Map Test</th>
+                    <td><%= es_cell.qc_map_test.empty? ? '-' : es_cell.qc_map_test %></td>
+                    <th>Karyotype</th>
+                    <td><%= es_cell.qc_karyotype.empty? ? '-' : es_cell.qc_karyotype %></td>
+                  </tr>
+                  <tr>
+                    <th>TV Backbone Assay</th>
+                    <td><%= es_cell.qc_tv_backbone_assay.empty? ? '-' : es_cell.qc_tv_backbone_assay %></td>
+                    <th>5' LR-PCR</th>
+                    <td><%= es_cell.qc_five_prime_lr_pcr.empty? ? '-' : es_cell.qc_five_prime_lr_pcr %></td>
+                    <th>Loss of Wild-Type Allele (LOA)</th>
+                    <td><%= es_cell.qc_loss_of_wt_allele.empty? ? '-' : es_cell.qc_loss_of_wt_allele %></td>
+                  </tr>
+                  <tr>
+                    <th>Neo Count (qPCR)</th>
+                    <td><%= es_cell.qc_neo_count_qpcr.empty? ? '-' : es_cell.qc_neo_count_qpcr %></td>
+                    <th>lacZ SR-PCR</th>
+                    <td><%= es_cell.qc_lacz_sr_pcr.empty? ? '-' : es_cell.qc_lacz_sr_pcr %></td>
+                    <th>5' Cassette Integrity</th>
+                    <td><%= es_cell.qc_five_prime_cassette_integrity.empty? ? '-' : es_cell.qc_five_prime_cassette_integrity %></td>
+                  </tr>
+                  <tr>
+                    <th>Neo SR-PCR</th>
+                    <td><%= es_cell.qc_neo_sr_pcr.empty? ? '-' : es_cell.qc_neo_sr_pcr %></td>
+                    <th>Mutant Specific SR-PCR</th>
+                    <td><%= es_cell.qc_mutant_specific_sr_pcr.empty? ? '-' : es_cell.qc_mutant_specific_sr_pcr %></td>
+                    <th>loxP Confirmation</th>
+                    <td><%= es_cell.qc_loxp_confirmation.empty? ? '-' : es_cell.qc_loxp_confirmation %></td>
+                  </tr>
+                  <tr>
+                    <th>3' LR-PCR</th>
+                    <td><%= es_cell.qc_three_prime_lr_pcr.empty? ? '-' : es_cell.qc_three_prime_lr_pcr %></td>
+                    <td colspan="4"></td>
+                  </tr>
+                  <tr>
+                    <th colspan="6" style="text-align:left;">Comments on QC</th>
+                  </tr>
+                  <tr>
+                    <td colspan="6"><%= es_cell.qc_comment.empty? ? '-' : es_cell.qc_comment %></td>
+                  </tr>
+                </table>
               </td>
-            <% end %>
-          </tr>
-          <% end -%>
+            </tr>
+          <% end %>
         </tbody>
       </table>
     <% else %>

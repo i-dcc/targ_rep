@@ -247,3 +247,8 @@ div.pagination .disabled {
   font-size: 15px;
 }
 
+/* ES Cell QC Metrics */
+
+table.es_cell_qc_info th {
+  text-align: right;
+}
