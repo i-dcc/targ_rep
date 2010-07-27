@@ -173,46 +173,46 @@
                   <caption>QC Metrics</caption>
                   <tr>
                     <th>Southern Blot</th>
-                    <td><%= es_cell.qc_southern_blot.empty? ? '-' : es_cell.qc_southern_blot %></td>
+                    <td><%= print_dash_on_nil_or_empty( es_cell.qc_southern_blot ) %></td>
                     <th>Map Test</th>
-                    <td><%= es_cell.qc_map_test.empty? ? '-' : es_cell.qc_map_test %></td>
+                    <td><%= print_dash_on_nil_or_empty( es_cell.qc_map_test ) %></td>
                     <th>Karyotype</th>
-                    <td><%= es_cell.qc_karyotype.empty? ? '-' : es_cell.qc_karyotype %></td>
+                    <td><%= print_dash_on_nil_or_empty( es_cell.qc_karyotype ) %></td>
                   </tr>
                   <tr>
                     <th>TV Backbone Assay</th>
-                    <td><%= es_cell.qc_tv_backbone_assay.empty? ? '-' : es_cell.qc_tv_backbone_assay %></td>
+                    <td><%= print_dash_on_nil_or_empty( es_cell.qc_tv_backbone_assay ) %></td>
                     <th>5' LR-PCR</th>
-                    <td><%= es_cell.qc_five_prime_lr_pcr.empty? ? '-' : es_cell.qc_five_prime_lr_pcr %></td>
+                    <td><%= print_dash_on_nil_or_empty( es_cell.qc_five_prime_lr_pcr ) %></td>
                     <th>Loss of Wild-Type Allele (LOA)</th>
-                    <td><%= es_cell.qc_loss_of_wt_allele.empty? ? '-' : es_cell.qc_loss_of_wt_allele %></td>
+                    <td><%= print_dash_on_nil_or_empty( es_cell.qc_loss_of_wt_allele ) %></td>
                   </tr>
                   <tr>
                     <th>Neo Count (qPCR)</th>
-                    <td><%= es_cell.qc_neo_count_qpcr.empty? ? '-' : es_cell.qc_neo_count_qpcr %></td>
+                    <td><%= print_dash_on_nil_or_empty( es_cell.qc_neo_count_qpcr ) %></td>
                     <th>lacZ SR-PCR</th>
-                    <td><%= es_cell.qc_lacz_sr_pcr.empty? ? '-' : es_cell.qc_lacz_sr_pcr %></td>
+                    <td><%= print_dash_on_nil_or_empty( es_cell.qc_lacz_sr_pcr ) %></td>
                     <th>5' Cassette Integrity</th>
-                    <td><%= es_cell.qc_five_prime_cassette_integrity.empty? ? '-' : es_cell.qc_five_prime_cassette_integrity %></td>
+                    <td><%= print_dash_on_nil_or_empty( es_cell.qc_five_prime_cassette_integrity ) %></td>
                   </tr>
                   <tr>
                     <th>Neo SR-PCR</th>
-                    <td><%= es_cell.qc_neo_sr_pcr.empty? ? '-' : es_cell.qc_neo_sr_pcr %></td>
+                    <td><%= print_dash_on_nil_or_empty( es_cell.qc_neo_sr_pcr ) %></td>
                     <th>Mutant Specific SR-PCR</th>
-                    <td><%= es_cell.qc_mutant_specific_sr_pcr.empty? ? '-' : es_cell.qc_mutant_specific_sr_pcr %></td>
+                    <td><%= print_dash_on_nil_or_empty( es_cell.qc_mutant_specific_sr_pcr ) %></td>
                     <th>loxP Confirmation</th>
-                    <td><%= es_cell.qc_loxp_confirmation.empty? ? '-' : es_cell.qc_loxp_confirmation %></td>
+                    <td><%= print_dash_on_nil_or_empty( es_cell.qc_loxp_confirmation ) %></td>
                   </tr>
                   <tr>
                     <th>3' LR-PCR</th>
-                    <td><%= es_cell.qc_three_prime_lr_pcr.empty? ? '-' : es_cell.qc_three_prime_lr_pcr %></td>
+                    <td><%= print_dash_on_nil_or_empty( es_cell.qc_three_prime_lr_pcr ) %></td>
                     <td colspan="4"></td>
                   </tr>
                   <tr>
                     <th colspan="6" style="text-align:left;">Comments on QC</th>
                   </tr>
                   <tr>
-                    <td colspan="6"><%= es_cell.qc_comment.empty? ? '-' : es_cell.qc_comment %></td>
+                    <td colspan="6"><%= print_dash_on_nil_or_empty( es_cell.qc_comment ) %></td>
                   </tr>
                 </table>
               </td>
