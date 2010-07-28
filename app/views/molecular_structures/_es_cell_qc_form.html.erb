@@ -1,46 +1,41 @@
-<table class="es_cell_qc">
+<table class="es_cell_qc_info">
   <caption>QC Metrics</caption>
   <tr>
-    <th>Southern Blot</th>
-    <td><%= f.select(:qc_southern_blot, [ nil, ESCELL_QC_OPTIONS[:qc_southern_blot] ].flatten ) %></td>
-    <th>Map Test</th>
-    <td><%= f.select(:qc_map_test, [ nil, ESCELL_QC_OPTIONS[:qc_map_test] ].flatten ) %></td>
-    <th>Karyotype</th>
-    <td><%= f.select(:qc_karyotype, [ nil, ESCELL_QC_OPTIONS[:qc_karyotype] ].flatten ) %></td>
+    <%= render :partial => 'molecular_structures/es_cell_qc_form_option', :locals => { :f => f, :name => "Southern Blot", :symbol => :qc_southern_blot } %>
+    <%= render :partial => 'molecular_structures/es_cell_qc_form_option', :locals => { :f => f, :name => "Map Test", :symbol => :qc_map_test } %>
+    <%= render :partial => 'molecular_structures/es_cell_qc_form_option', :locals => { :f => f, :name => "Karyotype", :symbol => :qc_karyotype } %>
   </tr>
   <tr>
-    <th>TV Backbone Assay</th>
-    <td><%= f.select(:qc_tv_backbone_assay, [ nil, ESCELL_QC_OPTIONS[:qc_tv_backbone_assay] ].flatten ) %></td>
-    <th>5' LR-PCR</th>
-    <td><%= f.select(:qc_five_prime_lr_pcr, [ nil, ESCELL_QC_OPTIONS[:qc_five_prime_lr_pcr] ].flatten ) %></td>
-    <th>Loss of Wild-Type Allele (LOA)</th>
-    <td><%= f.select(:qc_loss_of_wt_allele, [ nil, ESCELL_QC_OPTIONS[:qc_loss_of_wt_allele] ].flatten ) %></td>
+    <%= render :partial => 'molecular_structures/es_cell_qc_form_option', :locals => { :f => f, :name => "TV Backbone Assay", :symbol => :qc_tv_backbone_assay } %>
+    <%= render :partial => 'molecular_structures/es_cell_qc_form_option', :locals => { :f => f, :name => "5' LR-PCR", :symbol => :qc_five_prime_lr_pcr } %>
+    <%= render :partial => 'molecular_structures/es_cell_qc_form_option', :locals => { :f => f, :name => "Loss of Wild-Type Allele (LOA)", :symbol => :qc_loss_of_wt_allele } %>
   </tr>
   <tr>
-    <th>Neo Count (qPCR)</th>
-    <td><%= f.select(:qc_neo_count_qpcr, [ nil, ESCELL_QC_OPTIONS[:qc_neo_count_qpcr] ].flatten ) %></td>
-    <th>lacZ SR-PCR</th>
-    <td><%= f.select(:qc_lacz_sr_pcr, [ nil, ESCELL_QC_OPTIONS[:qc_lacz_sr_pcr] ].flatten ) %></td>
-    <th>5' Cassette Integrity</th>
-    <td><%= f.select(:qc_five_prime_cassette_integrity, [ nil, ESCELL_QC_OPTIONS[:qc_five_prime_cassette_integrity] ].flatten ) %></td>
+    <%= render :partial => 'molecular_structures/es_cell_qc_form_option', :locals => { :f => f, :name => "Neo Count (qPCR)", :symbol => :qc_neo_count_qpcr } %>
+    <%= render :partial => 'molecular_structures/es_cell_qc_form_option', :locals => { :f => f, :name => "lacZ SR-PCR", :symbol => :qc_lacz_sr_pcr } %>
+    <%= render :partial => 'molecular_structures/es_cell_qc_form_option', :locals => { :f => f, :name => "5' Cassette Integrity", :symbol => :qc_five_prime_cassette_integrity } %>
   </tr>
   <tr>
-    <th>Neo SR-PCR</th>
-    <td><%= f.select(:qc_neo_sr_pcr, [ nil, ESCELL_QC_OPTIONS[:qc_neo_sr_pcr] ].flatten ) %></td>
-    <th>Mutant Specific SR-PCR</th>
-    <td><%= f.select(:qc_mutant_specific_sr_pcr, [ nil, ESCELL_QC_OPTIONS[:qc_mutant_specific_sr_pcr] ].flatten ) %></td>
-    <th>loxP Confirmation</th>
-    <td><%= f.select(:qc_loxp_confirmation, [ nil, ESCELL_QC_OPTIONS[:qc_loxp_confirmation] ].flatten ) %></td>
+    <%= render :partial => 'molecular_structures/es_cell_qc_form_option', :locals => { :f => f, :name => "Neo SR-PCR", :symbol => :qc_neo_sr_pcr } %>
+    <%= render :partial => 'molecular_structures/es_cell_qc_form_option', :locals => { :f => f, :name => "Mutant Specific SR-PCR", :symbol => :qc_mutant_specific_sr_pcr } %>
+    <%= render :partial => 'molecular_structures/es_cell_qc_form_option', :locals => { :f => f, :name => "loxP Confirmation", :symbol => :qc_loxp_confirmation } %>
   </tr>
   <tr>
-    <th>3' LR-PCR</th>
-    <td><%= f.select(:qc_three_prime_lr_pcr, [ nil, ESCELL_QC_OPTIONS[:qc_three_prime_lr_pcr] ].flatten ) %></td>
+    <%= render :partial => 'molecular_structures/es_cell_qc_form_option', :locals => { :f => f, :name => "3' LR-PCR", :symbol => :qc_three_prime_lr_pcr } %>
     <td colspan="4"></td>
   </tr>
   <tr>
     <th colspan="6" style="text-align:left;">Comments on QC</th>
   </tr>
   <tr>
-    <td colspan="6"><%= f.text_area :qc_comment %></td>
+    <td colspan="6">
+      <%=
+        f.text_area(
+          :qc_comment,
+          :rows => 5, 
+          :style => "height:auto;width:90%"
+        )
+      %>
+    </td>
   </tr>
 </table>

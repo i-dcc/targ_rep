@@ -109,6 +109,14 @@ class ApplicationController < ActionController::Base
       
       @solr.select( solr_args )
     end
+    
+    # Helper function to slurp in all of the ES Cell QC descriptors
+    def get_qc_field_descriptions
+      @qc_field_descs = {}
+      QcFieldDescription.all.each do |desc|
+        @qc_field_descs[ desc.qc_field.to_sym ] = desc
+      end
+    end
   
   private
     def set_created_by

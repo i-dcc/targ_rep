@@ -1,0 +1,11 @@
+<th>
+  <%= name %> 
+  <% unless @qc_field_descs[symbol].nil? %>
+    <% if @qc_field_descs[symbol].url and !@qc_field_descs[symbol].url.empty? %>
+      <a href="<%= @qc_field_descs[symbol].url %>" target="_blank" class="ss_sprite ss_help" title="<%= @qc_field_descs[symbol].description %>" style="text-decoration:none;">&nbsp;</a>
+    <% else %>
+      <span class="ss_sprite ss_help" title="<%= @qc_field_descs[symbol].description %>">&nbsp;</span>
+    <% end %>
+  <% end %>
+</th>
+<td><%= print_dash_on_nil_or_empty( es_cell.attributes[symbol.to_s] ) %></td>

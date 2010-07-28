@@ -171,40 +171,27 @@
                 <table class="es_cell_qc_info">
                   <caption>QC Metrics</caption>
                   <tr>
-                    <th>Southern Blot</th>
-                    <td><%= print_dash_on_nil_or_empty( es_cell.qc_southern_blot ) %></td>
-                    <th>Map Test</th>
-                    <td><%= print_dash_on_nil_or_empty( es_cell.qc_map_test ) %></td>
-                    <th>Karyotype</th>
-                    <td><%= print_dash_on_nil_or_empty( es_cell.qc_karyotype ) %></td>
+                    <%= render :partial => 'molecular_structures/show_es_cell_qc_option', :locals => { :es_cell => es_cell, :name => "Southern Blot", :symbol => :qc_southern_blot } %>
+                    <%= render :partial => 'molecular_structures/show_es_cell_qc_option', :locals => { :es_cell => es_cell, :name => "Map Test", :symbol => :qc_map_test } %>
+                    <%= render :partial => 'molecular_structures/show_es_cell_qc_option', :locals => { :es_cell => es_cell, :name => "Karyotype", :symbol => :qc_karyotype } %>
                   </tr>
                   <tr>
-                    <th>TV Backbone Assay</th>
-                    <td><%= print_dash_on_nil_or_empty( es_cell.qc_tv_backbone_assay ) %></td>
-                    <th>5' LR-PCR</th>
-                    <td><%= print_dash_on_nil_or_empty( es_cell.qc_five_prime_lr_pcr ) %></td>
-                    <th>Loss of Wild-Type Allele (LOA)</th>
-                    <td><%= print_dash_on_nil_or_empty( es_cell.qc_loss_of_wt_allele ) %></td>
+                    <%= render :partial => 'molecular_structures/show_es_cell_qc_option', :locals => { :es_cell => es_cell, :name => "TV Backbone Assay", :symbol => :qc_tv_backbone_assay } %>
+                    <%= render :partial => 'molecular_structures/show_es_cell_qc_option', :locals => { :es_cell => es_cell, :name => "5' LR-PCR", :symbol => :qc_five_prime_lr_pcr } %>
+                    <%= render :partial => 'molecular_structures/show_es_cell_qc_option', :locals => { :es_cell => es_cell, :name => "Loss of Wild-Type Allele (LOA)", :symbol => :qc_loss_of_wt_allele } %>
                   </tr>
                   <tr>
-                    <th>Neo Count (qPCR)</th>
-                    <td><%= print_dash_on_nil_or_empty( es_cell.qc_neo_count_qpcr ) %></td>
-                    <th>lacZ SR-PCR</th>
-                    <td><%= print_dash_on_nil_or_empty( es_cell.qc_lacz_sr_pcr ) %></td>
-                    <th>5' Cassette Integrity</th>
-                    <td><%= print_dash_on_nil_or_empty( es_cell.qc_five_prime_cassette_integrity ) %></td>
+                    <%= render :partial => 'molecular_structures/show_es_cell_qc_option', :locals => { :es_cell => es_cell, :name => "Neo Count (qPCR)", :symbol => :qc_neo_count_qpcr } %>
+                    <%= render :partial => 'molecular_structures/show_es_cell_qc_option', :locals => { :es_cell => es_cell, :name => "lacZ SR-PCR", :symbol => :qc_lacz_sr_pcr } %>
+                    <%= render :partial => 'molecular_structures/show_es_cell_qc_option', :locals => { :es_cell => es_cell, :name => "5' Cassette Integrity", :symbol => :qc_five_prime_cassette_integrity } %>
                   </tr>
                   <tr>
-                    <th>Neo SR-PCR</th>
-                    <td><%= print_dash_on_nil_or_empty( es_cell.qc_neo_sr_pcr ) %></td>
-                    <th>Mutant Specific SR-PCR</th>
-                    <td><%= print_dash_on_nil_or_empty( es_cell.qc_mutant_specific_sr_pcr ) %></td>
-                    <th>loxP Confirmation</th>
-                    <td><%= print_dash_on_nil_or_empty( es_cell.qc_loxp_confirmation ) %></td>
+                    <%= render :partial => 'molecular_structures/show_es_cell_qc_option', :locals => { :es_cell => es_cell, :name => "Neo SR-PCR", :symbol => :qc_neo_sr_pcr } %>
+                    <%= render :partial => 'molecular_structures/show_es_cell_qc_option', :locals => { :es_cell => es_cell, :name => "Mutant Specific SR-PCR", :symbol => :qc_mutant_specific_sr_pcr } %>
+                    <%= render :partial => 'molecular_structures/show_es_cell_qc_option', :locals => { :es_cell => es_cell, :name => "loxP Confirmation", :symbol => :qc_loxp_confirmation } %>
                   </tr>
                   <tr>
-                    <th>3' LR-PCR</th>
-                    <td><%= print_dash_on_nil_or_empty( es_cell.qc_three_prime_lr_pcr ) %></td>
+                    <%= render :partial => 'molecular_structures/show_es_cell_qc_option', :locals => { :es_cell => es_cell, :name => "3' LR-PCR", :symbol => :qc_three_prime_lr_pcr } %>
                     <td colspan="4"></td>
                   </tr>
                   <tr>

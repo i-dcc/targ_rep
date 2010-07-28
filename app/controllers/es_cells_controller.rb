@@ -5,9 +5,10 @@ class EsCellsController < ApplicationController
   # Must be after "find_escell" filter (as it requires an object)
   before_filter :ensure_creator_or_admin, :only => [:destroy]
   
-  # Following both are located in application_controller.rb
+  # The following are located in application_controller.rb
   before_filter :set_created_by, :only => :create
   before_filter :set_updated_by, :only => :update
+  before_filter :get_qc_field_descriptions, :only => [:bulk_edit]
   
   # GET /es_cells.xml
   # GET /es_cells.json

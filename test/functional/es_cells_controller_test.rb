@@ -101,4 +101,12 @@ class EsCellsControllerTest < ActionController::TestCase
     end
     assert_response 302
   end
+  
+  should "allow us to interact with the /bulk_edit view" do
+    get :bulk_edit
+    assert_response :success, "Unable to open /es_cells/bulk_edit"
+    
+    post :bulk_edit, :es_cell_names => EsCell.first.name
+    assert_response :success, "Unable to open /es_cells/bulk_edit with an es_cell_names parameter"
+  end
 end
