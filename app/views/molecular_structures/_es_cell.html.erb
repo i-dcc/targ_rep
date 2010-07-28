@@ -25,7 +25,7 @@
   <td><%= f.text_field :allele_symbol_superscript %></td>
   <td><%= f.text_field :parental_cell_line %></td>
   <td><%= f.text_field :ikmc_project_id %></td>
-  <td><a href="#" onclick="$(this).up('tr.es_cell').next('tr.es_cell_qc').toggle(); return false;">show/hide QC metrics</a></td>
+  <td><a href="#" class="es_cell_qc_toggle ss_sprite ss_magnifier">show/hide QC metrics</a></td>
   <td><%= remove_es_cell_link(f) %></td>
 </tr>
 <tr class="es_cell_qc" style="display:none;">
