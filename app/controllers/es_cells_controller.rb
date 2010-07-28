@@ -69,6 +69,26 @@ class EsCellsController < ApplicationController
       format.json { head :ok }
     end
   end
+  
+  # GET /es_cells/qc_edit
+  # POST /es_cells/qc_edit
+  def qc_edit
+    unless params[:es_cell_names].nil?
+      es_cell_names = params[:es_cell_names].split("\n").map{ |elm| elm.chomp }
+      @es_cells     = EsCell.name_equals( es_cell_names )
+    end
+  end
+  
+  # PUT /es_cells/update_multiple
+  def update_multiple
+    EsCell.update( params[:es_cells].keys, params[:es_cells].values )
+    flash[:notice] = "ES Cells Updated"
+    
+    es_cell_names = []
+    params[:es_cells].values.each { |es_cell| es_cell_names.push( es_cell[:name] ) }
+    
+    redirect_to :action => :qc_edit, :es_cell_names => es_cell_names.join("\n")
+  end
 
   private
     def find_escell # makes our views "cleaner" and more consistent

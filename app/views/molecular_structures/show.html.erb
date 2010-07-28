@@ -158,8 +158,7 @@
         </thead>
         <tbody>
           <% @es_cells.each do |es_cell| %>
-            <% da_class = cycle("odd", "even") %>
-            <tr class="<%= da_class %>">
+            <tr class="<%= cycle("odd", "even") %>">
               <td><%= es_cell.name %></td>
               <td><% if es_cell.targeting_vector %><%= es_cell.targeting_vector.name %><% end %></td>
               <td><%= es_cell.allele_symbol_superscript %></td>

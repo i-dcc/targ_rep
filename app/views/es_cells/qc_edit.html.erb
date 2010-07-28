@@ -1,0 +1,54 @@
+<div class="span-24"><h2>ES Cell QC Editing</h2><div>
+
+<div class="span-24">
+  <% form_tag( { :action => 'qc_edit' }, { :method => :post } ) do %>
+    Enter a list of ES Cell names (one ES Cell per line) to edit and press search:<br />
+    <%= text_area_tag :es_cell_names, params[:es_cell_names] %><br />
+    <%= submit_tag "Search", :name => nil %>
+  <% end %>
+</div>
+
+<% if @es_cells and @es_cells.size > 0 %>
+  <div class="clear"></div>
+  
+  <div class="span-24">
+    <% form_tag update_multiple_es_cells_path, :method => :put do %>
+      <% @es_cells.each do |es_cell| %>
+        <% fields_for "es_cells[]", es_cell do |f| %>
+          <%= f.hidden_field :name %>
+          <h3><%= es_cell.name %></h3>
+          <table class="list">
+            <thead>
+              <tr>
+                <th>Allele Symbol Superscript</th>
+                <th>IKMC Project ID</th>
+                <th>Parental Cell Line</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><%= f.text_field :allele_symbol_superscript %></td>
+                <td><%= f.text_field :ikmc_project_id %></td>
+                <td><%= f.text_field :parental_cell_line %></td>
+                <td><a href="#" class="es_cell_qc_toggle ss_sprite ss_magnifier">show/hide QC metrics</a></td>
+              </tr>
+              <tr class="es_cell_qc">
+                <td colspan="4">
+                  <%= render :partial => 'molecular_structures/es_cell_qc_form', :locals => { :f => f } %>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <hr />
+        <% end %>
+      <% end %>
+    
+      <p>
+        <button type="submit" class="button positive">
+          <%= image_tag "led-icons/accept.png", :alt => "" %> Save
+        </button> 
+      </p>
+    <% end %>
+  </div>
+<% end %>

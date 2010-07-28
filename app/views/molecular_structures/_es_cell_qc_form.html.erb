@@ -1,0 +1,46 @@
+<table class="es_cell_qc">
+  <caption>QC Metrics</caption>
+  <tr>
+    <th>Southern Blot</th>
+    <td><%= f.select(:qc_southern_blot, [ nil, ESCELL_QC_OPTIONS[:qc_southern_blot] ].flatten ) %></td>
+    <th>Map Test</th>
+    <td><%= f.select(:qc_map_test, [ nil, ESCELL_QC_OPTIONS[:qc_map_test] ].flatten ) %></td>
+    <th>Karyotype</th>
+    <td><%= f.select(:qc_karyotype, [ nil, ESCELL_QC_OPTIONS[:qc_karyotype] ].flatten ) %></td>
+  </tr>
+  <tr>
+    <th>TV Backbone Assay</th>
+    <td><%= f.select(:qc_tv_backbone_assay, [ nil, ESCELL_QC_OPTIONS[:qc_tv_backbone_assay] ].flatten ) %></td>
+    <th>5' LR-PCR</th>
+    <td><%= f.select(:qc_five_prime_lr_pcr, [ nil, ESCELL_QC_OPTIONS[:qc_five_prime_lr_pcr] ].flatten ) %></td>
+    <th>Loss of Wild-Type Allele (LOA)</th>
+    <td><%= f.select(:qc_loss_of_wt_allele, [ nil, ESCELL_QC_OPTIONS[:qc_loss_of_wt_allele] ].flatten ) %></td>
+  </tr>
+  <tr>
+    <th>Neo Count (qPCR)</th>
+    <td><%= f.select(:qc_neo_count_qpcr, [ nil, ESCELL_QC_OPTIONS[:qc_neo_count_qpcr] ].flatten ) %></td>
+    <th>lacZ SR-PCR</th>
+    <td><%= f.select(:qc_lacz_sr_pcr, [ nil, ESCELL_QC_OPTIONS[:qc_lacz_sr_pcr] ].flatten ) %></td>
+    <th>5' Cassette Integrity</th>
+    <td><%= f.select(:qc_five_prime_cassette_integrity, [ nil, ESCELL_QC_OPTIONS[:qc_five_prime_cassette_integrity] ].flatten ) %></td>
+  </tr>
+  <tr>
+    <th>Neo SR-PCR</th>
+    <td><%= f.select(:qc_neo_sr_pcr, [ nil, ESCELL_QC_OPTIONS[:qc_neo_sr_pcr] ].flatten ) %></td>
+    <th>Mutant Specific SR-PCR</th>
+    <td><%= f.select(:qc_mutant_specific_sr_pcr, [ nil, ESCELL_QC_OPTIONS[:qc_mutant_specific_sr_pcr] ].flatten ) %></td>
+    <th>loxP Confirmation</th>
+    <td><%= f.select(:qc_loxp_confirmation, [ nil, ESCELL_QC_OPTIONS[:qc_loxp_confirmation] ].flatten ) %></td>
+  </tr>
+  <tr>
+    <th>3' LR-PCR</th>
+    <td><%= f.select(:qc_three_prime_lr_pcr, [ nil, ESCELL_QC_OPTIONS[:qc_three_prime_lr_pcr] ].flatten ) %></td>
+    <td colspan="4"></td>
+  </tr>
+  <tr>
+    <th colspan="6" style="text-align:left;">Comments on QC</th>
+  </tr>
+  <tr>
+    <td colspan="6"><%= f.text_area :qc_comment %></td>
+  </tr>
+</table>
