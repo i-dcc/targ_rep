@@ -3,7 +3,16 @@
 <div class="span-24">
   <% form_tag( { :action => 'qc_edit' }, { :method => :post } ) do %>
     Enter a list of ES Cell names (one ES Cell per line) to edit and press search:<br />
-    <%= text_area_tag :es_cell_names, params[:es_cell_names] %><br />
+    <%= 
+      text_area_tag( 
+        :es_cell_names, 
+        params[:es_cell_names], 
+        :rows => 10, 
+        :cols => 25,
+        :style => "height:auto"
+      )
+    %>
+    <br />
     <%= submit_tag "Search", :name => nil %>
   <% end %>
 </div>
