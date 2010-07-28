@@ -76,6 +76,7 @@ class EsCellsController < ApplicationController
     unless params[:es_cell_names].nil?
       es_cell_names = params[:es_cell_names].split("\n").map{ |elm| elm.chomp }
       @es_cells     = EsCell.name_equals( es_cell_names )
+      @es_cells.sort!{ |a,b| es_cell_names.index(a.name) <=> es_cell_names.index(b.name) }
     end
   end
   
