@@ -1,7 +1,7 @@
-<div class="span-24"><h2>ES Cell QC Editing</h2><div>
+<div class="span-24"><h2>ES Cell Bulk Editing</h2><div>
 
 <div class="span-24">
-  <% form_tag( { :action => 'qc_edit' }, { :method => :post } ) do %>
+  <% form_tag( { :action => 'bulk_edit' }, { :method => :post } ) do %>
     Enter a list of ES Cell names (one ES Cell per line) to edit and press search:<br />
     <%= 
       text_area_tag( 

@@ -5,7 +5,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :genbank_files
   map.resources :molecular_structures, :as => "alleles"
   map.resources :targeting_vectors
-  map.resources :es_cells, :collection => { :qc_edit => [:get,:post], :update_multiple => :put }
+  map.resources :es_cells, :collection => { :bulk_edit => [:get,:post], :update_multiple => :put }
   
   map.escell_clone_genbank_file     '/alleles/:id/escell-clone-genbank-file',      :controller => "molecular_structures", :action => "get_escell_clone_genbank_file"
   map.targeting_vector_genbank_file '/alleles/:id/targeting-vector-genbank-file',  :controller => "molecular_structures", :action => "get_targeting_vector_genbank_file"
