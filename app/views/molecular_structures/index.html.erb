@@ -52,9 +52,11 @@
         <td><%= mol_struct.targeted_trap? %></td>
         <td>
           <%= link_to 'view', mol_struct, :class => "ss_sprite ss_magnifier" %>
-          <% if @current_user and ( ( @current_user == mol_struct.created_by ) or @current_user.is_admin ) %>
+          <% if @current_user %>
             <%= link_to 'edit', edit_molecular_structure_path(mol_struct), :class => "ss_sprite ss_pencil" %>
-            <%= link_to 'delete', mol_struct, :confirm => 'Are you sure?', :method => :delete, :class => "ss_sprite ss_cross" %>
+            <% if @current_user == mol_struct.created_by or @current_user.is_admin %>
+              <%= link_to 'delete', mol_struct, :confirm => 'Are you sure?', :method => :delete, :class => "ss_sprite ss_cross" %>
+            <% end %>
           <% end %>
         </td>
       </tr>
