@@ -26,8 +26,7 @@ class EsCell < ActiveRecord::Base
   validate :molecular_structure_consistency,
     :unless => "[molecular_structure,targeting_vector].any?(&:nil?)"
   
-  validate :ikmc_project_id_consistency,
-    :unless => "[ikmc_project_id,targeting_vector].any?(&:nil?)"
+  validate :ikmc_project_id_consistency, :if => :test_ikmc_project_id_consistency?
     
   # Validate QC fields - the ESCELL_QC_OPTIONS constant comes from the 
   # es_cell_qc_options.rb initializer.
@@ -93,6 +92,20 @@ class EsCell < ActiveRecord::Base
         )
         errors.add( :targeting_vector_id, "targeting vector's molecular structure differs from ES cell's molecular structure" )
       end
+    end
+    
+    def test_ikmc_project_id_consistency?
+      test = false
+      
+      if ikmc_project_id != nil and ikmc_project_id != ""
+        test = true
+      end
+      
+      if self.targeting_vector and ( self.targeting_vector.ikmc_project_id != nil and self.targeting_vector.ikmc_project_id != "" )
+        test = true
+      end
+      
+      return test
     end
     
     def ikmc_project_id_consistency
