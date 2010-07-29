@@ -83,13 +83,15 @@ class EsCellsController < ApplicationController
   
   # PUT /es_cells/update_multiple
   def update_multiple
-    EsCell.update( params[:es_cells].keys, params[:es_cells].values )
-    flash[:notice] = "ES Cells Updated"
+    @es_cells = EsCell.update( params[:es_cells].keys, params[:es_cells].values ).reject { |p| p.errors.empty? }
     
-    es_cell_names = []
-    params[:es_cells].values.each { |es_cell| es_cell_names.push( es_cell[:name] ) }
-    
-    redirect_to :action => :bulk_edit, :es_cell_names => es_cell_names.join("\n")
+    if @es_cells.empty?
+      flash[:notice] = "ES Cells Updated"
+      redirect_to :action => :bulk_edit
+    else
+      flash[:error] = "There was a problem updating some of your records - the failed entries are shown below"
+      render :action => :bulk_edit
+    end
   end
 
   private

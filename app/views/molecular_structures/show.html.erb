@@ -159,11 +159,11 @@
         <tbody>
           <% @es_cells.each do |es_cell| %>
             <tr class="<%= cycle("odd", "even") %>">
-              <td><%= es_cell.name %></td>
-              <td><% if es_cell.targeting_vector %><%= es_cell.targeting_vector.name %><% end %></td>
-              <td><%= es_cell.allele_symbol_superscript %></td>
-              <td><%= es_cell.parental_cell_line %></td>
-              <td><%= es_cell.ikmc_project_id %></td>
+              <td><%=h es_cell.name %></td>
+              <td><% if es_cell.targeting_vector %><%=h es_cell.targeting_vector.name %><% end %></td>
+              <td><%=h es_cell.allele_symbol_superscript %></td>
+              <td><%=h es_cell.parental_cell_line %></td>
+              <td><%=h es_cell.ikmc_project_id %></td>
               <td><a href="#" class="es_cell_qc_toggle ss_sprite ss_magnifier">show/hide QC metrics</a></td>
             </tr>
             <tr class="es_cell_qc" style="display:none;">
@@ -198,7 +198,7 @@
                     <th colspan="6" style="text-align:left;">Comments on QC</th>
                   </tr>
                   <tr>
-                    <td colspan="6"><%= print_dash_on_nil_or_empty( es_cell.qc_comment ) %></td>
+                    <td colspan="6"><%=h print_dash_on_nil_or_empty( es_cell.qc_comment ) %></td>
                   </tr>
                 </table>
               </td>
