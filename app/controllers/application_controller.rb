@@ -2,6 +2,8 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
+  include ExceptionNotification::Notifiable
+  
   # See ActionController::RequestForgeryProtection for details
   protect_from_forgery
   
