@@ -26,7 +26,6 @@ Rails::Initializer.run do |config|
   config.gem "matthuhiggins-foreigner", :lib => "foreigner"
   config.gem "allele_image"
   config.gem "rsolr"
-  
   config.gem "newrelic_rpm"
 
   # Only load the plugins named here, in the order given (default is alphabetical).

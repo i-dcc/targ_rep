@@ -17,7 +17,7 @@ class MolecularStructuresController < ApplicationController
   # The following are located in application_controller.rb
   before_filter :set_created_by, :only => :create
   before_filter :set_updated_by, :only => :update
-  before_filter :get_qc_field_descriptions, :only => [:show, :edit, :new]
+  before_filter :get_qc_field_descriptions, :only => [:show, :edit, :new, :create]
   
   # For webservice interface
   before_filter :format_nested_params, :only => [:create, :update]
