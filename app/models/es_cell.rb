@@ -98,11 +98,9 @@ class EsCell < ActiveRecord::Base
       test = false
       
       if ikmc_project_id != nil and ikmc_project_id != ""
-        test = true
-      end
-      
-      if self.targeting_vector and ( self.targeting_vector.ikmc_project_id != nil and self.targeting_vector.ikmc_project_id != "" )
-        test = true
+        if self.targeting_vector and ( self.targeting_vector.ikmc_project_id != nil and self.targeting_vector.ikmc_project_id != "" )
+          test = true
+        end
       end
       
       return test
