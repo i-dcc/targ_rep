@@ -15,6 +15,10 @@ namespace :deploy do
     run "rm -rf #{var_run_path}/javascripts"
     run "cd #{release_path}/public && mv javascripts #{var_run_path}/javascripts && ln -nfs #{var_run_path}/javascripts javascripts"
     run "chgrp -R team87 #{var_run_path}/javascripts && chmod g+w #{var_run_path}/javascripts"
+    
+    # /public/downloads - auto-generated datafiles
+    run "mkdir -p #{var_run_path}/downloads"
+    run "cd #{release_path}/public && rm -rf downloads && ln -nfs #{var_run_path}/downloads downloads"
   end
 end
 
