@@ -306,7 +306,7 @@ module DataCheckHelpers
         #puts "[check_image_drawing_coverage] - #{TARG_REP_URL}/alleles/#{allele_id}/allele-image : #{allele_res.code}"
       end
       
-      if allele[:allele_img] != 200 or allele[:vector_img] != 200
+      if ( allele[:allele_img] != nil and allele[:allele_img] != 200 ) or ( allele[:vector_img] != nil and allele[:vector_img] != 200 )
         alleles_with_bad_images[allele_id] = alleles[allele_id]
       end
       
@@ -320,7 +320,7 @@ module DataCheckHelpers
     
     # alleles_with_bad_images = ""
     # File.open("tmp/alleles_with_bad_images.marshal",'r').each_line { |line| alleles_with_bad_images << line }
-    # alleles_with_bad_images = Marshal.load(data)
+    # alleles_with_bad_images = Marshal.load(alleles_with_bad_images)
     
     cache_file = File.open("tmp/alleles_with_bad_images.marshal",'w')
     cache_file.write( Marshal.dump(alleles_with_bad_images) )
