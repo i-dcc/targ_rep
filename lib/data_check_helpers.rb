@@ -15,7 +15,7 @@ module DataCheckHelpers
     dist_products = {}
 
     ['is_komp_csd','is_eucomm'].each do |project_filter|
-      puts "[htgt_targ] - requesting data for #{project_filter} projects..."
+      puts "[htgt_targ_get_all_distributable_products] - requesting data for #{project_filter} projects..."
       data = @@htgt_targ.search(
         :filters => { project_filter => '1' },
         :attributes => [
@@ -46,7 +46,7 @@ module DataCheckHelpers
       
       datapos = extract_header_positions( data[:headers] )
       
-      puts "[htgt_targ] - processing #{data[:data].size} rows of data for '#{project_filter}' projects..."
+      puts "[htgt_targ_get_all_distributable_products] - processing #{data[:data].size} rows of data for '#{project_filter}' projects..."
       data[:data].each do |result|
         distributable = nil
 
@@ -103,7 +103,7 @@ module DataCheckHelpers
         end
       end
 
-      puts "[htgt_targ] - done processing #{project_filter} projects..."
+      puts "[htgt_targ_get_all_distributable_products] - done processing #{project_filter} projects..."
     end
 
     return dist_products
@@ -115,7 +115,7 @@ module DataCheckHelpers
     dist_products = {}
 
     ['KOMP-CSD','EUCOMM'].each do |project_filter|
-      puts "[idcc_targ_rep] - requesting data for '#{project_filter}' projects..."
+      puts "[idcc_targ_rep_get_all_products] - requesting data for '#{project_filter}' projects..."
       data = @@idcc_targ_rep.search(
         :filters => { 'pipeline' => project_filter },
         :attributes => [
@@ -141,7 +141,7 @@ module DataCheckHelpers
       
       datapos = extract_header_positions( data[:headers] )
       
-      puts "[idcc_targ_rep] - processing #{data[:data].size} rows of data for '#{project_filter}' projects..."
+      puts "[idcc_targ_rep_get_all_products] - processing #{data[:data].size} rows of data for '#{project_filter}' projects..."
 
       data[:data].each do |result|
         result_data = dist_products[ result[datapos[:ikmc_project_id]].to_i ]
@@ -169,7 +169,7 @@ module DataCheckHelpers
         dist_products[ result[datapos[:ikmc_project_id]].to_i ] = result_data
       end
       
-      puts "[idcc_targ_rep] - done processing #{project_filter} projects..."
+      puts "[idcc_targ_rep_get_all_products] - done processing #{project_filter} projects..."
     end
     
     return dist_products
@@ -224,7 +224,7 @@ module DataCheckHelpers
   def get_allele_ids_with_products
     alleles = {}
     
-    puts "[idcc_targ_rep] - requesting data for all alleles..."
+    puts "[get_allele_ids_with_products] - requesting data for all alleles..."
     data = @@idcc_targ_rep.search(
       :filters => {},
       :attributes => [
@@ -249,7 +249,7 @@ module DataCheckHelpers
     
     datapos = extract_header_positions( data[:headers] )
     
-    puts "[idcc_targ_rep] - processing #{data[:data].size} rows of data..."
+    puts "[get_allele_ids_with_products] - processing #{data[:data].size} rows of data..."
     data[:data].each do |result|
       result_data = alleles[ result[datapos[:allele_id]].to_i ]
       
@@ -270,7 +270,7 @@ module DataCheckHelpers
       alleles[ result[datapos[:allele_id]].to_i ] = result_data
     end
     
-    puts "[idcc_targ_rep] - done processing data..."
+    puts "[get_allele_ids_with_products] - done processing data..."
     
     return alleles
   end
