@@ -264,8 +264,8 @@ module DataCheckHelpers
         }
       end
       
-      result_data[:tv]  = true unless result_data[datapos[:targeting_vector]].nil?
-      result_data[:esc] = true unless result_data[datapos[:escell_clone]].nil?
+      result_data[:tv]  = true unless result[datapos[:targeting_vector]].nil?
+      result_data[:esc] = true unless result[datapos[:escell_clone]].nil?
       
       alleles[ result[datapos[:allele_id]].to_i ] = result_data
     end
@@ -288,29 +288,31 @@ module DataCheckHelpers
     # the results if we get a fail...
     #
     # Do the requests in parallel (using the 'parallel' gem)
-    puts "[check_image_drawing_coverage] - running #{alleles.keys.size * 2} requests..."
+    puts "[check_image_drawing_coverage] - running requests for #{alleles.keys.size} alleles..."
     puts "[check_image_drawing_coverage] - this may take some time..."
-    puts "[check_image_drawing_coverage] - request: 0 / #{alleles.keys.size * 2}"
+    puts "[check_image_drawing_coverage] - allele: 0 / #{alleles.keys.size}"
     Parallel.each( alleles.keys, :in_threads => 10 ) do |allele_id|
       allele = alleles[allele_id]
       
       if allele[:tv]
         vector_res = HTTParty.get("#{TARG_REP_URL}/alleles/#{allele_id}/vector-image")
         allele[:vector_img] = vector_res.code
+        #puts "[check_image_drawing_coverage] - #{TARG_REP_URL}/alleles/#{allele_id}/vector-image : #{vector_res.code}"
       end
       
       if allele[:esc]
         allele_res = HTTParty.get("#{TARG_REP_URL}/alleles/#{allele_id}/allele-image")
         allele[:allele_img] = allele_res.code
+        #puts "[check_image_drawing_coverage] - #{TARG_REP_URL}/alleles/#{allele_id}/allele-image : #{allele_res.code}"
       end
       
       if allele[:allele_img] != 200 or allele[:vector_img] != 200
         alleles_with_bad_images[allele_id] = alleles[allele_id]
       end
       
-      req_count = req_count + 2
+      req_count = req_count + 1
       if req_count % 100 == 0
-        puts "[check_image_drawing_coverage] - request: #{req_count} / #{alleles.keys.size * 2}"
+        puts "[check_image_drawing_coverage] - allele: #{req_count} / #{alleles.keys.size}"
       end
       
       sleep(1)
