@@ -31,6 +31,7 @@ def dump_htgt_missing_product_report( discrepancies, report_file, product_type, 
 end
 
 namespace :targ_rep do
+  TARG_REP_URL = 'http://htgt.internal.sanger.ac.uk:4001/targ_rep'
   
   desc "Build a cache of the discrepacies between HTGT and the targ_rep"
   task :htgt_discrepacies_cache_build do
@@ -81,6 +82,37 @@ namespace :targ_rep do
     )
   end
   
-  
+  desc "Generate a report showing all of the alleles that throw errors when trying to draw images"
+  task :image_drawing_errors do
+    bad_alleles = check_image_drawing_coverage
+    
+    CSV.open('public/downloads/image_drawing_errors.csv','wb') do |csv|
+      csv << [
+        "Pipeline",
+        "MGI Accession ID",
+        "Allele ID",
+        "Cassette",
+        "Backbone",
+        "Allele Image Status Code",
+        "Allele Image URL",
+        "Vector Image Status Code",
+        "Vector Image URL"
+      ]
+
+      bad_alleles.each do |allele_id,data|
+        csv << [
+          data[:project],
+          data[:mgi_accession_id],
+          allele_id,
+          data[:cassette],
+          data[:backbone],
+          data[:allele_img],
+          data[:esc] ? "#{TARG_REP_URL}/alleles/#{allele_id}/allele-image" : nil,
+          data[:vector_img],
+          data[:tv] ? "#{TARG_REP_URL}/alleles/#{allele_id}/vector-image" : nil
+        ]
+      end
+    end
+  end
   
 end
