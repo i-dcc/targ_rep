@@ -8,7 +8,7 @@ class EsCellsController < ApplicationController
   # The following are located in application_controller.rb
   before_filter :set_created_by, :only => :create
   before_filter :set_updated_by, :only => :update
-  before_filter :get_qc_field_descriptions, :only => [:bulk_edit]
+  before_filter :get_qc_field_descriptions, :only => [:bulk_edit, :update_multiple]
   
   # GET /es_cells.xml
   # GET /es_cells.json

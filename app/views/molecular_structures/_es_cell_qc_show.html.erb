@@ -1,0 +1,2 @@
+<%= render :partial => 'molecular_structures/es_cell_qc_th', :locals => { :name => name, :symbol => symbol } %>
+<td><%= print_dash_on_empty( es_cell.attributes[ symbol.to_s ] ) %></td>

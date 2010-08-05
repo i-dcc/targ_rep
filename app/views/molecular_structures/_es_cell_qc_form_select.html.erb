@@ -1,0 +1,2 @@
+<%= render :partial => 'molecular_structures/es_cell_qc_th', :locals => { :name => name, :symbol => symbol } %>
+<td><%= f.select(symbol, [ nil, ESCELL_QC_OPTIONS[symbol] ].flatten ) %></td>

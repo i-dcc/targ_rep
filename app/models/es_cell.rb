@@ -33,10 +33,19 @@ class EsCell < ActiveRecord::Base
   ESCELL_QC_OPTIONS.each_key do |qc_field|
     validates_inclusion_of qc_field,
       :in        => ESCELL_QC_OPTIONS[qc_field],
-      :unless    => Proc.new { |a| a.attributes[qc_field.to_s].nil? || a.attributes[qc_field.to_s].empty? },
+      :unless    => Proc.new { |a| [nil,''].include?(a.attributes[qc_field.to_s]) },
       :message   => "This QC metric can only be set as: #{ESCELL_QC_OPTIONS[qc_field].join(', ')}"
   end
-
+  
+  validates_numericality_of :distribution_qc_karyotype_low,
+    :greater_than_or_equal_to => 0,
+    :less_than_or_equal_to => 1,
+    :unless    => Proc.new { |a| [nil,''].include?(a.distribution_qc_karyotype_low) }
+    
+  validates_numericality_of :distribution_qc_karyotype_high,
+    :greater_than_or_equal_to => 0,
+    :less_than_or_equal_to => 1,
+    :unless    => Proc.new { |a| [nil,''].include?(a.distribution_qc_karyotype_high) }
   
   def before_validation
     if ikmc_project_id.nil? and targeting_vector

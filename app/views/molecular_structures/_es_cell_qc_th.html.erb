@@ -1,4 +1,4 @@
-<th>
+<th width="24%">
   <%= name %> 
   <% unless @qc_field_descs[symbol].nil? %>
     <% if @qc_field_descs[symbol].url and !@qc_field_descs[symbol].url.empty? %>
@@ -8,4 +8,3 @@
     <% end %>
   <% end %>
 </th>
-<td><%= print_dash_on_nil_or_empty( es_cell.attributes[symbol.to_s] ) %></td>

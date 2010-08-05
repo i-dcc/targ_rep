@@ -48,7 +48,7 @@
               <tr>
                 <% if es_cell.targeting_vector %>
                   <td><%=h es_cell.targeting_vector.name %></td>
-                  <td><%=h print_dash_on_nil_or_empty( es_cell.targeting_vector.ikmc_project_id ) %></td>
+                  <td><%=h print_dash_on_empty( es_cell.targeting_vector.ikmc_project_id ) %></td>
                 <% else %>
                   <td></td>
                   <td></td>

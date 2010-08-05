@@ -28,37 +28,46 @@ ActiveRecord::Schema.define(:version => 20100727154252) do
   add_index "audits", ["user_id", "user_type"], :name => "user_index"
 
   create_table "es_cells", :force => true do |t|
-    t.integer  "molecular_structure_id",           :null => false
+    t.integer  "molecular_structure_id",                :null => false
     t.integer  "targeting_vector_id"
     t.string   "parental_cell_line"
     t.string   "allele_symbol_superscript"
-    t.string   "name",                             :null => false
+    t.string   "name",                                  :null => false
     t.integer  "created_by"
     t.integer  "updated_by"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "comment"
     t.string   "contact"
-    t.string   "qc_five_prime_lr_pcr"
-    t.string   "qc_three_prime_lr_pcr"
+    t.string   "production_qc_five_prime_screen"
+    t.string   "production_qc_three_prime_screen"
     t.string   "ikmc_project_id"
-    t.string   "qc_map_test"
-    t.string   "qc_karyotype"
-    t.string   "qc_tv_backbone_assay"
-    t.string   "qc_loxp_confirmation"
-    t.string   "qc_southern_blot"
-    t.string   "qc_loss_of_wt_allele"
-    t.string   "qc_neo_count_qpcr"
-    t.string   "qc_lacz_sr_pcr"
-    t.string   "qc_mutant_specific_sr_pcr"
-    t.string   "qc_five_prime_cassette_integrity"
-    t.string   "qc_neo_sr_pcr"
-    t.text     "qc_comment"
+    t.string   "distribution_qc_three_prime_sr_pcr"
+    t.string   "distribution_qc_five_prime_sr_pcr"
+    t.string   "user_qc_map_test"
+    t.string   "user_qc_karyotype"
+    t.string   "user_qc_tv_backbone_assay"
+    t.string   "user_qc_loxp_confirmation"
+    t.string   "user_qc_southern_blot"
+    t.string   "user_qc_loss_of_wt_allele"
+    t.string   "user_qc_neo_count_qpcr"
+    t.string   "user_qc_lacz_sr_pcr"
+    t.string   "user_qc_mutant_specific_sr_pcr"
+    t.string   "user_qc_five_prime_cassette_integrity"
+    t.string   "user_qc_neo_sr_pcr"
+    t.string   "user_qc_five_prime_lr_pcr"
+    t.string   "user_qc_three_prime_lr_pcr"
+    t.text     "user_qc_comment"
+    t.string   "production_qc_loxp_screen"
+    t.string   "production_qc_loss_of_allele"
+    t.string   "production_qc_vector_integrity"
+    t.float    "distribution_qc_karyotype_low"
+    t.float    "distribution_qc_karyotype_high"
+    t.string   "distribution_qc_copy_number"
   end
 
   add_index "es_cells", ["molecular_structure_id"], :name => "es_cells_molecular_structure_id_fk"
   add_index "es_cells", ["name"], :name => "index_es_cells_on_name", :unique => true
-  add_index "es_cells", ["targeting_vector_id"], :name => "es_cells_targeting_vector_id_fk"
 
   create_table "genbank_files", :force => true do |t|
     t.integer  "molecular_structure_id",                       :null => false
@@ -150,7 +159,6 @@ ActiveRecord::Schema.define(:version => 20100727154252) do
   end
 
   add_foreign_key "es_cells", "molecular_structures", :name => "es_cells_molecular_structure_id_fk", :dependent => :delete
-  add_foreign_key "es_cells", "targeting_vectors", :name => "es_cells_targeting_vector_id_fk", :dependent => :delete
 
   add_foreign_key "genbank_files", "molecular_structures", :name => "genbank_files_molecular_structure_id_fk", :dependent => :delete
 
