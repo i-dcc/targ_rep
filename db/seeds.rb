@@ -14,70 +14,32 @@ pipelines = Pipeline.create([
   { :name => 'mirKO' }
 ])
 
-qc_field_descriptions = QcFieldDescriptions.create([
+qc_field_descriptions = QcFieldDescription.create([
   {
-    :qc_field    => 'qc_five_prime_lr_pcr',
-    :description => "Long Range PCR (LR-PCR) test between the selection cassette and beyond the 5' homology arm.",
-    :url         => ''
+    :qc_field    => 'production_qc_five_prime_screen',
+    :description => "LR-PCR (and sometimes sequencing) test between the selection cassette and beyond the 5' homology arm.",
+    :url         => 'http://www.knockoutmouse.org/kb/entry/78/'
   },
   {
-    :qc_field    => 'qc_three_prime_lr_pcr',
-    :description => "Long Range PCR (LR-PCR) test between the selection cassette and beyond the 3' homology arm.",
-    :url         => ''
+    :qc_field    => 'production_qc_three_prime_screen',
+    :description => "LR-PCR (and sometimes sequencing) test between the selection cassette and beyond the 3' homology arm.",
+    :url         => 'http://www.knockoutmouse.org/kb/entry/78/'
   },
   {
-    :qc_field    => 'qc_map_test',
-    :description => "",
-    :url         => ''
-  },
-  {
-    :qc_field    => 'qc_karyotype',
-    :description => "",
-    :url         => ''
-  },
-  {
-    :qc_field    => 'qc_tv_backbone_assay',
-    :description => "",
-    :url         => ''
-  },
-  {
-    :qc_field    => 'qc_loxp_confirmation',
-    :description => "",
-    :url         => ''
-  },
-  {
-    :qc_field    => 'qc_southern_blot',
-    :description => "",
-    :url         => ''
-  },
-  {
-    :qc_field    => 'qc_loss_of_wt_allele',
-    :description => "",
-    :url         => ''
-  },
-  {
-    :qc_field    => 'qc_neo_count_qpcr',
-    :description => "",
-    :url         => ''
-  },
-  {
-    :qc_field    => 'qc_lacz_sr_pcr',
-    :description => "",
-    :url         => ''
-  },
-  {
-    :qc_field    => 'qc_mutant_specific_sr_pcr',
-    :description => "",
-    :url         => ''
-  },
-  {
-    :qc_field    => 'qc_five_prime_cassette_integrity',
-    :description => "",
-    :url         => ''
-  },
-  {
-    :qc_field    => 'qc_neo_sr_pcr',
-    :description => "",
-    :url         => ''
+    :qc_field    => 'production_qc_loxp_screen',
+    :description => "LR-PCR (and sometimes sequencing) test between the 3' arm of the targeting cassette and the downstream LoxP",
+    :url         => 'http://www.knockoutmouse.org/kb/entry/78/'
   }
+  # ,
+  # {
+  #   :qc_field    => 'production_qc_loss_of_allele',
+  #   :description => "",
+  #   :url         => ''
+  # },
+  # {
+  #   :qc_field    => 'production_qc_vector_integrity',
+  #   :description => "",
+  #   :url         => ''
+  # }
 ])
+
