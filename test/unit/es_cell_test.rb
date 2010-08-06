@@ -8,12 +8,12 @@ class EsCellTest < ActiveSupport::TestCase
   
   should belong_to(:created_by)
   should belong_to(:updated_by)
-  should belong_to(:molecular_structure)
+  should belong_to(:allele)
   should belong_to(:targeting_vector)
   
   should validate_uniqueness_of(:name).with_message('This ES Cell name has already been taken')
   should validate_presence_of(:name)
-  should validate_presence_of(:molecular_structure_id)
+  should validate_presence_of(:allele_id)
   
   pass_fail_only_qc_fields = [
     :production_qc_three_prime_screen,
@@ -61,12 +61,12 @@ class EsCellTest < ActiveSupport::TestCase
     context "with molecular structure consistency issue" do
       should "not be saved" do
         targ_vec    = Factory.create( :targeting_vector )
-        mol_struct  = Factory.create( :molecular_structure )
+        mol_struct  = Factory.create( :allele )
         
         es_cell = EsCell.new({
-          :name                   => 'INVALID',
-          :targeting_vector_id    => targ_vec.id,
-          :molecular_structure_id => mol_struct.id
+          :name                => 'INVALID',
+          :targeting_vector_id => targ_vec.id,
+          :allele_id           => mol_struct.id
         })
         
         assert( !es_cell.valid?, "ES Cell validates an invalid entry" )
@@ -80,9 +80,9 @@ class EsCellTest < ActiveSupport::TestCase
         
         # ikmc_project_id is not provided
         es_cell = EsCell.new({
-          :name                   => 'EPD001',
-          :targeting_vector_id    => targ_vec.id,
-          :molecular_structure_id => targ_vec.molecular_structure_id
+          :name                => 'EPD001',
+          :targeting_vector_id => targ_vec.id,
+          :allele_id           => targ_vec.allele_id
         })
         
         assert( es_cell.valid?, "ES Cell does not validate a valid entry" )
@@ -96,10 +96,10 @@ class EsCellTest < ActiveSupport::TestCase
         targ_vec = Factory.create( :targeting_vector )
         
         es_cell = EsCell.new({
-          :name                   => "EPD001",
-          :ikmc_project_id        => "DIFFERENT FROM TARG_VEC'S ONE",
-          :targeting_vector_id    => targ_vec.id,
-          :molecular_structure_id => targ_vec.molecular_structure_id,
+          :name                => "EPD001",
+          :ikmc_project_id     => "DIFFERENT FROM TARG_VEC'S ONE",
+          :targeting_vector_id => targ_vec.id,
+          :allele_id           => targ_vec.allele_id,
         })
         
         assert( !es_cell.valid?, "ES Cell validates an invalid entry" )

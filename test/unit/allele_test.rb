@@ -1,9 +1,9 @@
 require 'test_helper'
 
-class MolecularStructureTest < ActiveSupport::TestCase
+class AlleleTest < ActiveSupport::TestCase
   setup do
-    @molecular_structure = Factory.create( :molecular_structure )
-    # Molecular structure has been saved successfully here
+    @allele = Factory.create( :allele )
+    # allele has been saved successfully here
   end
   
   should belong_to(:pipeline)
@@ -36,56 +36,56 @@ class MolecularStructureTest < ActiveSupport::TestCase
   should validate_numericality_of(:loxp_start)
   should validate_numericality_of(:loxp_end)
   
-  context "Molecular structure" do
+  context "Allele" do
     context "with empty attributes" do
-      mol_struct = Factory.build( :invalid_molecular_structure )
+      allele = Factory.build( :invalid_allele )
       should "not be saved" do
-        assert( !mol_struct.save, "Molecular structure saves an empty entry" )
+        assert( !allele.save, "Allele saves an empty entry" )
       end
     end
     
     context "with wrong MGI" do
       should "not be saved" do
-        mol_struct = Factory.build( :molecular_structure, :mgi_accession_id => 'WRONG MGI' )
-        assert( !mol_struct.save, "Molecular structure is saved with a wrong MGI accession ID" )
+        allele = Factory.build( :allele, :mgi_accession_id => 'WRONG MGI' )
+        assert( !allele.save, "Allele is saved with a wrong MGI accession ID" )
       end
     end
     
     context "with wrong strand" do
       should "not be saved" do
-        mol_struct = Factory.build( :molecular_structure, :strand => 'WRONG STRAND' )
-        assert( !mol_struct.save, "Molecular structure is saved with a wrong strand" )
+        allele = Factory.build( :allele, :strand => 'WRONG STRAND' )
+        assert( !allele.save, "Allele is saved with a wrong strand" )
       end
     end
     
     context "with wrong chromosome" do
       should "not be saved" do
-        mol_struct = Factory.build( :molecular_structure, :chromosome => 'WRONG CHROMOSOME' )
-        assert( !mol_struct.save, "Molecular structure is saved with a wrong chromosome" )
+        allele = Factory.build( :allele, :chromosome => 'WRONG CHROMOSOME' )
+        assert( !allele.save, "Allele is saved with a wrong chromosome" )
       end
     end
     
     context "with wrong homology arm position" do
       should "not be saved" do
         # Wrong start and end positions for the given strand
-        @wrong_position1  = Factory.build( :molecular_structure, {
+        @wrong_position1  = Factory.build( :allele, {
                               :strand             => '+',
                               :homology_arm_start => 2,
                               :homology_arm_end   => 1
                             })
-        @wrong_position2  = Factory.build( :molecular_structure, {
+        @wrong_position2  = Factory.build( :allele, {
                               :strand             => '-',
                               :homology_arm_start => 1,
                               :homology_arm_end   => 2
                             })
 
         # Homology arm site overlaps other features
-        @wrong_position3  = Factory.build( :molecular_structure, {
+        @wrong_position3  = Factory.build( :allele, {
                               :strand             => '+',
                               :homology_arm_start => 50,
                               :homology_arm_end   => 120
                             })
-        @wrong_position4  = Factory.build( :molecular_structure, {
+        @wrong_position4  = Factory.build( :allele, {
                               :strand             => '-',
                               :homology_arm_start => 120,
                               :homology_arm_end   => 50
@@ -101,24 +101,24 @@ class MolecularStructureTest < ActiveSupport::TestCase
     context "with wrong cassette position" do
       should "not be saved" do
         # Wrong start and end positions for the given strand
-        @wrong_position1  = Factory.build( :molecular_structure, {
+        @wrong_position1  = Factory.build( :allele, {
                               :strand         => '+',
                               :cassette_start => 2,
                               :cassette_end   => 1
                             })
-        @wrong_position2  = Factory.build( :molecular_structure, {
+        @wrong_position2  = Factory.build( :allele, {
                               :strand         => '-',
                               :cassette_start => 1,
                               :cassette_end   => 2
                             })
         
         # LoxP site overlaps other features
-        @wrong_position3  = Factory.build( :molecular_structure, {
+        @wrong_position3  = Factory.build( :allele, {
                               :strand             => '+',
                               :cassette_start     => 5,
                               :cassette_end       => 170
                             })
-        @wrong_position4  = Factory.build( :molecular_structure, {
+        @wrong_position4  = Factory.build( :allele, {
                               :strand             => '-',
                               :cassette_start     => 170,
                               :cassette_end       => 5
@@ -134,24 +134,24 @@ class MolecularStructureTest < ActiveSupport::TestCase
     context "with wrong LoxP position" do
       should "not be saved" do
         # Wrong start and end positions for the given strand
-        @wrong_position1  = Factory.build( :molecular_structure, {
+        @wrong_position1  = Factory.build( :allele, {
                               :strand     => '+',
                               :loxp_start => 2,
                               :loxp_end   => 1
                             })
-        @wrong_position2  = Factory.build( :molecular_structure, {
+        @wrong_position2  = Factory.build( :allele, {
                               :strand     => '-',
                               :loxp_start => 1,
                               :loxp_end   => 2
                             })
         
         # LoxP site overlaps other features
-        @wrong_position3  = Factory.build( :molecular_structure, {
+        @wrong_position3  = Factory.build( :allele, {
                               :strand             => '+',
                               :loxp_start         => 5,
                               :loxp_end           => 170
                             })
-        @wrong_position4  = Factory.build( :molecular_structure, {
+        @wrong_position4  = Factory.build( :allele, {
                               :strand             => '-',
                               :loxp_start         => 170,
                               :loxp_end           => 5
@@ -166,25 +166,25 @@ class MolecularStructureTest < ActiveSupport::TestCase
     
     context "with design type 'Deletion' and LoxP set" do
       should "not be saved" do
-        mol_struct = Factory.build( :molecular_structure, {
+        allele = Factory.build( :allele, {
                         :design_type        => 'Deletion',
                         :strand             => '+',
                         :loxp_start         => 100,
                         :loxp_end           => 130
                       })
-        assert( !mol_struct.save, "Molecular structure validates presence of LoxP for design 'Deletion'" )
+        assert( !allele.save, "Allele validates presence of LoxP for design 'Deletion'" )
       end
     end
     
     context "with design type 'Insertion' and LoxP set" do
       should "not be saved" do
-        mol_struct = Factory.build( :molecular_structure, {
+        allele = Factory.build( :allele, {
                         :design_type        => 'Insertion',
                         :strand             => '+',
                         :loxp_start         => 100,
                         :loxp_end           => 130
                       })
-        assert( !mol_struct.save, "Molecular structure validates presence of LoxP for design 'Insertion'" )
+        assert( !allele.save, "Allele validates presence of LoxP for design 'Insertion'" )
       end
     end
   end

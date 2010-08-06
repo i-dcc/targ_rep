@@ -26,7 +26,7 @@ class TargetingVectorsControllerTest < ActionController::TestCase
     assert_difference('TargetingVector.count') do
       post :create, :targeting_vector => {
         :name                   => targ_vec_attrs[:name],
-        :molecular_structure_id => TargetingVector.first.molecular_structure_id
+        :allele_id => TargetingVector.first.allele_id
       }
     end
     assert_response :success
@@ -67,7 +67,7 @@ class TargetingVectorsControllerTest < ActionController::TestCase
     assert_difference('TargetingVector.count') do
       post :create, :targeting_vector => {
         :name                   => targ_vec_attrs[:name],
-        :molecular_structure_id => TargetingVector.first.molecular_structure_id
+        :allele_id => TargetingVector.first.allele_id
       }
     end
     assert_response :success
@@ -78,8 +78,8 @@ class TargetingVectorsControllerTest < ActionController::TestCase
     put :update, :id => created_targ_vec.id, :targeting_vector => { :name => another_targ_vec.name }
     assert_response :unprocessable_entity
     
-    # UPDATE - should fail as we're not allowed a nil molecular_structure_id
-    put :update, :id => created_targ_vec.id, :targeting_vector => { :molecular_structure_id => nil }
+    # UPDATE - should fail as we're not allowed a nil allele_id
+    put :update, :id => created_targ_vec.id, :targeting_vector => { :allele_id => nil }
     assert_response :unprocessable_entity
   end
   

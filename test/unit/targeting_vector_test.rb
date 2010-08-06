@@ -11,7 +11,7 @@ class TargetingVectorTest < ActiveSupport::TestCase
   should validate_uniqueness_of(:name).with_message('This Targeting Vector name has already been taken')
 
   should validate_presence_of(:name)
-  should validate_presence_of(:molecular_structure_id)
+  should validate_presence_of(:allele_id)
   
   context "Targeting vector with empty attributes" do
     targ_vec = Factory.build( :invalid_targeting_vector )

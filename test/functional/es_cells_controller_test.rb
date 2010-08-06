@@ -25,10 +25,10 @@ class EsCellsControllerTest < ActionController::TestCase
     # CREATE
     assert_difference('EsCell.count') do
       post :create, :es_cell => {
-        :name                    => es_cell_attrs[:name],
-        :parental_cell_line      => es_cell_attrs[:parental_cell_line],
-        :targeting_vector_id     => EsCell.first.targeting_vector_id,
-        :molecular_structure_id  => EsCell.first.molecular_structure_id
+        :name                => es_cell_attrs[:name],
+        :parental_cell_line  => es_cell_attrs[:parental_cell_line],
+        :targeting_vector_id => EsCell.first.targeting_vector_id,
+        :allele_id           => EsCell.first.allele_id
       }
     end
     assert_response :success, "Could not create ES Cell"
@@ -51,9 +51,9 @@ class EsCellsControllerTest < ActionController::TestCase
     
     assert_difference('EsCell.count') do
       post :create, :es_cell => {
-        :name                    => es_cell_attrs[:name],
-        :parental_cell_line      => es_cell_attrs[:parental_cell_line],
-        :molecular_structure_id  => EsCell.first.molecular_structure_id
+        :name               => es_cell_attrs[:name],
+        :parental_cell_line => es_cell_attrs[:parental_cell_line],
+        :allele_id          => EsCell.first.allele_id
       }
     end
     assert_response :success
@@ -79,10 +79,10 @@ class EsCellsControllerTest < ActionController::TestCase
     # CREATE a valid ES Cell
     assert_difference('EsCell.count') do
       post :create, :es_cell => {
-        :name                    => es_cell_attrs[:name],
-        :parental_cell_line      => es_cell_attrs[:parental_cell_line],
-        :targeting_vector_id     => EsCell.first.targeting_vector_id,
-        :molecular_structure_id  => EsCell.first.molecular_structure_id
+        :name                => es_cell_attrs[:name],
+        :parental_cell_line  => es_cell_attrs[:parental_cell_line],
+        :targeting_vector_id => EsCell.first.targeting_vector_id,
+        :allele_id           => EsCell.first.allele_id
       }
     end
     assert_response :success

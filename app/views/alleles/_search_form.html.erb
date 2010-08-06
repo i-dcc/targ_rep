@@ -3,25 +3,25 @@
   pipeline_options = options_for_select( [['All','']] + pipeline_array, params[:pipeline_id] )
   
   design_type_array = 
-  MolecularStructure.all(:select => 'DISTINCT design_type').map do |ms| 
-    [ms.design_type, ms.design_type]
+  Allele.all(:select => 'DISTINCT design_type').map do |allele| 
+    [allele.design_type, allele.design_type]
   end
   design_type_options = options_for_select( [['All','']] + design_type_array, params[:design_type] )
   
   cassette_array = 
-  MolecularStructure.all(:select => 'DISTINCT cassette').map do |ms| 
-    [ms.cassette, ms.cassette]
+  Allele.all(:select => 'DISTINCT cassette').map do |allele| 
+    [allele.cassette, allele.cassette]
   end
   cassette_options = options_for_select( [['All','']] + cassette_array, params[:cassette] )
   
   backbone_array = 
-  MolecularStructure.all(:select => 'DISTINCT backbone').map do |ms| 
-    [ms.backbone, ms.backbone] unless ms.backbone.nil? or ms.backbone.empty?
+  Allele.all(:select => 'DISTINCT backbone').map do |allele| 
+    [allele.backbone, allele.backbone] unless allele.backbone.nil? or allele.backbone.empty?
   end
   backbone_options = options_for_select( [['All','']] + backbone_array, params[:backbone] )
 %>
 
-<% form_tag molecular_structures_path, :method => 'get', :id => 'search_form' do %>
+<% form_tag alleles_path, :method => 'get', :id => 'search_form' do %>
   <table class="no-border">
     <tr>
       <td>

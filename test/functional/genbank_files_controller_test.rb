@@ -11,14 +11,14 @@ class GenbankFilesControllerTest < ActionController::TestCase
     assert_response 406
   end
   
-  should "not get index if molecular_structure_id is not given" do
+  should "not get index if allele_id is not given" do
     get :index, :format => "json"
     assert_response :unprocessable_entity
   end
   
-  should "get index if molecular_structure_id is given" do
+  should "get index if allele_id is given" do
     get :index, :format => "json",
-      :molecular_structure_id => GenbankFile.first.molecular_structure.id
+      :allele_id => GenbankFile.first.allele.id
     assert_response :success
   end
 
@@ -31,14 +31,14 @@ class GenbankFilesControllerTest < ActionController::TestCase
   end
 
   should "create genbank_file" do
-    mol_struct = Factory.create( :molecular_structure )
+    allele = Factory.create( :allele )
     
     assert_difference('GenbankFile.count') do
       attrs = Factory.attributes_for( :genbank_file )
       post :create, :genbank_file => {
-        :escell_clone           => attrs[:escell_clone],
-        :targeting_vector       => attrs[:targeting_vector],
-        :molecular_structure_id => mol_struct.id
+        :escell_clone     => attrs[:escell_clone],
+        :targeting_vector => attrs[:targeting_vector],
+        :allele_id        => allele.id
       }
     end
     
@@ -71,11 +71,7 @@ class GenbankFilesControllerTest < ActionController::TestCase
   end
 
   should "not update genbank_file" do
-    put :update, :id => GenbankFile.first.id, 
-      :genbank_file => {
-        :molecular_structure_id => nil
-      }
-
+    put :update, :id => GenbankFile.first.id, :genbank_file => { :allele_id => nil }
     assert_response :unprocessable_entity
   end
 

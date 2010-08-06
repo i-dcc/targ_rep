@@ -62,7 +62,7 @@
 
 <div class="span-8">
   <p>
-    This repository currently houses information on <%= @total_counts[:molecular_structures] %>
+    This repository currently houses information on <%= @total_counts[:alleles] %>
     alleles, covering <%= @total_counts[:genes] %> mouse genes, that have 
     been made into <%= @total_counts[:vectors] %> targeting vectors and 
     <%= @total_counts[:es_cells] %> mutant ES cells, over 
@@ -86,7 +86,7 @@
         <tr class="<%= cycle("even", "odd") %>">
           <td><strong><%= pipeline_name %></strong></td>
           <td><%= count[:genes] %></td>
-          <td><%= count[:molecular_structures] %></td>
+          <td><%= count[:alleles] %></td>
           <td><%= count[:vectors] %></td>
           <td><%= count[:es_cells] %></td>
         </tr>
@@ -125,7 +125,7 @@
     <h5>Manual Data Entry (via the Web Site)</h5>
     <p>
       To enter small numbers of alleles and products manually, simply head to 
-      the <%= link_to "Alleles", molecular_structures_path %> page and follow 
+      the <%= link_to "Alleles", alleles_path %> page and follow 
       the on-screen instructions for entering data.
     </p>
     <h5>Automated Data Entry (via the Web Services)</h5>

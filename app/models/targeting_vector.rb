@@ -5,9 +5,9 @@ class TargetingVector < ActiveRecord::Base
   belongs_to :created_by, :class_name => 'User', :foreign_key => 'created_by'
   belongs_to :updated_by, :class_name => 'User', :foreign_key => 'updated_by'
 
-  belongs_to :molecular_structure,
-    :class_name   => 'MolecularStructure',
-    :foreign_key  => 'molecular_structure_id',
+  belongs_to :allele,
+    :class_name   => 'Allele',
+    :foreign_key  => 'allele_id',
     :validate     => true
     
   has_many :es_cells,
@@ -19,8 +19,8 @@ class TargetingVector < ActiveRecord::Base
   validates_uniqueness_of :name, :message => 'This Targeting Vector name has already been taken'
 
   # Data validation
-  validates_presence_of :molecular_structure_id,  :on => :save, :unless => :nested
-  validates_presence_of :name,                    :on => :create
+  validates_presence_of :allele_id, :on => :save, :unless => :nested
+  validates_presence_of :name,      :on => :create
 
   attr_accessor :nested
   

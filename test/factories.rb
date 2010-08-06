@@ -37,7 +37,7 @@ end
 ## Molecular Structure
 ##
 
-Factory.define :molecular_structure do |f|
+Factory.define :allele do |f|
   f.sequence(:mgi_accession_id)           { |n| "MGI:#{n}" }
   f.sequence(:project_design_id)          { |n| "design id #{n}"}
   f.sequence(:design_subtype)             { |n| "subtype #{n}" }
@@ -70,47 +70,47 @@ Factory.define :molecular_structure do |f|
   #
   
   # Homology arm
-  f.homology_arm_start do |mol_struc|
-    case mol_struc.strand
+  f.homology_arm_start do |allele|
+    case allele.strand
       when '+' then 10
       when '-' then 160
     end
   end
   
-  f.homology_arm_end do |mol_struc|
-    case mol_struc.strand
+  f.homology_arm_end do |allele|
+    case allele.strand
       when '+' then 160
       when '-' then 10
     end
   end
   
   # Cassette
-  f.cassette_start do |mol_struc|
-    case mol_struc.strand
+  f.cassette_start do |allele|
+    case allele.strand
       when '+' then 40
       when '-' then 130
     end
   end
-  f.cassette_end do |mol_struc|
-    case mol_struc.strand
+  f.cassette_end do |allele|
+    case allele.strand
       when '+' then 70
       when '-' then 100
     end
   end
   
   # LoxP
-  f.loxp_start do |mol_struc|
-    if mol_struc.design_type == 'Knock Out'
-      case mol_struc.strand
+  f.loxp_start do |allele|
+    if allele.design_type == 'Knock Out'
+      case allele.strand
         when '+' then 100
         when '-' then 70
       end
     end
   end
   
-  f.loxp_end do |mol_struc|
-    if mol_struc.design_type == 'Knock Out'
-      case mol_struc.strand
+  f.loxp_end do |allele|
+    if allele.design_type == 'Knock Out'
+      case allele.strand
         when '+' then 130
         when '-' then 40
       end
@@ -118,7 +118,7 @@ Factory.define :molecular_structure do |f|
   end
 end
 
-Factory.define :invalid_molecular_structure, :class => MolecularStructure do |f|
+Factory.define :invalid_allele, :class => Allele do |f|
 end
 
 ##
@@ -128,7 +128,7 @@ end
 Factory.define :targeting_vector do |f|
   f.name { Factory.next(:pgdgr_plate_name) }
   f.ikmc_project_id { Factory.next(:ikmc_project_id) }
-  f.association :molecular_structure
+  f.association :allele
 end
 
 Factory.define :invalid_targeting_vector, :class => TargetingVector do |f|
@@ -144,10 +144,10 @@ Factory.define :es_cell do |f|
   
   ikmc_project_id = Factory.next( :ikmc_project_id )
   
-  f.association :molecular_structure
+  f.association :allele
   f.targeting_vector { |es_cell|
     es_cell.association( :targeting_vector, { 
-      :molecular_structure_id => es_cell.molecular_structure_id,
+      :allele_id       => es_cell.allele_id,
       :ikmc_project_id => ikmc_project_id
     })
   }
@@ -165,7 +165,7 @@ Factory.define :genbank_file do |f|
   f.sequence(:escell_clone)       { |n| "ES Cell clone file #{n}" }
   f.sequence(:targeting_vector)   { |n| "Targeting vector file #{n}" }
   
-  f.association :molecular_structure
+  f.association :allele
 end
 
 Factory.define :invalid_genbank_file, :class => GenbankFile do |f|

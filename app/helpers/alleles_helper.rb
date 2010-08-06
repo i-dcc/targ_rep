@@ -1,4 +1,4 @@
-module MolecularStructuresHelper
+module AllelesHelper
   # Following helpers come from: 
   # http://railsforum.com/viewtopic.php?id=28447
   

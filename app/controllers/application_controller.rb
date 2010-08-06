@@ -75,12 +75,12 @@ class ApplicationController < ActionController::Base
     
     def ensure_creator_or_admin
       changed_object =
-        if @molecular_structure then @molecular_structure
+        if    @allele           then @allele
         elsif @targeting_vector then @targeting_vector
         elsif @es_cell          then @es_cell
         elsif @genbank_file     then @genbank_file
         else
-          raise "Expecting one of the following objects: @molecular_structure, @targeting_vector, @es_cell or @genbank_file"
+          raise "Expecting one of the following objects: @allele, @targeting_vector, @es_cell or @genbank_file"
         end
       
       if not changed_object.has_attribute? 'created_by'

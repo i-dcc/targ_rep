@@ -1,10 +1,10 @@
 class Pipeline < ActiveRecord::Base
   # Associations
-  has_many :molecular_structures,
-    :class_name => "MolecularStructure",
+  has_many :alleles,
+    :class_name => "Allele",
     :foreign_key => "pipeline_id"
   
-  has_many :es_cells, :through => :molecular_structures, :uniq => true
+  has_many :es_cells, :through => :alleles, :uniq => true
   
   # Unique constraints
   validates_uniqueness_of :name, :message => 'This pipeline name has already been taken'

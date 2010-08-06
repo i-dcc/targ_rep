@@ -33,11 +33,11 @@
     <p>
       <%= f.label :chromosome %><br />
       <% chromosomes = ("1".."19").to_a.push('X').push('Y').push('MT') %>
-      <%= select( :molecular_structure, :chromosome, chromosomes ) %> 
+      <%= select( :allele, :chromosome, chromosomes ) %> 
     </p>
     <p>
       <%= f.label :strand %><br />
-      <%= select( :molecular_structure, :strand, ["+","-"] ) %>
+      <%= select( :allele, :strand, ["+","-"] ) %>
     </p>
     <p>
       <%= f.label :assembly, "Assembly" %><br />
@@ -49,7 +49,7 @@
     <legend>Design Details</legend>
     <p>
       <%= f.label :design_type, "Design Type" %><br />
-      <%= select( :molecular_structure, :design_type, ['Knock Out', 'Deletion'] ) %> 
+      <%= select( :allele, :design_type, ['Knock Out', 'Deletion'] ) %> 
     </p>
     <p>
       <%= f.label :design_subtype, "Design Subtype" %><br />

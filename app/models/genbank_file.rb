@@ -1,13 +1,13 @@
 class GenbankFile < ActiveRecord::Base
   # Associations
-  belongs_to :molecular_structure,
-    :class_name   => "MolecularStructure",
-    :foreign_key  => "molecular_structure_id",
+  belongs_to :allele,
+    :class_name   => "Allele",
+    :foreign_key  => "allele_id",
     :validate     => true
   
   # Data validation
-  validates_presence_of   :molecular_structure_id, :unless => :nested
-  validates_uniqueness_of :molecular_structure_id, :message => "must be unique"
+  validates_presence_of   :allele_id, :unless => :nested
+  validates_uniqueness_of :allele_id, :message => "must be unique"
   
   attr_accessor :nested
   

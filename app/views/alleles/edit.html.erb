@@ -1,0 +1,17 @@
+<h2>
+  <%=h @allele.pipeline.name %> |
+  <%=h @allele.mgi_accession_id %> |
+  Project Design ID: <%=h @allele.project_design_id %>
+</h2>
+
+<% form_for @allele do |f| %>
+  <%= render :partial => 'form', :locals => { :f => f, :allele => @allele } %>
+  <p>
+    <button type="submit" class="button positive">
+      <%= image_tag "led-icons/accept.png", :alt => "" %> Update
+    </button> 
+    <a href="<%= allele_path(@allele) %>" class="button negative">
+      <%= image_tag "led-icons/cross.png", :alt => "" %> Back
+    </a>
+  </p>
+<% end %>

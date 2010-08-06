@@ -1,4 +1,4 @@
-class MolecularStructure < ActiveRecord::Base
+class Allele < ActiveRecord::Base
   acts_as_audited
   
   # Associations
@@ -10,13 +10,13 @@ class MolecularStructure < ActiveRecord::Base
     :foreign_key  => "pipeline_id",
     :validate     => true
   
-  has_one :genbank_file, :class_name => "GenbankFile", :foreign_key => "molecular_structure_id"
+  has_one :genbank_file, :class_name => "GenbankFile", :foreign_key => "allele_id"
   accepts_nested_attributes_for :genbank_file, :allow_destroy  => true
   
-  has_many :targeting_vectors, :class_name => "TargetingVector", :foreign_key => "molecular_structure_id"
+  has_many :targeting_vectors, :class_name => "TargetingVector", :foreign_key => "allele_id"
   accepts_nested_attributes_for :targeting_vectors, :allow_destroy  => true
   
-  has_many :es_cells, :class_name => "EsCell", :foreign_key => "molecular_structure_id"
+  has_many :es_cells, :class_name => "EsCell", :foreign_key => "allele_id"
   accepts_nested_attributes_for :es_cells, :allow_destroy  => true
   
   # Unique constraint
@@ -79,21 +79,21 @@ class MolecularStructure < ActiveRecord::Base
   
   public
     def to_json( options = {} )
-      MolecularStructure.include_root_in_json = false
+      Allele.include_root_in_json = false
       options.update(
         :include => {
           :es_cells => { :except => [
-              :molecular_structure_id,
+              :allele_id,
               :created_at, :updated_at,
               :created_by, :updated_by
           ]},
           :targeting_vectors => { :except => [
-              :molecular_structure_id,
+              :allele_id,
               :created_at, :updated_at,
               :created_by, :updated_by
           ]},
           :genbank_file => { :except => [
-              :molecular_structure_id,
+              :allele_id,
               :created_at, :updated_at,
               :created_by, :updated_by
           ]},
@@ -108,12 +108,12 @@ class MolecularStructure < ActiveRecord::Base
         :skip_types => true,
         :include => {
           :es_cells => { :except => [
-              :molecular_structure_id,
+              :allele_id,
               :created_at, :updated_at,
               :created_by, :updated_by
           ]},
           :targeting_vectors => { :except => [
-              :molecular_structure_id,
+              :allele_id,
               :created_at, :updated_at,
               :created_by, :updated_by
           ]}

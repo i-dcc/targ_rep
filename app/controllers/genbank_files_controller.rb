@@ -7,12 +7,12 @@ class GenbankFilesController < ApplicationController
   
   def index
     respond_to do |format|
-      if params.key? :molecular_structure_id
-        @genbank_file = GenbankFile.search(:molecular_structure_id => params[:molecular_structure_id]).all
+      if params.key? :allele_id
+        @genbank_file = GenbankFile.search(:allele_id => params[:allele_id]).all
         format.xml  { render :xml   => @genbank_file }
         format.json { render :json  => @genbank_file }
       else
-        errors = { :molecular_structure_id => "is required" }
+        errors = { :allele_id => "is required" }
         format.xml  { render :xml   => errors, :status => :unprocessable_entity }
         format.json { render :json  => errors, :status => :unprocessable_entity }
       end

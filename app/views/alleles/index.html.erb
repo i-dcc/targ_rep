@@ -5,7 +5,7 @@
   <%= render :partial => 'search_form' %>
 </div>
 
-<%= will_paginate @molecular_structures %>
+<%= will_paginate @alleles %>
 
 <table class="list">
   <thead>
@@ -22,7 +22,7 @@
     </tr>
   </thead>
   <tbody>
-    <% @molecular_structures.each do |mol_struct| %>
+    <% @alleles.each do |mol_struct| %>
       <tr class="<%= cycle("odd", "even") %>">
         <td>
           <% if mol_struct.pipeline %>
@@ -53,7 +53,7 @@
         <td>
           <%= link_to 'view', mol_struct, :class => "ss_sprite ss_magnifier" %>
           <% if @current_user %>
-            <%= link_to 'edit', edit_molecular_structure_path(mol_struct), :class => "ss_sprite ss_pencil" %>
+            <%= link_to 'edit', edit_allele_path(mol_struct), :class => "ss_sprite ss_pencil" %>
             <% if @current_user == mol_struct.created_by or @current_user.is_admin %>
               <%= link_to 'delete', mol_struct, :confirm => 'Are you sure?', :method => :delete, :class => "ss_sprite ss_cross" %>
             <% end %>
@@ -64,10 +64,10 @@
   </tbody>
 </table>
 
-<%= will_paginate @molecular_structures %>
+<%= will_paginate @alleles %>
 
 <% if @current_user %>
-<a href="<%= url_for(new_molecular_structure_path) %>" class="button positive">
+<a href="<%= url_for(new_allele_path) %>" class="button positive">
   <%= image_tag "led-icons/add.png", :alt => "" %> New Allele
 </a>
 <% end %>

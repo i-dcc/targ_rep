@@ -6,9 +6,9 @@ class EsCell < ActiveRecord::Base
   belongs_to :created_by, :class_name => 'User', :foreign_key => 'created_by'
   belongs_to :updated_by, :class_name => 'User', :foreign_key => 'updated_by'
   
-  belongs_to :molecular_structure,
-    :class_name   => 'MolecularStructure',
-    :foreign_key  => 'molecular_structure_id',
+  belongs_to :allele,
+    :class_name   => 'Allele',
+    :foreign_key  => 'allele_id',
     :validate     => true
   
   belongs_to :targeting_vector,
@@ -20,11 +20,11 @@ class EsCell < ActiveRecord::Base
   validates_uniqueness_of :name, :message => 'This ES Cell name has already been taken'
   
   # Data validation
-  validates_presence_of :molecular_structure_id,  :on => :save, :unless => :nested
-  validates_presence_of :name,                    :on => :create
+  validates_presence_of :allele_id, :on => :save, :unless => :nested
+  validates_presence_of :name,      :on => :create
   
-  validate :molecular_structure_consistency,
-    :unless => "[molecular_structure,targeting_vector].any?(&:nil?)"
+  validate :allele_consistency,
+    :unless => "[allele,targeting_vector].any?(&:nil?)"
   
   validate :ikmc_project_id_consistency, :if => :test_ikmc_project_id_consistency?
     
@@ -86,9 +86,9 @@ class EsCell < ActiveRecord::Base
   protected
     # Compares targeting vector's molecular structure to
     # ES cell's molecular structure
-    def molecular_structure_consistency
-      my_mol_struct = self.molecular_structure
-      targ_vec_mol_struct = self.targeting_vector.molecular_structure
+    def allele_consistency
+      my_mol_struct = self.allele
+      targ_vec_mol_struct = self.targeting_vector.allele
       
       unless \
            targ_vec_mol_struct.id == my_mol_struct.id \

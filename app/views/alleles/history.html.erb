@@ -1,0 +1,95 @@
+<h2>History of changes for Allele ID <%=h @allele.id %></h2>
+
+<div>
+  <%= link_to "back to allele page", allele_path(@allele), :class => "ss_sprite ss_magnifier" %>
+</div>
+<div class="clear"></div>
+
+<table class="list">
+  <thead>
+    <th>Version</th>
+    <th>Date</th>
+    <th colspan="2">Changes</th>
+  </thead>
+  <tbody>
+    <% @allele.audits.each do |revision| %>
+      <tr>
+        <td><%=h revision.version %></td>
+        <td><%=h revision.created_at.to_s(:long) %></td>
+        <% if revision.action == "create" %>
+          <td colspan="2">Creation of the object</td>
+        <% else %>
+          <td class="key"><%= revision.changes.keys.join('<br />') %></td>
+          <td>
+            <%
+              values = revision.changes.values.collect do |val|
+                "'#{val[0] ||= 'null'}' => '#{val[1]}'"
+              end
+            %>
+            <%= values.join('<br />') %>
+          </td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<div class="clear"></div>
+
+<table class="list">
+  <thead>
+    <th>Version</th>
+    <th>Pipeline</th>
+    <th>MGI&nbsp;Accession&nbsp;ID</th>
+    <th>Chromosome</th>
+    <th>Project&nbsp;Design&nbsp;ID</th>
+    <th>Design&nbsp;type</th>
+    <th>Design&nbsp;subtype</th>
+    <th>subtype&nbsp;description</th>
+    <th>Mutation&nbsp;type</th>
+    <th>Mutation&nbsp;subtype</th>
+    <th>Mutation&nbsp;method</th>
+    <th>Cassette</th>
+    <th>Backbone</th>
+    <th>Floxed Start Exon</th>
+    <th>Floxed End Exon</th>
+    <th>Homology&nbsp;Arm&nbsp;Start</th>
+    <th>Homology&nbsp;Arm&nbsp;End</th>
+    <th>Cassette&nbsp;Start</th>
+    <th>Cassette&nbsp;End</th>
+    <th>LoxP&nbsp;Start</th>
+    <th>LoxP&nbsp;End</th>
+  </thead>
+  <tbody>
+    <% @allele.audits.each do |audit|
+      rev = @allele.revision(audit.version)
+      changes = audit.changes.keys
+    %>
+      <tr>
+        <td><%=h audit.version %></td>
+        <td <% if changes.include? 'pipeline_id' %>class="highlight"<% end %>><%=h rev.pipeline_id %></td>
+        <td <% if changes.include? 'mgi_accession_id' %>class="highlight"<% end %>><%=h rev.mgi_accession_id %></td>
+        <td <% if changes.include? 'chromosome' or changes.include? 'strand' %>class="highlight"<% end %>>
+          <%=h rev.chromosome %> (Strand <%=h rev.strand %>)
+        </td>
+        <td <% if changes.include? 'project_design_id' %>class="highlight"<% end %>><%=h rev.project_design_id %></td>
+        <td <% if changes.include? 'design_type' %>class="highlight"<% end %>><%=h rev.design_type %></td>
+        <td <% if changes.include? 'design_subtype' %>class="highlight"<% end %>><%=h rev.design_subtype %></td>
+        <td <% if changes.include? 'subtype_description' %>class="highlight"<% end %>><%=h rev.subtype_description %></td>
+        <td <% if changes.include? 'mutation_type' %>class="highlight"<% end %>><%=h rev.mutation_type %></td>
+        <td <% if changes.include? 'mutation_subtype' %>class="highlight"<% end %>><%=h rev.mutation_subtype %></td>
+        <td <% if changes.include? 'mutation_method' %>class="highlight"<% end %>><%=h rev.mutation_method %></td>
+        <td <% if changes.include? 'cassette' %>class="highlight"<% end %>><%=h rev.cassette %></td>
+        <td <% if changes.include? 'backbone' %>class="highlight"<% end %>><%=h rev.backbone %></td>
+        <td <% if changes.include? 'floxed_start_exon' %>class="highlight"<% end %>><%=h rev.floxed_start_exon %></td>
+        <td <% if changes.include? 'floxed_end_exon' %>class="highlight"<% end %>><%=h rev.floxed_end_exon %></td>
+        <td <% if changes.include? 'homology_arm_start' %>class="highlight"<% end %>><%=h rev.homology_arm_start %></td>
+        <td <% if changes.include? 'homology_arm_end' %>class="highlight"<% end %>><%=h rev.homology_arm_end %></td>
+        <td <% if changes.include? 'cassette_start' %>class="highlight"<% end %>><%=h rev.cassette_start %></td>
+        <td <% if changes.include? 'cassette_end' %>class="highlight"<% end %>><%=h rev.cassette_end %></td>
+        <td <% if changes.include? 'loxp_start' %>class="highlight"<% end %>><%=h rev.loxp_start %></td>
+        <td <% if changes.include? 'loxp_end' %>class="highlight"<% end %>><%=h rev.loxp_end %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

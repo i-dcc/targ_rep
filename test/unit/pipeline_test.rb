@@ -6,7 +6,7 @@ class PipelineTest < ActiveSupport::TestCase
     # Pipeline has been validated and saved successfully
   end
   
-  should have_many(:molecular_structures)
+  should have_many(:alleles)
   should validate_uniqueness_of(:name).with_message('This pipeline name has already been taken')
   should validate_presence_of(:name)
   
