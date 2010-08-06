@@ -17,7 +17,7 @@ class AllelesController < ApplicationController
   # The following are located in application_controller.rb
   before_filter :set_created_by, :only => :create
   before_filter :set_updated_by, :only => :update
-  before_filter :get_qc_field_descriptions, :only => [:show, :edit, :new, :create]
+  before_filter :get_qc_field_descriptions, :only => [:show, :new, :create, :edit, :update, :destroy]
   
   # For webservice interface
   before_filter :format_nested_params, :only => [:create, :update]
@@ -215,7 +215,8 @@ class AllelesController < ApplicationController
     
     def format_nested_params
       # Specific to create/update methods - webservice interface
-      allele_params = params[:allele] || params[:molecular_structure]
+      params[:allele] = params.delete(:molecular_structure) if params[:molecular_structure]
+      allele_params = params[:allele]
       
       # README: http://htgt.internal.sanger.ac.uk:4005/issues/257
       #
@@ -238,11 +239,9 @@ class AllelesController < ApplicationController
       if allele_params.include? :es_cells
         allele_params[:es_cells].each { |attrs| attrs[:nested] = true }
         allele_params[:es_cells_attributes] = allele_params.delete(:es_cells)
-      
       elsif not allele_params.include? :es_cells_attributes
         allele_params[:es_cells_attributes] = []
       end
-      
       
       ##
       ##  Targeting Vectors + their ES Cells
@@ -268,7 +267,6 @@ class AllelesController < ApplicationController
         allele_params[:targeting_vectors_attributes] = allele_params.delete(:targeting_vectors)
       end
       
-      
       ##
       ##  Genbank Files
       ##
@@ -281,12 +279,10 @@ class AllelesController < ApplicationController
       # Don't create genbank file object if its attributes are empty.
       gb_files_attrs = allele_params[:genbank_file_attributes]
       if gb_files_attrs
-        gb_escell = gb_files_attrs[:escell_clone]
+        gb_escell   = gb_files_attrs[:escell_clone]
         gb_targ_vec = gb_files_attrs[:targeting_vector]
         
-        if gb_escell.nil? and gb_targ_vec.nil?
-          allele_params.delete(:genbank_file_attributes)
-        elsif !gb_escell.nil? and !gb_targ_vec.nil? and gb_escell.empty? and gb_targ_vec.empty?
+        if ( gb_escell.nil? and gb_targ_vec.nil? ) or ( gb_escell.empty? and gb_targ_vec.empty? ) 
           allele_params.delete(:genbank_file_attributes)
         end
       end
