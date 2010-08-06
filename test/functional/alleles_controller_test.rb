@@ -212,18 +212,18 @@ class AllelesControllerTest < ActionController::TestCase
   end
 
   should "show a allele" do
-    mol_struct_id = Allele.find(:first).id
+    allele_id = Allele.find(:first).id
     
     # html
-    get :show, :format => "html", :id => mol_struct_id
+    get :show, :format => "html", :id => allele_id
     assert_response :success, "should show allele as html"
     
     # json
-    get :show, :format => "json", :id => mol_struct_id
+    get :show, :format => "json", :id => allele_id
     assert_response :success, "should show allele as json"
     
     # xml
-    get :show, :format => "xml", :id => mol_struct_id
+    get :show, :format => "xml", :id => allele_id
     assert_response :success, "should show allele as xml"
   end
 
