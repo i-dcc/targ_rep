@@ -7,7 +7,7 @@ Factory.sequence(:pipeline_name) { |n| "pipeline_name_#{n}" }
 Factory.sequence(:ikmc_project_id) { |n| "project_000#{n}" }
 
 ##
-## Users
+## User
 ##
 
 Factory.define :user do |u|
@@ -23,7 +23,7 @@ Factory.define :invalid_user, :class => User do |u|
 end
 
 ##
-## Pipelines
+## Pipeline
 ##
 
 Factory.define :pipeline do |f|
@@ -34,7 +34,7 @@ Factory.define :invalid_pipeline, :class => Pipeline do |f|
 end
 
 ##
-## Molecular Structure
+## Allele
 ##
 
 Factory.define :allele do |f|
@@ -155,6 +155,27 @@ Factory.define :es_cell do |f|
 end
 
 Factory.define :invalid_escell, :class => EsCell do |f|
+end
+
+##
+## EsCellQcConflict
+##
+
+Factory.define :es_cell_qc_conflict do |f|
+  qc_field  = ESCELL_QC_OPTIONS.keys[ rand(ESCELL_QC_OPTIONS.size) - 1 ]
+  qc_values = ESCELL_QC_OPTIONS[qc_field]
+  
+  current_result  = qc_values.first
+  proposed_result = qc_values[ rand(qc_values.size - 1) + 1 ]
+  
+  f.qc_field        { qc_field.to_s }
+  f.proposed_result { proposed_result }
+  
+  f.es_cell { |conflict|
+    conflict.association( :es_cell, {
+      qc_field.to_sym => current_result
+    })
+  }
 end
 
 ##
