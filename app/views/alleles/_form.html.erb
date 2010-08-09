@@ -130,7 +130,7 @@
     </thead>
     <tbody id="targeting_vectors">
       <% f.fields_for :targeting_vectors do |targ_vec_form| %>
-        <%= render :partial => 'targ_vec', :locals => { :f => targ_vec_form } %>
+        <%= render :partial => 'targ_vec_form', :locals => { :f => targ_vec_form } %>
       <% end -%>
     </tbody>
   </table>
@@ -156,7 +156,7 @@
     </thead>
     <tbody id="es_cells">
       <% f.fields_for :es_cells do |es_cell_form| %>
-        <%= render :partial => 'es_cell', :locals => { :f => es_cell_form }%>
+        <%= render :partial => 'es_cell_form', :locals => { :f => es_cell_form }%>
       <% end -%>
     </tbody>
   </table>
