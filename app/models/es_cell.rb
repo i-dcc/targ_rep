@@ -2,7 +2,10 @@ class EsCell < ActiveRecord::Base
   acts_as_audited
   attr_accessor :nested
   
-  # Associations
+  ##
+  ## Associations
+  ##
+  
   belongs_to :created_by, :class_name => 'User', :foreign_key => 'created_by'
   belongs_to :updated_by, :class_name => 'User', :foreign_key => 'updated_by'
   
@@ -16,10 +19,12 @@ class EsCell < ActiveRecord::Base
     :foreign_key  => 'targeting_vector_id',
     :validate     => true
   
-  # Unique constraint
+  ##
+  ## Data validation
+  ##
+  
   validates_uniqueness_of :name, :message => 'This ES Cell name has already been taken'
   
-  # Data validation
   validates_presence_of :allele_id, :on => :save, :unless => :nested
   validates_presence_of :name,      :on => :create
   
@@ -47,11 +52,16 @@ class EsCell < ActiveRecord::Base
     :less_than_or_equal_to => 1,
     :unless    => Proc.new { |a| [nil,''].include?(a.distribution_qc_karyotype_high) }
   
-  def before_validation
-    if ikmc_project_id.nil? and targeting_vector
-      self.ikmc_project_id = targeting_vector.ikmc_project_id
-    end
-  end
+  ##
+  ## Filters
+  ##
+  
+  before_validation :stamp_tv_project_id_on_cell, 
+    :if => Proc.new { |a| [nil,''].include?(a.ikmc_project_id) }
+  
+  ##
+  ## Methods
+  ##
   
   def targeting_vector_name
     targeting_vector.name if targeting_vector
@@ -84,6 +94,15 @@ class EsCell < ActiveRecord::Base
     end
   
   protected
+    # Helper function to stamp the IKMC Project ID from 
+    # the parent targeting vector on this cell if it's not 
+    # been specifically entered
+    def stamp_tv_project_id_on_cell
+      if ikmc_project_id.nil? and targeting_vector
+        self.ikmc_project_id = targeting_vector.ikmc_project_id
+      end
+    end
+    
     # Compares targeting vector's molecular structure to
     # ES cell's molecular structure
     def allele_consistency
