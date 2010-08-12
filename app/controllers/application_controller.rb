@@ -3,6 +3,7 @@
 
 class ApplicationController < ActionController::Base
   include ExceptionNotification::Notifiable
+  include Userstamp
   
   # See ActionController::RequestForgeryProtection for details
   protect_from_forgery
@@ -83,11 +84,9 @@ class ApplicationController < ActionController::Base
           raise "Expecting one of the following objects: @allele, @targeting_vector, @es_cell or @genbank_file"
         end
       
-      if not changed_object.has_attribute? 'created_by'
-        raise "Expecting the object to have a 'created_by' attribute."
-      end
-      
-      if current_user != changed_object.created_by and !@current_user.is_admin
+      if @current_user.id == changed_object.created_by or @current_user.is_admin
+        # All is fine - move along...
+      else
         error_msg = "You are not allowed to perform this action"
         
         respond_to do |format|
@@ -118,16 +117,5 @@ class ApplicationController < ActionController::Base
       QcFieldDescription.all.each do |desc|
         @qc_field_descs[ desc.qc_field.to_sym ] = desc
       end
-    end
-  
-  private
-    def set_created_by
-      controller_name = params['controller'][0..-2] # remove the ending 's'
-      params[controller_name].update({ :created_by => current_user })
-    end
-    
-    def set_updated_by
-      controller_name = params['controller'][0..-2] # remove the ending 's'
-      params[controller_name].update({ :updated_by => current_user })
     end
 end

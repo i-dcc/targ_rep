@@ -6,15 +6,13 @@ class UserSessionsControllerTest < ActionController::TestCase
     assert_response :success
   end
 
-  should "create a user session" do
-    user = User.first || Factory.build( :user )
+  test "should create user session" do
     post :create, :user_session => {
-      :username => user.username,
-      :password => "secret"
+      :username => "the_dave",
+      :password => "the_dave_is_here"
     }
-    assert_equal 'Successfully logged in.', flash[:notice]
-    assert( @user_session = UserSession.find, "User session has not been created" )
-    assert_equal( user, @user_session.user, "User is unknown" )
+    assert user_session = UserSession.find
+    assert_equal users(:dave), user_session.user
   end
   
   should "not create a user session" do

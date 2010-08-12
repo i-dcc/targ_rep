@@ -1,10 +1,8 @@
 class Allele < ActiveRecord::Base
   acts_as_audited
+  stampable
   
   # Associations
-  belongs_to :created_by, :class_name => "User", :foreign_key => "created_by"
-  belongs_to :updated_by, :class_name => "User", :foreign_key => "updated_by"
-  
   belongs_to :pipeline,
     :class_name   => "Pipeline",
     :foreign_key  => "pipeline_id",
@@ -85,17 +83,17 @@ class Allele < ActiveRecord::Base
           :es_cells => { :except => [
               :allele_id,
               :created_at, :updated_at,
-              :created_by, :updated_by
+              :creator, :updater
           ]},
           :targeting_vectors => { :except => [
               :allele_id,
               :created_at, :updated_at,
-              :created_by, :updated_by
+              :creator, :updater
           ]},
           :genbank_file => { :except => [
               :allele_id,
               :created_at, :updated_at,
-              :created_by, :updated_by
+              :creator, :updater
           ]},
         }
       )
@@ -110,12 +108,12 @@ class Allele < ActiveRecord::Base
           :es_cells => { :except => [
               :allele_id,
               :created_at, :updated_at,
-              :created_by, :updated_by
+              :creator, :updater
           ]},
           :targeting_vectors => { :except => [
               :allele_id,
               :created_at, :updated_at,
-              :created_by, :updated_by
+              :creator, :updater
           ]}
         }
       )

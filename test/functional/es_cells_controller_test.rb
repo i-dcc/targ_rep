@@ -2,8 +2,14 @@ require 'test_helper'
 
 class EsCellsControllerTest < ActionController::TestCase
   setup do
-    UserSession.create Factory.build( :user ) # A different user for each test
+    user = Factory.create( :user )
+    UserSession.create user
     Factory.create(:es_cell)
+  end
+  
+  teardown do
+    session = UserSession.find
+    session.destroy
   end
   
   should "allow us to GET /index" do
@@ -33,7 +39,9 @@ class EsCellsControllerTest < ActionController::TestCase
     end
     assert_response :success, "Could not create ES Cell"
     
-    created_es_cell = EsCell.search(:name => es_cell_attrs[:name]).first
+    created_es_cell = EsCell.search(:name => es_cell_attrs[:name]).last
+    created_es_cell.created_by = @request.session["user_credentials_id"]
+    created_es_cell.save
     
     # UPDATE
     put :update, :id => created_es_cell.id, :es_cell => { :name => 'new name' }

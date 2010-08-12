@@ -2,8 +2,14 @@ require 'test_helper'
 
 class TargetingVectorsControllerTest < ActionController::TestCase
   setup do
-    UserSession.create Factory.build( :user )
+    user = Factory.create( :user )
+    UserSession.create user
     Factory.create( :targeting_vector )
+  end
+  
+  teardown do
+    session = UserSession.find
+    session.destroy
   end
   
   should "not allow us to GET /edit" do
@@ -25,13 +31,15 @@ class TargetingVectorsControllerTest < ActionController::TestCase
     targ_vec_attrs = Factory.attributes_for( :targeting_vector )
     assert_difference('TargetingVector.count') do
       post :create, :targeting_vector => {
-        :name                   => targ_vec_attrs[:name],
+        :name      => targ_vec_attrs[:name],
         :allele_id => TargetingVector.first.allele_id
       }
     end
     assert_response :success
     
-    created_targ_vec = TargetingVector.search( :name => targ_vec_attrs[:name] ).first
+    created_targ_vec = TargetingVector.search( :name => targ_vec_attrs[:name] ).last
+    created_targ_vec.created_by = @request.session["user_credentials_id"]
+    created_targ_vec.save
     
     # UPDATE
     attrs = Factory.attributes_for( :targeting_vector )

@@ -7,8 +7,6 @@ class AlleleTest < ActiveSupport::TestCase
   end
   
   should belong_to(:pipeline)
-  should belong_to(:created_by)
-  should belong_to(:updated_by)
   should have_many(:targeting_vectors)
   should have_many(:es_cells)
   

@@ -15,8 +15,6 @@ class AllelesController < ApplicationController
   before_filter :ensure_creator_or_admin, :only => [:destroy]
   
   # The following are located in application_controller.rb
-  before_filter :set_created_by, :only => :create
-  before_filter :set_updated_by, :only => :update
   before_filter :get_qc_field_descriptions, :only => [:show, :new, :create, :edit, :update, :destroy]
   
   # For webservice interface

@@ -2,20 +2,24 @@
 ##  Factory helpers
 ##
 Factory.sequence(:pgdgr_plate_name) { |n| "PGDGR_#{n}" }
-Factory.sequence(:epd_plate_name) { |n| "EPD_#{n}" }
-Factory.sequence(:pipeline_name) { |n| "pipeline_name_#{n}" }
-Factory.sequence(:ikmc_project_id) { |n| "project_000#{n}" }
+Factory.sequence(:epd_plate_name)   { |n| "EPD_#{n}" }
+Factory.sequence(:pipeline_name)    { |n| "pipeline_name_#{n}" }
+Factory.sequence(:ikmc_project_id)  { |n| "project_000#{n}" }
+Factory.sequence(:mgi_accession_id) { |n| "MGI:#{n}" }
+Factory.sequence(:username)         { |n| "bob#{n}" }
+Factory.sequence(:email)            { |n| "bob#{n}@bobsworld.com" }
 
 ##
 ## User
 ##
 
 Factory.define :user do |u|
-  u.sequence(:username)            { |n| "bob#{n}" }
-  u.sequence(:email)               { |n| "bob#{n}@bobsworld.com" }
-  u.password                       "secret"
+  u.username                       { Factory.next(:username) }
+  u.email                          { Factory.next(:email) }
+  u.password_salt                  Authlogic::Random.hex_token
+  u.password                       { |u| Authlogic::CryptoProviders::Sha512.encrypt( "secret" + u.password_salt ) }
   u.password_confirmation          { |u| u.password }
-  u.sequence(:persistence_token)   { |n| "token_#{n}" }
+  u.sequence(:persistence_token)   { |n| "6cde06746_#{n}" }
   u.is_admin                       false
 end
 
@@ -38,7 +42,7 @@ end
 ##
 
 Factory.define :allele do |f|
-  f.sequence(:mgi_accession_id)           { |n| "MGI:#{n}" }
+  f.mgi_accession_id                      { Factory.next(:mgi_accession_id) }
   f.sequence(:project_design_id)          { |n| "design id #{n}"}
   f.sequence(:design_subtype)             { |n| "subtype #{n}" }
   f.sequence(:subtype_description)        { |n| "subtype description #{n}" }

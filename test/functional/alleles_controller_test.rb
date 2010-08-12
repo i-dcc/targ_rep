@@ -7,8 +7,14 @@ class AllelesControllerTest < ActionController::TestCase
   include ActionView::Helpers::TagHelper
   
   setup do
-    UserSession.create Factory.build( :user )
+    user = Factory.create( :user )
+    UserSession.create user
     Factory.create( :allele )
+  end
+  
+  teardown do
+    session = UserSession.find
+    session.destroy
   end
   
   should "allow us to GET /index" do
@@ -103,26 +109,29 @@ class AllelesControllerTest < ActionController::TestCase
   end
 
   should "allow us to create, update and delete a allele we made" do
-    mol_struct_attrs = Factory.attributes_for( :allele )
-    mol_struct_attrs.update({ :pipeline_id => Allele.first.pipeline_id })
+    pipeline     = Factory.create( :pipeline )
+    allele_attrs = Factory.attributes_for( :allele )
+    allele_attrs.update({ :pipeline_id => pipeline.id })
     
     # CREATE
     assert_difference('Allele.count') do
-      post :create, :allele => mol_struct_attrs
+      post :create, :allele => allele_attrs
     end
     assert_redirected_to allele_path(assigns(:allele))
     
-    created_mol_struct = Allele.search( :mgi_accession_id => mol_struct_attrs[:mgi_accession_id] ).first
+    created_allele = Allele.search( :mgi_accession_id => allele_attrs[:mgi_accession_id] ).last
+    created_allele.created_by = @request.session["user_credentials_id"]
+    created_allele.save
     
     # UPDATE
-    put :update, :id => created_mol_struct.id, :allele => Factory.attributes_for( :allele )
+    put :update, { :id => created_allele.id, :allele => Factory.attributes_for( :allele ) }
     assert_redirected_to allele_path(assigns(:allele))
     
     # DELETE
     back_url = url_for( :controller => 'alleles', :action => 'index' )
     @request.env['HTTP_REFERER'] = back_url
     assert_difference('Allele.count', -1) do
-      delete :destroy, :id => created_mol_struct.id
+      delete :destroy, :id => created_allele.id
     end
     assert_redirected_to back_url
   end
@@ -211,7 +220,7 @@ class AllelesControllerTest < ActionController::TestCase
     assert_template :new
   end
 
-  should "show a allele" do
+  should "show an allele" do
     allele_id = Allele.find(:first).id
     
     # html

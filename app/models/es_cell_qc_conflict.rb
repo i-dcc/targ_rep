@@ -1,10 +1,9 @@
 class EsCellQcConflict < ActiveRecord::Base
   acts_as_audited
+  stampable
   
   attr_accessor :nested
   
-  belongs_to :created_by, :class_name => 'User',   :foreign_key => 'created_by'
-  belongs_to :updated_by, :class_name => 'User',   :foreign_key => 'updated_by'
   belongs_to :es_cell,    :class_name => 'EsCell', :foreign_key => 'es_cell_id', :validate => true
   
   validates_presence_of :qc_field

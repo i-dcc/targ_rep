@@ -1,10 +1,8 @@
 class TargetingVector < ActiveRecord::Base
   acts_as_audited
+  stampable
 
   # Associations
-  belongs_to :created_by, :class_name => 'User', :foreign_key => 'created_by'
-  belongs_to :updated_by, :class_name => 'User', :foreign_key => 'updated_by'
-
   belongs_to :allele,
     :class_name   => 'Allele',
     :foreign_key  => 'allele_id',
@@ -29,8 +27,8 @@ class TargetingVector < ActiveRecord::Base
       TargetingVector.include_root_in_json = false
       options.update(
         :include => {
-          :created_by => { :only => [:id, :username] },
-          :updated_by => { :only => [:id, :username] }
+          :creator => { :only => [:id, :username] },
+          :updater => { :only => [:id, :username] }
         }
       )
       super( options )
@@ -40,8 +38,8 @@ class TargetingVector < ActiveRecord::Base
       options.update(
         :skip_types => true,
         :include => {
-          :created_by => { :only => [:id, :username] },
-          :updated_by => { :only => [:id, :username] }
+          :creator => { :only => [:id, :username] },
+          :updater => { :only => [:id, :username] }
         }
       )
     end

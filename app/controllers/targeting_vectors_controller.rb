@@ -4,11 +4,7 @@ class TargetingVectorsController < ApplicationController
   
   # Must be after "find_targ_vec" filter (as it requires an object)
   before_filter :ensure_creator_or_admin, :only => [:destroy]
-  
-  # Following both are located in application_controller.rb
-  before_filter :set_created_by, :only => :create
-  before_filter :set_updated_by, :only => :update
-  
+    
   # For webservice interface
   before_filter :format_nested_params, :only => [:create, :update]
   

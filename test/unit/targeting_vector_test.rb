@@ -5,9 +5,6 @@ class TargetingVectorTest < ActiveSupport::TestCase
     Factory.create( :targeting_vector )
   end
   
-  should belong_to(:created_by)
-  should belong_to(:updated_by)
-
   should validate_uniqueness_of(:name).with_message('This Targeting Vector name has already been taken')
 
   should validate_presence_of(:name)

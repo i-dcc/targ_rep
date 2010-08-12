@@ -1,13 +1,12 @@
 class EsCell < ActiveRecord::Base  
   acts_as_audited
+  stampable
+  
   attr_accessor :nested
   
   ##
   ## Associations
   ##
-  
-  belongs_to :created_by, :class_name => 'User', :foreign_key => 'created_by'
-  belongs_to :updated_by, :class_name => 'User', :foreign_key => 'updated_by'
   
   belongs_to :allele,
     :class_name   => 'Allele',
@@ -76,8 +75,8 @@ class EsCell < ActiveRecord::Base
       EsCell.include_root_in_json = false
       options.update(
         :include => {
-          :created_by => { :only => [:id, :username] },
-          :updated_by => { :only => [:id, :username] }
+          :creator => { :only => [:id, :username] },
+          :updater => { :only => [:id, :username] }
         }
       )
       super( options )
@@ -87,8 +86,8 @@ class EsCell < ActiveRecord::Base
       options.update(
         :skip_types => true,
         :include => {
-          :created_by => { :only => [:id, :username] },
-          :updated_by => { :only => [:id, :username] }
+          :creator => { :only => [:id, :username] },
+          :updater => { :only => [:id, :username] }
         }
       )
     end

@@ -6,8 +6,6 @@ class EsCellTest < ActiveSupport::TestCase
     # ES Cell has been validated and saved successfully
   end
   
-  should belong_to(:created_by)
-  should belong_to(:updated_by)
   should belong_to(:allele)
   should belong_to(:targeting_vector)
   
