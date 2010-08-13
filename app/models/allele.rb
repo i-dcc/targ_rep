@@ -2,22 +2,23 @@ class Allele < ActiveRecord::Base
   acts_as_audited
   stampable
   
-  # Associations
-  belongs_to :pipeline,
-    :class_name   => "Pipeline",
-    :foreign_key  => "pipeline_id",
-    :validate     => true
+  ##
+  ## Associations
+  ##
   
-  has_one :genbank_file, :class_name => "GenbankFile", :foreign_key => "allele_id"
-  accepts_nested_attributes_for :genbank_file, :allow_destroy  => true
+  belongs_to :pipeline,          :class_name => "Pipeline",        :foreign_key => "pipeline_id", :validate => true
+  has_one    :genbank_file,      :class_name => "GenbankFile",     :foreign_key => "allele_id"
+  has_many   :targeting_vectors, :class_name => "TargetingVector", :foreign_key => "allele_id"
+  has_many   :es_cells,          :class_name => "EsCell",          :foreign_key => "allele_id"
   
-  has_many :targeting_vectors, :class_name => "TargetingVector", :foreign_key => "allele_id"
+  accepts_nested_attributes_for :genbank_file,      :allow_destroy  => true
   accepts_nested_attributes_for :targeting_vectors, :allow_destroy  => true
+  accepts_nested_attributes_for :es_cells,          :allow_destroy  => true
   
-  has_many :es_cells, :class_name => "EsCell", :foreign_key => "allele_id"
-  accepts_nested_attributes_for :es_cells, :allow_destroy  => true
+  ##
+  ## Validations
+  ##
   
-  # Unique constraint
   validates_uniqueness_of :project_design_id,
     :scope => [
       :mgi_accession_id, :assembly, :chromosome, :strand,
@@ -28,7 +29,6 @@ class Allele < ActiveRecord::Base
     ],
     :message => "must have unique design features"
   
-  # Data validation
   validates_presence_of [
     :mgi_accession_id,
     :assembly,
@@ -38,9 +38,9 @@ class Allele < ActiveRecord::Base
     :homology_arm_start,
     :homology_arm_end,
     :cassette_start,
-    :cassette_end
+    :cassette_end,
+    :pipeline_id
   ]
-  validates_presence_of :pipeline_id, :on => :save
   
   validates_inclusion_of :strand,
     :in => ["+", "-"],
@@ -73,7 +73,15 @@ class Allele < ActiveRecord::Base
     :unless => "[mgi_accession_id, assembly, chromosome, strand, design_type,
     homology_arm_start, homology_arm_end, cassette_start, cassette_end].any?(&:nil?)"
   
+  ##
+  ## Filters
+  ##
+  
   before_validation :set_mutation_details
+  
+  ##
+  ## Methods
+  ##
   
   public
     def to_json( options = {} )
@@ -100,7 +108,7 @@ class Allele < ActiveRecord::Base
       
       super( options )
     end
-
+    
     def to_xml( options = {} )
       options.update(
         :skip_types => true,
@@ -123,7 +131,7 @@ class Allele < ActiveRecord::Base
     def targeted_trap?
       (self.design_type == 'Knock Out' and self.loxp_start.nil?) ? 'Yes' : 'No'
     end
-
+    
   protected
     def has_right_features
       error_msg = "cannot be greater than %s position on this strand (#{strand})"

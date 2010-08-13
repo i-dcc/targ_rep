@@ -4,7 +4,7 @@ class EsCellQcConflict < ActiveRecord::Base
   
   attr_accessor :nested
   
-  belongs_to :es_cell,    :class_name => 'EsCell', :foreign_key => 'es_cell_id', :validate => true
+  belongs_to :es_cell, :class_name => 'EsCell', :foreign_key => 'es_cell_id', :validate => true
   
   validates_presence_of :qc_field
   validates_presence_of :proposed_result

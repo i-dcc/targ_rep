@@ -8,15 +8,12 @@ class EsCell < ActiveRecord::Base
   ## Associations
   ##
   
-  belongs_to :allele,
-    :class_name   => 'Allele',
-    :foreign_key  => 'allele_id',
-    :validate     => true
+  belongs_to :allele,           :class_name => 'Allele',          :foreign_key => 'allele_id',           :validate => true
+  belongs_to :targeting_vector, :class_name => 'TargetingVector', :foreign_key => 'targeting_vector_id', :validate => true
   
-  belongs_to :targeting_vector,
-    :class_name   => 'TargetingVector',
-    :foreign_key  => 'targeting_vector_id',
-    :validate     => true
+  has_many :es_cell_qc_conflicts, :class_name => 'EsCellQcConflict', :foreign_key => "es_cell_id"
+  
+  accepts_nested_attributes_for :es_cell_qc_conflicts, :allow_destroy => true
   
   ##
   ## Data validation
@@ -27,10 +24,8 @@ class EsCell < ActiveRecord::Base
   validates_presence_of :allele_id, :on => :save, :unless => :nested
   validates_presence_of :name,      :on => :create
   
-  validate :allele_consistency,
-    :unless => "[allele,targeting_vector].any?(&:nil?)"
-  
-  validate :ikmc_project_id_consistency, :if => :test_ikmc_project_id_consistency?
+  validate :allele_consistency,          :unless => "[allele,targeting_vector].any?(&:nil?)"
+  validate :ikmc_project_id_consistency, :if     => :test_ikmc_project_id_consistency?
     
   # Validate QC fields - the ESCELL_QC_OPTIONS constant comes from the 
   # es_cell_qc_options.rb initializer.
@@ -55,11 +50,8 @@ class EsCell < ActiveRecord::Base
   ## Filters
   ##
   
-  before_validation :stamp_tv_project_id_on_cell, 
-    :if => Proc.new { |a| [nil,''].include?(a.ikmc_project_id) }
-    
-  before_validation :convert_ikmc_project_id_to_string,
-    :unless => Proc.new { |a| a.ikmc_project_id.is_a?(String) }
+  before_validation :stamp_tv_project_id_on_cell,       :if     => Proc.new { |a| [nil,''].include?(a.ikmc_project_id) }
+  before_validation :convert_ikmc_project_id_to_string, :unless => Proc.new { |a| a.ikmc_project_id.is_a?(String) }
   
   ##
   ## Methods
