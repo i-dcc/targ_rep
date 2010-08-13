@@ -57,6 +57,9 @@ class EsCell < ActiveRecord::Base
   
   before_validation :stamp_tv_project_id_on_cell, 
     :if => Proc.new { |a| [nil,''].include?(a.ikmc_project_id) }
+    
+  before_validation :convert_ikmc_project_id_to_string,
+    :unless => Proc.new { |a| a.ikmc_project_id.is_a?(String) }
   
   ##
   ## Methods
@@ -93,6 +96,12 @@ class EsCell < ActiveRecord::Base
     end
   
   protected
+    # Helper function to solve the IKMC Project ID consistency validation 
+    # errors when people are passing integers in as the id...
+    def convert_ikmc_project_id_to_string
+      self.ikmc_project_id = ikmc_project_id.to_s
+    end
+    
     # Helper function to stamp the IKMC Project ID from 
     # the parent targeting vector on this cell if it's not 
     # been specifically entered

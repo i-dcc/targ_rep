@@ -46,63 +46,72 @@ class EsCellTest < ActiveSupport::TestCase
   should ensure_inclusion_of(:distribution_qc_karyotype_low).in_range(0..1).with_message(/must be less than or equal/)
   should ensure_inclusion_of(:distribution_qc_karyotype_high).in_range(0..1).with_message(/must be less than or equal/)
   
-  context "ES Cell" do
-    context "with empty attributes" do
-      should "not be saved" do
-        es_cell = Factory.build( :invalid_escell )
-        
-        assert( !es_cell.valid?, "ES Cell validates an empty entry" )
-        assert( !es_cell.save, "ES Cell validates the creation of an empty entry" )
-      end
+  context "An ES Cell" do
+    should "not be saved if it has empty attributes" do
+      es_cell = Factory.build( :invalid_escell )
+      
+      assert( !es_cell.valid?, "ES Cell validates an empty entry" )
+      assert( !es_cell.save, "ES Cell validates the creation of an empty entry" )
     end
     
-    context "with molecular structure consistency issue" do
-      should "not be saved" do
-        targ_vec    = Factory.create( :targeting_vector )
-        mol_struct  = Factory.create( :allele )
-        
-        es_cell = EsCell.new({
-          :name                => 'INVALID',
-          :targeting_vector_id => targ_vec.id,
-          :allele_id           => mol_struct.id
-        })
-        
-        assert( !es_cell.valid?, "ES Cell validates an invalid entry" )
-        assert( !es_cell.save, "ES Cell validates the creation of an invalid entry" )
-      end
+    should "not be saved if it has molecular structure consistency issue" do
+      targ_vec    = Factory.create( :targeting_vector )
+      mol_struct  = Factory.create( :allele )
+      
+      es_cell = EsCell.new({
+        :name                => 'INVALID',
+        :targeting_vector_id => targ_vec.id,
+        :allele_id           => mol_struct.id
+      })
+      
+      assert( !es_cell.valid?, "ES Cell validates an invalid entry" )
+      assert( !es_cell.save, "ES Cell validates the creation of an invalid entry" )
     end
     
-    context "with an IKMC Project ID copied from its targeting vector's" do
-      should "be saved" do
-        targ_vec = Factory.create( :targeting_vector )
-        
-        # ikmc_project_id is not provided
-        es_cell = EsCell.new({
-          :name                => 'EPD001',
-          :targeting_vector_id => targ_vec.id,
-          :allele_id           => targ_vec.allele_id
-        })
-        
-        assert( es_cell.valid?, "ES Cell does not validate a valid entry" )
-        assert( es_cell.save, "ES Cell does not validate the creation of a valid entry" )
-        assert( es_cell.ikmc_project_id == targ_vec.ikmc_project_id, "ES Cell should have copied the ikmc_project_id from its targeting vector's" )
-      end
+    should "copy the IKMC project id from it's TV if the project id is empty" do
+      targ_vec = Factory.create( :targeting_vector )
+      
+      # ikmc_project_id is not provided
+      es_cell = EsCell.new({
+        :name                => 'EPD001',
+        :targeting_vector_id => targ_vec.id,
+        :allele_id           => targ_vec.allele_id
+      })
+      
+      assert( es_cell.valid?, "ES Cell does not validate a valid entry" )
+      assert( es_cell.save, "ES Cell does not validate the creation of a valid entry" )
+      assert( es_cell.ikmc_project_id == targ_vec.ikmc_project_id, "ES Cell should have copied the ikmc_project_id from its targeting vector's" )
     end
     
-    context "with IKMC Project ID consistency issue" do
-      should "not be saved" do
-        targ_vec = Factory.create( :targeting_vector )
-        
-        es_cell = EsCell.new({
-          :name                => "EPD001",
-          :ikmc_project_id     => "DIFFERENT FROM TARG_VEC'S ONE",
-          :targeting_vector_id => targ_vec.id,
-          :allele_id           => targ_vec.allele_id,
-        })
-        
-        assert( !es_cell.valid?, "ES Cell validates an invalid entry" )
-        assert( !es_cell.save, "ES Cell validates the creation of an invalid entry" )
-      end
+    should "not be saved if there are IKMC project id consistency issue" do
+      targ_vec = Factory.create( :targeting_vector )
+      
+      es_cell = EsCell.new({
+        :name                => "EPD001",
+        :ikmc_project_id     => "VG456789",
+        :targeting_vector_id => targ_vec.id,
+        :allele_id           => targ_vec.allele_id,
+      })
+      
+      assert( !es_cell.valid?, "ES Cell validates an invalid entry" )
+      assert( !es_cell.save, "ES Cell validates the creation of an invalid entry" )
+      assert( es_cell.errors["ikmc_project_id"].match(/IKMC Project ID is different/i) )
+    end
+    
+    should "cope gracefully if a user tries to send in an integer as an IKMC Project ID" do
+      targ_vec = Factory.create( :targeting_vector )
+      targ_vec.ikmc_project_id = "12345678"
+      targ_vec.save
+      
+      es_cell = EsCell.new({
+        :name                => "EPD12345678",
+        :ikmc_project_id     => 12345678,
+        :targeting_vector_id => targ_vec.id,
+        :allele_id           => targ_vec.allele_id,
+      })
+      
+      assert( es_cell.valid?, "ES Cell does not validate a valid entry" )
+      assert( es_cell.save, "ES Cell does not validate the creation of a valid entry" )
     end
   end
 end
