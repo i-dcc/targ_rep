@@ -1,4 +1,5 @@
 class GenbankFile < ActiveRecord::Base
+  stampable
   
   attr_accessor :nested
   

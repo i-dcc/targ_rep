@@ -2,8 +2,14 @@ require 'test_helper'
 
 class GenbankFilesControllerTest < ActionController::TestCase
   setup do
-    UserSession.create Factory.build( :user )
+    user = Factory.create( :user )
+    UserSession.create user
     Factory.create( :genbank_file )
+  end
+  
+  teardown do
+    session = UserSession.find
+    session.destroy
   end
   
   should "not get index as html" do
@@ -75,9 +81,33 @@ class GenbankFilesControllerTest < ActionController::TestCase
     assert_response :unprocessable_entity
   end
 
-  should "destroy genbank_file" do
-    assert_difference('GenbankFile.count', -1) do
+  should "not allow us to delete a genbank_file when we're not the creator" do
+    # Permission will be denied here because we are not deleting as the creator
+    assert_no_difference('GenbankFile.count') do
       delete :destroy, :id => GenbankFile.first.id
+    end
+    assert_response 302
+  end
+  
+  should "allow us to create and delete a genbank_file" do
+    allele   = Factory.create( :allele )
+    gb_attrs = Factory.attributes_for( :genbank_file )
+    
+    assert_difference('GenbankFile.count') do
+      post :create, :genbank_file => {
+        :escell_clone     => gb_attrs[:escell_clone],
+        :targeting_vector => gb_attrs[:targeting_vector],
+        :allele_id        => allele.id
+      }
+    end
+    assert_response :success
+    
+    gb_file = GenbankFile.search( :allele_id => allele.id ).all.first
+    gb_file.created_by = @request.session["user_credentials_id"]
+    gb_file.save
+    
+    assert_difference('GenbankFile.count',-1) do
+      delete :destroy, :id => gb_file.id
     end
     assert_response :success
   end

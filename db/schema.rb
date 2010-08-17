@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100806150242) do
+ActiveRecord::Schema.define(:version => 20100817132800) do
 
   create_table "alleles", :force => true do |t|
     t.string   "assembly",            :limit => 50,  :default => "NCBIM37", :null => false
@@ -124,6 +124,8 @@ ActiveRecord::Schema.define(:version => 20100806150242) do
     t.text     "targeting_vector", :limit => 2147483647
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "created_by"
+    t.integer  "updated_by"
   end
 
   add_index "genbank_files", ["allele_id"], :name => "genbank_files_allele_id_fk"
