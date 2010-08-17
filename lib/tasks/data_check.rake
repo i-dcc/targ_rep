@@ -37,7 +37,7 @@ namespace :targ_rep do
   task :htgt_discrepacies_cache_build do
     discrepancies = find_htgt_to_targ_rep_discrepancies
     
-    cache_file = File.open('tmp/htgt_discrepacies.marshal','w')
+    cache_file = File.open('tmp/htgt_discrepancies.marshal','w')
     cache_file.write( Marshal.dump(discrepancies) )
     cache_file.close
   end
@@ -45,7 +45,7 @@ namespace :targ_rep do
   @discrepancies = ""
   
   task :htgt_discrepacies_report_helper do
-    cache_file = File.open('tmp/htgt_discrepacies.marshal','r')
+    cache_file = File.open('tmp/htgt_discrepancies.marshal','r')
     cache_file.each_line { |line| @discrepancies << line }
     cache_file.close
     
