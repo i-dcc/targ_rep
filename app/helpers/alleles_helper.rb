@@ -8,6 +8,7 @@ module AllelesHelper
       form_builder.fields_for :es_cells, EsCell.new, :child_index => 'NEW_RECORD' do |f|
         html = render( :partial => 'es_cell_form', :locals => { :f => f } )
         page << "$('es_cells').insert({ bottom: '#{escape_javascript(html)}'.replace(/NEW_RECORD/g, new Date().getTime()) });"
+        page << "setup_qc_metric_toggles();"
       end
     end
   end
