@@ -1,0 +1,13 @@
+<tr>
+  <td>
+    <% if f.object.creator.nil? %>
+      <%= @current_user.username %>
+    <% else %>
+      <%= f.object.creator.username %>
+    <% end %>
+  </td>
+  <td><%= f.select( :qc_field, ESCELL_QC_CONFLICT_FIELDS, { :include_blank => true }, { :class => 'esc_qc_conflicts_test' } ) %></td>
+  <td><%= f.select( :proposed_result, ESCELL_QC_CONFLICT_OPTIONS, { :include_blank => true }, { :class => 'esc_qc_conflicts_options' } ) %></td>
+  <td><%= f.text_area( :comment, :rows => 3, :style => "height:auto;width:auto" ) %></td>
+  <td><%= remove_es_cell_qc_conflict_link(f) %></td>
+</tr>

@@ -31,9 +31,9 @@ class EsCell < ActiveRecord::Base
   # es_cell_qc_options.rb initializer.
   ESCELL_QC_OPTIONS.each_key do |qc_field|
     validates_inclusion_of qc_field,
-      :in        => ESCELL_QC_OPTIONS[qc_field],
+      :in        => ESCELL_QC_OPTIONS[qc_field.to_s][:values],
       :unless    => Proc.new { |a| [nil,''].include?(a.attributes[qc_field.to_s]) },
-      :message   => "This QC metric can only be set as: #{ESCELL_QC_OPTIONS[qc_field].join(', ')}"
+      :message   => "This QC metric can only be set as: #{ESCELL_QC_OPTIONS[qc_field.to_s][:values].join(', ')}"
   end
   
   validates_numericality_of :distribution_qc_karyotype_low,

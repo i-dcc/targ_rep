@@ -167,7 +167,7 @@ end
 
 Factory.define :es_cell_qc_conflict do |f|
   qc_field  = ESCELL_QC_OPTIONS.keys[ rand(ESCELL_QC_OPTIONS.size) - 1 ]
-  qc_values = ESCELL_QC_OPTIONS[qc_field]
+  qc_values = ESCELL_QC_OPTIONS[qc_field][:values]
   
   current_result  = qc_values.first
   proposed_result = qc_values[ rand(qc_values.size - 1) + 1 ]

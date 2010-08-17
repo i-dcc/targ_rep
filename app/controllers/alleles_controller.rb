@@ -184,10 +184,7 @@ class AllelesController < ApplicationController
         # these fields to be null
         allele_params.delete( :loxp_start )
         allele_params.delete( :loxp_end )
-        allele_params.update({
-          :loxp_start_null  => true,
-          :loxp_end_null    => true
-        })
+        allele_params.update({ :loxp_start_null => true, :loxp_end_null => true })
       end
       
       # Search on marker_symbol against SolR and returns 

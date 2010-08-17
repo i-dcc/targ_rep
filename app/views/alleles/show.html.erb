@@ -7,53 +7,25 @@
 <div class="span-12">
   <fieldset>
     <legend>Genomic Position</legend>
-    <p>
-      <strong>Assembly:</strong>
-      <%=h @allele.assembly %>
-    </p>
-    <p>
-      <strong>Chromosome:</strong>
-      <%=h @allele.chromosome %>
-    </p>
-    <p>
-      <strong>Strand</strong>
-      <%=h @allele.strand %>
-    </p>
+    <p><strong>Assembly:</strong> <%=h @allele.assembly %></p>
+    <p><strong>Chromosome:</strong> <%=h @allele.chromosome %></p>
+    <p><strong>Strand</strong> <%=h @allele.strand %></p>
   </fieldset>
   
   <fieldset>
     <legend>Design Details</legend>
+    <p><strong>Design type:</strong> <%=h @allele.design_type %></p>
     <p>
-      <strong>Design type:</strong>
-      <%=h @allele.design_type %>
-    </p>
-    <p>
-      <strong>Design subtype:</strong>
-      <%=h @allele.design_subtype %><br />
+      <strong>Design subtype:</strong> <%=h @allele.design_subtype %><br />
       <em><%=h @allele.subtype_description %></em>
     </p>
-    <p>
-      <strong>Cassette:</strong>
-      <%=h @allele.cassette %>
-    </p>
-    <p>
-      <strong>Backbone:</strong>
-      <%=h @allele.backbone %>
-    </p>
+    <p><strong>Cassette:</strong> <%=h @allele.cassette %></p>
+    <p><strong>Backbone:</strong> <%=h @allele.backbone %></p>
     <% if @allele.floxed_start_exon == @allele.floxed_end_exon %>
-    <p>
-      <strong>Floxed Exon:</strong>
-      <%=h @allele.floxed_start_exon %>
-    </p>
+      <p><strong>Floxed Exon:</strong> <%=h @allele.floxed_start_exon %></p>
     <% else %>
-    <p>
-      <strong>First Floxed Exon:</strong>
-      <%=h @allele.floxed_start_exon %>
-    </p>
-    <p>
-      <strong>Last Floxed Exon:</strong>
-      <%=h @allele.floxed_end_exon %>
-    </p>
+      <p><strong>First Floxed Exon:</strong> <%=h @allele.floxed_start_exon %></p>
+      <p><strong>Last Floxed Exon:</strong> <%=h @allele.floxed_end_exon %></p>
     <% end %>
   </fieldset>
 </div>
@@ -171,13 +143,13 @@
                 <table class="es_cell_qc_info">
                   <caption>Production Centre Screen</caption>
                   <tr>
-                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :name => "5' Screen", :symbol => :production_qc_five_prime_screen } %>
-                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :name => "LoxP Screen", :symbol => :production_qc_loxp_screen } %>
-                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :name => "3' Screen", :symbol => :production_qc_three_prime_screen } %>
+                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :symbol => :production_qc_five_prime_screen } %>
+                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :symbol => :production_qc_loxp_screen } %>
+                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :symbol => :production_qc_three_prime_screen } %>
                   </tr>
                   <tr>
-                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :name => "Loss of WT Allele (LOA)", :symbol => :production_qc_loss_of_allele } %>
-                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :name => "Vector Integrity", :symbol => :production_qc_vector_integrity } %>
+                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :symbol => :production_qc_loss_of_allele } %>
+                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :symbol => :production_qc_vector_integrity } %>
                     <td colspan="2"></td>
                   </tr>
                 </table>
@@ -193,13 +165,13 @@
                         -
                       <% end %>
                     </td>
-                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :name => "Copy Number", :symbol => :distribution_qc_copy_number } %>
+                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :symbol => :distribution_qc_copy_number } %>
                     <td width="24%"></td>
                     <td></td>
                   </tr>
                   <tr>
-                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :name => "5' SR-PCR", :symbol => :distribution_qc_five_prime_sr_pcr } %>
-                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :name => "3' SR-PCR", :symbol => :distribution_qc_three_prime_sr_pcr } %>
+                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :symbol => :distribution_qc_five_prime_sr_pcr } %>
+                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :symbol => :distribution_qc_three_prime_sr_pcr } %>
                     <td colspan="2"></td>
                   </tr>
                 </table>
@@ -207,27 +179,27 @@
                 <table class="es_cell_qc_info">
                   <caption>User/Mouse Clinic QC</caption>
                   <tr>
-                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :name => "Southern Blot", :symbol => :user_qc_southern_blot } %>
-                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :name => "Map Test", :symbol => :user_qc_map_test } %>
-                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :name => "Karyotype", :symbol => :user_qc_karyotype } %>
+                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :symbol => :user_qc_southern_blot } %>
+                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :symbol => :user_qc_map_test } %>
+                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :symbol => :user_qc_karyotype } %>
                   </tr>
                   <tr>
-                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :name => "TV Backbone Assay", :symbol => :user_qc_tv_backbone_assay } %>
-                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :name => "5' LR-PCR", :symbol => :user_qc_five_prime_lr_pcr } %>
-                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :name => "Loss of WT Allele (LOA)", :symbol => :user_qc_loss_of_wt_allele } %>
+                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :symbol => :user_qc_tv_backbone_assay } %>
+                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :symbol => :user_qc_five_prime_lr_pcr } %>
+                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :symbol => :user_qc_loss_of_wt_allele } %>
                   </tr>
                   <tr>
-                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :name => "Neo Count (qPCR)", :symbol => :user_qc_neo_count_qpcr } %>
-                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :name => "lacZ SR-PCR", :symbol => :user_qc_lacz_sr_pcr } %>
-                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :name => "5' Cassette Integrity", :symbol => :user_qc_five_prime_cassette_integrity } %>
+                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :symbol => :user_qc_neo_count_qpcr } %>
+                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :symbol => :user_qc_lacz_sr_pcr } %>
+                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :symbol => :user_qc_five_prime_cassette_integrity } %>
                   </tr>
                   <tr>
-                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :name => "Neo SR-PCR", :symbol => :user_qc_neo_sr_pcr } %>
-                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :name => "Mutant Specific SR-PCR", :symbol => :user_qc_mutant_specific_sr_pcr } %>
-                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :name => "LoxP Confirmation", :symbol => :user_qc_loxp_confirmation } %>
+                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :symbol => :user_qc_neo_sr_pcr } %>
+                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :symbol => :user_qc_mutant_specific_sr_pcr } %>
+                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :symbol => :user_qc_loxp_confirmation } %>
                   </tr>
                   <tr>
-                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :name => "3' LR-PCR", :symbol => :user_qc_three_prime_lr_pcr } %>
+                    <%= render :partial => 'alleles/es_cell_qc_show', :locals => { :es_cell => es_cell, :symbol => :user_qc_three_prime_lr_pcr } %>
                     <td colspan="4"></td>
                   </tr>
                   <tr>
@@ -236,6 +208,35 @@
                   <tr>
                     <td colspan="6"><%=h print_dash_on_empty( es_cell.user_qc_comment ) %></td>
                   </tr>
+                  <% if es_cell.es_cell_qc_conflicts.count > 0 %>
+                    <tr>
+                      <th colspan="6" style="text-align:left;">User/Mouse Clinic QC Data Conflicts</th>
+                    </tr>
+                    <tr>
+                      <td colspan="6">
+                        <table class="list esc_qc_conflicts">
+                          <thead>
+                            <tr>
+                              <th style="text-align:left;">User</th>
+                              <th style="text-align:left;">QC Test</th>
+                              <th style="text-align:left;">Proposed Result</th>
+                              <th style="text-align:left;">Comments</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <% es_cell.es_cell_qc_conflicts.each do |conflict| %>
+                              <tr class="<%= cycle("odd", "even") %>">
+                                <td><%=h conflict.creator.username %></td>
+                                <td><%=h ESCELL_QC_OPTIONS[conflict.qc_field][:name] %></td>
+                                <td><%=h conflict.proposed_result %></td>
+                                <td><%=h conflict.comment %></td>
+                              </tr>
+                            <% end %>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                  <% end %>
                 </table>
               </td>
             </tr>
