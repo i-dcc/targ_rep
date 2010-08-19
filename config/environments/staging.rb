@@ -22,7 +22,14 @@ config.log_level = :debug
 # config.action_controller.asset_host = "http://assets.example.com"
 
 # Disable delivery errors, bad email addresses will be ignored
-config.action_mailer.raise_delivery_errors = false
+config.action_mailer.raise_delivery_errors = true
 
 # Enable threaded mode
 # config.threadsafe!
+
+config.action_mailer.delivery_method = :smtp
+config.action_mailer.smtp_settings = {
+  :address => "mail.sanger.ac.uk",
+  :port    => 25,
+  :domain  => "htgt.internal.sanger.ac.uk"
+}
