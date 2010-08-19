@@ -226,7 +226,11 @@
                           <tbody>
                             <% es_cell.es_cell_qc_conflicts.each do |conflict| %>
                               <tr class="<%= cycle("odd", "even") %>">
-                                <td><%=h conflict.creator.username %></td>
+                                <td>
+                                  <% unless conflict.creator.nil? %>
+                                    <%=h conflict.creator.username %>
+                                  <% end %>
+                                </td>
                                 <td><%=h ESCELL_QC_OPTIONS[conflict.qc_field][:name] %></td>
                                 <td><%=h conflict.proposed_result %></td>
                                 <td><%=h conflict.comment %></td>
