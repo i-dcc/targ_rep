@@ -32,6 +32,10 @@ class WelcomeController < ApplicationController
     end
   end
   
+  def boom
+    raise "Testing Exception Reporting"
+  end
+  
   private
   
   def allele_count_by_pipeline
@@ -91,10 +95,6 @@ class WelcomeController < ApplicationController
     end
     
     return counts
-  end
-  
-  def boom
-    raise "Testing Exception Reporting"
   end
   
 end
