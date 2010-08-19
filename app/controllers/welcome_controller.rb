@@ -93,4 +93,8 @@ class WelcomeController < ApplicationController
     return counts
   end
   
+  def boom
+    raise "Testing Exception Reporting"
+  end
+  
 end
