@@ -46,10 +46,12 @@ Rails::Initializer.run do |config|
   # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
   # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}')]
   # config.i18n.default_locale = :de
+  
+  config.after_initialize do
+    ExceptionNotification::Notifier.sender_address = '"Targeting Repository Exception Notifier" <targ_rep@sanger.ac.uk>'
+    ExceptionNotification::Notifier.email_prefix = "[Targeting Repository Exception (#{Rails.env.upcase})] "
+    ExceptionNotification::Notifier.exception_recipients = ['team87@sanger.ac.uk']
+    
+    Ddb::Userstamp.compatibility_mode = true
+  end
 end
-
-ExceptionNotification::Notifier.sender_address = '"Targeting Repository Exception Notifier" <targ_rep@sanger.ac.uk>'
-ExceptionNotification::Notifier.email_prefix = "[Targeting Repository Exception (#{Rails.env.upcase})] "
-ExceptionNotification::Notifier.exception_recipients = ['team87@sanger.ac.uk']
-
-Ddb::Userstamp.compatibility_mode = true
