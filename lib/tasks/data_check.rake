@@ -84,35 +84,14 @@ namespace :targ_rep do
   
   desc "Generate a report showing all of the alleles that throw errors when trying to draw images"
   task :image_drawing_errors do
-    bad_alleles = check_image_drawing_coverage
-    
-    CSV.open('public/downloads/image_drawing_errors.csv','wb') do |csv|
-      csv << [
-        "Pipeline",
-        "MGI Accession ID",
-        "Allele ID",
-        "Cassette",
-        "Backbone",
-        "Allele Image Status Code",
-        "Allele Image URL",
-        "Vector Image Status Code",
-        "Vector Image URL"
-      ]
+    # TODO: pass these as options to the rake task
+    database    = "development"
+    config_file = "config/database.yml"
+    output_file = "public/downloads/image_drawing_errors.csv"
 
-      bad_alleles.each do |allele_id,data|
-        csv << [
-          data[:project],
-          data[:mgi_accession_id],
-          allele_id,
-          data[:cassette],
-          data[:backbone],
-          data[:allele_img],
-          data[:esc] ? "#{TARG_REP_URL}/alleles/#{allele_id}/allele-image" : nil,
-          data[:vector_img],
-          data[:tv] ? "#{TARG_REP_URL}/alleles/#{allele_id}/vector-image" : nil
-        ]
-      end
-    end
+    puts "[checking coverage for -- image_drawing_errors]"
+
+    check_image_drawing_coverage( database, config_file, output_file )
   end
   
 end
