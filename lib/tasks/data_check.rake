@@ -83,15 +83,15 @@ namespace :targ_rep do
   end
   
   desc "Generate a report showing all of the alleles that throw errors when trying to draw images"
-  task :image_drawing_errors do
-    # TODO: pass these as options to the rake task
-    database    = "development"
-    config_file = "config/database.yml"
-    output_file = "public/downloads/image_drawing_errors.csv"
-
+  task :image_drawing_errors, [ :database, :config_file, :output_file ] do |t, args|
+    # process the options ...
+    args.with_defaults(
+                       :database    => "development",
+                       :config_file => "config/database.yml",
+                       :output_file => "public/downloads/image_drawing_errors.csv"
+                       )
     puts "[checking coverage for -- image_drawing_errors]"
-
-    check_image_drawing_coverage( database, config_file, output_file )
+    check_image_drawing_coverage( args[:database], args[:config_file], args[:output_file] )
   end
   
 end
