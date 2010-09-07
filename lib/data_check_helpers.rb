@@ -305,8 +305,8 @@ module DataCheckHelpers
       allele       = db_conn[:alleles].filter( :id => genbank_file[:allele_id] ).first()
       pipeline     = db_conn[:pipelines].filter( :id => allele[:pipeline_id] ).first()
 
-      # only validate EUCOMM and KOMP-CSD genbank_files (for now) ...
-      next unless pipeline and [ "EUCOMM", "KOMP-CSD" ].include?( pipeline[:name] )
+      # only validate EUCOMM, KOMP-CSD and NorCOMM genbank_files (for now) ...
+      next unless pipeline and [ "EUCOMM", "KOMP-CSD", "NorCOMM" ].include?( pipeline[:name] )
 
       # let's assume everything is ok ...
       result_for = { :escell_clone => "ok", :targeting_vector => "ok" }
