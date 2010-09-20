@@ -3,6 +3,10 @@ require 'rubygems'
 require 'biomart'
 require 'parallel'
 require 'httparty'
+require 'csv'
+require 'yaml'
+require 'sequel'
+require 'allele_image'
 
 module DataCheckHelpers
   @@htgt_targ     = Biomart::Dataset.new( 'http://www.sanger.ac.uk/htgt/biomart', { :name => 'htgt_targ' } )
@@ -276,57 +280,67 @@ module DataCheckHelpers
   end
   
   # Function to query the production targ_rep and report whether an 
-  # allele or vector image was successfully returned.  Returns a hash 
-  # of alleles which gave an error for either request.
-  def check_image_drawing_coverage
-    alleles                 = get_allele_ids_with_products
-    alleles_with_bad_images = {}
-    req_count               = 0
-    
-    # Perform a GET request for vector and allele images 
-    # (if we have any vectors or alleles present) and store 
-    # the results if we get a fail...
-    #
-    # Do the requests in parallel (using the 'parallel' gem)
-    puts "[check_image_drawing_coverage] - running requests for #{alleles.keys.size} alleles..."
-    puts "[check_image_drawing_coverage] - this may take some time..."
-    puts "[check_image_drawing_coverage] - allele: 0 / #{alleles.keys.size}"
-    Parallel.each( alleles.keys, :in_threads => 10 ) do |allele_id|
-      allele = alleles[allele_id]
-      
-      if allele[:tv]
-        vector_res = HTTParty.get("#{TARG_REP_URL}/alleles/#{allele_id}/vector-image")
-        allele[:vector_img] = vector_res.code
-        #puts "[check_image_drawing_coverage] - #{TARG_REP_URL}/alleles/#{allele_id}/vector-image : #{vector_res.code}"
+  # allele or vector image was successfully returned.
+  def check_image_drawing_coverage(  database, config_file, output_file )
+    # retrieve config parameters and connect to the database ...
+    config  = YAML.load_file( config_file )
+    db_conn = Sequel.connect( config[database] )
+
+    # write the header ...
+    writer = CSV.open( output_file, "w" )
+    writer << [
+               "allele_id",
+               "backbone",
+               "cassette",
+               "project",
+               "design",
+               "genbank_id",
+               "escell_clone",
+               "targeting_vector"
+              ]
+
+    db_conn[:genbank_files].select( :id ).each do |row|
+      # get the objects we'll need ...
+      genbank_file = db_conn[:genbank_files].filter( :id => row[:id] ).first()
+      allele       = db_conn[:alleles].filter( :id => genbank_file[:allele_id] ).first()
+      pipeline     = db_conn[:pipelines].filter( :id => allele[:pipeline_id] ).first()
+
+      # only validate EUCOMM, KOMP-CSD and NorCOMM genbank_files (for now) ...
+      next unless pipeline and [ "EUCOMM", "KOMP-CSD", "NorCOMM" ].include?( pipeline[:name] )
+
+      # let's assume everything is ok ...
+      result_for = { :escell_clone => "ok", :targeting_vector => "ok" }
+
+      # see if we can draw it ...
+      result_for.each_key do |tag|
+        begin
+          if genbank_file[tag]
+            AlleleImage::Image.new( genbank_file[tag] ).render()
+          else
+            result_for[tag] = "NA"
+          end
+        rescue
+          result_for[tag] = $!
+        end
       end
-      
-      if allele[:esc]
-        allele_res = HTTParty.get("#{TARG_REP_URL}/alleles/#{allele_id}/allele-image")
-        allele[:allele_img] = allele_res.code
-        #puts "[check_image_drawing_coverage] - #{TARG_REP_URL}/alleles/#{allele_id}/allele-image : #{allele_res.code}"
-      end
-      
-      if ( allele[:allele_img] != nil and allele[:allele_img] != 200 ) or ( allele[:vector_img] != nil and allele[:vector_img] != 200 )
-        alleles_with_bad_images[allele_id] = alleles[allele_id]
-      end
-      
-      req_count = req_count + 1
-      if req_count % 100 == 0
-        puts "[check_image_drawing_coverage] - allele: #{req_count} / #{alleles.keys.size}"
-      end
-      
-      sleep(1)
+
+      # print the outcome ...
+      writer << [
+                 genbank_file[:allele_id],
+                 allele[:backbone],
+                 allele[:cassette],
+                 # because sometimes the allele[:pipeline_id] is "nil"
+                 ( pipeline.nil? ? "nil" : pipeline[:name] ),
+                 allele[:project_design_id],
+                 genbank_file[:id],
+                 result_for[:escell_clone],
+                 result_for[:targeting_vector]
+                ]
     end
-    
-    # alleles_with_bad_images = ""
-    # File.open("tmp/alleles_with_bad_images.marshal",'r').each_line { |line| alleles_with_bad_images << line }
-    # alleles_with_bad_images = Marshal.load(alleles_with_bad_images)
-    
-    cache_file = File.open("tmp/alleles_with_bad_images.marshal",'w')
-    cache_file.write( Marshal.dump(alleles_with_bad_images) )
-    cache_file.close
-    
-    return alleles_with_bad_images
+
+    # close the file handle ...
+    writer.close
+
+    puts "[output written to -- #{output_file}]"
   end
-  
 end
