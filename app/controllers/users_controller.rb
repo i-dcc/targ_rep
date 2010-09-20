@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
-  before_filter :require_user,  :only => [:show, :edit, :update]
+  before_filter :require_user,  :only => [:show, :edit, :update, :destroy]
   before_filter :require_admin, :only => [:index, :new, :create, :destroy]
-  before_filter :find_user,     :only => [:show, :edit, :update]
+  before_filter :find_user,     :only => [:show, :edit, :update, :destroy]
 
   def index
     @users = User.all
@@ -34,7 +34,12 @@ class UsersController < ApplicationController
       render :action => :edit
     end
   end
-
+  
+  def destroy
+    @user.destroy
+    redirect_to users_path
+  end
+  
   def show
   end
 
