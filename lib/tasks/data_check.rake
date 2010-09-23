@@ -83,15 +83,15 @@ namespace :targ_rep do
   end
   
   desc "Generate a report showing all of the alleles that throw errors when trying to draw images"
-  task :image_drawing_errors, [ :database, :config_file, :output_file ] do |t, args|
+  task :image_drawing_errors, [ :config_file, :output_file ] do |t, args|
     # process the options ...
     args.with_defaults(
-                       :database    => "development",
-                       :config_file => "config/database.yml",
-                       :output_file => "public/downloads/image_drawing_errors.csv"
-                       )
-    puts "[checking coverage for -- image_drawing_errors]"
-    check_image_drawing_coverage( args[:database], args[:config_file], args[:output_file] )
+      :config_file => "config/database.yml",
+      :output_file => "public/downloads/image_drawing_errors.csv"
+    )
+    database = ENV["HTGT_ENV"] == "Devel" ? "development" : "production"
+    puts "[checking image drawing coverage against '#{database}' database]"
+    check_image_drawing_coverage( database, args[:config_file], args[:output_file] )
   end
   
 end
