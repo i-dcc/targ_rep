@@ -19,6 +19,7 @@ class EsCellTest < ActiveSupport::TestCase
     :production_qc_loss_of_allele,
     :production_qc_vector_integrity,
     :distribution_qc_copy_number,
+    :distribution_qc_five_prime_lr_pcr,
     :distribution_qc_five_prime_sr_pcr,
     :distribution_qc_three_prime_sr_pcr,
     :user_qc_five_prime_lr_pcr,

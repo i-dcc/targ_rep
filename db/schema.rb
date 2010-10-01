@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100817132800) do
+ActiveRecord::Schema.define(:version => 20101001095540) do
 
   create_table "alleles", :force => true do |t|
     t.string   "assembly",            :limit => 50,  :default => "NCBIM37", :null => false
@@ -112,6 +112,7 @@ ActiveRecord::Schema.define(:version => 20100817132800) do
     t.float    "distribution_qc_karyotype_low"
     t.float    "distribution_qc_karyotype_high"
     t.string   "distribution_qc_copy_number"
+    t.string   "distribution_qc_five_prime_lr_pcr"
   end
 
   add_index "es_cells", ["allele_id"], :name => "es_cells_allele_id_fk"

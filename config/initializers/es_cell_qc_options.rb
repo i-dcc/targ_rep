@@ -10,6 +10,7 @@ qc_metrics = {
   "production_qc_vector_integrity"        => { :name => "Vector Integrity" },
   
   "distribution_qc_copy_number"           => { :name => "Copy Number" },
+  "distribution_qc_five_prime_lr_pcr"     => { :name => "5' LR-PCR" },
   "distribution_qc_five_prime_sr_pcr"     => { :name => "5' SR-PCR" },
   "distribution_qc_three_prime_sr_pcr"    => { :name => "3' SR-PCR" },
   
