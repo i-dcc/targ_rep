@@ -48,9 +48,9 @@ Rails::Initializer.run do |config|
   # config.i18n.default_locale = :de
   
   config.after_initialize do
-    ExceptionNotification::Notifier.sender_address = '"Targeting Repository Exception Notifier" <targ_rep@sanger.ac.uk>'
-    ExceptionNotification::Notifier.email_prefix = "[Targeting Repository Exception (#{Rails.env.upcase})] "
-    ExceptionNotification::Notifier.exception_recipients = ['team87@sanger.ac.uk']
+    # ExceptionNotification::Notifier.sender_address = '"Targeting Repository Exception Notifier" <targ_rep@sanger.ac.uk>'
+    # ExceptionNotification::Notifier.email_prefix = "[Targeting Repository Exception (#{Rails.env.upcase})] "
+    # ExceptionNotification::Notifier.exception_recipients = ['team87@sanger.ac.uk']
     
     Ddb::Userstamp.compatibility_mode = true
   end
