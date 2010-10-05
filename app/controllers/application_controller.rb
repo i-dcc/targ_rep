@@ -2,7 +2,6 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
-  include ExceptionNotification::Notifiable
   include Userstamp
   
   # See ActionController::RequestForgeryProtection for details
