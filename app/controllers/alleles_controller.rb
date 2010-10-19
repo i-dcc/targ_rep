@@ -133,12 +133,26 @@ class AllelesController < ApplicationController
   
   # GET /alleles/1/escell_clone_genbank_file/
   def escell_clone_genbank_file
-    render :inline => "<pre><%= @allele.genbank_file.escell_clone %></pre>"
+    send_data(
+      @allele.genbank_file.escell_clone,
+      {
+        :type        => 'chemical/x-genbank',
+        :disposition => 'inline',
+        :filename    => "allele-#{@allele.id}-escell.gbk"
+      }
+    )
   end
 
   # GET /alleles/1/targeting-vector-genbank-file/
   def targeting_vector_genbank_file
-    render :inline => "<pre><%= @allele.genbank_file.targeting_vector %></pre>"
+    send_data(
+      @allele.genbank_file.targeting_vector,
+      {
+        :type        => 'chemical/x-genbank',
+        :disposition => 'inline',
+        :filename    => "allele-#{@allele.id}-vector.gbk"
+      }
+    )
   end
 
   # GET /alleles/1/allele-image/
