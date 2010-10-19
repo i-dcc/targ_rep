@@ -26,10 +26,3 @@ config.action_view.cache_template_loading            = true
 
 # Enable threaded mode
 # config.threadsafe!
-
-# config.action_mailer.delivery_method = :smtp
-# config.action_mailer.smtp_settings = {
-#   :address => "mail.sanger.ac.uk",
-#   :port    => 25,
-#   :domain  => "htgt.internal.sanger.ac.uk"
-# }
