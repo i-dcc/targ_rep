@@ -23,8 +23,17 @@
   </tr>
   <tr>
     <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_five_prime_lr_pcr } %>
+    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_three_prime_lr_pcr } %>
+    <td colspan="2"></td>
+  </tr>
+  <tr>
     <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_five_prime_sr_pcr } %>
     <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_three_prime_sr_pcr } %>
+    <td colspan="2"></td>
+  </tr>
+  <tr>
+    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_thawing } %>
+    <td colspan="4"></td>
   </tr>
 </table>
 

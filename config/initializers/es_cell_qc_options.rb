@@ -11,8 +11,10 @@ qc_metrics = {
   
   "distribution_qc_copy_number"           => { :name => "Copy Number" },
   "distribution_qc_five_prime_lr_pcr"     => { :name => "5' LR-PCR" },
+  "distribution_qc_three_prime_lr_pcr"    => { :name => "3' LR-PCR" },
   "distribution_qc_five_prime_sr_pcr"     => { :name => "5' SR-PCR" },
   "distribution_qc_three_prime_sr_pcr"    => { :name => "3' SR-PCR" },
+  "distribution_qc_thawing"               => { :name => "Cells Thawed Correctly" },
   
   "user_qc_karyotype"                     => { :name => "Karyotype",     :values => ["pass","fail","limit"] },
   "user_qc_southern_blot"                 => { :name => "Southern Blot", :values => ["pass","fail 5' end","fail 3' end","fail both ends","double integration"] },
