@@ -13,7 +13,7 @@
   </fieldset>
   
   <fieldset>
-    <legend>Design Details</legend>
+    <legend>Mutation Details</legend>
     <p><strong>Design type:</strong> <%=h @allele.design_type %></p>
     <p>
       <strong>Design subtype:</strong> <%=h @allele.design_subtype %><br />
@@ -27,12 +27,13 @@
       <p><strong>First Floxed Exon:</strong> <%=h @allele.floxed_start_exon %></p>
       <p><strong>Last Floxed Exon:</strong> <%=h @allele.floxed_end_exon %></p>
     <% end %>
+    <p><strong>MGI Allele ID:</strong> <%=h @allele.mgi_allele_id %></p>
   </fieldset>
 </div>
 
 <div class="span-12 last">
   <fieldset>
-    <legend>Molecular Structure</legend>
+    <legend>Molecular Co-Ordinates</legend>
     <table class="list">
       <thead>
         <th>Feature</th>

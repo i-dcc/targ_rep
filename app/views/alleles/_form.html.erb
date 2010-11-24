@@ -67,12 +67,24 @@
       <%= f.label :backbone %><br />
       <%= f.text_field :backbone, :class => :text %>
     </p>
+    <p>
+      <%= f.label :floxed_start_exon, "First Floxed Exon" %><br />
+      <%= f.text_field :floxed_start_exon, :class => :text %>
+    </p>
+    <p>
+      <%= f.label :floxed_end_exon, "Last Floxed Exon" %><br />
+      <%= f.text_field :floxed_end_exon, :class => :text %>
+    </p>
+    <p>
+      <%= f.label :mgi_allele_id, "MGI Allele ID" %><br />
+      <%= f.text_field :mgi_allele_id, :class => :text %>
+    </p>
   </fieldset>
 </div>
 
 <div class="span-12 last">
   <fieldset>
-    <legend>Molecular Structure</legend>
+    <legend>Molecular Co-Ordinates</legend>
     <p>
       <%= f.label :homology_arm_start, "Homology Arm Start" %><br />
       <%= f.text_field :homology_arm_start, :class => :text %>

@@ -53,6 +53,7 @@
     <th>Backbone</th>
     <th>Floxed Start Exon</th>
     <th>Floxed End Exon</th>
+    <th>MGI Allele ID</th>
     <th>Homology&nbsp;Arm&nbsp;Start</th>
     <th>Homology&nbsp;Arm&nbsp;End</th>
     <th>Cassette&nbsp;Start</th>
@@ -83,6 +84,7 @@
         <td <% if changes.include? 'backbone' %>class="highlight"<% end %>><%=h rev.backbone %></td>
         <td <% if changes.include? 'floxed_start_exon' %>class="highlight"<% end %>><%=h rev.floxed_start_exon %></td>
         <td <% if changes.include? 'floxed_end_exon' %>class="highlight"<% end %>><%=h rev.floxed_end_exon %></td>
+        <td <% if changes.include? 'mgi_allele_id' %>class="highlight"<% end %>><%=h rev.mgi_allele_id %></td>
         <td <% if changes.include? 'homology_arm_start' %>class="highlight"<% end %>><%=h rev.homology_arm_start %></td>
         <td <% if changes.include? 'homology_arm_end' %>class="highlight"<% end %>><%=h rev.homology_arm_end %></td>
         <td <% if changes.include? 'cassette_start' %>class="highlight"<% end %>><%=h rev.cassette_start %></td>

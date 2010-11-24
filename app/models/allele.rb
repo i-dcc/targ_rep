@@ -43,31 +43,42 @@ class Allele < ActiveRecord::Base
   ]
   
   validates_inclusion_of :strand,
-    :in => ["+", "-"],
-    :message => "should be '+' or '-'.",
-    :allow_nil => true
+    :in         => ["+", "-"],
+    :message    => "should be '+' or '-'."
   
   validates_inclusion_of :chromosome,
-    :in => ('1'..'19').to_a + ['X', 'Y', 'MT'],
-    :message => "is not a valid mouse chromosome",
-    :allow_nil => true
+    :in         => ('1'..'19').to_a + ['X', 'Y', 'MT'],
+    :message    => "is not a valid mouse chromosome"
   
   validates_inclusion_of :design_type,
-    :in => ['Knock Out', 'Deletion', 'Insertion'],
-    :message => "should be 'Knockout', 'Deletion' or 'Insertion'.",
-    :allow_nil => true
+    :in         => ['Knock Out', 'Deletion', 'Insertion'],
+    :message    => "should be 'Knockout', 'Deletion' or 'Insertion'."
   
   validates_format_of :mgi_accession_id,
-    :with => /^MGI\:\d+$/,
-    :message => "is not a valid MGI accession ID",
-    :allow_nil => true
+    :with       => /^MGI\:\d+$/,
+    :message    => "is not a valid MGI Accession ID"
   
-  validates_numericality_of :homology_arm_start,  :only_integer => true, :greater_than => 0, :allow_nil => true
-  validates_numericality_of :homology_arm_end,    :only_integer => true, :greater_than => 0, :allow_nil => true
-  validates_numericality_of :cassette_start,      :only_integer => true, :greater_than => 0, :allow_nil => true
-  validates_numericality_of :cassette_end,        :only_integer => true, :greater_than => 0, :allow_nil => true
-  validates_numericality_of :loxp_start,          :only_integer => true, :greater_than => 0, :allow_nil => true
-  validates_numericality_of :loxp_end,            :only_integer => true, :greater_than => 0, :allow_nil => true
+  validates_format_of :mgi_allele_id,
+    :with       => /^MGI\:\d+$/,
+    :message    => "is not a valid MGI Allele ID",
+    :allow_nil  => true
+  
+  validates_format_of :floxed_start_exon,
+    :with       => /^ENSMUSE\d+$/,
+    :message    => "is not a valid Ensembl Exon ID",
+    :allow_nil  => true
+  
+  validates_format_of :floxed_end_exon,
+    :with       => /^ENSMUSE\d+$/,
+    :message    => "is not a valid Ensembl Exon ID",
+    :allow_nil  => true
+  
+  validates_numericality_of :homology_arm_start, :only_integer => true, :greater_than => 0
+  validates_numericality_of :homology_arm_end,   :only_integer => true, :greater_than => 0
+  validates_numericality_of :cassette_start,     :only_integer => true, :greater_than => 0
+  validates_numericality_of :cassette_end,       :only_integer => true, :greater_than => 0
+  validates_numericality_of :loxp_start,         :only_integer => true, :greater_than => 0, :allow_nil => true
+  validates_numericality_of :loxp_end,           :only_integer => true, :greater_than => 0, :allow_nil => true
   
   validate :has_right_features, 
     :unless => "[mgi_accession_id, assembly, chromosome, strand, design_type,
@@ -77,7 +88,7 @@ class Allele < ActiveRecord::Base
   ## Filters
   ##
   
-  before_validation :set_mutation_details
+  before_validation :set_mutation_details_and_clean_blanks
   
   ##
   ## Methods
@@ -195,9 +206,9 @@ class Allele < ActiveRecord::Base
       end
     end
     
-    def set_mutation_details
+    def set_mutation_details_and_clean_blanks
+      # Set the mutation details
       self.mutation_type = 'targeted_mutation'
-      
       self.mutation_subtype = case self.design_type
         when 'Deletion'   then 'deletion'
         when 'Insertion'  then 'insertion'
@@ -212,6 +223,9 @@ class Allele < ActiveRecord::Base
         end
       end
       
-      self.reporter = nil
+      # Convert any blank strings to nil...
+      self.attributes.each do |name,value|
+        self.send("#{name}=".to_sym, nil) if value.is_a?(String) and value.empty?
+      end
     end
 end

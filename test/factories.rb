@@ -6,6 +6,7 @@ Factory.sequence(:epd_plate_name)   { |n| "EPD_#{n}" }
 Factory.sequence(:pipeline_name)    { |n| "pipeline_name_#{n}" }
 Factory.sequence(:ikmc_project_id)  { |n| "project_000#{n}" }
 Factory.sequence(:mgi_accession_id) { |n| "MGI:#{n}" }
+Factory.sequence(:mgi_allele_id)    { |n| "MGI:#{n}" }
 Factory.sequence(:username)         { |n| "bob#{n}" }
 Factory.sequence(:email)            { |n| "bob#{n}@bobsworld.com" }
 
@@ -43,6 +44,7 @@ end
 
 Factory.define :allele do |f|
   f.mgi_accession_id                      { Factory.next(:mgi_accession_id) }
+  f.mgi_allele_id                         { Factory.next(:mgi_allele_id) }
   f.sequence(:project_design_id)          { |n| "design id #{n}"}
   f.sequence(:design_subtype)             { |n| "subtype #{n}" }
   f.sequence(:subtype_description)        { |n| "subtype description #{n}" }
