@@ -1,5 +1,5 @@
 
-require 'lib/data_check_helpers.rb'
+require 'data_check_helpers.rb'
 include DataCheckHelpers
 
 def dump_htgt_missing_product_report( discrepancies, report_file, product_type, product_key )
