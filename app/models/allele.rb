@@ -7,9 +7,9 @@ class Allele < ActiveRecord::Base
   ##
   
   belongs_to :pipeline,          :class_name => "Pipeline",        :foreign_key => "pipeline_id", :validate => true
-  has_one    :genbank_file,      :class_name => "GenbankFile",     :foreign_key => "allele_id"
-  has_many   :targeting_vectors, :class_name => "TargetingVector", :foreign_key => "allele_id"
-  has_many   :es_cells,          :class_name => "EsCell",          :foreign_key => "allele_id"
+  has_one    :genbank_file,      :class_name => "GenbankFile",     :foreign_key => "allele_id",   :dependent => :destroy
+  has_many   :targeting_vectors, :class_name => "TargetingVector", :foreign_key => "allele_id",   :dependent => :destroy
+  has_many   :es_cells,          :class_name => "EsCell",          :foreign_key => "allele_id",   :dependent => :destroy
   
   accepts_nested_attributes_for :genbank_file,      :allow_destroy  => true
   accepts_nested_attributes_for :targeting_vectors, :allow_destroy  => true

@@ -11,7 +11,7 @@ class EsCell < ActiveRecord::Base
   belongs_to :allele,           :class_name => 'Allele',          :foreign_key => 'allele_id',           :validate => true
   belongs_to :targeting_vector, :class_name => 'TargetingVector', :foreign_key => 'targeting_vector_id', :validate => true
   
-  has_many :es_cell_qc_conflicts, :class_name => 'EsCellQcConflict', :foreign_key => "es_cell_id"
+  has_many :es_cell_qc_conflicts, :class_name => 'EsCellQcConflict', :foreign_key => "es_cell_id", :dependent => :destroy
   
   accepts_nested_attributes_for :es_cell_qc_conflicts, :allow_destroy => true
   

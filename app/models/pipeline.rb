@@ -6,7 +6,7 @@ class Pipeline < ActiveRecord::Base
   ## Associations
   ##
   
-  has_many :alleles, :class_name => "Allele", :foreign_key => "pipeline_id"
+  has_many :alleles, :class_name => "Allele", :foreign_key => "pipeline_id", :dependent => :destroy
   
   ##
   ## Validations

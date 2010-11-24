@@ -10,7 +10,7 @@ class TargetingVector < ActiveRecord::Base
   
   belongs_to :allele, :class_name => 'Allele', :foreign_key => 'allele_id', :validate => true
     
-  has_many :es_cells, :class_name => "EsCell", :foreign_key => "targeting_vector_id"
+  has_many :es_cells, :class_name => "EsCell", :foreign_key => "targeting_vector_id", :dependent => :destroy
   
   accepts_nested_attributes_for :es_cells, :allow_destroy => true
   
