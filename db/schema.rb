@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101123153046) do
+ActiveRecord::Schema.define(:version => 20101126085942) do
 
   create_table "alleles", :force => true do |t|
     t.string   "assembly",            :limit => 50,  :default => "NCBIM37", :null => false
@@ -167,15 +167,21 @@ ActiveRecord::Schema.define(:version => 20101123153046) do
   add_index "targeting_vectors", ["name"], :name => "index_targvec", :unique => true
 
   create_table "users", :force => true do |t|
-    t.string   "username",                             :null => false
+    t.string   "username",                              :null => false
     t.string   "email"
     t.string   "crypted_password"
     t.string   "password_salt"
     t.string   "persistence_token"
     t.datetime "last_login_at"
-    t.boolean  "is_admin",          :default => false, :null => false
+    t.boolean  "is_admin",           :default => false, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "login_count",        :default => 0,     :null => false
+    t.integer  "failed_login_count", :default => 0,     :null => false
+    t.datetime "last_request_at"
+    t.datetime "current_login_at"
+    t.string   "current_login_ip"
+    t.string   "last_login_ip"
   end
 
   add_foreign_key "alleles", "pipelines", :name => "molecular_structures_pipeline_id_fk", :dependent => :delete
