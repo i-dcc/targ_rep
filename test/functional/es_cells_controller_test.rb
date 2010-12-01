@@ -34,7 +34,8 @@ class EsCellsControllerTest < ActionController::TestCase
         :name                => es_cell_attrs[:name],
         :parental_cell_line  => es_cell_attrs[:parental_cell_line],
         :targeting_vector_id => EsCell.first.targeting_vector_id,
-        :allele_id           => EsCell.first.allele_id
+        :allele_id           => EsCell.first.allele_id,
+        :mgi_allele_id       => es_cell_attrs[:mgi_allele_id]
       }
     end
     assert_response :success, "Could not create ES Cell"
@@ -61,7 +62,8 @@ class EsCellsControllerTest < ActionController::TestCase
       post :create, :es_cell => {
         :name               => es_cell_attrs[:name],
         :parental_cell_line => es_cell_attrs[:parental_cell_line],
-        :allele_id          => EsCell.first.allele_id
+        :allele_id          => EsCell.first.allele_id,
+        :mgi_allele_id       => es_cell_attrs[:mgi_allele_id]
       }
     end
     assert_response :success
@@ -90,7 +92,8 @@ class EsCellsControllerTest < ActionController::TestCase
         :name                => es_cell_attrs[:name],
         :parental_cell_line  => es_cell_attrs[:parental_cell_line],
         :targeting_vector_id => EsCell.first.targeting_vector_id,
-        :allele_id           => EsCell.first.allele_id
+        :allele_id           => EsCell.first.allele_id,
+        :mgi_allele_id       => es_cell_attrs[:mgi_allele_id]
       }
     end
     assert_response :success

@@ -49,13 +49,6 @@ class AlleleTest < ActiveSupport::TestCase
       end
     end
     
-    context "with an incorrect MGI Allele ID" do
-      should "not be saved" do
-        allele = Factory.build( :allele, :mgi_allele_id => 'WIBBLE' )
-        assert( !allele.save, "Allele is saved with an incorrect MGI Allele ID" )
-      end
-    end
-    
     context "with an incorrect floxed exon" do
       should "not be saved" do
         allele = Factory.build( :allele, :floxed_start_exon => 'ENSMUSG20913091309' )

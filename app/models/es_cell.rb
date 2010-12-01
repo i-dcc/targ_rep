@@ -32,25 +32,31 @@ class EsCell < ActiveRecord::Base
   ESCELL_QC_OPTIONS.each_key do |qc_field|
     validates_inclusion_of qc_field,
       :in        => ESCELL_QC_OPTIONS[qc_field.to_s][:values],
-      :unless    => Proc.new { |a| [nil,''].include?(a.attributes[qc_field.to_s]) },
-      :message   => "This QC metric can only be set as: #{ESCELL_QC_OPTIONS[qc_field.to_s][:values].join(', ')}"
+      :message   => "This QC metric can only be set as: #{ESCELL_QC_OPTIONS[qc_field.to_s][:values].join(', ')}",
+      :allow_nil => true
   end
   
   validates_numericality_of :distribution_qc_karyotype_low,
     :greater_than_or_equal_to => 0,
-    :less_than_or_equal_to => 1,
-    :unless    => Proc.new { |a| [nil,''].include?(a.distribution_qc_karyotype_low) }
+    :less_than_or_equal_to    => 1,
+    :allow_nil                => true
     
   validates_numericality_of :distribution_qc_karyotype_high,
     :greater_than_or_equal_to => 0,
-    :less_than_or_equal_to => 1,
-    :unless    => Proc.new { |a| [nil,''].include?(a.distribution_qc_karyotype_high) }
+    :less_than_or_equal_to    => 1,
+    :allow_nil                => true
+  
+  validates_format_of :mgi_allele_id,
+    :with      => /^MGI\:\d+$/,
+    :message   => "is not a valid MGI Allele ID",
+    :allow_nil => true
   
   ##
   ## Filters
   ##
   
-  before_validation :stamp_tv_project_id_on_cell,       :if     => Proc.new { |a| [nil,''].include?(a.ikmc_project_id) }
+  before_validation :convert_blanks_to_nil
+  before_validation :stamp_tv_project_id_on_cell,       :if     => Proc.new { |a| a.ikmc_project_id.nil? }
   before_validation :convert_ikmc_project_id_to_string, :unless => Proc.new { |a| a.ikmc_project_id.is_a?(String) }
   
   ##
@@ -88,6 +94,13 @@ class EsCell < ActiveRecord::Base
     end
   
   protected
+    # Convert any blank attribute strings to nil...
+    def convert_blanks_to_nil
+      self.attributes.each do |name,value|
+        self.send("#{name}=".to_sym, nil) if value.is_a?(String) and value.empty?
+      end
+    end
+    
     # Helper function to solve the IKMC Project ID consistency validation 
     # errors when people are passing integers in as the id...
     def convert_ikmc_project_id_to_string

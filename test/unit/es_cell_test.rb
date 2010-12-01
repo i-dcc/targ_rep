@@ -57,6 +57,11 @@ class EsCellTest < ActiveSupport::TestCase
       assert( !es_cell.save, "ES Cell validates the creation of an empty entry" )
     end
     
+    should "not be saved if it has an incorrect MGI Allele ID" do
+      es_cell = Factory.build( :es_cell, :mgi_allele_id => 'WIBBLE' )
+      assert( !es_cell.save, "An ES Cell is saved with an incorrect MGI Allele ID" )
+    end
+    
     should "not be saved if it has molecular structure consistency issue" do
       targ_vec    = Factory.create( :targeting_vector )
       mol_struct  = Factory.create( :allele )

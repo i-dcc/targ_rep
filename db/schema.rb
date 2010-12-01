@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101126085942) do
+ActiveRecord::Schema.define(:version => 20101201091851) do
 
   create_table "alleles", :force => true do |t|
     t.string   "assembly",            :limit => 50,  :default => "NCBIM37", :null => false
@@ -39,7 +39,6 @@ ActiveRecord::Schema.define(:version => 20101126085942) do
     t.string   "mutation_method"
     t.string   "reporter"
     t.integer  "pipeline_id"
-    t.string   "mgi_allele_id",       :limit => 50
   end
 
   add_index "alleles", ["mgi_accession_id", "project_design_id", "assembly", "chromosome", "strand", "homology_arm_start", "homology_arm_end", "cassette_start", "cassette_end", "loxp_start", "loxp_end", "cassette", "backbone"], :name => "index_mol_struct", :unique => true
@@ -77,11 +76,11 @@ ActiveRecord::Schema.define(:version => 20101126085942) do
   add_index "es_cell_qc_conflicts", ["es_cell_id"], :name => "es_cell_qc_conflicts_es_cell_id_fk"
 
   create_table "es_cells", :force => true do |t|
-    t.integer  "allele_id",                             :null => false
+    t.integer  "allele_id",                                           :null => false
     t.integer  "targeting_vector_id"
     t.string   "parental_cell_line"
     t.string   "allele_symbol_superscript"
-    t.string   "name",                                  :null => false
+    t.string   "name",                                                :null => false
     t.integer  "created_by"
     t.integer  "updated_by"
     t.datetime "created_at"
@@ -116,6 +115,7 @@ ActiveRecord::Schema.define(:version => 20101126085942) do
     t.string   "distribution_qc_five_prime_lr_pcr"
     t.string   "distribution_qc_three_prime_lr_pcr"
     t.string   "distribution_qc_thawing"
+    t.string   "mgi_allele_id",                         :limit => 50
   end
 
   add_index "es_cells", ["allele_id"], :name => "es_cells_allele_id_fk"

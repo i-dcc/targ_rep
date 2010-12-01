@@ -58,11 +58,6 @@ class Allele < ActiveRecord::Base
     :with       => /^MGI\:\d+$/,
     :message    => "is not a valid MGI Accession ID"
   
-  validates_format_of :mgi_allele_id,
-    :with       => /^MGI\:\d+$/,
-    :message    => "is not a valid MGI Allele ID",
-    :allow_nil  => true
-  
   validates_format_of :floxed_start_exon,
     :with       => /^ENSMUSE\d+$/,
     :message    => "is not a valid Ensembl Exon ID",

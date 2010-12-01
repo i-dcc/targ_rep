@@ -44,7 +44,6 @@ end
 
 Factory.define :allele do |f|
   f.mgi_accession_id                      { Factory.next(:mgi_accession_id) }
-  f.mgi_allele_id                         { Factory.next(:mgi_allele_id) }
   f.sequence(:project_design_id)          { |n| "design id #{n}"}
   f.sequence(:design_subtype)             { |n| "subtype #{n}" }
   f.sequence(:subtype_description)        { |n| "subtype description #{n}" }
@@ -147,6 +146,7 @@ end
 Factory.define :es_cell do |f|
   f.name                { Factory.next(:epd_plate_name) }
   f.parental_cell_line  { ['JM8 parental', 'JM8.F6', 'JM8.N19'][rand(3)] }
+  f.mgi_allele_id       { Factory.next(:mgi_allele_id) }
   
   ikmc_project_id = Factory.next( :ikmc_project_id )
   

@@ -27,7 +27,6 @@
       <p><strong>First Floxed Exon:</strong> <%=h @allele.floxed_start_exon %></p>
       <p><strong>Last Floxed Exon:</strong> <%=h @allele.floxed_end_exon %></p>
     <% end %>
-    <p><strong>MGI Allele ID:</strong> <%=h @allele.mgi_allele_id %></p>
   </fieldset>
 </div>
 
@@ -123,6 +122,7 @@
           <tr>
             <th>ES Cell</th>
             <th>Targeting Vector</th>
+            <th>MGI Allele ID</th>
             <th>Allele Symbol Superscript</th>
             <th>Parental Cell Line</th>
             <th>IKMC Project ID</th>
@@ -134,6 +134,7 @@
             <tr class="<%= cycle("odd", "even") %>">
               <td><%=h es_cell.name %></td>
               <td><% if es_cell.targeting_vector %><%=h es_cell.targeting_vector.name %><% end %></td>
+              <td><%=h es_cell.mgi_allele_id %></td>
               <td><%=h es_cell.allele_symbol_superscript %></td>
               <td><%=h es_cell.parental_cell_line %></td>
               <td><%=h es_cell.ikmc_project_id %></td>
