@@ -24,6 +24,11 @@ class TargetingVector < ActiveRecord::Base
   validates_presence_of :name
   
   ##
+  ## Filters
+  ##
+  before_save :set_mirko_ikmc_project_id
+
+  ##
   ## Methods
   ##
   
@@ -47,5 +52,13 @@ class TargetingVector < ActiveRecord::Base
           :updater => { :only => [:id, :username] }
         }
       )
+    end
+
+  protected
+    # Set mirKO ikmc_project_ids to "mirKO#{self.allele_id}"
+    def set_mirko_ikmc_project_id
+      if self.ikmc_project_id.nil? and self.allele.pipeline_id == 5
+        self.ikmc_project_id = "mirKO#{ self.allele_id }"
+      end
     end
 end

@@ -55,10 +55,11 @@ class EsCell < ActiveRecord::Base
   ## Filters
   ##
   
+  before_save :set_mirko_ikmc_project_id
   before_validation :convert_blanks_to_nil
   before_validation :stamp_tv_project_id_on_cell,       :if     => Proc.new { |a| a.ikmc_project_id.nil? }
   before_validation :convert_ikmc_project_id_to_string, :unless => Proc.new { |a| a.ikmc_project_id.is_a?(String) }
-  
+
   ##
   ## Methods
   ##
@@ -150,6 +151,13 @@ class EsCell < ActiveRecord::Base
     def ikmc_project_id_consistency
       if ikmc_project_id != self.targeting_vector.ikmc_project_id
         errors.add( :ikmc_project_id, "targeting vector's IKMC Project ID is different.")
+      end
+    end
+
+    # Set mirKO ikmc_project_ids to "mirKO#{self.allele_id}"
+    def set_mirko_ikmc_project_id
+      if self.ikmc_project_id.nil? and self.allele.pipeline_id == 5
+        self.ikmc_project_id = "mirKO#{ self.allele_id }"
       end
     end
 end
