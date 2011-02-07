@@ -121,5 +121,13 @@ class EsCellTest < ActiveSupport::TestCase
       assert( es_cell.valid?, "ES Cell does not validate a valid entry" )
       assert( es_cell.save, "ES Cell does not validate the creation of a valid entry" )
     end
+
+    should "set mirKO ikmc_project_ids to 'mirKO' + self.allele_id" do
+      pipeline = Factory.create( :pipeline, :id => 5 )
+      allele   = Factory.create( :allele, :pipeline => pipeline )
+      targ_vec = Factory.create( :targeting_vector, :allele => allele, :ikmc_project_id => nil )
+      es_cell  = Factory.create( :es_cell, :allele => allele, :targeting_vector => targ_vec, :ikmc_project_id => nil )
+      assert_equal "mirKO#{ allele.id }", es_cell.ikmc_project_id
+    end
   end
 end
