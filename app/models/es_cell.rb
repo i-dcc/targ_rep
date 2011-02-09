@@ -153,10 +153,10 @@ class EsCell < ActiveRecord::Base
         errors.add( :ikmc_project_id, "targeting vector's IKMC Project ID is different.")
       end
     end
-
+    
     # Set mirKO ikmc_project_ids to "mirKO#{self.allele_id}"
     def set_mirko_ikmc_project_id
-      if self.ikmc_project_id.nil? and self.allele.pipeline_id == 5
+      if self.ikmc_project_id.nil? and self.allele.pipeline.name == "mirKO"
         self.ikmc_project_id = "mirKO#{ self.allele_id }"
       end
     end

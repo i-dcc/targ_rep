@@ -123,11 +123,12 @@ class EsCellTest < ActiveSupport::TestCase
     end
 
     should "set mirKO ikmc_project_ids to 'mirKO' + self.allele_id" do
-      pipeline = Factory.create( :pipeline, :id => 5 )
+      pipeline = Factory.create( :pipeline, :name => "mirKO" )
       allele   = Factory.create( :allele, :pipeline => pipeline )
       targ_vec = Factory.create( :targeting_vector, :allele => allele, :ikmc_project_id => nil )
       es_cell  = Factory.create( :es_cell, :allele => allele, :targeting_vector => targ_vec, :ikmc_project_id => nil )
-      assert_equal "mirKO#{ allele.id }", es_cell.ikmc_project_id
+      assert_equal( "mirKO#{ allele.id }", es_cell.ikmc_project_id )
+      assert_equal( targ_vec.ikmc_project_id, es_cell.ikmc_project_id )
     end
   end
 end
