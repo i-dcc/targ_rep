@@ -134,11 +134,10 @@ class AllelesController < ApplicationController
   # GET /alleles/1/escell_clone_genbank_file/
   def escell_clone_genbank_file
     send_data(
-      @allele.genbank_file.escell_clone,
+      "<pre>#{@allele.genbank_file.escell_clone}</pre>",
       {
-        :type        => 'chemical/x-genbank',
-        :disposition => 'inline',
-        :filename    => "allele-#{@allele.id}-escell.gbk"
+        :type        => 'text/html',
+        :disposition => 'inline'
       }
     )
   end
@@ -146,11 +145,10 @@ class AllelesController < ApplicationController
   # GET /alleles/1/targeting-vector-genbank-file/
   def targeting_vector_genbank_file
     send_data(
-      @allele.genbank_file.targeting_vector,
+      "<pre>#{@allele.genbank_file.targeting_vector}</pre>",
       {
-        :type        => 'chemical/x-genbank',
-        :disposition => 'inline',
-        :filename    => "allele-#{@allele.id}-vector.gbk"
+        :type        => 'text/html',
+        :disposition => 'inline'
       }
     )
   end
@@ -158,18 +156,22 @@ class AllelesController < ApplicationController
   # GET /alleles/1/allele-image/
   def allele_image
     send_data(
-      AlleleImage::Image.new( @allele.genbank_file.escell_clone ).render.to_blob { self.format = "PNG" }, 
+      AlleleImage::Image.new( @allele.genbank_file.escell_clone ).render.to_blob { self.format = "PNG" },
+      {
         :disposition => "inline",
         :type => "image/png"
+      }
     )
   end
 
   # GET /alleles/1/vector-image/
   def vector_image
     send_data(
-      AlleleImage::Image.new( @allele.genbank_file.targeting_vector ).render.to_blob { self.format = "PNG" }, 
+      AlleleImage::Image.new( @allele.genbank_file.targeting_vector ).render.to_blob { self.format = "PNG" },
+      {
         :disposition => "inline",
         :type => "image/png"
+      }
     )
   end
 
