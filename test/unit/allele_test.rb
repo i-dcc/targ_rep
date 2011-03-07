@@ -26,6 +26,7 @@ class AlleleTest < ActiveSupport::TestCase
   should validate_presence_of(:design_type)
   should validate_presence_of(:homology_arm_start)
   should validate_presence_of(:homology_arm_end)
+  should validate_presence_of(:cassette)
   should validate_presence_of(:cassette_type)
   
   should validate_numericality_of(:homology_arm_start)

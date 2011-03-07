@@ -40,6 +40,7 @@ class Allele < ActiveRecord::Base
     :cassette_start,
     :cassette_end,
     :pipeline_id,
+    :cassette,
     :cassette_type
   ]
   
