@@ -1,3 +1,26 @@
+require "getoptlong"
+require "csv"
+
+opts = GetoptLong.new([ '--file',  '-f', GetoptLong::REQUIRED_ARGUMENT ])
+file = nil
+ids  = []
+
+# Process the options ...
+opts.each do |opt, arg|
+  case opt
+  when '--file' then file = arg
+  end
+end
+
+# Check if the user specified a file
+unless file.nil?
+  puts "Processing alleles from file '#{file}'"
+  ids = CSV.parse(File.read(file)).flatten.map { |i| i.to_i }
+end
+
+# Get the corresponding allele objects
+alleles = ids.empty? ? Allele.all : Allele.find(ids)
+
 # A mapping of the available cassette names to types
 cassette_types = {
   "L1L2_gt0"              => "Promotorless",
@@ -26,12 +49,16 @@ cassette_types = {
 }
 
 # Update the cassette_type for the existing alleles
-Allele.all.each do |allele|
+puts "#{alleles.count} alleles to process"
+alleles.each do |allele|
   allele.cassette_type = cassette_types[allele.cassette]
   begin
     allele.save!
-  rescue RecordNotSaved
-    puts "Could not save data for allele #{allele.id}"
+  rescue RecordNotSaved => error
+    puts "Could not save data for allele #{allele.id}: #{error}"
+    next
+  rescue Exception => error
+    puts "Something went wrong for allele #{allele.id}: #{error}"
     next
   end
   puts "Set cassette_type for allele #{allele.id} to '#{allele.cassette_type}'"
