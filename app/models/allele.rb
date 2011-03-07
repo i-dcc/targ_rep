@@ -39,8 +39,13 @@ class Allele < ActiveRecord::Base
     :homology_arm_end,
     :cassette_start,
     :cassette_end,
-    :pipeline_id
+    :pipeline_id,
+    :cassette_type
   ]
+  
+  validates_inclusion_of :cassette_type, 
+    :in => ['Promotorless','Promotor Driven'], 
+    :message => "Cassette Type can only be 'Promotorless' or 'Promotor Driven'"
   
   validates_inclusion_of :strand,
     :in         => ["+", "-"],

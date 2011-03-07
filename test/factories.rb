@@ -52,10 +52,11 @@ Factory.define :allele do |f|
   
   f.association :pipeline
   
-  f.assembly    "NCBIM37"
-  f.chromosome  { [("1".."19").to_a + ['X', 'Y', 'MT']].flatten[rand(22)] }
-  f.strand      { ['+', '-'][rand(2)] }
-  f.design_type { ['Knock Out', 'Deletion', 'Insertion'][rand(3)] }
+  f.assembly      "NCBIM37"
+  f.chromosome    { [("1".."19").to_a + ['X', 'Y', 'MT']].flatten[rand(22)] }
+  f.strand        { ['+', '-'][rand(2)] }
+  f.design_type   { ['Knock Out', 'Deletion', 'Insertion'][rand(3)] }
+  f.cassette_type { ['Promotorless','Promotor Driven'][rand(2)] }
   
   #     Features positions chose for this factory:
   #     They have been fixed so that complex tests can be cleaner. Otherwise,
