@@ -51,14 +51,25 @@ cassette_types = {
 # Update the cassette_type for the existing alleles
 puts "#{alleles.count} alleles to process"
 alleles.each do |allele|
-  allele.cassette_type = cassette_types[allele.cassette]
   begin
+    # process the cassette_name
+    cassette_name = case
+    when allele.cassette.nil?
+      raise Exception.new("Allele #{allele.id} does not have a cassette")
+    when allele.cassette.match(/^\s+|\s+$/)
+      allele.cassette.gsub(/^\s+|\s+$/, '')
+    else
+      allele.cassette
+    end
+
+    # set the new values
+    allele.cassette      = cassette_name
+    allele.cassette_type = cassette_types[cassette_name]
+
+    # save the new values
     allele.save!
-  rescue RecordNotSaved => error
-    puts "Could not save data for allele #{allele.id}: #{error}"
-    next
   rescue Exception => error
-    puts "Something went wrong for allele #{allele.id}: #{error}"
+    puts "Something went wrong for allele #{allele.id}: #{error.inspect}"
     next
   end
   puts "Set cassette_type for allele #{allele.id} to '#{allele.cassette_type}'"
