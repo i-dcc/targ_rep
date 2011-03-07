@@ -66,6 +66,7 @@ class AllelesControllerTest < ActionController::TestCase
       :homology_arm_end   => mol_struct[:homology_arm_end],
       :cassette_start     => mol_struct[:cassette_start],
       :cassette_end       => mol_struct[:cassette_end],
+      :cassette_type      => mol_struct[:cassette_type],
       
       :targeting_vectors => [
         # Targeting vector 1 with its ES cells
@@ -154,6 +155,7 @@ class AllelesControllerTest < ActionController::TestCase
       :homology_arm_end   => mol_struct[:homology_arm_end],
       :cassette_start     => mol_struct[:cassette_start],
       :cassette_end       => mol_struct[:cassette_end],
+      :cassette_type      => mol_struct[:cassette_type],
       :genbank_file => {
         :escell_clone     => genbank_file[:escell_clone],
         :targeting_vector => genbank_file[:targeting_vector]
@@ -181,6 +183,7 @@ class AllelesControllerTest < ActionController::TestCase
       :homology_arm_end   => mol_struct[:homology_arm_end],
       :cassette_start     => mol_struct[:cassette_start],
       :cassette_end       => mol_struct[:cassette_end],
+      :cassette_type      => mol_struct[:cassette_type],
       :genbank_file       => { :escell_clone => '', :targeting_vector => '' }
     }
     
@@ -205,6 +208,7 @@ class AllelesControllerTest < ActionController::TestCase
       :homology_arm_end   => mol_struct[:homology_arm_end],
       :cassette_start     => mol_struct[:cassette_start],
       :cassette_end       => mol_struct[:cassette_end],
+      :cassette_type      => mol_struct[:cassette_type],
       :genbank_file       => { :escell_clone => nil, :targeting_vector => nil }
     }
     
@@ -272,5 +276,14 @@ class AllelesControllerTest < ActionController::TestCase
       delete :destroy, :id => Allele.first.id
     end
     assert_response 302
+  end
+  
+  should "return 404 if we try to request something to do with a genbank file that doesn't exist" do
+    allele_without_gb = Factory.create( :allele )
+    
+    [:escell_clone_genbank_file,:targeting_vector_genbank_file,:allele_image,:vector_image].each do |route|
+      get route, :id => allele_without_gb.id
+      assert_response 404
+    end
   end
 end

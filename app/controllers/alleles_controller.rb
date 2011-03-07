@@ -10,6 +10,16 @@ class AllelesController < ApplicationController
       :vector_image,
       :history
     ]
+  before_filter :check_for_genbank_file, 
+    :only => [
+      :escell_clone_genbank_file,
+      :targeting_vector_genbank_file,
+      :allele_image,
+      :vector_image
+    ]
+  before_filter :check_for_escell_genbank_file, :only => [ :escell_clone_genbank_file, :allele_image ]
+  before_filter :check_for_vector_genbank_file, :only => [ :targeting_vector_genbank_file, :vector_image ]
+  
   
   # Must be after "find_allele" filter (as it requires an object)
   before_filter :ensure_creator_or_admin, :only => [:destroy]
@@ -178,7 +188,7 @@ class AllelesController < ApplicationController
   # GET /alleles/1/history/
   def history
   end
-
+  
   private
     def find_allele
       @allele = Allele.find(params[:id])
@@ -297,6 +307,25 @@ class AllelesController < ApplicationController
           allele_params.delete(:genbank_file_attributes)
         end
       end
+    end
+    
+    def four_oh_four
+      respond_to do |format|
+        format.html { render :file => "#{RAILS_ROOT}/public/404.html", :status => "404 Not Found" }
+        format.all { render :nothing => true, :status => "404 Not Found" }
+      end
+    end
+    
+    def check_for_genbank_file
+      four_oh_four() if @allele.genbank_file.nil?
+    end
+    
+    def check_for_escell_genbank_file
+      four_oh_four() if @allele.genbank_file.escell_clone.nil? || @allele.genbank_file.escell_clone.empty?
+    end
+    
+    def check_for_vector_genbank_file
+      four_oh_four() if @allele.genbank_file.targeting_vector.nil? || @allele.genbank_file.targeting_vector.empty?
     end
     
     # One can give a targeting_vector_name instead of a targeting_vector_id
