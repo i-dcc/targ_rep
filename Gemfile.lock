@@ -1,0 +1,61 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    actionmailer (2.3.10)
+      actionpack (= 2.3.10)
+    actionpack (2.3.10)
+      activesupport (= 2.3.10)
+      rack (~> 1.1.0)
+    activerecord (2.3.10)
+      activesupport (= 2.3.10)
+    activeresource (2.3.10)
+      activesupport (= 2.3.10)
+    activesupport (2.3.10)
+    acts_as_audited (1.1.0)
+      activerecord (>= 2.1)
+    allele_image (0.2.13)
+    authlogic (2.1.6)
+      activesupport
+    builder (2.1.2)
+    factory_girl (1.3.2)
+    foreigner (0.9.1)
+    hoptoad_notifier (2.4.5)
+      activesupport
+      builder
+    newrelic_rpm (2.13.4)
+    rack (1.1.0)
+    rails (2.3.10)
+      actionmailer (= 2.3.10)
+      actionpack (= 2.3.10)
+      activerecord (= 2.3.10)
+      activeresource (= 2.3.10)
+      activesupport (= 2.3.10)
+      rake (>= 0.8.3)
+    rake (0.8.7)
+    rsolr (0.12.1)
+      builder (>= 2.1.2)
+    searchlogic (2.4.12)
+      activerecord (>= 2.0.0)
+    shoulda (2.11.3)
+    sqlite3-ruby (1.2.5)
+    test-unit (2.2.0)
+    will_paginate (2.3.15)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  acts_as_audited
+  allele_image
+  authlogic
+  factory_girl
+  foreigner
+  hoptoad_notifier
+  newrelic_rpm
+  rails (= 2.3.10)
+  rsolr
+  searchlogic
+  shoulda (> 2.11.0)
+  sqlite3-ruby
+  test-unit
+  will_paginate (~> 2.3.15)

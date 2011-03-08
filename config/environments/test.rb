@@ -28,6 +28,3 @@ config.action_mailer.delivery_method = :test
 # config.active_record.schema_format = :sql
 
 # Use shoulda test environment
-config.gem "shoulda", :lib => "shoulda/rails", :version => "> 2.11.0"
-config.gem "factory_girl"
-config.gem 'test-unit', :lib => 'test/unit'
