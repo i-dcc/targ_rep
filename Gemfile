@@ -19,6 +19,7 @@ gem "hoptoad_notifier"
 gem "parallel"
 gem "httparty"
 gem "sequel"
+gem "mysql"
 
 # bundler requires these gems in development and while running tests
 group :development, :test do
