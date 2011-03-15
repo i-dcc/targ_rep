@@ -1,9 +1,9 @@
 GIT
   remote: http://github.com/i-dcc/allele-imaging.git
-  revision: c44128900b2ffedee514404d29134566983a5031
-  tag: v0.3.0
+  revision: 6a2a713dc3e556225e5f93cc5f797be3766d9e3c
+  tag: v0.3.2
   specs:
-    allele_image (0.3.0)
+    allele_image (0.3.2)
       bio
       rmagick
 
@@ -63,7 +63,7 @@ PLATFORMS
 
 DEPENDENCIES
   acts_as_audited
-  allele_image (= 0.3.0)!
+  allele_image (= 0.3.2)!
   authlogic
   biomart
   factory_girl
