@@ -89,11 +89,9 @@ class WelcomeController < ApplicationController
   def run_count_sql(sql)
     counts  = {}
     results = ActiveRecord::Base.connection.execute(sql)
-    
-    results.each_hash do |res|
-      counts[ res["id"].to_i ] = res["count"].to_i
+    results.each do |res|
+      counts[ res[0].to_i ] = res[1].to_i
     end
-    
     return counts
   end
   
