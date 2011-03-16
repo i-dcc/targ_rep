@@ -67,6 +67,7 @@ class AllelesControllerTest < ActionController::TestCase
       :cassette_start     => mol_struct[:cassette_start],
       :cassette_end       => mol_struct[:cassette_end],
       :cassette_type      => mol_struct[:cassette_type],
+      :cassette           => mol_struct[:cassette],
       
       :targeting_vectors => [
         # Targeting vector 1 with its ES cells
@@ -156,12 +157,16 @@ class AllelesControllerTest < ActionController::TestCase
       :cassette_start     => mol_struct[:cassette_start],
       :cassette_end       => mol_struct[:cassette_end],
       :cassette_type      => mol_struct[:cassette_type],
+      :cassette           => mol_struct[:cassette],
       :genbank_file => {
         :escell_clone     => genbank_file[:escell_clone],
         :targeting_vector => genbank_file[:targeting_vector]
       }
     }
-    
+
+    assert_true assigns["allele"].valid?, assigns["allele"].errors.full_messages.join(', ')
+    assert_redirected_to assigns["allele"], "Not redirected to the new allele"
+
     assert_equal( mol_struct_count + 1, Allele.count, "Controller should have created 1 valid allele." )
     assert_equal( genbank_file_count + 1, GenbankFile.count, "Controller should have created 1 more genbank file" )
   end
@@ -184,6 +189,7 @@ class AllelesControllerTest < ActionController::TestCase
       :cassette_start     => mol_struct[:cassette_start],
       :cassette_end       => mol_struct[:cassette_end],
       :cassette_type      => mol_struct[:cassette_type],
+      :cassette           => mol_struct[:cassette],
       :genbank_file       => { :escell_clone => '', :targeting_vector => '' }
     }
     
@@ -209,6 +215,7 @@ class AllelesControllerTest < ActionController::TestCase
       :cassette_start     => mol_struct[:cassette_start],
       :cassette_end       => mol_struct[:cassette_end],
       :cassette_type      => mol_struct[:cassette_type],
+      :cassette           => mol_struct[:cassette],
       :genbank_file       => { :escell_clone => nil, :targeting_vector => nil }
     }
     
