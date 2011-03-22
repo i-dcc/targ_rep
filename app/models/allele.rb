@@ -85,6 +85,8 @@ class Allele < ActiveRecord::Base
     :unless => "[mgi_accession_id, assembly, chromosome, strand, design_type,
     homology_arm_start, homology_arm_end, cassette_start, cassette_end].any?(&:nil?)"
   
+  validate :has_correct_cassette_type
+  
   ##
   ## Filters
   ##
@@ -229,4 +231,39 @@ class Allele < ActiveRecord::Base
         self.send("#{name}=".to_sym, nil) if value.is_a?(String) and value.empty?
       end
     end
+    
+    def has_correct_cassette_type
+      known_cassettes = {
+        'L1L2_6XOspnEnh_Bact_P'   => 'Promotor Driven',
+        'L1L2_Bact_P'             => 'Promotor Driven',
+        'L1L2_Del_BactPneo_FFL'   => 'Promotor Driven',
+        'L1L2_GOHANU'             => 'Promotor Driven',
+        'L1L2_hubi_P'             => 'Promotor Driven',
+        'L1L2_Pgk_P'              => 'Promotor Driven',
+        'L1L2_Pgk_PM'             => 'Promotor Driven',
+        'PGK_EM7_PuDtk_bGHpA'     => 'Promotor Driven',
+        'pL1L2_PAT_B0'            => 'Promotor Driven',
+        'TM-ZEN-UB1'              => 'Promotor Driven',
+        'ZEN-Ub1'                 => 'Promotor Driven',
+        'ZEN-UB1.GB'              => 'Promotor Driven',
+        'L1L2_gt0'                => 'Promotorless',
+        'L1L2_gt1'                => 'Promotorless',
+        'L1L2_gt2'                => 'Promotorless',
+        'L1L2_gtk'                => 'Promotorless',
+        'L1L2_NTARU-0'            => 'Promotorless',
+        'L1L2_NTARU-1'            => 'Promotorless',
+        'L1L2_NTARU-2'            => 'Promotorless',
+        'L1L2_NTARU-K'            => 'Promotorless',
+        'L1L2_st0'                => 'Promotorless',
+        'L1L2_st1'                => 'Promotorless',
+        'L1L2_st2'                => 'Promotorless'
+      }
+      
+      unless known_cassettes[cassette].nil?
+        if known_cassettes[cassette] != cassette_type
+          errors.add( :cassette_type, "The cassette #{cassette} is a known #{known_cassettes[cassette]} cassette - please correct this field." )
+        end
+      end
+    end
+    
 end

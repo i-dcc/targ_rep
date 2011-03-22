@@ -9,7 +9,7 @@
 <div class="span-24 last">
   <p>
     <%= f.label :pipeline_id, "Pipeline" %>
-    <%= f.select :pipeline_id, pipeline_list %>
+    <%= f.select :pipeline_id, pipeline_list.unshift(['',nil]) %>
   </p>
 </div>
 
@@ -32,12 +32,12 @@
     <legend>Genomic Position</legend>
     <p>
       <%= f.label :chromosome %><br />
-      <% chromosomes = ("1".."19").to_a.push('X').push('Y').push('MT') %>
+      <% chromosomes = ('1'..'19').to_a.push('X').push('Y').push('MT').unshift('') %>
       <%= select( :allele, :chromosome, chromosomes ) %> 
     </p>
     <p>
       <%= f.label :strand %><br />
-      <%= select( :allele, :strand, ["+","-"] ) %>
+      <%= select( :allele, :strand, ['','+','-'] ) %>
     </p>
     <p>
       <%= f.label :assembly, "Assembly" %><br />
@@ -49,7 +49,7 @@
     <legend>Design Details</legend>
     <p>
       <%= f.label :design_type, "Design Type" %><br />
-      <%= select( :allele, :design_type, ['Knock Out', 'Deletion'] ) %> 
+      <%= select( :allele, :design_type, ['','Knock Out', 'Deletion','Insertion'] ) %> 
     </p>
     <p>
       <%= f.label :design_subtype, "Design Subtype" %><br />
@@ -62,6 +62,10 @@
     <p>
       <%= f.label :cassette %><br />
       <%= f.text_field :cassette, :class => :text %>
+    </p>
+    <p>
+      <%= f.label :cassette_type %><br />
+      <%= select( :allele, :cassette_type, ['','Promotorless', 'Promotor Driven'] ) %> 
     </p>
     <p>
       <%= f.label :backbone %><br />

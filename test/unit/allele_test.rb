@@ -36,7 +36,7 @@ class AlleleTest < ActiveSupport::TestCase
   should validate_numericality_of(:loxp_start)
   should validate_numericality_of(:loxp_end)
   
-  context "Allele" do
+  context "An Allele" do
     context "with empty attributes" do
       allele = Factory.build( :invalid_allele )
       should "not be saved" do
@@ -196,6 +196,19 @@ class AlleleTest < ActiveSupport::TestCase
                       })
         assert( !allele.save, "Allele validates presence of LoxP for design 'Insertion'" )
       end
+    end
+    
+    should "not be saved with the wrong 'cassette_type' for a KNOWN cassette" do
+      allele = Factory.build( :allele, { :cassette => 'L1L2_st1', :cassette_type => 'Promotor Driven' } )
+      assert( !allele.save, "Allele 'has_correct_cassette_type' validation did not work for L1L2_st1!" )
+      
+      allele = Factory.build( :allele, { :cassette => 'L1L2_Bact_P', :cassette_type => 'Promotorless' } )
+      assert( !allele.save, "Allele 'has_correct_cassette_type' validation did not work for L1L2_Bact_P!" )
+    end
+    
+    should "be saved when the correct 'cassette_type' is entered though..." do
+      allele = Factory.build( :allele, { :cassette => 'L1L2_st1', :cassette_type => 'Promotorless' } )
+      assert( allele.save, "Allele 'has_correct_cassette_type' is not accepting L1L2_st1 as a Promotorless cassette!")
     end
   end
 end

@@ -22,7 +22,7 @@ class EsCell < ActiveRecord::Base
   validates_uniqueness_of :name, :message => 'This ES Cell name has already been taken'
   
   validates_presence_of :allele_id, :on => :save, :unless => :nested
-  validates_presence_of :name,      :on => :create
+  validates_presence_of :name
   
   validate :allele_consistency,          :unless => "[allele,targeting_vector].any?(&:nil?)"
   validate :ikmc_project_id_consistency, :if     => :test_ikmc_project_id_consistency?
