@@ -3,9 +3,9 @@
 # options for the ESCell QC metrics in a single location...
 
 qc_metrics = {
-  "production_qc_five_prime_screen"       => { :name => "5' Screen",   :values => ["pass","fail","no reads detected","not attempted"] },
-  "production_qc_three_prime_screen"      => { :name => "3' Screen",   :values => ["pass","fail","no reads detected"] },
-  "production_qc_loxp_screen"             => { :name => "LoxP Screen", :values => ["pass","fail","no reads detected"] },
+  "production_qc_five_prime_screen"       => { :name => "5' Screen",   :values => ["pass","not confirmed","no reads detected","not attempted"] },
+  "production_qc_three_prime_screen"      => { :name => "3' Screen",   :values => ["pass","not confirmed","no reads detected"] },
+  "production_qc_loxp_screen"             => { :name => "LoxP Screen", :values => ["pass","not confirmed","no reads detected"] },
   "production_qc_loss_of_allele"          => { :name => "Loss of WT Allele (LOA)" },
   "production_qc_vector_integrity"        => { :name => "Vector Integrity" },
   

@@ -14,8 +14,6 @@ class EsCellTest < ActiveSupport::TestCase
   should validate_presence_of(:allele_id)
   
   pass_fail_only_qc_fields = [
-    :production_qc_three_prime_screen,
-    :production_qc_loxp_screen,
     :production_qc_loss_of_allele,
     :production_qc_vector_integrity,
     :distribution_qc_copy_number,
@@ -40,6 +38,19 @@ class EsCellTest < ActiveSupport::TestCase
   pass_fail_only_qc_fields.each do |qc_field|
     should allow_value('pass').for(qc_field)
     should allow_value('fail').for(qc_field)
+    should_not allow_value('wibble').for(qc_field)
+  end
+  
+  pass_not_confirmed_qc_fields = [
+    :production_qc_five_prime_screen,
+    :production_qc_three_prime_screen,
+    :production_qc_loxp_screen
+  ]
+  
+  pass_not_confirmed_qc_fields.each do |qc_field|
+    should allow_value('pass').for(qc_field)
+    should allow_value('not confirmed').for(qc_field)
+    should_not allow_value('fail').for(qc_field)
     should_not allow_value('wibble').for(qc_field)
   end
   
