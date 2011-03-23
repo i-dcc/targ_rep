@@ -2,7 +2,7 @@
 source :rubygems
 
 # rails requires these gems
-gem "rails", "2.3.10"
+gem "rails", "2.3.11"
 
 # bundler requires these gems in all environments
 gem "biomart"
