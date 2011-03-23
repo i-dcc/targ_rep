@@ -15,6 +15,13 @@ role :app, "localhost"
 role :db,  "localhost", :primary => true
 set :ssh_options, { :port => 10027 }
 
+set :default_environment, {
+  'PATH'      => '/software/team87/brave_new_world/bin:/software/perl-5.8.8/bin:/usr/bin:/bin',
+  'PERL5LIB'  => '/software/team87/brave_new_world/lib/perl5:/software/team87/brave_new_world/lib/perl5/x86_64-linux-thread-multi'
+}
+
+set :bundle_cmd, '/software/team87/brave_new_world/bin/htgt-env.pl --environment Ruby19 /software/team87/brave_new_world/app/ruby-1.9.2-p0/lib/ruby/gems/1.9/bin/bundle'
+
 namespace :deploy do
   desc "Restart Passenger"
   task :restart, :roles => :app, :except => { :no_release => true } do
