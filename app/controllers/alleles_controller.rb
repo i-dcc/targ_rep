@@ -1,9 +1,8 @@
 class AllelesController < ApplicationController
   before_filter :require_user, :only => [:index, :show, :new, :edit, :create, :update, :destroy]
-  before_filter :find_alleles, :only => :index
   before_filter :find_allele,
     :only => [
-      :show, :edit, :update, :destroy, 
+      :update, :destroy, 
       :escell_clone_genbank_file,
       :targeting_vector_genbank_file,
       :allele_image,
@@ -34,7 +33,9 @@ class AllelesController < ApplicationController
   # GET /alleles.xml
   # GET /alleles.json
   def index
-    @alleles = @search.all( :include => [:pipeline] ).paginate( :page => params[:page] )
+    params[:page] ||= 1
+    allele_params   = setup_allele_search(params)
+    @alleles        = Allele.search( allele_params ).paginate( :page => params[:page] )
     
     respond_to do |format|
       format.html # index.html.erb
@@ -47,7 +48,8 @@ class AllelesController < ApplicationController
   # GET /alleles/1.xml
   # GET /alleles/1.json
   def show
-    @es_cells = @allele.es_cells.find(:all, :order => "name")
+    @allele   = Allele.find( params[:id], :include => [ :genbank_file, :targeting_vectors, { :es_cells => :es_cell_qc_conflicts } ] )
+    @es_cells = @allele.es_cells.sort{ |a,b| a.name <=> b.name }
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml   => @allele }
@@ -65,6 +67,7 @@ class AllelesController < ApplicationController
 
   # GET /alleles/1/edit
   def edit
+    @allele = Allele.find( params[:id], :include => [ :genbank_file, :targeting_vectors, { :es_cells => :es_cell_qc_conflicts } ] )
     if @allele.genbank_file.nil?
       @allele.genbank_file = GenbankFile.new
     end
@@ -194,7 +197,7 @@ class AllelesController < ApplicationController
       @allele = Allele.find(params[:id])
     end
     
-    def find_alleles
+    def setup_allele_search(params)
       allele_params = params.dup
       
       # Just keep Molecular Structure params.
@@ -214,9 +217,7 @@ class AllelesController < ApplicationController
       end
       
       # Search on marker_symbol against SolR and returns 
-      if allele_params.include? :marker_symbol    \
-      and not allele_params[:marker_symbol].nil?  \
-      and not allele_params[:marker_symbol].empty?
+      if allele_params.include? :marker_symbol and not allele_params[:marker_symbol].nil? and not allele_params[:marker_symbol].empty?
         marker_symbol = allele_params.delete( :marker_symbol )
         solr_results = search_solr({
           :q   => "marker_symbol:#{marker_symbol}",
@@ -226,12 +227,10 @@ class AllelesController < ApplicationController
         
         unless docs.empty?
           allele_params.update({ :mgi_accession_id => docs[0]['mgi_accession_id'] })
-        else
-          allele_params = {}
         end
       end
       
-      @search = Allele.search( allele_params )
+      return allele_params
     end
     
     def format_nested_params
