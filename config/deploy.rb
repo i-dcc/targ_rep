@@ -1,7 +1,7 @@
 set :application, "idcc_targ_rep"
 set :repository,  "git://github.com/i-dcc/targ_rep.git"
 set :branch, "master"
-set :user, "do2"
+set :user, `whoami`.chomp
 
 set :scm, :git
 set :deploy_via, :export
@@ -10,10 +10,9 @@ set :copy_compression, :bz2
 set :keep_releases, 5
 set :use_sudo, false
 
-role :web, "localhost"
-role :app, "localhost"
-role :db,  "localhost", :primary => true
-set :ssh_options, { :port => 10027 }
+role :web, 'etch-dev64.internal.sanger.ac.uk'
+role :app, 'etch-dev64.internal.sanger.ac.uk'
+role :db,  'etch-dev64.internal.sanger.ac.uk', :primary => true
 
 set :default_environment, {
   'PATH'      => '/software/team87/brave_new_world/bin:/software/perl-5.8.8/bin:/usr/bin:/bin',
