@@ -22,6 +22,8 @@ gem "mysql2"
 
 # bundler requires these gems in development and while running tests
 group :development, :test do
+  gem "capistrano"
+  gem "capistrano-ext"
   gem "shoulda", "> 2.11.0"
   gem "factory_girl"
   gem "test-unit"
