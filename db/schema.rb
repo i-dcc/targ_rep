@@ -39,7 +39,7 @@ ActiveRecord::Schema.define(:version => 20110322154912) do
     t.string   "mutation_method"
     t.string   "reporter"
     t.integer  "pipeline_id"
-    t.string   "cassette_type"
+    t.string   "cassette_type",       :limit => 50
   end
 
   add_index "alleles", ["mgi_accession_id", "project_design_id", "assembly", "chromosome", "strand", "homology_arm_start", "homology_arm_end", "cassette_start", "cassette_end", "loxp_start", "loxp_end", "cassette", "backbone"], :name => "index_mol_struct", :unique => true
