@@ -47,8 +47,8 @@ class GenbankFilesController < ApplicationController
   def update
     respond_to do |format|
       if @genbank_file.update_attributes(params[:genbank_file])
-        format.xml  { head :ok }
-        format.json { head :ok }
+        format.xml  { render :xml  => { :id => @genbank_file.id }, :location => @genbank_file }
+        format.json { render :json => { :id => @genbank_file.id }, :location => @genbank_file }
       else
         format.xml  { render :xml  => @genbank_file.errors, :status => :unprocessable_entity }
         format.json { render :json => @genbank_file.errors, :status => :unprocessable_entity }
