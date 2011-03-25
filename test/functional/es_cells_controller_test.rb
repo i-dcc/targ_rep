@@ -113,6 +113,22 @@ class EsCellsControllerTest < ActionController::TestCase
     assert_response 302
   end
   
+  should "allow us to reparent an es_cell if we need to" do
+    es_cell        = Factory.create( :es_cell, { :targeting_vector => nil } )
+    current_parent = es_cell.allele
+    new_parent     = Factory.create( :allele )
+    
+    assert_equal( es_cell.allele_id, current_parent.id, "WTF? The es_cell doesn't have the correct allele_id in the first place..." )
+    
+    put :update, :id => es_cell.id, :es_cell => { :allele_id => new_parent.id }
+    assert_response :success
+    
+    es_cell = EsCell.find(es_cell.id)
+    
+    assert_not_equal( es_cell.allele_id, current_parent.id, "Ooops, we haven't switched parents..." )
+    assert_equal( es_cell.allele_id, new_parent.id, "Ooops, we haven't switched parents..." )
+  end
+  
   should "allow us to interact with the /bulk_edit view" do
     get :bulk_edit
     assert_response :success, "Unable to open /es_cells/bulk_edit"
