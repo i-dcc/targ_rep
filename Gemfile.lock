@@ -1,9 +1,9 @@
 GIT
   remote: http://github.com/i-dcc/allele-imaging.git
-  revision: 6a2a713dc3e556225e5f93cc5f797be3766d9e3c
-  tag: v0.3.2
+  revision: 92b5174f712defb4c3c3b8e94a1c1ea885525fd3
+  tag: v0.3.3
   specs:
-    allele_image (0.3.2)
+    allele_image (0.3.3)
       bio
       rmagick
 
@@ -31,8 +31,8 @@ GEM
     capistrano (2.5.20)
       highline
       highline
-      net-scp
       net-scp (>= 1.0.0)
+      net-scp
       net-sftp
       net-sftp (>= 2.0.0)
       net-ssh (>= 2.0.14)
@@ -84,7 +84,7 @@ PLATFORMS
 
 DEPENDENCIES
   acts_as_audited
-  allele_image (= 0.3.2)!
+  allele_image (= 0.3.3)!
   authlogic
   biomart
   capistrano
