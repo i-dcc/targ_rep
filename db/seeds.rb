@@ -11,7 +11,8 @@ pipelines = Pipeline.create([
   { :name => 'KOMP-Regeneron' },
   { :name => 'NorCOMM' },
   { :name => 'EUCOMM' },
-  { :name => 'mirKO' }
+  { :name => 'mirKO' },
+  { :name => 'Sanger MGP' }
 ])
 
 qc_field_descriptions = QcFieldDescription.create([
