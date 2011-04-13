@@ -1,5 +1,5 @@
 set :application, "idcc_targ_rep"
-set :repository,  "git://github.com/i-dcc/targ_rep.git"
+set :repository,  "http://github.com/i-dcc/targ_rep.git"
 set :branch, "master"
 set :user, `whoami`.chomp
 
