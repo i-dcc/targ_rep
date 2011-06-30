@@ -1,6 +1,6 @@
 require 'rake'
 require 'rake/testtask'
-require 'rake/rdoctask'
+require 'rdoc/task'
 
 desc 'Default: run the proxy tests'
 task :default => :test
@@ -25,7 +25,7 @@ Rake::TestTask.new(:test) do |t|
 end
 
 desc 'Generate documentation for the proxy plugin.'
-Rake::RDocTask.new(:rdoc) do |rdoc|
+RDoc::Task.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
   rdoc.title    = 'Proxy'
   rdoc.options << '--line-numbers' << '--inline-source'

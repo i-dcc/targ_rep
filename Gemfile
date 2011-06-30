@@ -2,7 +2,7 @@
 source :rubygems
 
 # rails requires these gems
-gem "rails", "2.3.11"
+gem "rails", "~> 2.3.12"
 
 # bundler requires these gems in all environments
 gem "biomart"
@@ -19,6 +19,7 @@ gem "parallel"
 gem "httparty"
 gem "sequel"
 gem "mysql2"
+gem "rdoc"
 
 # bundler requires these gems in development and while running tests
 group :development, :test do
