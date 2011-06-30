@@ -60,6 +60,11 @@ class Allele < ActiveRecord::Base
     :in         => ['Knock Out', 'Deletion', 'Insertion'],
     :message    => "should be 'Knockout', 'Deletion' or 'Insertion'."
   
+  validates_inclusion_of :design_subtype,
+    :in         => ['frameshift', 'domain'],
+    :message    => "should be 'frameshift' or 'domain'.",
+    :allow_nil  => true
+  
   validates_format_of :mgi_accession_id,
     :with       => /^MGI\:\d+$/,
     :message    => "is not a valid MGI Accession ID"

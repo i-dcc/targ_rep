@@ -53,7 +53,7 @@
     </p>
     <p>
       <%= f.label :design_subtype, "Design Subtype" %><br />
-      <%= f.text_field :design_subtype, :class => :text %>
+      <%= select( :allele, :design_subtype, ['','frameshift', 'domain'] ) %> 
     </p>
     <p>
       <%= f.label :subtype_description, "Subtype Description" %><br />

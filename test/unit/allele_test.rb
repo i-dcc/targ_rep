@@ -18,23 +18,32 @@ class AlleleTest < ActiveSupport::TestCase
       :loxp_start, :loxp_end
     ]).with_message("must have unique design features")
   
-  should validate_presence_of(:pipeline_id)
-  should validate_presence_of(:mgi_accession_id)
-  should validate_presence_of(:assembly)
-  should validate_presence_of(:chromosome)
-  should validate_presence_of(:strand)
-  should validate_presence_of(:design_type)
-  should validate_presence_of(:homology_arm_start)
-  should validate_presence_of(:homology_arm_end)
-  should validate_presence_of(:cassette)
-  should validate_presence_of(:cassette_type)
+  [
+    :pipeline_id, :mgi_accession_id, :assembly, :chromosome,
+    :strand, :design_type, :homology_arm_start, :homology_arm_end,
+    :cassette, :cassette_type
+  ].each do |attribute|
+    should validate_presence_of(attribute)
+  end
   
-  should validate_numericality_of(:homology_arm_start)
-  should validate_numericality_of(:homology_arm_end)
-  should validate_numericality_of(:cassette_start)
-  should validate_numericality_of(:cassette_end)
-  should validate_numericality_of(:loxp_start)
-  should validate_numericality_of(:loxp_end)
+  [
+    :homology_arm_start, :homology_arm_end, :cassette_start, :cassette_end,
+    :loxp_start, :loxp_end
+  ].each do |attribute|
+    should validate_numericality_of(attribute)
+  end
+  
+  should allow_value('Knock Out').for(:design_type)
+  should allow_value('Deletion').for(:design_type)
+  should allow_value('Insertion').for(:design_type)
+  
+  should allow_value('frameshift').for(:design_subtype)
+  should allow_value('domain').for(:design_subtype)
+  should allow_value(nil).for(:design_subtype)
+  
+  should_not allow_value(nil).for(:design_type)
+  should_not allow_value('wibble').for(:design_type)
+  should_not allow_value('wibble').for(:design_subtype)
   
   context "An Allele" do
     context "with empty attributes" do

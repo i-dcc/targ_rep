@@ -45,18 +45,18 @@ end
 Factory.define :allele do |f|
   f.mgi_accession_id                      { Factory.next(:mgi_accession_id) }
   f.sequence(:project_design_id)          { |n| "design id #{n}"}
-  f.sequence(:design_subtype)             { |n| "subtype #{n}" }
   f.sequence(:subtype_description)        { |n| "subtype description #{n}" }
   f.sequence(:cassette)                   { |n| "cassette #{n}"}
   f.sequence(:backbone)                   { |n| "backbone #{n}"}
   
   f.association :pipeline
   
-  f.assembly      "NCBIM37"
-  f.chromosome    { [("1".."19").to_a + ['X', 'Y', 'MT']].flatten[rand(22)] }
-  f.strand        { ['+', '-'][rand(2)] }
-  f.design_type   { ['Knock Out', 'Deletion', 'Insertion'][rand(3)] }
-  f.cassette_type { ['Promotorless','Promotor Driven'][rand(2)] }
+  f.assembly       "NCBIM37"
+  f.chromosome     { [("1".."19").to_a + ['X', 'Y', 'MT']].flatten[rand(22)] }
+  f.strand         { ['+', '-'][rand(2)] }
+  f.design_type    { ['Knock Out', 'Deletion', 'Insertion'][rand(3)] }
+  f.design_subtype { ['frameshift', 'domain', nil][rand(3)] }
+  f.cassette_type  { ['Promotorless','Promotor Driven'][rand(2)] }
   
   #     Features positions chose for this factory:
   #     They have been fixed so that complex tests can be cleaner. Otherwise,
