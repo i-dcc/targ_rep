@@ -27,4 +27,5 @@ group :development, :test do
   gem "shoulda", "> 2.11.0"
   gem "factory_girl"
   gem "test-unit"
+  gem "annotate"
 end

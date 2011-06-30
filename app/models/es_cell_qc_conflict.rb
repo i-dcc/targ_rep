@@ -17,3 +17,20 @@ class EsCellQcConflict < ActiveRecord::Base
   end
   
 end
+
+# == Schema Information
+#
+# Table name: es_cell_qc_conflicts
+#
+#  id              :integer(4)      not null, primary key
+#  es_cell_id      :integer(4)
+#  qc_field        :string(255)     not null
+#  current_result  :string(255)     not null
+#  proposed_result :string(255)     not null
+#  comment         :text
+#  created_by      :integer(4)
+#  updated_by      :integer(4)
+#  created_at      :datetime
+#  updated_at      :datetime
+#
+

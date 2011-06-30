@@ -22,6 +22,7 @@ GEM
     activesupport (2.3.11)
     acts_as_audited (1.1.0)
       activerecord (>= 2.1)
+    annotate (2.4.0)
     authlogic (2.1.6)
       activesupport
     bio (1.4.1)
@@ -85,6 +86,7 @@ PLATFORMS
 DEPENDENCIES
   acts_as_audited
   allele_image (= 0.3.5)!
+  annotate
   authlogic
   biomart
   capistrano

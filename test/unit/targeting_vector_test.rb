@@ -26,3 +26,20 @@ class TargetingVectorTest < ActiveSupport::TestCase
     end
   end
 end
+
+# == Schema Information
+#
+# Table name: targeting_vectors
+#
+#  id                  :integer(4)      not null, primary key
+#  allele_id           :integer(4)      not null
+#  ikmc_project_id     :string(255)
+#  name                :string(255)     not null
+#  intermediate_vector :string(255)
+#  created_by          :integer(4)
+#  updated_by          :integer(4)
+#  created_at          :datetime
+#  updated_at          :datetime
+#  display             :boolean(1)      default(TRUE)
+#
+

@@ -143,3 +143,51 @@ class EsCellTest < ActiveSupport::TestCase
     end
   end
 end
+
+# == Schema Information
+#
+# Table name: es_cells
+#
+#  id                                    :integer(4)      not null, primary key
+#  allele_id                             :integer(4)      not null
+#  targeting_vector_id                   :integer(4)
+#  parental_cell_line                    :string(255)
+#  allele_symbol_superscript             :string(255)
+#  name                                  :string(255)     not null
+#  created_by                            :integer(4)
+#  updated_by                            :integer(4)
+#  created_at                            :datetime
+#  updated_at                            :datetime
+#  comment                               :string(255)
+#  contact                               :string(255)
+#  production_qc_five_prime_screen       :string(255)
+#  distribution_qc_five_prime_sr_pcr     :string(255)
+#  production_qc_three_prime_screen      :string(255)
+#  distribution_qc_three_prime_sr_pcr    :string(255)
+#  ikmc_project_id                       :string(255)
+#  user_qc_map_test                      :string(255)
+#  user_qc_karyotype                     :string(255)
+#  user_qc_tv_backbone_assay             :string(255)
+#  user_qc_loxp_confirmation             :string(255)
+#  user_qc_southern_blot                 :string(255)
+#  user_qc_loss_of_wt_allele             :string(255)
+#  user_qc_neo_count_qpcr                :string(255)
+#  user_qc_lacz_sr_pcr                   :string(255)
+#  user_qc_mutant_specific_sr_pcr        :string(255)
+#  user_qc_five_prime_cassette_integrity :string(255)
+#  user_qc_neo_sr_pcr                    :string(255)
+#  user_qc_five_prime_lr_pcr             :string(255)
+#  user_qc_three_prime_lr_pcr            :string(255)
+#  user_qc_comment                       :text
+#  production_qc_loxp_screen             :string(255)
+#  production_qc_loss_of_allele          :string(255)
+#  production_qc_vector_integrity        :string(255)
+#  distribution_qc_karyotype_low         :float
+#  distribution_qc_karyotype_high        :float
+#  distribution_qc_copy_number           :string(255)
+#  distribution_qc_five_prime_lr_pcr     :string(255)
+#  distribution_qc_three_prime_lr_pcr    :string(255)
+#  distribution_qc_thawing               :string(255)
+#  mgi_allele_id                         :string(50)
+#
+
