@@ -102,21 +102,6 @@ class EsCellTest < ActiveSupport::TestCase
       assert( es_cell.ikmc_project_id == targ_vec.ikmc_project_id, "ES Cell should have copied the ikmc_project_id from its targeting vector's" )
     end
     
-    should "not be saved if there are IKMC project id consistency issue" do
-      targ_vec = Factory.create( :targeting_vector )
-      
-      es_cell = EsCell.new({
-        :name                => "EPD001",
-        :ikmc_project_id     => "VG456789",
-        :targeting_vector_id => targ_vec.id,
-        :allele_id           => targ_vec.allele_id,
-      })
-      
-      assert( !es_cell.valid?, "ES Cell validates an invalid entry" )
-      assert( !es_cell.save, "ES Cell validates the creation of an invalid entry" )
-      assert( es_cell.errors["ikmc_project_id"].match(/IKMC Project ID is different/i) )
-    end
-    
     should "cope gracefully if a user tries to send in an integer as an IKMC Project ID" do
       targ_vec = Factory.create( :targeting_vector )
       targ_vec.ikmc_project_id = "12345678"

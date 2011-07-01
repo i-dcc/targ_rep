@@ -24,8 +24,7 @@ class EsCell < ActiveRecord::Base
   validates_presence_of :allele_id, :on => :save, :unless => :nested
   validates_presence_of :name
   
-  validate :allele_consistency,          :unless => "[allele,targeting_vector].any?(&:nil?)"
-  validate :ikmc_project_id_consistency, :if     => :test_ikmc_project_id_consistency?
+  validate :allele_consistency, :unless => "[allele,targeting_vector].any?(&:nil?)"
     
   # Validate QC fields - the ESCELL_QC_OPTIONS constant comes from the 
   # es_cell_qc_options.rb initializer.
@@ -120,37 +119,23 @@ class EsCell < ActiveRecord::Base
     # Compares targeting vector's molecular structure to
     # ES cell's molecular structure
     def allele_consistency
-      my_mol_struct = self.allele
-      targ_vec_mol_struct = self.targeting_vector.allele
+      my_allele       = self.allele
+      targ_vec_allele = self.targeting_vector.allele
       
       unless \
-           targ_vec_mol_struct.id == my_mol_struct.id \
+           targ_vec_allele.id == my_allele.id \
         or ( \
-              my_mol_struct.mgi_accession_id  == targ_vec_mol_struct.mgi_accession_id   \
-          and my_mol_struct.project_design_id == targ_vec_mol_struct.project_design_id  \
-          and my_mol_struct.design_type       == targ_vec_mol_struct.design_type        \
-          and my_mol_struct.cassette          == targ_vec_mol_struct.cassette           \
-          and my_mol_struct.backbone          == targ_vec_mol_struct.backbone           \
+              my_allele.mgi_accession_id    == targ_vec_allele.mgi_accession_id   \
+          and my_allele.project_design_id   == targ_vec_allele.project_design_id  \
+          and my_allele.design_type         == targ_vec_allele.design_type        \
+          and my_allele.cassette            == targ_vec_allele.cassette           \
+          and my_allele.backbone            == targ_vec_allele.backbone           \
+          and my_allele.homology_arm_start  == targ_vec_allele.homology_arm_start \
+          and my_allele.homology_arm_end    == targ_vec_allele.homology_arm_end   \
+          and my_allele.cassette_start      == targ_vec_allele.cassette_start     \
+          and my_allele.cassette_end        == targ_vec_allele.cassette_end
         )
         errors.add( :targeting_vector_id, "targeting vector's molecular structure differs from ES cell's molecular structure" )
-      end
-    end
-    
-    def test_ikmc_project_id_consistency?
-      test = false
-      
-      if ikmc_project_id != nil and ikmc_project_id != ""
-        if self.targeting_vector and ( self.targeting_vector.ikmc_project_id != nil and self.targeting_vector.ikmc_project_id != "" )
-          test = true
-        end
-      end
-      
-      return test
-    end
-    
-    def ikmc_project_id_consistency
-      if ikmc_project_id != self.targeting_vector.ikmc_project_id
-        errors.add( :ikmc_project_id, "targeting vector's IKMC Project ID is different.")
       end
     end
     
