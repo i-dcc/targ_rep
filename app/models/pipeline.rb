@@ -17,6 +17,8 @@ class Pipeline < ActiveRecord::Base
   
 end
 
+
+
 # == Schema Information
 #
 # Table name: pipelines
@@ -25,5 +27,9 @@ end
 #  name       :string(255)     not null
 #  created_at :datetime
 #  updated_at :datetime
+#
+# Indexes
+#
+#  index_pipelines_on_name  (name)
 #
 

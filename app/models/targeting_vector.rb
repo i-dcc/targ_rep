@@ -64,6 +64,8 @@ class TargetingVector < ActiveRecord::Base
     end
 end
 
+
+
 # == Schema Information
 #
 # Table name: targeting_vectors
@@ -78,5 +80,10 @@ end
 #  created_at          :datetime
 #  updated_at          :datetime
 #  display             :boolean(1)      default(TRUE)
+#
+# Indexes
+#
+#  index_targvec                   (name) UNIQUE
+#  targeting_vectors_allele_id_fk  (allele_id)
 #
 

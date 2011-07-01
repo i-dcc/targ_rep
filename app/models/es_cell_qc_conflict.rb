@@ -18,6 +18,8 @@ class EsCellQcConflict < ActiveRecord::Base
   
 end
 
+
+
 # == Schema Information
 #
 # Table name: es_cell_qc_conflicts
@@ -32,5 +34,9 @@ end
 #  updated_by      :integer(4)
 #  created_at      :datetime
 #  updated_at      :datetime
+#
+# Indexes
+#
+#  es_cell_qc_conflicts_es_cell_id_fk  (es_cell_id)
 #
 

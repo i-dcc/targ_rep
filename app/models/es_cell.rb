@@ -162,6 +162,8 @@ class EsCell < ActiveRecord::Base
     end
 end
 
+
+
 # == Schema Information
 #
 # Table name: es_cells
@@ -207,5 +209,10 @@ end
 #  distribution_qc_three_prime_lr_pcr    :string(255)
 #  distribution_qc_thawing               :string(255)
 #  mgi_allele_id                         :string(50)
+#
+# Indexes
+#
+#  index_es_cells_on_name  (name) UNIQUE
+#  es_cells_allele_id_fk   (allele_id)
 #
 

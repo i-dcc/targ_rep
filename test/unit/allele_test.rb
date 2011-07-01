@@ -222,38 +222,3 @@ class AlleleTest < ActiveSupport::TestCase
   end
 end
 
-# == Schema Information
-#
-# Table name: alleles
-#
-#  id                  :integer(4)      not null, primary key
-#  assembly            :string(50)      default("NCBIM37"), not null
-#  chromosome          :string(2)       not null
-#  strand              :string(1)       not null
-#  mgi_accession_id    :string(50)      not null
-#  homology_arm_start  :integer(4)      not null
-#  homology_arm_end    :integer(4)      not null
-#  loxp_start          :integer(4)
-#  loxp_end            :integer(4)
-#  cassette_start      :integer(4)
-#  cassette_end        :integer(4)
-#  cassette            :string(100)
-#  backbone            :string(100)
-#  design_type         :string(255)     not null
-#  design_subtype      :string(255)
-#  subtype_description :string(255)
-#  created_by          :integer(4)
-#  updated_by          :integer(4)
-#  created_at          :datetime
-#  updated_at          :datetime
-#  floxed_start_exon   :string(255)
-#  floxed_end_exon     :string(255)
-#  project_design_id   :integer(4)
-#  mutation_type       :string(255)
-#  mutation_subtype    :string(255)
-#  mutation_method     :string(255)
-#  reporter            :string(255)
-#  pipeline_id         :integer(4)
-#  cassette_type       :string(50)
-#
-

@@ -20,6 +20,8 @@ class GenbankFile < ActiveRecord::Base
   
 end
 
+
+
 # == Schema Information
 #
 # Table name: genbank_files
@@ -32,5 +34,9 @@ end
 #  updated_at       :datetime
 #  created_by       :integer(4)
 #  updated_by       :integer(4)
+#
+# Indexes
+#
+#  genbank_files_allele_id_fk  (allele_id)
 #
 

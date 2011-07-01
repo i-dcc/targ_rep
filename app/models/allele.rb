@@ -273,6 +273,8 @@ class Allele < ActiveRecord::Base
     
 end
 
+
+
 # == Schema Information
 #
 # Table name: alleles
@@ -306,5 +308,11 @@ end
 #  reporter            :string(255)
 #  pipeline_id         :integer(4)
 #  cassette_type       :string(50)
+#
+# Indexes
+#
+#  index_mol_struct                                (mgi_accession_id,project_design_id,assembly,chromosome,strand,homology_arm_start,homology_arm_end,cassette_start,cassette_end,loxp_start,loxp_end,cassette,backbone) UNIQUE
+#  molecular_structures_pipeline_id_fk             (pipeline_id)
+#  index_molecular_structures_on_mgi_accession_id  (mgi_accession_id)
 #
 

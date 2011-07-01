@@ -4,6 +4,8 @@ class QcFieldDescription < ActiveRecord::Base
   validates_presence_of :description
 end
 
+
+
 # == Schema Information
 #
 # Table name: qc_field_descriptions
@@ -14,5 +16,9 @@ end
 #  url         :string(255)
 #  created_at  :datetime
 #  updated_at  :datetime
+#
+# Indexes
+#
+#  index_qc_field_descriptions_on_qc_field  (qc_field) UNIQUE
 #
 
