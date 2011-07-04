@@ -69,8 +69,7 @@ namespace :vlad do
   remote_task :setup_shared, :roles => :app do
     commands = [
       "umask #{umask}",
-      "mkdir -p #{shared_path}/config",
-      "ln -nfs /software/team87/brave_new_world/conf/ols_database.yml #{shared_path}/config/ols_database.yml"
+      "mkdir -p #{shared_path}/config"
     ]
     
     run commands.join(' && ')
