@@ -34,8 +34,12 @@ class AllelesController < ApplicationController
   # GET /alleles.json
   def index
     params[:page] ||= 1
-    allele_params   = setup_allele_search(params)
-    @alleles        = Allele.search( allele_params ).paginate( :page => params[:page] )
+    allele_params = setup_allele_search(params)
+    @alleles = Allele.search( allele_params ).paginate(
+      :page    => params[:page],
+      :select  => "distinct alleles.*",
+      :include => [ { :targeting_vectors => :pipeline }, { :es_cells => :pipeline } ]
+    )
     
     respond_to do |format|
       format.html # index.html.erb
@@ -48,7 +52,14 @@ class AllelesController < ApplicationController
   # GET /alleles/1.xml
   # GET /alleles/1.json
   def show
-    @allele   = Allele.find( params[:id], :include => [ :genbank_file, :targeting_vectors, { :es_cells => :es_cell_qc_conflicts } ] )
+    @allele = Allele.find(
+      params[:id], 
+      :include => [
+        :genbank_file, 
+        { :targeting_vectors => :pipeline }, 
+        { :es_cells => [ :pipeline, :es_cell_qc_conflicts ] }
+      ]
+    )
     @es_cells = @allele.es_cells.sort{ |a,b| a.name <=> b.name }
     respond_to do |format|
       format.html # show.html.erb
@@ -67,10 +78,15 @@ class AllelesController < ApplicationController
 
   # GET /alleles/1/edit
   def edit
-    @allele = Allele.find( params[:id], :include => [ :genbank_file, :targeting_vectors, { :es_cells => :es_cell_qc_conflicts } ] )
-    if @allele.genbank_file.nil?
-      @allele.genbank_file = GenbankFile.new
-    end
+    @allele = Allele.find(
+      params[:id], 
+      :include => [
+        :genbank_file, 
+        { :targeting_vectors => :pipeline }, 
+        { :es_cells => [ :pipeline, :es_cell_qc_conflicts ] }
+      ]
+    )
+    @allele.genbank_file = GenbankFile.new if @allele.genbank_file.nil?
   end
 
   # POST /alleles
@@ -217,7 +233,7 @@ class AllelesController < ApplicationController
       end
       
       # Search on marker_symbol against SolR and returns 
-      if allele_params.include? :marker_symbol and not allele_params[:marker_symbol].nil? and not allele_params[:marker_symbol].empty?
+      if allele_params.include? :marker_symbol and !allele_params[:marker_symbol].blank?
         marker_symbol = allele_params.delete( :marker_symbol )
         solr_results = search_solr({
           :q   => "marker_symbol:#{marker_symbol}",

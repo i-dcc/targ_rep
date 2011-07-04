@@ -8,10 +8,11 @@ class EsCell < ActiveRecord::Base
   ## Associations
   ##
   
+  belongs_to :pipeline,         :class_name => 'Pipeline',        :foreign_key => 'pipeline_id',         :validate => true
   belongs_to :allele,           :class_name => 'Allele',          :foreign_key => 'allele_id',           :validate => true
   belongs_to :targeting_vector, :class_name => 'TargetingVector', :foreign_key => 'targeting_vector_id', :validate => true
   
-  has_many :es_cell_qc_conflicts, :class_name => 'EsCellQcConflict', :foreign_key => "es_cell_id", :dependent => :destroy
+  has_many :es_cell_qc_conflicts, :class_name => 'EsCellQcConflict', :foreign_key => 'es_cell_id', :dependent => :destroy
   
   accepts_nested_attributes_for :es_cell_qc_conflicts, :allow_destroy => true
   
@@ -21,6 +22,7 @@ class EsCell < ActiveRecord::Base
   
   validates_uniqueness_of :name, :message => 'This ES Cell name has already been taken'
   
+  validates_presence_of :pipeline_id
   validates_presence_of :allele_id, :on => :save, :unless => :nested
   validates_presence_of :name
   
@@ -141,7 +143,7 @@ class EsCell < ActiveRecord::Base
     
     # Set mirKO ikmc_project_ids to "mirKO#{self.allele_id}"
     def set_mirko_ikmc_project_id
-      if self.ikmc_project_id.nil? and self.allele.pipeline.name == "mirKO"
+      if self.ikmc_project_id.nil? and self.pipeline.name == "mirKO"
         self.ikmc_project_id = "mirKO#{ self.allele_id }"
       end
     end
@@ -149,7 +151,9 @@ end
 
 
 
+
 # == Schema Information
+# Schema version: 20110701094136
 #
 # Table name: es_cells
 #
@@ -194,10 +198,12 @@ end
 #  distribution_qc_three_prime_lr_pcr    :string(255)
 #  distribution_qc_thawing               :string(255)
 #  mgi_allele_id                         :string(50)
+#  pipeline_id                           :integer(4)
 #
 # Indexes
 #
-#  index_es_cells_on_name  (name) UNIQUE
-#  es_cells_allele_id_fk   (allele_id)
+#  index_es_cells_on_name   (name) UNIQUE
+#  es_cells_allele_id_fk    (allele_id)
+#  es_cells_pipeline_id_fk  (pipeline_id)
 #
 

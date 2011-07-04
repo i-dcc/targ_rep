@@ -25,6 +25,7 @@ GEM
     annotate (2.4.0)
     authlogic (2.1.6)
       activesupport
+    awesome_print (0.4.0)
     bio (1.4.1)
     biomart (0.2.2)
       builder
@@ -32,8 +33,8 @@ GEM
     capistrano (2.5.20)
       highline
       highline
-      net-scp
       net-scp (>= 1.0.0)
+      net-scp
       net-sftp
       net-sftp (>= 2.0.0)
       net-ssh (>= 2.0.14)
@@ -74,8 +75,9 @@ GEM
     rmagick (2.13.1)
     rsolr (0.12.1)
       builder (>= 2.1.2)
-    searchlogic (2.4.12)
-      activerecord (>= 2.0.0)
+    searchlogic (2.5.6)
+      activerecord (~> 2.3.11)
+      activerecord (~> 2.3.11)
     sequel (3.20.0)
     shoulda (2.11.3)
     test-unit (2.2.0)
@@ -89,6 +91,7 @@ DEPENDENCIES
   allele_image (= 0.3.5)!
   annotate
   authlogic
+  awesome_print
   biomart
   capistrano
   capistrano-ext

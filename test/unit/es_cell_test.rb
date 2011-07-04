@@ -6,6 +6,7 @@ class EsCellTest < ActiveSupport::TestCase
     # ES Cell has been validated and saved successfully
   end
   
+  should belong_to(:pipeline)
   should belong_to(:allele)
   should belong_to(:targeting_vector)
   
@@ -94,7 +95,8 @@ class EsCellTest < ActiveSupport::TestCase
       es_cell = EsCell.new({
         :name                => 'EPD001',
         :targeting_vector_id => targ_vec.id,
-        :allele_id           => targ_vec.allele_id
+        :allele_id           => targ_vec.allele_id,
+        :pipeline_id         => targ_vec.pipeline_id
       })
       
       assert( es_cell.valid?, "ES Cell does not validate a valid entry" )
@@ -112,6 +114,7 @@ class EsCellTest < ActiveSupport::TestCase
         :ikmc_project_id     => 12345678,
         :targeting_vector_id => targ_vec.id,
         :allele_id           => targ_vec.allele_id,
+        :pipeline_id         => targ_vec.pipeline_id
       })
       
       assert( es_cell.valid?, "ES Cell does not validate a valid entry" )
@@ -120,9 +123,9 @@ class EsCellTest < ActiveSupport::TestCase
 
     should "set mirKO ikmc_project_ids to 'mirKO' + self.allele_id" do
       pipeline = Factory.create( :pipeline, :name => "mirKO" )
-      allele   = Factory.create( :allele, :pipeline => pipeline )
-      targ_vec = Factory.create( :targeting_vector, :allele => allele, :ikmc_project_id => nil )
-      es_cell  = Factory.create( :es_cell, :allele => allele, :targeting_vector => targ_vec, :ikmc_project_id => nil )
+      allele   = Factory.create( :allele )
+      targ_vec = Factory.create( :targeting_vector, :pipeline => pipeline, :allele => allele, :ikmc_project_id => nil )
+      es_cell  = Factory.create( :es_cell, :pipeline => pipeline, :allele => allele, :targeting_vector => targ_vec, :ikmc_project_id => nil )
       assert_equal( "mirKO#{ allele.id }", es_cell.ikmc_project_id )
       assert_equal( targ_vec.ikmc_project_id, es_cell.ikmc_project_id )
     end

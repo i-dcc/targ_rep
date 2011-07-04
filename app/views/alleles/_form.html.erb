@@ -1,17 +1,8 @@
-<% pipeline_list = Pipeline.find(:all, :order => "name").collect {|p| [ p.name, p.id ] } %>
-
 <% unless f.error_messages.empty? %>
   <div class="error">
     <%= f.error_messages %>
   </div>
 <% end %>
-
-<div class="span-24 last">
-  <p>
-    <%= f.label :pipeline_id, "Pipeline" %>
-    <%= f.select :pipeline_id, pipeline_list.unshift(['',nil]) %>
-  </p>
-</div>
 
 <div class="span-12">
   <p>
@@ -128,7 +119,6 @@
   </div>
 <% end -%>
 
-
 <!-- Targeting vectors handling. -->
 
 <div class="span-24 last">
@@ -136,6 +126,7 @@
   <table class="list">
     <thead>
       <tr>
+        <th>Pipeline</th>
         <th>IKMC Project ID</th>
         <th>Targeting Vector</th>
         <th>Intermediate Vector</th>
@@ -159,6 +150,7 @@
   <table class="list">
     <thead>
       <tr>
+        <th>Pipeline</th>
         <th>ES Cell</th>
         <th>Targeting Vector</th>
         <th>MGI Allele ID</th>
@@ -171,7 +163,7 @@
     </thead>
     <tbody id="es_cells">
       <% f.fields_for :es_cells do |es_cell_form| %>
-        <%= render :partial => 'es_cell_form', :locals => { :f => es_cell_form }%>
+        <%= render :partial => 'es_cell_form', :locals => { :f => es_cell_form } %>
       <% end -%>
     </tbody>
   </table>

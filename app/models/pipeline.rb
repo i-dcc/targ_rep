@@ -6,7 +6,8 @@ class Pipeline < ActiveRecord::Base
   ## Associations
   ##
   
-  has_many :alleles, :class_name => "Allele", :foreign_key => "pipeline_id", :dependent => :destroy
+  has_many :targeting_vectors,  :class_name => "TargetingVector", :foreign_key => "pipeline_id", :dependent => :destroy
+  has_many :es_cells,           :class_name => "EsCell",          :foreign_key => "pipeline_id", :dependent => :destroy
   
   ##
   ## Validations

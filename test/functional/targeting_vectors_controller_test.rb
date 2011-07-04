@@ -28,11 +28,13 @@ class TargetingVectorsControllerTest < ActionController::TestCase
   
   should "allow us to create, update and delete a targeting vector we made" do
     # CREATE
+    pipeline       = Factory.create( :pipeline )
     targ_vec_attrs = Factory.attributes_for( :targeting_vector )
     assert_difference('TargetingVector.count') do
       post :create, :targeting_vector => {
-        :name      => targ_vec_attrs[:name],
-        :allele_id => TargetingVector.first.allele_id
+        :name        => targ_vec_attrs[:name],
+        :allele_id   => TargetingVector.first.allele_id,
+        :pipeline_id => pipeline.id
       }
     end
     assert_response :success
@@ -67,6 +69,7 @@ class TargetingVectorsControllerTest < ActionController::TestCase
   end
   
   should "not allow us to update a targeting_vector with invalid parameters" do
+    pipeline         = Factory.create( :pipeline )
     targ_vec_attrs   = Factory.attributes_for( :targeting_vector )
     another_targ_vec = Factory.create( :targeting_vector )
     
@@ -74,8 +77,9 @@ class TargetingVectorsControllerTest < ActionController::TestCase
     targ_vec_attrs = Factory.attributes_for( :targeting_vector )
     assert_difference('TargetingVector.count') do
       post :create, :targeting_vector => {
-        :name                   => targ_vec_attrs[:name],
-        :allele_id => TargetingVector.first.allele_id
+        :name        => targ_vec_attrs[:name],
+        :allele_id   => TargetingVector.first.allele_id,
+        :pipeline_id => pipeline.id
       }
     end
     assert_response :success

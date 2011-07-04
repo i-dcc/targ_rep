@@ -26,6 +26,7 @@ class EsCellsControllerTest < ActionController::TestCase
   end
   
   should "allow us to create, update and delete an es_cell we made" do
+    pipeline      = Factory.create( :pipeline )
     es_cell_attrs = Factory.attributes_for( :es_cell )
     
     # CREATE
@@ -35,7 +36,8 @@ class EsCellsControllerTest < ActionController::TestCase
         :parental_cell_line  => es_cell_attrs[:parental_cell_line],
         :targeting_vector_id => EsCell.first.targeting_vector_id,
         :allele_id           => EsCell.first.allele_id,
-        :mgi_allele_id       => es_cell_attrs[:mgi_allele_id]
+        :mgi_allele_id       => es_cell_attrs[:mgi_allele_id],
+        :pipeline_id         => pipeline.id
       }
     end
     assert_response :success, "Could not create ES Cell"
@@ -56,6 +58,7 @@ class EsCellsControllerTest < ActionController::TestCase
   end
     
   should "allow us to create without providing a targeting vector" do
+    pipeline      = Factory.create( :pipeline )
     es_cell_attrs = Factory.attributes_for( :es_cell )
     
     assert_difference('EsCell.count') do
@@ -63,7 +66,8 @@ class EsCellsControllerTest < ActionController::TestCase
         :name               => es_cell_attrs[:name],
         :parental_cell_line => es_cell_attrs[:parental_cell_line],
         :allele_id          => EsCell.first.allele_id,
-        :mgi_allele_id       => es_cell_attrs[:mgi_allele_id]
+        :mgi_allele_id      => es_cell_attrs[:mgi_allele_id],
+        :pipeline_id        => pipeline.id
       }
     end
     assert_response :success
@@ -83,6 +87,7 @@ class EsCellsControllerTest < ActionController::TestCase
   end
 
   should "not allow us to rename an existing cell to the same name as another cell" do
+    pipeline        = Factory.create( :pipeline )
     es_cell_attrs   = Factory.attributes_for( :es_cell )
     another_escell  = Factory.create( :es_cell )
     
@@ -93,7 +98,8 @@ class EsCellsControllerTest < ActionController::TestCase
         :parental_cell_line  => es_cell_attrs[:parental_cell_line],
         :targeting_vector_id => EsCell.first.targeting_vector_id,
         :allele_id           => EsCell.first.allele_id,
-        :mgi_allele_id       => es_cell_attrs[:mgi_allele_id]
+        :mgi_allele_id       => es_cell_attrs[:mgi_allele_id],
+        :pipeline_id         => pipeline.id
       }
     end
     assert_response :success

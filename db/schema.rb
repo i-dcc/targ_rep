@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110322154912) do
+ActiveRecord::Schema.define(:version => 20110701094136) do
 
   create_table "alleles", :force => true do |t|
     t.string   "assembly",            :limit => 50,  :default => "NCBIM37", :null => false
@@ -38,13 +38,11 @@ ActiveRecord::Schema.define(:version => 20110322154912) do
     t.string   "mutation_subtype"
     t.string   "mutation_method"
     t.string   "reporter"
-    t.integer  "pipeline_id"
     t.string   "cassette_type",       :limit => 50
   end
 
   add_index "alleles", ["mgi_accession_id", "project_design_id", "assembly", "chromosome", "strand", "homology_arm_start", "homology_arm_end", "cassette_start", "cassette_end", "loxp_start", "loxp_end", "cassette", "backbone"], :name => "index_mol_struct", :unique => true
   add_index "alleles", ["mgi_accession_id"], :name => "index_molecular_structures_on_mgi_accession_id"
-  add_index "alleles", ["pipeline_id"], :name => "molecular_structures_pipeline_id_fk"
 
   create_table "audits", :force => true do |t|
     t.integer  "auditable_id"
@@ -117,10 +115,12 @@ ActiveRecord::Schema.define(:version => 20110322154912) do
     t.string   "distribution_qc_three_prime_lr_pcr"
     t.string   "distribution_qc_thawing"
     t.string   "mgi_allele_id",                         :limit => 50
+    t.integer  "pipeline_id"
   end
 
   add_index "es_cells", ["allele_id"], :name => "es_cells_allele_id_fk"
   add_index "es_cells", ["name"], :name => "index_es_cells_on_name", :unique => true
+  add_index "es_cells", ["pipeline_id"], :name => "es_cells_pipeline_id_fk"
 
   create_table "genbank_files", :force => true do |t|
     t.integer  "allele_id",                              :null => false
@@ -162,10 +162,12 @@ ActiveRecord::Schema.define(:version => 20110322154912) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "display",             :default => true
+    t.integer  "pipeline_id"
   end
 
   add_index "targeting_vectors", ["allele_id"], :name => "targeting_vectors_allele_id_fk"
   add_index "targeting_vectors", ["name"], :name => "index_targvec", :unique => true
+  add_index "targeting_vectors", ["pipeline_id"], :name => "targeting_vectors_pipeline_id_fk"
 
   create_table "users", :force => true do |t|
     t.string   "username",                              :null => false
@@ -185,14 +187,14 @@ ActiveRecord::Schema.define(:version => 20110322154912) do
     t.string   "last_login_ip"
   end
 
-  add_foreign_key "alleles", "pipelines", :name => "molecular_structures_pipeline_id_fk", :dependent => :delete
-
   add_foreign_key "es_cell_qc_conflicts", "es_cells", :name => "es_cell_qc_conflicts_es_cell_id_fk", :dependent => :delete
 
   add_foreign_key "es_cells", "alleles", :name => "es_cells_allele_id_fk", :dependent => :delete
+  add_foreign_key "es_cells", "pipelines", :name => "es_cells_pipeline_id_fk", :dependent => :delete
 
   add_foreign_key "genbank_files", "alleles", :name => "genbank_files_allele_id_fk", :dependent => :delete
 
   add_foreign_key "targeting_vectors", "alleles", :name => "targeting_vectors_allele_id_fk", :dependent => :delete
+  add_foreign_key "targeting_vectors", "pipelines", :name => "targeting_vectors_pipeline_id_fk", :dependent => :delete
 
 end

@@ -8,9 +8,10 @@ class TargetingVector < ActiveRecord::Base
   ## Associations
   ##
   
-  belongs_to :allele, :class_name => 'Allele', :foreign_key => 'allele_id', :validate => true
+  belongs_to :pipeline,   :class_name => 'Pipeline',  :foreign_key => 'pipeline_id',  :validate => true
+  belongs_to :allele,     :class_name => 'Allele',    :foreign_key => 'allele_id',    :validate => true
     
-  has_many :es_cells, :class_name => "EsCell", :foreign_key => "targeting_vector_id", :dependent => :destroy
+  has_many :es_cells, :class_name => 'EsCell', :foreign_key => 'targeting_vector_id', :dependent => :destroy
   
   accepts_nested_attributes_for :es_cells, :allow_destroy => true
   
@@ -20,6 +21,7 @@ class TargetingVector < ActiveRecord::Base
   
   validates_uniqueness_of :name, :message => 'This Targeting Vector name has already been taken'
   
+  validates_presence_of :pipeline_id
   validates_presence_of :allele_id, :on => :save, :unless => :nested
   validates_presence_of :name
   
@@ -58,7 +60,7 @@ class TargetingVector < ActiveRecord::Base
   protected
     # Set mirKO ikmc_project_ids to "mirKO#{self.allele_id}"
     def set_mirko_ikmc_project_id
-      if self.ikmc_project_id.nil? and self.allele.pipeline.name == "mirKO"
+      if self.ikmc_project_id.nil? and self.pipeline.name == "mirKO"
         self.ikmc_project_id = "mirKO#{ self.allele_id }"
       end
     end
@@ -66,7 +68,9 @@ end
 
 
 
+
 # == Schema Information
+# Schema version: 20110701094136
 #
 # Table name: targeting_vectors
 #
@@ -80,10 +84,12 @@ end
 #  created_at          :datetime
 #  updated_at          :datetime
 #  display             :boolean(1)      default(TRUE)
+#  pipeline_id         :integer(4)
 #
 # Indexes
 #
-#  index_targvec                   (name) UNIQUE
-#  targeting_vectors_allele_id_fk  (allele_id)
+#  index_targvec                     (name) UNIQUE
+#  targeting_vectors_allele_id_fk    (allele_id)
+#  targeting_vectors_pipeline_id_fk  (pipeline_id)
 #
 

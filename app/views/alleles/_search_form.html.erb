@@ -1,6 +1,7 @@
 <%
-  pipeline_array = Pipeline.all.map { |pipeline| [pipeline.name, pipeline.id.to_s] }
-  pipeline_options = options_for_select( [['All','']] + pipeline_array, params[:pipeline_id] )
+  pipeline_array       = Pipeline.all.map { |pipeline| [pipeline.name, pipeline.id.to_s] }
+  tv_pipeline_options  = options_for_select( [['All','']] + pipeline_array, params[:targeting_vectors_pipeline_id_is] )
+  esc_pipeline_options = options_for_select( [['All','']] + pipeline_array, params[:es_cells_pipeline_id_is] )
   
   design_type_array = 
   Allele.all(:select => 'DISTINCT design_type').map do |allele| 
@@ -24,42 +25,28 @@
 <% form_tag alleles_path, :method => 'get', :id => 'search_form' do %>
   <table class="no-border">
     <tr>
-      <td>
-        <%= label_tag :pipeline %>:
-        <%= select_tag :pipeline_id, pipeline_options %>
-      </td>
-      
-      <td>
-        <%= label_tag :mgi_accession_id, "MGI Acc. ID" %>:
-        <%= text_field_tag :mgi_accession_id, params[:mgi_accession_id] %>
-      </td>
-      
-      <td>
-        <%= label_tag :project_design_id, "Project Design ID" %>:
-        <%= text_field_tag :project_design_id, params[:project_design_id] %>
-      </td>
-        
-      <td>
-        <%= label_tag :marker_symbol, "Marker Symbol" %>:
-        <%= text_field_tag :marker_symbol, params[:marker_symbol] %>
-      </td>
+      <td><%= label_tag :marker_symbol, "Marker Symbol" %>:</td>
+      <td><%= text_field_tag :marker_symbol, params[:marker_symbol] %></td>
+      <td><%= label_tag :mgi_accession_id, "MGI Acc. ID" %>:</td>
+      <td><%= text_field_tag :mgi_accession_id, params[:mgi_accession_id] %></td>
+      <td><%= label_tag :project_design_id, "Project Design ID" %>:</td>
+      <td><%= text_field_tag :project_design_id, params[:project_design_id] %></td>
     </tr>
-    
     <tr>
-      <td>
-        <%= label_tag :design_type, "Design Type" %>:
-        <%= select_tag :design_type, design_type_options %>
-      </td>
-      
-      <td>
-        <%= label_tag :cassette %>:
-        <%= select_tag :cassette, cassette_options %>
-      </td>
-      
-      <td colspan="2">
-        <%= label_tag :backbone %>:
-        <%= select_tag :backbone, backbone_options %>
-      </td>
+      <td><%= label_tag :targeting_vectors_pipeline_id_is, 'TV Pipeline' %>:</td>
+      <td><%= select_tag :targeting_vectors_pipeline_id_is, tv_pipeline_options %></td>
+      <td><%= label_tag :es_cells_pipeline_id_is, 'ESC Pipeline' %>:</td>
+      <td><%= select_tag :es_cells_pipeline_id_is, esc_pipeline_options %></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><%= label_tag :design_type, "Design Type" %>:</td>
+      <td><%= select_tag :design_type, design_type_options %></td>
+      <td><%= label_tag :cassette %>:</td>
+      <td><%= select_tag :cassette, cassette_options %></td>
+      <td><%= label_tag :backbone %>:</td>
+      <td><%= select_tag :backbone, backbone_options %></td>
     </tr>
     
     <tr>

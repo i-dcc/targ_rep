@@ -20,6 +20,8 @@
 <% if @es_cells and @es_cells.size > 0 %>
   <div class="clear"></div>
   
+  <% pipeline_list = Pipeline.find(:all, :order => "name").collect {|p| [ p.name, p.id ] } %>
+  
   <div class="span-24">
     <% form_tag update_multiple_es_cells_path, :method => :put do %>
       <% @es_cells.each do |es_cell| %>
@@ -38,6 +40,7 @@
               <tr>
                 <th>Targeting Vector</th>
                 <th>TV IKMC Project ID</th>
+                <th>Pipeline</th>
                 <th>Allele Symbol Superscript</th>
                 <th>IKMC Project ID</th>
                 <th>Parental Cell Line</th>
@@ -53,13 +56,14 @@
                   <td></td>
                   <td></td>
                 <% end %>
+                <td><%= f.select :pipeline_id, pipeline_list.unshift(['',nil]) %></td>
                 <td><%= f.text_field :allele_symbol_superscript %></td>
                 <td><%= f.text_field :ikmc_project_id %></td>
                 <td><%= f.text_field :parental_cell_line %></td>
                 <td><a href="#" class="es_cell_qc_toggle ss_sprite ss_magnifier">show/hide QC metrics</a></td>
               </tr>
               <tr class="es_cell_qc">
-                <td colspan="6">
+                <td colspan="7">
                   <%= render :partial => 'alleles/es_cell_qc_form', :locals => { :f => f } %>
                 </td>
               </tr>

@@ -29,4 +29,5 @@ group :development, :test do
   gem "factory_girl"
   gem "test-unit"
   gem "annotate"
+  gem "awesome_print"
 end

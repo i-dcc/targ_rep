@@ -6,7 +6,6 @@ class Allele < ActiveRecord::Base
   ## Associations
   ##
   
-  belongs_to :pipeline,          :class_name => "Pipeline",        :foreign_key => "pipeline_id", :validate => true
   has_one    :genbank_file,      :class_name => "GenbankFile",     :foreign_key => "allele_id",   :dependent => :destroy
   has_many   :targeting_vectors, :class_name => "TargetingVector", :foreign_key => "allele_id",   :dependent => :destroy
   has_many   :es_cells,          :class_name => "EsCell",          :foreign_key => "allele_id",   :dependent => :destroy
@@ -39,7 +38,6 @@ class Allele < ActiveRecord::Base
     :homology_arm_end,
     :cassette_start,
     :cassette_end,
-    :pipeline_id,
     :cassette,
     :cassette_type
   ]
@@ -149,6 +147,13 @@ class Allele < ActiveRecord::Base
     
     def targeted_trap?
       (self.design_type == 'Knock Out' and self.loxp_start.nil?) ? 'Yes' : 'No'
+    end
+    
+    def pipeline_names
+      pipelines = {}
+      self.targeting_vectors.each { |tv| pipelines[tv.pipeline.name] = true } if self.targeting_vectors
+      self.es_cells.each { |esc| pipelines[esc.pipeline.name] = true } if self.es_cells
+      pipelines.keys.sort.join(', ')
     end
     
   protected
@@ -275,7 +280,9 @@ end
 
 
 
+
 # == Schema Information
+# Schema version: 20110701094136
 #
 # Table name: alleles
 #
@@ -306,13 +313,11 @@ end
 #  mutation_subtype    :string(255)
 #  mutation_method     :string(255)
 #  reporter            :string(255)
-#  pipeline_id         :integer(4)
 #  cassette_type       :string(50)
 #
 # Indexes
 #
 #  index_mol_struct                                (mgi_accession_id,project_design_id,assembly,chromosome,strand,homology_arm_start,homology_arm_end,cassette_start,cassette_end,loxp_start,loxp_end,cassette,backbone) UNIQUE
-#  molecular_structures_pipeline_id_fk             (pipeline_id)
 #  index_molecular_structures_on_mgi_accession_id  (mgi_accession_id)
 #
 

@@ -6,7 +6,6 @@ class AlleleTest < ActiveSupport::TestCase
     # allele has been saved successfully here
   end
   
-  should belong_to(:pipeline)
   should have_many(:targeting_vectors)
   should have_many(:es_cells)
   
@@ -19,7 +18,7 @@ class AlleleTest < ActiveSupport::TestCase
     ]).with_message("must have unique design features")
   
   [
-    :pipeline_id, :mgi_accession_id, :assembly, :chromosome,
+    :mgi_accession_id, :assembly, :chromosome,
     :strand, :design_type, :homology_arm_start, :homology_arm_end,
     :cassette, :cassette_type
   ].each do |attribute|

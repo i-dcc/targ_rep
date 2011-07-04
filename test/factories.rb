@@ -43,13 +43,11 @@ end
 ##
 
 Factory.define :allele do |f|
-  f.mgi_accession_id                      { Factory.next(:mgi_accession_id) }
-  f.sequence(:project_design_id)          { |n| "design id #{n}"}
-  f.sequence(:subtype_description)        { |n| "subtype description #{n}" }
-  f.sequence(:cassette)                   { |n| "cassette #{n}"}
-  f.sequence(:backbone)                   { |n| "backbone #{n}"}
-  
-  f.association :pipeline
+  f.mgi_accession_id                { Factory.next(:mgi_accession_id) }
+  f.sequence(:project_design_id)    { |n| "design id #{n}"}
+  f.sequence(:subtype_description)  { |n| "subtype description #{n}" }
+  f.sequence(:cassette)             { |n| "cassette #{n}"}
+  f.sequence(:backbone)             { |n| "backbone #{n}"}
   
   f.assembly       "NCBIM37"
   f.chromosome     { [("1".."19").to_a + ['X', 'Y', 'MT']].flatten[rand(22)] }
@@ -97,6 +95,7 @@ Factory.define :allele do |f|
       when '-' then 130
     end
   end
+  
   f.cassette_end do |allele|
     case allele.strand
       when '+' then 70
@@ -134,7 +133,8 @@ end
 Factory.define :targeting_vector do |f|
   f.name { Factory.next(:pgdgr_plate_name) }
   f.ikmc_project_id { Factory.next(:ikmc_project_id) }
-  f.association :allele
+  f.association :pipeline, :factory => :pipeline
+  f.association :allele, :factory => :allele
 end
 
 Factory.define :invalid_targeting_vector, :class => TargetingVector do |f|
@@ -151,7 +151,8 @@ Factory.define :es_cell do |f|
   
   ikmc_project_id = Factory.next( :ikmc_project_id )
   
-  f.association :allele
+  f.association :pipeline, :factory => :pipeline
+  f.association :allele, :factory => :allele
   f.targeting_vector { |es_cell|
     es_cell.association( :targeting_vector, { 
       :allele_id       => es_cell.allele_id,
@@ -193,7 +194,7 @@ Factory.define :genbank_file do |f|
   f.sequence(:escell_clone)       { |n| "ES Cell clone file #{n}" }
   f.sequence(:targeting_vector)   { |n| "Targeting vector file #{n}" }
   
-  f.association :allele
+  f.association :allele, :factory => :allele
 end
 
 Factory.define :invalid_genbank_file, :class => GenbankFile do |f|

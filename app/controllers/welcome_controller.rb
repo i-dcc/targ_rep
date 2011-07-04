@@ -41,10 +41,18 @@ class WelcomeController < ApplicationController
   def allele_count_by_pipeline
     sql = <<-SQL
       select
-        pipeline_id id,
-        count(id) count
-      from alleles
-      group by pipeline_id
+        pipeline_id as id,
+        count(allele_id) as count
+      from (
+        select distinct ( alleles.id ) as allele_id, targeting_vectors.pipeline_id
+        from alleles
+        join targeting_vectors on alleles.id = targeting_vectors.allele_id
+        union
+        select distinct ( alleles.id ) as allele_id, es_cells.pipeline_id
+        from alleles
+        join es_cells on alleles.id = es_cells.pipeline_id
+      ) tmp
+      group by id
     SQL
     run_count_sql(sql)
   end
@@ -52,10 +60,18 @@ class WelcomeController < ApplicationController
   def gene_count_by_pipeline
     sql = <<-SQL
       select
-        pipeline_id id,
-        count(distinct mgi_accession_id) count
-      from alleles
-      group by pipeline_id
+        pipeline_id as id,
+        count(mgi_accession_id) as count
+      from (
+        select distinct ( alleles.mgi_accession_id ) as mgi_accession_id, targeting_vectors.pipeline_id
+        from alleles
+        join targeting_vectors on alleles.id = targeting_vectors.allele_id
+        union
+        select distinct ( alleles.mgi_accession_id ) as mgi_accession_id, es_cells.pipeline_id
+        from alleles
+        join es_cells on alleles.id = es_cells.pipeline_id
+      ) tmp
+      group by id
     SQL
     run_count_sql(sql)
   end
@@ -63,11 +79,10 @@ class WelcomeController < ApplicationController
   def targeting_vector_count_by_pipeline
     sql = <<-SQL
       select
-        pipeline_id id,
+        targeting_vectors.pipeline_id id,
         count(targeting_vectors.id) count
       from
-        alleles
-        join targeting_vectors on targeting_vectors.allele_id = alleles.id
+        targeting_vectors
       group by pipeline_id
     SQL
     run_count_sql(sql)
@@ -76,11 +91,10 @@ class WelcomeController < ApplicationController
   def escell_count_by_pipeline
     sql = <<-SQL
       select
-        pipeline_id id,
+        es_cells.pipeline_id id,
         count(es_cells.id) count
       from
-        alleles
-        join es_cells on es_cells.allele_id = alleles.id
+        es_cells
       group by pipeline_id
     SQL
     run_count_sql(sql)

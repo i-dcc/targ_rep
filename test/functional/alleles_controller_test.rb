@@ -55,7 +55,6 @@ class AllelesControllerTest < ActionController::TestCase
     linked_es_cells   = EsCell.targeting_vector_id_not_null.count
     
     post :create, :allele => {
-      :pipeline_id        => Allele.first.pipeline_id,
       :assembly           => mol_struct[:assembly],
       :mgi_accession_id   => mol_struct[:mgi_accession_id],
       :project_design_id  => mol_struct[:project_design_id],
@@ -72,18 +71,20 @@ class AllelesControllerTest < ActionController::TestCase
       :targeting_vectors => [
         # Targeting vector 1 with its ES cells
         {
+          :pipeline_id         => targ_vec1[:pipeline_id],
           :ikmc_project_id     => targ_vec1[:ikmc_project_id],
           :name                => targ_vec1[:name],
           :intermediate_vector => targ_vec1[:intermediate_vector],
           :es_cells => [
-            Factory.attributes_for( :es_cell, :ikmc_project_id => targ_vec1[:ikmc_project_id] ),
-            Factory.attributes_for( :es_cell, :ikmc_project_id => targ_vec1[:ikmc_project_id] ),
-            Factory.attributes_for( :es_cell, :ikmc_project_id => targ_vec1[:ikmc_project_id] )
+            Factory.attributes_for( :es_cell, :ikmc_project_id => targ_vec1[:ikmc_project_id], :pipeline_id => targ_vec1[:pipeline_id] ),
+            Factory.attributes_for( :es_cell, :ikmc_project_id => targ_vec1[:ikmc_project_id], :pipeline_id => targ_vec1[:pipeline_id] ),
+            Factory.attributes_for( :es_cell, :ikmc_project_id => targ_vec1[:ikmc_project_id], :pipeline_id => targ_vec1[:pipeline_id] )
           ]
         },
         
         # Targeting vector 2 without ES Cells
         {
+          :pipeline_id         => targ_vec2[:pipeline_id],
           :ikmc_project_id     => targ_vec2[:ikmc_project_id],
           :name                => targ_vec2[:name],
           :intermediate_vector => targ_vec2[:intermediate_vector]     
@@ -92,9 +93,9 @@ class AllelesControllerTest < ActionController::TestCase
       
       # ES Cells only related to allele
       :es_cells => [
-        { :name => Factory.attributes_for( :es_cell )[:name] },
-        { :name => Factory.attributes_for( :es_cell )[:name] },
-        { :name => Factory.attributes_for( :es_cell )[:name] }
+        { :name => Factory.attributes_for( :es_cell )[:name], :pipeline_id => targ_vec1[:pipeline_id] },
+        { :name => Factory.attributes_for( :es_cell )[:name], :pipeline_id => targ_vec1[:pipeline_id] },
+        { :name => Factory.attributes_for( :es_cell )[:name], :pipeline_id => targ_vec1[:pipeline_id] }
       ],
       
       :genbank_file => {
@@ -111,9 +112,7 @@ class AllelesControllerTest < ActionController::TestCase
   end
 
   should "allow us to create, update and delete a allele we made" do
-    pipeline     = Factory.create( :pipeline )
     allele_attrs = Factory.attributes_for( :allele )
-    allele_attrs.update({ :pipeline_id => pipeline.id })
     
     # CREATE
     assert_difference('Allele.count') do
@@ -146,7 +145,6 @@ class AllelesControllerTest < ActionController::TestCase
     genbank_file_count  = GenbankFile.count
     
     post :create, :allele => {
-      :pipeline_id        => Allele.first.pipeline_id,
       :assembly           => mol_struct[:assembly],
       :mgi_accession_id   => mol_struct[:mgi_accession_id],
       :chromosome         => mol_struct[:chromosome],
@@ -178,7 +176,6 @@ class AllelesControllerTest < ActionController::TestCase
     genbank_file_count  = GenbankFile.count
     
     post :create, :allele => {
-      :pipeline_id        => Allele.first.pipeline_id,
       :assembly           => mol_struct[:assembly],
       :mgi_accession_id   => mol_struct[:mgi_accession_id],
       :chromosome         => mol_struct[:chromosome],
@@ -204,7 +201,6 @@ class AllelesControllerTest < ActionController::TestCase
     genbank_file_count  = GenbankFile.count
 
     post :create, :allele => {
-      :pipeline_id        => Allele.first.pipeline_id,
       :assembly           => mol_struct[:assembly],
       :mgi_accession_id   => mol_struct[:mgi_accession_id],
       :chromosome         => mol_struct[:chromosome],
@@ -258,7 +254,6 @@ class AllelesControllerTest < ActionController::TestCase
 
   should "not allow us to update a allele with invalid parameters" do
     mol_struct_attrs = Factory.attributes_for( :allele )
-    mol_struct_attrs.update({ :pipeline_id => Allele.first.pipeline_id })
     
     # CREATE a valid Molecular Structure
     assert_difference('Allele.count') do

@@ -1,32 +1,30 @@
 <h2>
-  <% if @allele.pipeline %><%=h @allele.pipeline.name %> |<% end %>
-  <%=h @allele.mgi_accession_id %> |
-  Project Design ID: <%=h @allele.project_design_id %>
+  <%= @allele.mgi_accession_id %> | Project Design ID: <%= @allele.project_design_id %>
 </h2>
 
 <div class="span-12">
   <fieldset>
     <legend>Genomic Position</legend>
-    <p><strong>Assembly:</strong> <%=h @allele.assembly %></p>
-    <p><strong>Chromosome:</strong> <%=h @allele.chromosome %></p>
-    <p><strong>Strand</strong> <%=h @allele.strand %></p>
+    <p><strong>Assembly:</strong> <%= @allele.assembly %></p>
+    <p><strong>Chromosome:</strong> <%= @allele.chromosome %></p>
+    <p><strong>Strand</strong> <%= @allele.strand %></p>
   </fieldset>
   
   <fieldset>
     <legend>Mutation Details</legend>
-    <p><strong>Design type:</strong> <%=h @allele.design_type %></p>
+    <p><strong>Design type:</strong> <%= @allele.design_type %></p>
     <p>
-      <strong>Design subtype:</strong> <%=h @allele.design_subtype %><br />
-      <em><%=h @allele.subtype_description %></em>
+      <strong>Design subtype:</strong> <%= @allele.design_subtype %><br />
+      <em><%= @allele.subtype_description %></em>
     </p>
-    <p><strong>Cassette:</strong> <%=h @allele.cassette %></p>
-    <p><strong>Cassette Type:</strong> <%=h @allele.cassette_type %></p>
-    <p><strong>Backbone:</strong> <%=h @allele.backbone %></p>
+    <p><strong>Cassette:</strong> <%= @allele.cassette %></p>
+    <p><strong>Cassette Type:</strong> <%= @allele.cassette_type %></p>
+    <p><strong>Backbone:</strong> <%= @allele.backbone %></p>
     <% if @allele.floxed_start_exon == @allele.floxed_end_exon %>
-      <p><strong>Floxed Exon:</strong> <%=h @allele.floxed_start_exon %></p>
+      <p><strong>Floxed Exon:</strong> <%= @allele.floxed_start_exon %></p>
     <% else %>
-      <p><strong>First Floxed Exon:</strong> <%=h @allele.floxed_start_exon %></p>
-      <p><strong>Last Floxed Exon:</strong> <%=h @allele.floxed_end_exon %></p>
+      <p><strong>First Floxed Exon:</strong> <%= @allele.floxed_start_exon %></p>
+      <p><strong>Last Floxed Exon:</strong> <%= @allele.floxed_end_exon %></p>
     <% end %>
   </fieldset>
 </div>
@@ -43,18 +41,18 @@
       <tbody>
         <tr>
           <td>Homology Arm</td>
-          <td><%=h @allele.homology_arm_start %></td>
-          <td><%=h @allele.homology_arm_end %></td>
+          <td><%= @allele.homology_arm_start %></td>
+          <td><%= @allele.homology_arm_end %></td>
         </tr>
         <tr class="even">
           <td>Cassette</td>
-          <td><%=h @allele.cassette_start %></td>
-          <td><%=h @allele.cassette_end %></td>
+          <td><%= @allele.cassette_start %></td>
+          <td><%= @allele.cassette_end %></td>
         </tr>
         <tr>
           <td>LoxP</td>
-          <td><%=h @allele.loxp_start %></td>
-          <td><%=h @allele.loxp_end %></td>
+          <td><%= @allele.loxp_start %></td>
+          <td><%= @allele.loxp_end %></td>
         </tr>
       </tbody>
     </table>
@@ -91,6 +89,7 @@
     <% unless @allele.targeting_vectors.empty? %>
       <table class="list">
         <thead>
+          <th>Pipeline</th>
           <th>IKMC Project ID</th>
           <th>Targeting Vector</th>
           <th class="last">Intermediate Vector</th>
@@ -99,6 +98,7 @@
           <% @allele.targeting_vectors.each do |targ_vec| %>
             <% if targ_vec.display == true %>
               <tr class="<%= cycle("odd", "even") %>">
+                <td><%= targ_vec.pipeline.try(:name) %></td>
                 <td><%= targ_vec.ikmc_project_id %></td>
                 <td><%= targ_vec.name %></td>
                 <td><%= targ_vec.intermediate_vector %></td>
@@ -121,6 +121,7 @@
       <table class="list">
         <thead>
           <tr>
+            <th>Pipeline</th>
             <th>ES Cell</th>
             <th>Targeting Vector</th>
             <th>MGI Allele ID</th>
@@ -133,16 +134,17 @@
         <tbody>
           <% @es_cells.each do |es_cell| %>
             <tr class="<%= cycle("odd", "even") %>">
-              <td><%=h es_cell.name %></td>
-              <td><% if es_cell.targeting_vector %><%=h es_cell.targeting_vector.name %><% end %></td>
-              <td><%=h es_cell.mgi_allele_id %></td>
-              <td><%=h es_cell.allele_symbol_superscript %></td>
-              <td><%=h es_cell.parental_cell_line %></td>
-              <td><%=h es_cell.ikmc_project_id %></td>
+              <td><%= es_cell.pipeline.try(:name) %></td>
+              <td><%= es_cell.name %></td>
+              <td><%= es_cell.targeting_vector.try(:name) %></td>
+              <td><%= es_cell.mgi_allele_id %></td>
+              <td><%= es_cell.allele_symbol_superscript %></td>
+              <td><%= es_cell.parental_cell_line %></td>
+              <td><%= es_cell.ikmc_project_id %></td>
               <td><a href="#" class="es_cell_qc_toggle ss_sprite ss_magnifier">show/hide QC metrics</a></td>
             </tr>
             <tr class="es_cell_qc" style="display:none;">
-              <td colspan="7">
+              <td colspan="8">
                 <table class="es_cell_qc_info">
                   <caption>Production Centre Screen</caption>
                   <tr>
@@ -218,7 +220,7 @@
                     <th colspan="6" style="text-align:left;">Comments</th>
                   </tr>
                   <tr>
-                    <td colspan="6"><%=h print_dash_on_empty( es_cell.user_qc_comment ) %></td>
+                    <td colspan="6"><%= print_dash_on_empty( es_cell.user_qc_comment ) %></td>
                   </tr>
                   <% if es_cell.es_cell_qc_conflicts.count > 0 %>
                     <tr>
@@ -240,12 +242,12 @@
                               <tr class="<%= cycle("odd", "even") %>">
                                 <td>
                                   <% unless conflict.creator.nil? %>
-                                    <%=h conflict.creator.username %>
+                                    <%= conflict.creator.username %>
                                   <% end %>
                                 </td>
-                                <td><%=h ESCELL_QC_OPTIONS[conflict.qc_field][:name] %></td>
-                                <td><%=h conflict.proposed_result %></td>
-                                <td><%=h conflict.comment %></td>
+                                <td><%= ESCELL_QC_OPTIONS[conflict.qc_field][:name] %></td>
+                                <td><%= conflict.proposed_result %></td>
+                                <td><%= conflict.comment %></td>
                               </tr>
                             <% end %>
                           </tbody>

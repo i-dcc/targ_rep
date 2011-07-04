@@ -5,6 +5,11 @@ class TargetingVectorTest < ActiveSupport::TestCase
     Factory.create( :targeting_vector )
   end
   
+  should belong_to(:pipeline)
+  should belong_to(:allele)
+  
+  should have_many(:es_cells)
+  
   should validate_uniqueness_of(:name).with_message('This Targeting Vector name has already been taken')
 
   should validate_presence_of(:name)
@@ -19,8 +24,8 @@ class TargetingVectorTest < ActiveSupport::TestCase
     
     should "set mirKO ikmc_project_ids to 'mirKO' + self.allele_id" do
       pipeline = Factory.create( :pipeline, :name => "mirKO" )
-      allele   = Factory.create( :allele, :pipeline => pipeline )
-      targ_vec = Factory.create( :targeting_vector, :allele => allele, :ikmc_project_id => nil )
+      allele   = Factory.create( :allele )
+      targ_vec = Factory.create( :targeting_vector, :pipeline => pipeline, :allele => allele, :ikmc_project_id => nil )
       assert( targ_vec.valid? )
       assert_equal( "mirKO#{ allele.id }", targ_vec.ikmc_project_id )
     end
