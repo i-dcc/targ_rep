@@ -57,6 +57,10 @@ class TargetingVector < ActiveRecord::Base
       )
     end
     
+    def report_to_public?
+      self.report_to_public
+    end
+    
   protected
     # Set mirKO ikmc_project_ids to "mirKO#{self.allele_id}"
     def set_mirko_ikmc_project_id
@@ -69,8 +73,9 @@ end
 
 
 
+
 # == Schema Information
-# Schema version: 20110701094136
+# Schema version: 20110707091231
 #
 # Table name: targeting_vectors
 #
@@ -83,7 +88,7 @@ end
 #  updated_by          :integer(4)
 #  created_at          :datetime
 #  updated_at          :datetime
-#  display             :boolean(1)      default(TRUE)
+#  report_to_public    :boolean(1)      default(TRUE), not null
 #  pipeline_id         :integer(4)
 #
 # Indexes

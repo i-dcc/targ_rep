@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110701094136) do
+ActiveRecord::Schema.define(:version => 20110707091231) do
 
   create_table "alleles", :force => true do |t|
     t.string   "assembly",            :limit => 50,  :default => "NCBIM37", :null => false
@@ -75,11 +75,11 @@ ActiveRecord::Schema.define(:version => 20110701094136) do
   add_index "es_cell_qc_conflicts", ["es_cell_id"], :name => "es_cell_qc_conflicts_es_cell_id_fk"
 
   create_table "es_cells", :force => true do |t|
-    t.integer  "allele_id",                                           :null => false
+    t.integer  "allele_id",                                                             :null => false
     t.integer  "targeting_vector_id"
     t.string   "parental_cell_line"
     t.string   "allele_symbol_superscript"
-    t.string   "name",                                                :null => false
+    t.string   "name",                                                                  :null => false
     t.integer  "created_by"
     t.integer  "updated_by"
     t.datetime "created_at"
@@ -116,6 +116,7 @@ ActiveRecord::Schema.define(:version => 20110701094136) do
     t.string   "distribution_qc_thawing"
     t.string   "mgi_allele_id",                         :limit => 50
     t.integer  "pipeline_id"
+    t.boolean  "report_to_public",                                    :default => true, :null => false
   end
 
   add_index "es_cells", ["allele_id"], :name => "es_cells_allele_id_fk"
@@ -161,7 +162,7 @@ ActiveRecord::Schema.define(:version => 20110701094136) do
     t.integer  "updated_by"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "display",             :default => true
+    t.boolean  "report_to_public",    :default => true, :null => false
     t.integer  "pipeline_id"
   end
 

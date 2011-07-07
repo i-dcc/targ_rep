@@ -94,7 +94,11 @@ class EsCell < ActiveRecord::Base
         }
       )
     end
-  
+    
+    def report_to_public?
+      self.report_to_public
+    end
+    
   protected
     # Convert any blank attribute strings to nil...
     def convert_blanks_to_nil
@@ -152,8 +156,9 @@ end
 
 
 
+
 # == Schema Information
-# Schema version: 20110701094136
+# Schema version: 20110707091231
 #
 # Table name: es_cells
 #
@@ -199,6 +204,7 @@ end
 #  distribution_qc_thawing               :string(255)
 #  mgi_allele_id                         :string(50)
 #  pipeline_id                           :integer(4)
+#  report_to_public                      :boolean(1)      default(TRUE), not null
 #
 # Indexes
 #
