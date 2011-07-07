@@ -62,6 +62,10 @@ GEM
       activerecord (~> 2.3.11)
     sequel (3.20.0)
     shoulda (2.11.3)
+    simplecov (0.4.2)
+      simplecov-html (~> 0.4.4)
+    simplecov-html (0.4.5)
+    simplecov-rcov (0.2.0)
     test-unit (2.2.0)
     vlad (1.4.0)
       open4
@@ -93,6 +97,8 @@ DEPENDENCIES
   searchlogic
   sequel
   shoulda (> 2.11.0)
+  simplecov (>= 0.4.0)
+  simplecov-rcov
   test-unit
   vlad
   vlad-git
