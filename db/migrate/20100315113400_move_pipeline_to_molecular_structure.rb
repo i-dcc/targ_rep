@@ -23,7 +23,11 @@ class MovePipelineToMolecularStructure < ActiveRecord::Migration
       targ_vec.save
     end
     
-    remove_foreign_key( :molecular_structures, :pipelines )
+    begin
+      remove_foreign_key( :molecular_structures, :pipelines )
+    rescue
+      execute("alter table molecular_structures drop foreign key alleles_pipeline_id_fk")
+    end
     remove_column :molecular_structures, :pipeline_id
   end
 end
