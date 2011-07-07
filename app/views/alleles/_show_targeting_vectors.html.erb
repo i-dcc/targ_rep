@@ -1,0 +1,30 @@
+<% unless @allele.targeting_vectors.empty? %>
+  <table class="list">
+    <thead>
+      <th>Pipeline</th>
+      <th>IKMC Project ID</th>
+      <th>Targeting Vector</th>
+      <th>Intermediate Vector</th>
+      <th>Report to Public</th>
+    </thead>
+    <tbody>
+      <% @allele.targeting_vectors.each do |targ_vec| %>
+        <tr class="<%= cycle("odd", "even") %>">
+          <td><%= targ_vec.pipeline.try(:name) %></td>
+          <td><%= targ_vec.ikmc_project_id %></td>
+          <td><%= targ_vec.name %></td>
+          <td><%= targ_vec.intermediate_vector %></td>
+          <td>
+            <% if targ_vec.report_to_public? %>
+              <span class="ss_sprite ss_tick">&nbsp;</span>
+            <% else %>
+              <span class="ss_sprite ss_cross">&nbsp;</span>
+            <% end %>
+          </td>
+        </tr>
+      <% end -%>
+    </tbody>
+  </table>
+<% else %>
+  <p>No targeting vectors</p>
+<% end -%>

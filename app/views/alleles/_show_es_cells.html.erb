@@ -1,0 +1,45 @@
+<% unless @es_cells.empty? %>
+  <table class="list">
+    <thead>
+      <tr>
+        <th>Pipeline</th>
+        <th>ES Cell</th>
+        <th>Targeting Vector</th>
+        <th>MGI Allele ID</th>
+        <th>Allele Symbol Superscript</th>
+        <th>Parental Cell Line</th>
+        <th>IKMC Project ID</th>
+        <th>Report to Public</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @es_cells.each do |es_cell| %>
+        <tr class="<%= cycle("odd", "even") %>">
+          <td><%= es_cell.pipeline.try(:name) %></td>
+          <td><%= es_cell.name %></td>
+          <td><%= es_cell.targeting_vector.try(:name) %></td>
+          <td><%= es_cell.mgi_allele_id %></td>
+          <td><%= es_cell.allele_symbol_superscript %></td>
+          <td><%= es_cell.parental_cell_line %></td>
+          <td><%= es_cell.ikmc_project_id %></td>
+          <td>
+            <% if es_cell.report_to_public? %>
+              <span class="ss_sprite ss_tick">&nbsp;</span>
+            <% else %>
+              <span class="ss_sprite ss_cross">&nbsp;</span>
+            <% end %>
+          </td>
+          <td><a href="#" class="es_cell_qc_toggle ss_sprite ss_magnifier">show/hide QC metrics</a></td>
+        </tr>
+        <tr class="es_cell_qc" style="display:none;">
+          <td colspan="9">
+            <%= render :partial => 'alleles/show_es_cells_qc', :locals => { :es_cell => es_cell } %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p>No ES Cells</p>
+<% end -%>

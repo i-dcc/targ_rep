@@ -15,9 +15,9 @@
 <table class="es_cell_qc_info">
   <caption>Distribution Centre QC <em>- please only enter if you are a distribution centre</em></caption>
   <tr>
-    <%= render :partial => 'alleles/es_cell_qc_th', :locals => { :name => "Karyotype (Low)", :symbol => :distribution_qc_karyotype_low } %>
+    <%= render :partial => 'alleles/show_es_cells_qc_title', :locals => { :name => "Karyotype (Low)", :symbol => :distribution_qc_karyotype_low } %>
     <td><%= f.text_field :distribution_qc_karyotype_low %></td>
-    <%= render :partial => 'alleles/es_cell_qc_th', :locals => { :name => "Karyotype (High)", :symbol => :distribution_qc_karyotype_high } %>
+    <%= render :partial => 'alleles/show_es_cells_qc_title', :locals => { :name => "Karyotype (High)", :symbol => :distribution_qc_karyotype_high } %>
     <td><%= f.text_field :distribution_qc_karyotype_high %></td>
     <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_copy_number } %>
   </tr>

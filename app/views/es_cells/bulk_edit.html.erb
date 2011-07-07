@@ -42,8 +42,9 @@
                 <th>TV IKMC Project ID</th>
                 <th>Pipeline</th>
                 <th>Allele Symbol Superscript</th>
-                <th>IKMC Project ID</th>
                 <th>Parental Cell Line</th>
+                <th>IKMC Project ID</th>
+                <th>Report to Public</th>
                 <th></th>
               </tr>
             </thead>
@@ -58,12 +59,13 @@
                 <% end %>
                 <td><%= f.select :pipeline_id, pipeline_list.unshift(['',nil]) %></td>
                 <td><%= f.text_field :allele_symbol_superscript %></td>
-                <td><%= f.text_field :ikmc_project_id %></td>
                 <td><%= f.text_field :parental_cell_line %></td>
+                <td><%= f.text_field :ikmc_project_id %></td>
+                <td><%= f.check_box :report_to_public %></td>
                 <td><a href="#" class="es_cell_qc_toggle ss_sprite ss_magnifier">show/hide QC metrics</a></td>
               </tr>
               <tr class="es_cell_qc">
-                <td colspan="7">
+                <td colspan="8">
                   <%= render :partial => 'alleles/es_cell_qc_form', :locals => { :f => f } %>
                 </td>
               </tr>

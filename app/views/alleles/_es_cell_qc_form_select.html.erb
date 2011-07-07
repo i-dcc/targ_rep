@@ -1,2 +1,2 @@
-<%= render :partial => 'alleles/es_cell_qc_th', :locals => { :symbol => symbol } %>
+<%= render :partial => 'alleles/show_es_cells_qc_title', :locals => { :symbol => symbol } %>
 <td><%= f.select( symbol, ESCELL_QC_OPTIONS[symbol.to_s][:values], { :include_blank => true } ) %></td>
