@@ -107,7 +107,7 @@ class ApplicationController < ActionController::Base
         @solr = RSolr.connect :url => 'http://www.sanger.ac.uk/mouseportal/solr'
       end
       
-      @solr.select( solr_args )
+      @solr.get 'select', :params => solr_args
     end
     
     # Helper function to slurp in all of the ES Cell QC descriptors

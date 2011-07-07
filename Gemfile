@@ -18,7 +18,7 @@ gem 'hoptoad_notifier'
 gem 'parallel'
 gem 'httparty'
 gem 'sequel'
-gem 'mysql2'
+gem 'mysql2', '< 0.3'
 gem 'rdoc'
 
 # bundler requires these gems in development and while running tests
