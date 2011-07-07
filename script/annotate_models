@@ -1,0 +1,3 @@
+#! /bin/sh
+
+annotate --show-indexes --show-migration --exclude tests,fixtures
