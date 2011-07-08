@@ -1,15 +1,16 @@
-<h2>Create a pipeline</h2>
-
-<% form_for @pipeline do |f| %>
-  <%= f.error_messages %>
-
-  <p>
-    <%= f.label :name %><br />
-    <%= f.text_field :name, :class => 'text' %>
-  </p>
-  <p>
-    <%= f.submit 'Create' %>
-  </p>
-<% end %>
-
-<%= link_to 'Back', pipelines_path %>
+<div class="grid_12">
+  <h2>Create a Pipeline</h2>
+  
+  <% form_for @pipeline do |f| %>
+    <%= f.error_messages %>
+    <p>
+      <%= f.label :name %><br />
+      <%= f.text_field :name, :class => 'text' %>
+    </p>
+    <p>
+      <%= f.submit 'Create' %>
+    </p>
+  <% end %>
+  
+  <%= link_to 'Back', pipelines_path %>
+</div>

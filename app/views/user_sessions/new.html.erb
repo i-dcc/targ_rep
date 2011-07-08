@@ -1,31 +1,36 @@
-<h2>Login</h2>
+<div class="grid_12">
+  <h2>Login</h2>
+  
+  <p>
+    If you would like a login, please <a href="mailto:htgt@sanger.ac.uk">contact us</a> 
+    for details.
+  </p>
+  
+  <% form_for @user_session, :url => user_sessions_path do |f| %>
+    <% unless f.error_messages.empty? %>
+      <div class="error">
+        <%= f.error_messages %>
+      </div>
+    <% end %>
 
-<p>If you would like a login, please <a href="mailto:htgt@sanger.ac.uk">contact us</a> for details.</p>
-
-<% form_for @user_session, :url => user_sessions_path do |f| %>
-  <% unless f.error_messages.empty? %>
-    <div class="error">
-      <%= f.error_messages %>
-    </div>
+    <p>
+      <%= f.label :username %><br />
+      <%= f.text_field :username, :class => :text %>
+    </p>
+  
+    <p>
+      <%= f.label :password %><br />
+      <%= f.password_field :password, :class => :text %>
+    </p>
+  
+    <p>
+      <%= f.check_box :remember_me %><%= f.label :remember_me %><br />
+    </p>
+  
+    <p>
+      <button type="submit" class="button positive">
+        <%= image_tag "led-icons/accept.png", :alt => "" %> Login
+      </button>
+    </p>
   <% end %>
-
-  <p>
-    <%= f.label :username %><br />
-    <%= f.text_field :username, :class => :text %>
-  </p>
-  
-  <p>
-    <%= f.label :password %><br />
-    <%= f.password_field :password, :class => :text %>
-  </p>
-  
-  <p>
-    <%= f.check_box :remember_me %><%= f.label :remember_me %><br />
-  </p>
-  
-  <p>
-    <button type="submit" class="button positive">
-      <%= image_tag "led-icons/accept.png", :alt => "" %> Login
-    </button>
-  </p>
-<% end %>
+</div>

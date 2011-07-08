@@ -1,8 +1,8 @@
-<div class="span-24">
+<div class="grid_12">
   <h3>Welcome</h3>
-<div>
+</div>
 
-<div class="span-12">
+<div class="grid_6">
   <p>
     Welcome to the IKMC Targeting Repository. This repository 
     compiles information on mutant ES Cells and Targeting vectors made by 
@@ -11,7 +11,7 @@
   </p>
 </div>
 
-<div class="span-12 last">
+<div class="grid_6">
   <p>
     <strong>Please note:</strong>
     This site is provided to enable IKMC members to <em>enter</em> product data. 
@@ -21,13 +21,13 @@
   </p>
 </div>
 
-<hr />
+<div class="grid_12 clear hr alpha omega"></div>
 
-<div class="span-24">
+<div class="grid_12">
   <h3>About</h3>
-<div>
-  
-<div class="span-12">
+</div>
+
+<div class="grid_6">
   <h4>Catalogue</h4>
   <p>
     This repository is a <em>catalogue</em> of targeted mutant alleles produced by the IKMC members and the mirKO program.
@@ -43,7 +43,7 @@
   </p>
 </div>
 
-<div class="span-12 last">
+<div class="grid_6">
   <h4>Genome Browser Track</h4>
   <p>
     All alleles in this repository will appear in the <a href="http://das.sanger.ac.uk/das/ikmc_products">IKMC DAS Track</a>, see 
@@ -54,13 +54,13 @@
   </p>
 </div>
 
-<hr />
+<div class="grid_12 clear hr alpha omega"></div>
 
-<div class="span-24">
+<div class="grid_12">
   <h3>Summary</h3>
-<div>
+</div>
 
-<div class="span-8">
+<div class="grid_4">
   <p>
     This repository currently houses information on <%= @total_counts[:alleles] %>
     alleles, covering <%= @total_counts[:genes] %> mouse genes, that have 
@@ -70,7 +70,7 @@
   </p>
 </div>
 
-<div class="span-16 last">
+<div class="grid_8">
   <table class="list">
     <thead>
       <tr>
@@ -78,7 +78,7 @@
         <th>Genes</th>
         <th>Alleles</th>
         <th>Vectors</th>
-        <th class="last">ES Cells</th>
+        <th>ES Cells</th>
       </tr>
     </thead>
     <tbody>
@@ -95,17 +95,14 @@
   </table>
 </div>
 
-<div class="clear"></div>
+<div class="grid_12 clear hr alpha omega"></div>
 
 <% if @current_user %>
-
-  <hr />
-
-  <div class="span-24">
+  <div class="grid_12">
     <h3>IKMC Members: Using This Site</h3>
   </div>
-
-  <div class="span-12">
+  
+  <div class="grid_6">
     <h4>How to Get Your Data in Here</h4>
     <p>
       There are two approaches that can be used to insert data into 
@@ -142,8 +139,8 @@
       <a href="https://github.com/i-dcc/targ_rep/wiki/Using-the-Web-Services%3A-Python">Python</a>.
     </p>
   </div>
-
-  <div class="span-12 last">
+  
+  <div class="grid_6">
     <h4>Our Terminology</h4>
     <dl>
       <di>
@@ -160,7 +157,7 @@
       Once your data is loaded into this repository, after approximately 24 hours 
       the data you have entered will automatically be transferred into the 
       <a href="http://www.knockoutmouse.org/biomart">IKMC Biomart</a>.  From here:
-    
+      
       <ul>
         <li>
           it will be linked with and displayed alongside all other data that is 
@@ -175,5 +172,4 @@
       </ul>
     </p>
   </div>
-
 <% end %>

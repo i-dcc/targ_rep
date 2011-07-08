@@ -1,67 +1,71 @@
-<h2>Alleles</h2>
+<div class="grid_12">
+  <h2>Alleles</h2>
+</div>
 
-<div id="search_box">
-  <h2>Search for alleles</h2>
+<div id="search_box" class="grid_12">
+  <h2>Search for Alleles</h2>
   <%= render :partial => 'search_form' %>
 </div>
 
-<%= will_paginate @alleles %>
+<div class="grid_12">
+  <%= will_paginate @alleles %>
 
-<table class="list">
-  <thead>
-    <tr>
-      <th>Pipeline(s)</th>
-      <th>MGI Accession ID</th>
-      <th>Design Type</th>
-      <th>Cassette</th>
-      <th>Backbone</th>
-      <th>Vectors</th>
-      <th>ES Cells</th>
-      <th>Targeted Trap</th>
-      <th class="last"></th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @alleles.each do |mol_struct| %>
-      <tr class="<%= cycle("odd", "even") %>">
-        <td><%= mol_struct.pipeline_names %></td>
-        <td><%= mol_struct.mgi_accession_id %></td>
-        <td><%= mol_struct.design_type %></td>
-        <td><%= mol_struct.cassette %></td>
-        <td><%= mol_struct.backbone %></td>
-        <td>
-          <% if mol_struct.targeting_vectors.size > 0 %>
-            <span class="ss_sprite ss_tick">&nbsp;</span>
-          <% else %>
-            <span class="ss_sprite ss_cross">&nbsp;</span>
-          <% end %>
-        </td>
-        <td>
-          <% if mol_struct.es_cells.size > 0 %>
-            <span class="ss_sprite ss_tick">&nbsp;</span>
-          <% else %>
-            <span class="ss_sprite ss_cross">&nbsp;</span>
-          <% end %>
-        </td>
-        <td><%= mol_struct.targeted_trap? %></td>
-        <td>
-          <%= link_to 'view', mol_struct, :class => "ss_sprite ss_magnifier" %>
-          <% if @current_user %>
-            <%= link_to 'edit', edit_allele_path(mol_struct), :class => "ss_sprite ss_pencil" %>
-            <% if @current_user == mol_struct.created_by or @current_user.is_admin %>
-              <%= link_to 'delete', mol_struct, :confirm => 'Are you sure?', :method => :delete, :class => "ss_sprite ss_cross" %>
-            <% end %>
-          <% end %>
-        </td>
+  <table class="list">
+    <thead>
+      <tr>
+        <th>Pipeline(s)</th>
+        <th>MGI Accession ID</th>
+        <th>Design Type</th>
+        <th>Cassette</th>
+        <th>Backbone</th>
+        <th>Vectors</th>
+        <th>ES Cells</th>
+        <th>Targeted Trap</th>
+        <th></th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% @alleles.each do |mol_struct| %>
+        <tr class="<%= cycle("odd", "even") %>">
+          <td><%= mol_struct.pipeline_names %></td>
+          <td><%= mol_struct.mgi_accession_id %></td>
+          <td><%= mol_struct.design_type %></td>
+          <td><%= mol_struct.cassette %></td>
+          <td><%= mol_struct.backbone %></td>
+          <td>
+            <% if mol_struct.targeting_vectors.size > 0 %>
+              <span class="ss_sprite ss_tick">&nbsp;</span>
+            <% else %>
+              <span class="ss_sprite ss_cross">&nbsp;</span>
+            <% end %>
+          </td>
+          <td>
+            <% if mol_struct.es_cells.size > 0 %>
+              <span class="ss_sprite ss_tick">&nbsp;</span>
+            <% else %>
+              <span class="ss_sprite ss_cross">&nbsp;</span>
+            <% end %>
+          </td>
+          <td><%= mol_struct.targeted_trap? %></td>
+          <td>
+            <%= link_to 'view', mol_struct, :class => "ss_sprite ss_magnifier" %>
+            <% if @current_user %>
+              <%= link_to 'edit', edit_allele_path(mol_struct), :class => "ss_sprite ss_pencil" %>
+              <% if @current_user == mol_struct.created_by or @current_user.is_admin %>
+                <%= link_to 'delete', mol_struct, :confirm => 'Are you sure?', :method => :delete, :class => "ss_sprite ss_cross" %>
+              <% end %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 
-<%= will_paginate @alleles %>
+  <%= will_paginate @alleles %>
 
-<% if @current_user %>
-<a href="<%= url_for(new_allele_path) %>" class="button positive">
-  <%= image_tag "led-icons/add.png", :alt => "" %> New Allele
-</a>
-<% end %>
+  <% if @current_user %>
+  <a href="<%= url_for(new_allele_path) %>" class="button positive">
+    <%= image_tag "led-icons/add.png", :alt => "" %> New Allele
+  </a>
+  <% end %>
+</div>

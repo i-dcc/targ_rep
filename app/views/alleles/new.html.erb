@@ -1,9 +1,11 @@
-<h2>Create an allele</h2>
+<div class="grid_12">
+  <h2>Create an allele</h2>
+</div>
 
 <% form_for @allele do |f| %>
   <%= render :partial => 'form', :locals => { :f => f, :allele => @allele } %>
   
-  <div id="buttons" class="span-24 last">
+  <div id="buttons" class="grid_12">
     <p>
       <button type="submit" class="button positive">
         <%= image_tag "led-icons/accept.png", :alt => "" %> Create

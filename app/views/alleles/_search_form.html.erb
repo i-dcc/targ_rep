@@ -51,11 +51,14 @@
     
     <tr>
       <td colspan="4">
-        <%= submit_tag "Search", :name => nil %>
-        <input type="reset" value="Reset" />
+        <button type="submit" class="button">
+          <%= image_tag "led-icons/find.png", :alt => "" %> Search
+        </button> 
+        
+        <button type="reset" class="button negative">
+          <%= image_tag "led-icons/cross.png", :alt => "" %> Reset
+        </button> 
       </td>
     </tr>
   </table>
-  
-  <div class="cleaner"></div>
 <% end %>

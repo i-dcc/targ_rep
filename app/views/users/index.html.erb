@@ -1,33 +1,35 @@
-<h2>Listing users</h2>
-
-<table>
-  <thead>
-    <th>Username</th>
-    <th>E-Mail</th>
-    <th>Last login at</th>
-    <th class="last">Action</th>
-  </thead>
-  <tbody>
-    <% @users.each do |user| %>
-      <tr class="<%= cycle("even", "odd") %>">
-        <td><%= user.username %></td>
-        <td><%= user.email %></td>
-        <td><%= user.last_login_at %></td>
-        <td>
-          <% if @current_user and @current_user.is_admin %>
-            <%= link_to 'show', user, :class => "ss_sprite ss_magnifier" %>
-            <%= link_to 'edit', edit_user_path(user), :class => "ss_sprite ss_pencil" %>
-            <%= link_to 'delete', user, :confirm => 'Are you sure?', :method => :delete, :class => "ss_sprite ss_cross" %>
-          <% end %>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-<br />
-
-<% if @current_user and @current_user.is_admin %>
-  <a href="<%= url_for(new_user_path) %>" class="button positive">
-    <%= image_tag "led-icons/add.png", :alt => "" %> New User
-  </a>
-<% end %>
+<div class="grid_12">
+  <h2>Users</h2>
+  
+  <table class="list">
+    <thead>
+      <th>Username</th>
+      <th>E-Mail</th>
+      <th>Last login at</th>
+      <th>Action</th>
+    </thead>
+    <tbody>
+      <% @users.each do |user| %>
+        <tr class="<%= cycle("even", "odd") %>">
+          <td><%= user.username %></td>
+          <td><%= user.email %></td>
+          <td><%= user.last_login_at %></td>
+          <td>
+            <% if @current_user and @current_user.is_admin %>
+              <%= link_to 'show', user, :class => "ss_sprite ss_magnifier" %>
+              <%= link_to 'edit', edit_user_path(user), :class => "ss_sprite ss_pencil" %>
+              <%= link_to 'delete', user, :confirm => 'Are you sure?', :method => :delete, :class => "ss_sprite ss_cross" %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <br />
+  
+  <% if @current_user and @current_user.is_admin %>
+    <a href="<%= url_for(new_user_path) %>" class="button positive">
+      <%= image_tag "led-icons/add.png", :alt => "" %> New User
+    </a>
+  <% end %>
+</div>

@@ -1,35 +1,38 @@
-<h2>History of Changes for Allele ID <%=h @allele.id %></h2>
+<div class="grid_12">
+  <h2>History of Changes for Allele ID <%=h @allele.id %></h2>
+</div>
 
-<div>
+<div class="grid_12">
   <%= link_to "back to allele page", allele_path(@allele), :class => "ss_sprite ss_magnifier" %>
 </div>
-<div class="clear"></div>
 
-<table class="list">
-  <thead>
-    <th>Version</th>
-    <th>Date</th>
-    <th colspan="2">Changes</th>
-  </thead>
-  <tbody>
-    <% @allele.audits.each do |revision| %>
-      <tr>
-        <td><%=h revision.version %></td>
-        <td><%=h revision.created_at.to_s(:long) %></td>
-        <% if revision.action == "create" %>
-          <td colspan="2">Creation of the object</td>
-        <% else %>
-          <td class="key"><%= revision.changes.keys.join('<br />') %></td>
-          <td>
-            <%
-              values = revision.changes.values.collect do |val|
-                "'#{val[0] ||= 'null'}' => '#{val[1]}'"
-              end
-            %>
-            <%= values.join('<br />') %>
-          </td>
-        <% end %>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+<div class="grid_12">
+  <table class="list">
+    <thead>
+      <th>Version</th>
+      <th>Date</th>
+      <th colspan="2">Changes</th>
+    </thead>
+    <tbody>
+      <% @allele.audits.each do |revision| %>
+        <tr>
+          <td><%=h revision.version %></td>
+          <td><%=h revision.created_at.to_s(:long) %></td>
+          <% if revision.action == "create" %>
+            <td colspan="2">Creation of the object</td>
+          <% else %>
+            <td class="key"><%= revision.changes.keys.join('<br />') %></td>
+            <td>
+              <%
+                values = revision.changes.values.collect do |val|
+                  "'#{val[0] ||= 'null'}' => '#{val[1]}'"
+                end
+              %>
+              <%= values.join('<br />') %>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

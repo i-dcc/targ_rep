@@ -1,24 +1,26 @@
-<h2>Pipelines</h2>
+<div class="grid_12">
+  <h2>Pipelines</h2>
 
-<table>
-  <thead>
-    <th>Name</th>
-    <th class="last"></th>
-  </thead>
-  <tbody>
-    <% @pipelines.each do |pipeline| %>
-      <tr class="<%= cycle("odd", "even") %>">
-        <td><%=h pipeline.name %></td>
-        <td>
-          <%= link_to 'view', pipeline, :class => "ss_sprite ss_magnifier" %>
-          <%= link_to 'edit', edit_pipeline_path(pipeline), :class => "ss_sprite ss_pencil" %>
-          <%= link_to 'delete', pipeline, :confirm => 'Are you sure?', :method => :delete, :class => "ss_sprite ss_cross" %>
-        </td>
-      </tr>
-    <% end -%>
-  </tbody>
-</table>
+  <table>
+    <thead>
+      <th>Name</th>
+      <th></th>
+    </thead>
+    <tbody>
+      <% @pipelines.each do |pipeline| %>
+        <tr class="<%= cycle("odd", "even") %>">
+          <td><%=h pipeline.name %></td>
+          <td>
+            <%= link_to 'view', pipeline, :class => "ss_sprite ss_magnifier" %>
+            <%= link_to 'edit', edit_pipeline_path(pipeline), :class => "ss_sprite ss_pencil" %>
+            <%= link_to 'delete', pipeline, :confirm => 'Are you sure?', :method => :delete, :class => "ss_sprite ss_cross" %>
+          </td>
+        </tr>
+      <% end -%>
+    </tbody>
+  </table>
 
-<br />
+  <br />
 
-<%= link_to 'New pipeline', new_pipeline_path %>
+  <%= link_to 'New pipeline', new_pipeline_path %>
+</div>

@@ -1,6 +1,6 @@
-<h2><%=h @user.username %></h2>
-
-<div class="span-12">
+<div class="grid_12">
+  <h2><%=h @user.username %></h2>
+  
   <fieldset id="account_details">
     <legend>Account Details</legend>
     <p>
@@ -22,10 +22,10 @@
       <%=h @user.last_login_at %>
     </p>
   </fieldset>
+  
+  <div class="clear"></div>
+  
+  <a href="<%= edit_user_path(@user) %>" class="button">
+    <%= image_tag "famfamfam/pencil.png", :alt => "" %> Edit
+  </a>
 </div>
-
-<div class="clear"></div>
-
-<a href="<%= edit_user_path(@user) %>" class="button">
-  <%= image_tag "famfamfam/pencil.png", :alt => "" %> Edit
-</a>

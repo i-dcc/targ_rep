@@ -1,8 +1,8 @@
-<h2>
-  <%= @allele.mgi_accession_id %> | Project Design ID: <%= @allele.project_design_id %>
-</h2>
+<div class="grid_12">
+  <h2><%= @allele.mgi_accession_id %> | Project Design ID: <%= @allele.project_design_id %></h2>
+</div>
 
-<div class="span-12">
+<div class="grid_6">
   <fieldset>
     <legend>Genomic Position</legend>
     <p><strong>Assembly:</strong> <%= @allele.assembly %></p>
@@ -29,14 +29,14 @@
   </fieldset>
 </div>
 
-<div class="span-12 last">
+<div class="grid_6">
   <fieldset>
     <legend>Molecular Co-Ordinates</legend>
     <table class="list">
       <thead>
         <th>Feature</th>
         <th>Start</th>
-        <th class="last">End</th>
+        <th>End</th>
       </thead>
       <tbody>
         <tr>
@@ -82,14 +82,14 @@
   </fieldset>
 </div>
 
-<div class="span-24 last">
+<div class="grid_12">
   <fieldset>
     <legend>Targeting Vectors</legend>
     <%= render :partial => 'alleles/show_targeting_vectors' %>
   </fieldset>
 </div>
 
-<div class="span-24 last">
+<div class="grid_12">
   <fieldset>
     <legend>ES Cells</legend>
     <%= render :partial => 'alleles/show_es_cells' %>
@@ -97,7 +97,7 @@
 </div>
 
 <% if @current_user %>
-<div class="span-24">
+<div class="grid_12">
   <a href="<%= edit_allele_path(@allele) %>" class="button">
     <%= image_tag "famfamfam/pencil.png", :alt => "" %> Edit
   </a>

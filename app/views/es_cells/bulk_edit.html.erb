@@ -1,6 +1,8 @@
-<div class="span-24"><h2>ES Cell Bulk Editing</h2><div>
+<% javascript 'dynamic_esc_qc_conflict_selects' %>
 
-<div class="span-24">
+<div class="grid_12">
+  <h2>ES Cell Bulk Editing</h2>
+  
   <% form_tag( { :action => 'bulk_edit' }, { :method => :post } ) do %>
     Enter a list of ES Cell names (one ES Cell per line) to edit and press search:<br />
     <%= 
@@ -13,28 +15,31 @@
       )
     %>
     <br />
-    <%= submit_tag "Search", :name => nil %>
+    <button type="submit" class="button">
+      <%= image_tag "led-icons/find.png", :alt => "" %> Search
+    </button> 
+    
   <% end %>
 </div>
 
 <% if @es_cells and @es_cells.size > 0 %>
-  <div class="clear"></div>
+  <div class="grid_12 clear hr alpha omega"></div>
   
-  <% pipeline_list = Pipeline.find(:all, :order => "name").collect {|p| [ p.name, p.id ] } %>
-  
-  <div class="span-24">
+  <div class="grid_12">
+    <% pipeline_list = Pipeline.find(:all, :order => "name").collect {|p| [ p.name, p.id ] } %>
+
     <% form_tag update_multiple_es_cells_path, :method => :put do %>
       <% @es_cells.each do |es_cell| %>
         <% fields_for "es_cells[]", es_cell do |f| %>
           <%= f.hidden_field :name %>
           <h3><%=h es_cell.name %></h3>
-          
+
           <% unless f.error_messages.empty? %>
             <div class="error">
               <%= f.error_messages :object_name => "es_cell" %>
             </div>
           <% end %>
-          
+
           <table class="list">
             <thead>
               <tr>
@@ -71,15 +76,12 @@
               </tr>
             </tbody>
           </table>
-          <hr />
         <% end %>
       <% end %>
-    
-      <p>
-        <button type="submit" class="button positive">
-          <%= image_tag "led-icons/accept.png", :alt => "" %> Save
-        </button> 
-      </p>
+
+      <button type="submit" class="button positive">
+        <%= image_tag "led-icons/accept.png", :alt => "" %> Save
+      </button> 
     <% end %>
   </div>
 <% end %>
