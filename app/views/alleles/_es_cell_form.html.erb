@@ -16,7 +16,7 @@
       new Ajax.Autocompleter(
         input_field_id,
         'autocomplete_for_' + input_field_id,
-        '/targeting_vectors.js',
+        '<%= url_for :controller => 'targeting_vectors', :action => 'index', :format => :js %>',
         {
           method: 'GET',
           min_chars: 2,
