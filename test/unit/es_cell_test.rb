@@ -129,6 +129,28 @@ class EsCellTest < ActiveSupport::TestCase
       assert_equal( "mirKO#{ allele.id }", es_cell.ikmc_project_id )
       assert_equal( targ_vec.ikmc_project_id, es_cell.ikmc_project_id )
     end
+
+    should "set the ES cell strain correctly" do
+      good_tests = {
+        'JM8N4'     => 'C57BL/6N',
+        'JM8wibble' => 'C57BL/6N',
+        'C2'        => 'C57BL/6N',
+        'C2.2'      => 'C57BL/6N',
+        'AB2.2'     => '129S7',
+        'AB2.2a'    => '129S7'
+      }
+
+      good_tests.each do |cell_line,expected_strain|
+        es_cell = Factory.create( :es_cell, :parental_cell_line => cell_line )
+        assert_equal( expected_strain, es_cell.strain )
+      end
+
+      ['JM4','wibble'].each do |cell_line|
+        es_cell = Factory.build( :es_cell, :parental_cell_line => cell_line )
+        assert_false es_cell.valid?
+        assert_false es_cell.save
+      end
+    end
   end
 end
 

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110707091231) do
+ActiveRecord::Schema.define(:version => 20110719134537) do
 
   create_table "alleles", :force => true do |t|
     t.string   "assembly",            :limit => 50,  :default => "NCBIM37", :null => false
@@ -117,12 +117,12 @@ ActiveRecord::Schema.define(:version => 20110707091231) do
     t.string   "mgi_allele_id",                         :limit => 50
     t.integer  "pipeline_id"
     t.boolean  "report_to_public",                                    :default => true, :null => false
+    t.string   "strain",                                :limit => 25
   end
 
   add_index "es_cells", ["allele_id"], :name => "es_cells_allele_id_fk"
   add_index "es_cells", ["name"], :name => "index_es_cells_on_name", :unique => true
   add_index "es_cells", ["pipeline_id"], :name => "es_cells_pipeline_id_fk"
-  add_index "es_cells", ["targeting_vector_id"], :name => "es_cells_targeting_vector_id_fk"
 
   create_table "genbank_files", :force => true do |t|
     t.integer  "allele_id",                              :null => false
@@ -193,7 +193,6 @@ ActiveRecord::Schema.define(:version => 20110707091231) do
 
   add_foreign_key "es_cells", "alleles", :name => "es_cells_allele_id_fk", :dependent => :delete
   add_foreign_key "es_cells", "pipelines", :name => "es_cells_pipeline_id_fk", :dependent => :delete
-  add_foreign_key "es_cells", "targeting_vectors", :name => "es_cells_targeting_vector_id_fk", :dependent => :delete
 
   add_foreign_key "genbank_files", "alleles", :name => "genbank_files_allele_id_fk", :dependent => :delete
 

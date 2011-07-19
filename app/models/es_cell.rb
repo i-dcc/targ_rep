@@ -27,6 +27,7 @@ class EsCell < ActiveRecord::Base
   validates_presence_of :name
   
   validate :allele_consistency, :unless => "[allele,targeting_vector].any?(&:nil?)"
+  validate :set_and_check_strain, :unless => Proc.new { |a| a.parental_cell_line.nil? }
     
   # Validate QC fields - the ESCELL_QC_OPTIONS constant comes from the 
   # es_cell_qc_options.rb initializer.
@@ -57,6 +58,7 @@ class EsCell < ActiveRecord::Base
   ##
   
   before_save :set_mirko_ikmc_project_id
+
   before_validation :convert_blanks_to_nil
   before_validation :stamp_tv_project_id_on_cell,       :if     => Proc.new { |a| a.ikmc_project_id.nil? }
   before_validation :convert_ikmc_project_id_to_string, :unless => Proc.new { |a| a.ikmc_project_id.is_a?(String) }
@@ -151,14 +153,27 @@ class EsCell < ActiveRecord::Base
         self.ikmc_project_id = "mirKO#{ self.allele_id }"
       end
     end
+
+    # Set the ES Cell Strain
+   def set_and_check_strain
+      self.strain = case self.parental_cell_line
+      when /JM8/    then 'C57BL/6N'
+      when /C2/     then 'C57BL/6N'
+      when /AB2\.2/ then '129S7'
+      else
+        errors.add( :parental_cell_line, "The parental cell line '#{self.parental_cell_line}' is not recognised" )
+      end
+    end
 end
 
 
 
 
 
+
+
 # == Schema Information
-# Schema version: 20110707091231
+# Schema version: 20110719134537
 #
 # Table name: es_cells
 #
@@ -205,6 +220,7 @@ end
 #  mgi_allele_id                         :string(50)
 #  pipeline_id                           :integer(4)
 #  report_to_public                      :boolean(1)      default(TRUE), not null
+#  strain                                :string(25)
 #
 # Indexes
 #
