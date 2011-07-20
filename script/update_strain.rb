@@ -1,6 +1,7 @@
 # Get all es_cells and set the strain...
 
-EsCell.find_each( :batch_size => 100 ) do |cell|
+EsCell.find_each( :batch_size => 500 ) do |cell|
+  next unless cell.strain.blank?
   unless cell.parental_cell_line.blank?
     cell.strain = case cell.parental_cell_line
     when /JM8/ then 'C57BL/6N'
