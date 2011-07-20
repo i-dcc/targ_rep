@@ -25,9 +25,10 @@ class EsCell < ActiveRecord::Base
   validates_presence_of :pipeline_id
   validates_presence_of :allele_id, :on => :save, :unless => :nested
   validates_presence_of :name
+  validates_presence_of :parental_cell_line
   
   validate :allele_consistency, :unless => "[allele,targeting_vector].any?(&:nil?)"
-  validate :set_and_check_strain, :unless => Proc.new { |a| a.parental_cell_line.nil? }
+  validate :set_and_check_strain
     
   # Validate QC fields - the ESCELL_QC_OPTIONS constant comes from the 
   # es_cell_qc_options.rb initializer.
@@ -157,9 +158,10 @@ class EsCell < ActiveRecord::Base
     # Set the ES Cell Strain
    def set_and_check_strain
       self.strain = case self.parental_cell_line
-      when /JM8/    then 'C57BL/6N'
-      when /C2/     then 'C57BL/6N'
-      when /AB2\.2/ then '129S7'
+      when /JM8/ then 'C57BL/6N'
+      when /C2/  then 'C57BL/6N'
+      when /AB2/ then '129S7'
+      when /SI2/ then '129S7'
       else
         errors.add( :parental_cell_line, "The parental cell line '#{self.parental_cell_line}' is not recognised" )
       end

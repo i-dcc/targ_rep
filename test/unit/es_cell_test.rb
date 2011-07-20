@@ -94,6 +94,7 @@ class EsCellTest < ActiveSupport::TestCase
       # ikmc_project_id is not provided
       es_cell = EsCell.new({
         :name                => 'EPD001',
+        :parental_cell_line  => 'JM8N4',
         :targeting_vector_id => targ_vec.id,
         :allele_id           => targ_vec.allele_id,
         :pipeline_id         => targ_vec.pipeline_id
@@ -111,6 +112,7 @@ class EsCellTest < ActiveSupport::TestCase
       
       es_cell = EsCell.new({
         :name                => "EPD12345678",
+        :parental_cell_line  => 'JM8N4',
         :ikmc_project_id     => 12345678,
         :targeting_vector_id => targ_vec.id,
         :allele_id           => targ_vec.allele_id,
@@ -130,14 +132,20 @@ class EsCellTest < ActiveSupport::TestCase
       assert_equal( targ_vec.ikmc_project_id, es_cell.ikmc_project_id )
     end
 
-    should "set the ES cell strain correctly" do
+    should "set the ES cell strain correctly and validate the presence of the parental_cell_line" do
+      es_cell = Factory.build( :es_cell, :parental_cell_line => nil )
+      assert_false es_cell.valid?
+      assert_false es_cell.save
+
       good_tests = {
         'JM8N4'     => 'C57BL/6N',
         'JM8wibble' => 'C57BL/6N',
         'C2'        => 'C57BL/6N',
         'C2.2'      => 'C57BL/6N',
         'AB2.2'     => '129S7',
-        'AB2.2a'    => '129S7'
+        'AB2.2a'    => '129S7',
+        'SI2'       => '129S7',
+        'SI2.2'     => '129S7'
       }
 
       good_tests.each do |cell_line,expected_strain|
