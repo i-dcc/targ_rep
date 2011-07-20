@@ -54,7 +54,7 @@ class AllelesControllerTest < ActionController::TestCase
     unlinked_es_cells = EsCell.targeting_vector_id_null.count
     linked_es_cells   = EsCell.targeting_vector_id_not_null.count
     
-    post :create, :allele => {
+    allele = {
       :assembly           => mol_struct[:assembly],
       :mgi_accession_id   => mol_struct[:mgi_accession_id],
       :project_design_id  => mol_struct[:project_design_id],
@@ -93,9 +93,9 @@ class AllelesControllerTest < ActionController::TestCase
       
       # ES Cells only related to allele
       :es_cells => [
-        { :name => Factory.attributes_for( :es_cell )[:name], :pipeline_id => targ_vec1[:pipeline_id] },
-        { :name => Factory.attributes_for( :es_cell )[:name], :pipeline_id => targ_vec1[:pipeline_id] },
-        { :name => Factory.attributes_for( :es_cell )[:name], :pipeline_id => targ_vec1[:pipeline_id] }
+        Factory.attributes_for( :es_cell, :pipeline_id => targ_vec1[:pipeline_id] ),
+        Factory.attributes_for( :es_cell, :pipeline_id => targ_vec1[:pipeline_id] ),
+        Factory.attributes_for( :es_cell, :pipeline_id => targ_vec1[:pipeline_id] )
       ],
       
       :genbank_file => {
@@ -103,6 +103,8 @@ class AllelesControllerTest < ActionController::TestCase
         :targeting_vector => genbank_file[:targeting_vector]
       }
     }
+
+    post :create, :allele => allele
     
     assert_equal( mol_struct_count + 1, Allele.all.count, "Controller should have created 1 valid allele." )
     assert_equal( targ_vec_count + 2, TargetingVector.all.count, "Controller should have created 2 valid targeting vectors." )
