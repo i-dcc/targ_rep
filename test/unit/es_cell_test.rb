@@ -138,6 +138,8 @@ class EsCellTest < ActiveSupport::TestCase
       assert_false es_cell.save
 
       good_tests = {
+        'JM8AN4'    => 'C57BL/6N-A<tm1Brd>/a',
+        'JM8.AN3'   => 'C57BL/6N-A<tm1Brd>/a',
         'JM8N4'     => 'C57BL/6N',
         'JM8wibble' => 'C57BL/6N',
         'C2'        => 'C57BL/6N',
