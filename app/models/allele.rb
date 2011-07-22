@@ -253,6 +253,8 @@ class Allele < ActiveRecord::Base
         'L1L2_Pgk_PM'             => 'Promotor Driven',
         'PGK_EM7_PuDtk_bGHpA'     => 'Promotor Driven',
         'pL1L2_PAT_B0'            => 'Promotor Driven',
+        'pL1L2_PAT_B1'            => 'Promotor Driven',
+        'pL1L2_PAT_B2'            => 'Promotor Driven',
         'TM-ZEN-UB1'              => 'Promotor Driven',
         'ZEN-Ub1'                 => 'Promotor Driven',
         'ZEN-UB1.GB'              => 'Promotor Driven',
