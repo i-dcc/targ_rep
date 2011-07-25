@@ -158,12 +158,12 @@ class EsCell < ActiveRecord::Base
     # Set the ES Cell Strain
    def set_and_check_strain
       self.strain = case self.parental_cell_line
-      when /JM8A/   then 'C57BL/6N-A<tm1Brd>/a'
-      when /JM8\.A/ then 'C57BL/6N-A<tm1Brd>/a'
-      when /JM8/    then 'C57BL/6N'
-      when /C2/     then 'C57BL/6N'
-      when /AB2/    then '129S7'
-      when /SI/     then '129S7'
+      when /^JM8A/   then 'C57BL/6N-A<tm1Brd>/a'
+      when /^JM8\.A/ then 'C57BL/6N-A<tm1Brd>/a'
+      when /^JM8/    then 'C57BL/6N'
+      when /^C2/     then 'C57BL/6N'
+      when /^AB2/    then '129S7'
+      when /^SI/     then '129S7'
       else
         errors.add( :parental_cell_line, "The parental cell line '#{self.parental_cell_line}' is not recognised" )
       end
