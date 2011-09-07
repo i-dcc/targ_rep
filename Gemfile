@@ -3,7 +3,7 @@ source :rubygems
 
 # rails requires these gems
 gem 'rails', '~> 2.3.12'
-gem 'rake', '0.8.7'
+gem 'rake'
 
 # bundler requires these gems in all environments
 gem 'biomart'
