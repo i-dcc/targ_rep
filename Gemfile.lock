@@ -1,9 +1,9 @@
 GIT
   remote: git@github.com:i-dcc/allele-imaging.git
-  revision: 386f75670fcb462e77aeeb66a0e44f6aba16382b
-  tag: v0.3.6
+  revision: fe34a4b1a6641ac1d0d8720bc9935ac9109f459a
+  tag: v0.3.7
   specs:
-    allele_image (0.3.6)
+    allele_image (0.3.7)
       bio
       rmagick
 
@@ -52,7 +52,7 @@ GEM
       activeresource (= 2.3.12)
       activesupport (= 2.3.12)
       rake (>= 0.8.3)
-    rake (0.9.2)
+    rake (0.8.7)
     rake-remote_task (2.0.4)
       open4 (~> 0.9.0)
       rake (~> 0.8)
@@ -83,7 +83,7 @@ PLATFORMS
 
 DEPENDENCIES
   acts_as_audited
-  allele_image (= 0.3.6)!
+  allele_image (= 0.3.7)!
   annotate
   authlogic
   awesome_print
@@ -97,6 +97,7 @@ DEPENDENCIES
   newrelic_rpm
   parallel
   rails (~> 2.3.12)
+  rake (= 0.8.7)
   rdoc
   rsolr
   searchlogic

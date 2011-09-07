@@ -3,6 +3,7 @@ source :rubygems
 
 # rails requires these gems
 gem 'rails', '~> 2.3.12'
+gem 'rake', '0.8.7'
 
 # bundler requires these gems in all environments
 gem 'biomart'
@@ -11,7 +12,7 @@ gem 'authlogic'
 gem 'searchlogic'
 gem 'acts_as_audited'
 gem 'foreigner'
-gem 'allele_image', '0.3.6', :git => 'git@github.com:i-dcc/allele-imaging.git', :tag => 'v0.3.6'
+gem 'allele_image', '0.3.7', :git => 'git@github.com:i-dcc/allele-imaging.git', :tag => 'v0.3.7'
 gem 'rsolr'
 gem 'newrelic_rpm'
 gem 'hoptoad_notifier'
