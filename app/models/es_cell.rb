@@ -1,35 +1,35 @@
 class EsCell < ActiveRecord::Base  
   acts_as_audited
   stampable
-  
+
   attr_accessor :nested
-  
+
   ##
   ## Associations
   ##
-  
+
   belongs_to :pipeline,         :class_name => 'Pipeline',        :foreign_key => 'pipeline_id',         :validate => true
   belongs_to :allele,           :class_name => 'Allele',          :foreign_key => 'allele_id',           :validate => true
   belongs_to :targeting_vector, :class_name => 'TargetingVector', :foreign_key => 'targeting_vector_id', :validate => true
-  
+
   has_many :es_cell_qc_conflicts, :class_name => 'EsCellQcConflict', :foreign_key => 'es_cell_id', :dependent => :destroy
-  
+
   accepts_nested_attributes_for :es_cell_qc_conflicts, :allow_destroy => true
-  
+
   ##
   ## Data validation
   ##
-  
+
   validates_uniqueness_of :name, :message => 'This ES Cell name has already been taken'
-  
+
   validates_presence_of :pipeline_id
   validates_presence_of :allele_id, :on => :save, :unless => :nested
   validates_presence_of :name
   validates_presence_of :parental_cell_line
-  
+
   validate :allele_consistency, :unless => "[allele,targeting_vector].any?(&:nil?)"
   validate :set_and_check_strain
-    
+
   # Validate QC fields - the ESCELL_QC_OPTIONS constant comes from the 
   # es_cell_qc_options.rb initializer.
   ESCELL_QC_OPTIONS.each_key do |qc_field|
@@ -38,26 +38,26 @@ class EsCell < ActiveRecord::Base
       :message   => "This QC metric can only be set as: #{ESCELL_QC_OPTIONS[qc_field.to_s][:values].join(', ')}",
       :allow_nil => true
   end
-  
+
   validates_numericality_of :distribution_qc_karyotype_low,
     :greater_than_or_equal_to => 0,
     :less_than_or_equal_to    => 1,
     :allow_nil                => true
-    
+
   validates_numericality_of :distribution_qc_karyotype_high,
     :greater_than_or_equal_to => 0,
     :less_than_or_equal_to    => 1,
     :allow_nil                => true
-  
+
   validates_format_of :mgi_allele_id,
     :with      => /^MGI\:\d+$/,
     :message   => "is not a valid MGI Allele ID",
     :allow_nil => true
-  
+
   ##
   ## Filters
   ##
-  
+
   before_save :set_mirko_ikmc_project_id
 
   before_validation :convert_blanks_to_nil
@@ -67,15 +67,15 @@ class EsCell < ActiveRecord::Base
   ##
   ## Methods
   ##
-  
+
   def targeting_vector_name
     targeting_vector.name if targeting_vector
   end
-  
+
   def targeting_vector_name=(name)
     self.targeting_vector = TargetingVector.find_by_name(name) unless name.blank?
   end
-  
+
   public
     def to_json( options = {} )
       EsCell.include_root_in_json = false
@@ -87,7 +87,7 @@ class EsCell < ActiveRecord::Base
       )
       super( options )
     end
-    
+
     def to_xml( options = {} )
       options.update(
         :skip_types => true,
@@ -97,11 +97,11 @@ class EsCell < ActiveRecord::Base
         }
       )
     end
-    
+
     def report_to_public?
       self.report_to_public
     end
-    
+
   protected
     # Convert any blank attribute strings to nil...
     def convert_blanks_to_nil
@@ -109,13 +109,13 @@ class EsCell < ActiveRecord::Base
         self.send("#{name}=".to_sym, nil) if value.is_a?(String) and value.empty?
       end
     end
-    
+
     # Helper function to solve the IKMC Project ID consistency validation 
     # errors when people are passing integers in as the id...
     def convert_ikmc_project_id_to_string
       self.ikmc_project_id = ikmc_project_id.to_s
     end
-    
+
     # Helper function to stamp the IKMC Project ID from 
     # the parent targeting vector on this cell if it's not 
     # been specifically entered
@@ -124,13 +124,13 @@ class EsCell < ActiveRecord::Base
         self.ikmc_project_id = targeting_vector.ikmc_project_id
       end
     end
-    
+
     # Compares targeting vector's molecular structure to
     # ES cell's molecular structure
     def allele_consistency
       my_allele       = self.allele
       targ_vec_allele = self.targeting_vector.allele
-      
+
       unless \
            targ_vec_allele.id == my_allele.id \
         or ( \
@@ -147,10 +147,10 @@ class EsCell < ActiveRecord::Base
         errors.add( :targeting_vector_id, "targeting vector's molecular structure differs from ES cell's molecular structure" )
       end
     end
-    
+
     # Set mirKO ikmc_project_ids to "mirKO#{self.allele_id}"
     def set_mirko_ikmc_project_id
-      if self.ikmc_project_id.nil? and self.pipeline.name == "mirKO"
+      if ( self.ikmc_project_id.blank? or self.ikmc_project_id =~ /^mirko$/i ) and self.pipeline.name == "mirKO"
         self.ikmc_project_id = "mirKO#{ self.allele_id }"
       end
     end
