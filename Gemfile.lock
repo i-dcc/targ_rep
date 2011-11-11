@@ -41,7 +41,6 @@ GEM
     httparty (0.7.8)
       crack (= 0.1.8)
     mysql2 (0.2.7)
-    newrelic_rpm (3.1.0)
     open4 (0.9.6)
     parallel (0.5.5)
     rack (1.1.2)
@@ -94,7 +93,6 @@ DEPENDENCIES
   hoptoad_notifier
   httparty
   mysql2 (< 0.3)
-  newrelic_rpm
   parallel
   rails (~> 2.3.12)
   rake
