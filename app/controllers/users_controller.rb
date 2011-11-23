@@ -29,7 +29,7 @@ class UsersController < ApplicationController
   def update
     if @user.update_attributes( params[:user] )
       flash[:success] = "Update successful"
-      redirect_to user_path( @user )
+      redirect_to users_path
     else
       render :action => :edit
     end
