@@ -1,9 +1,9 @@
 GIT
   remote: git@github.com:i-dcc/allele-imaging.git
-  revision: 1399f9de738b129e093aa85b667f589a2d067c42
-  tag: v0.3.9
+  revision: 67393c3a3c574ebba060397763c6393da5d00c5a
+  tag: v0.4.0
   specs:
-    allele_image (0.3.9)
+    allele_image (0.4.0)
       bio
       rmagick
 
@@ -82,7 +82,7 @@ PLATFORMS
 
 DEPENDENCIES
   acts_as_audited
-  allele_image (= 0.3.9)!
+  allele_image (= 0.4.0)!
   annotate
   authlogic
   awesome_print
