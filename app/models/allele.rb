@@ -276,6 +276,19 @@ class Allele < ActiveRecord::Base
         'Ifitm2_intron_L1L2_GT1_LF2A_LacZ_BetactP_neo' => 'Promotor Driven',
         'Ifitm2_intron_L1L2_GT2_LF2A_LacZ_BetactP_neo' => 'Promotor Driven',
         'Ifitm2_intron_L1L2_GTk_LacZ_BetactP_neo'      => 'Promotor Driven',
+        'pL1L2_GT0_T2A_H2BCherry_Puro_delRsrll_NO_DTA' => 'Promotor Driven',
+        'pL1L2_GT1_T2A_H2BCherry_Puro_delRsrll_NO_DTA' => 'Promotor Driven',
+        'pL1L2_GT2_T2A_H2BCherry_Puro_delRsrll_NO_DTA' => 'Promotor Driven',
+        'pL1L2_GT0_LF2A_H2BCherry_Puro'                => 'Promotor Driven',
+        'pL1L2_GT1_LF2A_H2BCherry_Puro'                => 'Promotor Driven',
+        'pL1L2_GT2_LF2A_H2BCherry_Puro'                => 'Promotor Driven',
+        'pL1L2_GT0_T2A_iCre_KI_Puro'                   => 'Promotor Driven',
+        'pL1L2_GT1_T2A_iCre_KI_Puro'                   => 'Promotor Driven',
+        'pL1L2_GT2_T2A_iCre_KI_Puro'                   => 'Promotor Driven',
+        'pL1L2_GT0_LF2A_nEGFPO_T2A_CreERT_puro'        => 'Promoterless',
+        'pL1L2_GT1_LF2A_nEGFPO_T2A_CreERT_puro'        => 'Promoterless',
+        'pL1L2_GT2_LF2A_nEGFPO_T2A_CreERT_puro'        => 'Promoterless',
+        'pL1L2_GTK_nEGFPO_T2A_CreERT_puro'             => 'Promoterless',
       }
 
       unless known_cassettes[cassette].nil?
