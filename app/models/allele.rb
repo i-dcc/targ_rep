@@ -285,10 +285,10 @@ class Allele < ActiveRecord::Base
         'pL1L2_GT0_T2A_iCre_KI_Puro'                   => 'Promotor Driven',
         'pL1L2_GT1_T2A_iCre_KI_Puro'                   => 'Promotor Driven',
         'pL1L2_GT2_T2A_iCre_KI_Puro'                   => 'Promotor Driven',
-        'pL1L2_GT0_LF2A_nEGFPO_T2A_CreERT_puro'        => 'Promoterless',
-        'pL1L2_GT1_LF2A_nEGFPO_T2A_CreERT_puro'        => 'Promoterless',
-        'pL1L2_GT2_LF2A_nEGFPO_T2A_CreERT_puro'        => 'Promoterless',
-        'pL1L2_GTK_nEGFPO_T2A_CreERT_puro'             => 'Promoterless',
+        'pL1L2_GT0_LF2A_nEGFPO_T2A_CreERT_puro'        => 'Promotorless',
+        'pL1L2_GT1_LF2A_nEGFPO_T2A_CreERT_puro'        => 'Promotorless',
+        'pL1L2_GT2_LF2A_nEGFPO_T2A_CreERT_puro'        => 'Promotorless',
+        'pL1L2_GTK_nEGFPO_T2A_CreERT_puro'             => 'Promotorless',
       }
 
       unless known_cassettes[cassette].nil?
