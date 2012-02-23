@@ -1,6 +1,6 @@
 GIT
   remote: git@github.com:i-dcc/allele-imaging.git
-  revision: 3eca0aef0f0e467e20ac543813486fd4f9074c83
+  revision: fc43a93de2814e067ef60ace428a0fb64d0cffb0
   specs:
     allele_image (0.4.1)
       bio
