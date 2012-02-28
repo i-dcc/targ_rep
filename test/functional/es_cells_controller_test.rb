@@ -143,7 +143,7 @@ class EsCellsControllerTest < ActionController::TestCase
     assert_response :success, "Unable to open /es_cells/bulk_edit with an es_cell_names parameter"
   end
 
-  should "allow us to create/get using added distribution attributes" do
+  should "allow us to create/get using new distribution attributes" do
     pipeline      = Factory.create( :pipeline )
     es_cell_attrs = Factory.attributes_for( :es_cell )
 
@@ -163,9 +163,7 @@ class EsCellsControllerTest < ActionController::TestCase
 
     settings = ['pass', 'fail', nil]
 
-    distribution_attributes.each do |name|
-      hash[name] = settings.sample
-    end
+    distribution_attributes.each { |name| hash[name] = settings.sample }
 
     assert_difference('EsCell.count') do
       post :create, :es_cell => hash
@@ -181,14 +179,7 @@ class EsCellsControllerTest < ActionController::TestCase
 
     created_es_cell = EsCell.find_by_name(es_cell_attrs[:name])
 
-    hash.keys.each do |key|
-      assert_equal hash[key], created_es_cell[key]
-    end
-
-    #hash[:distribution_loa] = 'wibble'
-    #post :create, :es_cell => hash
-    #assert_response 400, "Trying to create an illegal ES Cell"
-
+    hash.keys.each { |key| assert_equal hash[key], created_es_cell[key] }
   end
 
   should "prevent create using illegally set distribution attribute" do
