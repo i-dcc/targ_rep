@@ -143,7 +143,7 @@ class EsCellsControllerTest < ActionController::TestCase
     assert_response :success, "Unable to open /es_cells/bulk_edit with an es_cell_names parameter"
   end
 
-  should "allow us to create/get using new distribution attributes" do
+  should "allow us to create/get using added distribution attributes" do
     pipeline      = Factory.create( :pipeline )
     es_cell_attrs = Factory.attributes_for( :es_cell )
 
@@ -155,25 +155,18 @@ class EsCellsControllerTest < ActionController::TestCase
         :mgi_allele_id       => es_cell_attrs[:mgi_allele_id],
         :pipeline_id         => pipeline.id
     }
-    list = [
-      :distribution_loa,
-      :distribution_loxp,
-      :distribution_lacz,
-      :distribution_chr1,
-      :distribution_chr8a,
-      :distribution_chr8b,
-      :distribution_chr11a,
-      :distribution_chr11b,
-      :distribution_chry
+
+    distribution_attributes = [
+      :distribution_loa, :distribution_loxp, :distribution_lacz, :distribution_chr1,
+      :distribution_chr8a, :distribution_chr8b, :distribution_chr11a,:distribution_chr11b, :distribution_chry
     ]
 
-    setting = 'fail'
+    settings = ['pass', 'fail', nil]
 
-    list.each do |name|
-      hash[name] = setting
+    distribution_attributes.each do |name|
+      hash[name] = settings.sample
     end
 
-    # CREATE
     assert_difference('EsCell.count') do
       post :create, :es_cell => hash
     end
@@ -186,11 +179,32 @@ class EsCellsControllerTest < ActionController::TestCase
     get :show, :id => created_es_cell.id, :es_cell => {:id => created_es_cell.id}
     assert_response :success, "Could not read ES Cell"
 
-    created_es_cell = EsCell.search(:name => es_cell_attrs[:name]).last
+    created_es_cell = EsCell.find_by_name(es_cell_attrs[:name])
 
-    list.each do |name|
-      assert setting == created_es_cell[name]
+    hash.keys.each do |key|
+      assert_equal hash[key], created_es_cell[key]
     end
 
+    #hash[:distribution_loa] = 'wibble'
+    #post :create, :es_cell => hash
+    #assert_response 400, "Trying to create an illegal ES Cell"
+
   end
+
+  should "prevent create using illegally set distribution attribute" do
+    pipeline      = Factory.create( :pipeline )
+    es_cell_attrs = Factory.attributes_for( :es_cell )
+    hash = {
+        :name                => es_cell_attrs[:name],
+        :parental_cell_line  => es_cell_attrs[:parental_cell_line],
+        :targeting_vector_id => EsCell.first.targeting_vector_id,
+        :allele_id           => EsCell.first.allele_id,
+        :mgi_allele_id       => es_cell_attrs[:mgi_allele_id],
+        :pipeline_id         => pipeline.id,
+        :distribution_loa    => 'wibble'
+    }
+    post :create, :es_cell => hash
+    assert_response 400, "Trying to create an illegal ES Cell"
+  end
+
 end
