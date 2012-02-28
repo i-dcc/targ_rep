@@ -143,7 +143,7 @@ class EsCellsControllerTest < ActionController::TestCase
     assert_response :success, "Unable to open /es_cells/bulk_edit with an es_cell_names parameter"
   end
 
-  should "allow us to create/get using new attributes" do
+  should "allow us to create/get using new distribution attributes" do
     pipeline      = Factory.create( :pipeline )
     es_cell_attrs = Factory.attributes_for( :es_cell )
 
@@ -153,8 +153,7 @@ class EsCellsControllerTest < ActionController::TestCase
         :targeting_vector_id => EsCell.first.targeting_vector_id,
         :allele_id           => EsCell.first.allele_id,
         :mgi_allele_id       => es_cell_attrs[:mgi_allele_id],
-        :pipeline_id         => pipeline.id,
-        :distribution_loa    => 'fail'
+        :pipeline_id         => pipeline.id
     }
     list = [
       :distribution_loa,
@@ -184,21 +183,10 @@ class EsCellsControllerTest < ActionController::TestCase
     created_es_cell.created_by = @request.session["user_credentials_id"]
     created_es_cell.save
 
-    # GET
-#    get :update, :id => created_es_cell.id
-#    get :show, :es_cell => { :id => created_es_cell.id }, :format => :json
-#    put :update, :id => created_es_cell.id, :es_cell => { :name => 'new name' }
-#    get :show, :id => created_es_cell.id, :es_cell => { :id => created_es_cell.id }, :format => :json
-#    get :show, :es_cell => {:id => created_es_cell.id}, :format => :json
-#    get :show, :id => created_es_cell.id, :es_cell => {:id => created_es_cell.id}, :format => :json
-#    puts response.inspect
-
     get :show, :id => created_es_cell.id, :es_cell => {:id => created_es_cell.id}
     assert_response :success, "Could not read ES Cell"
 
     created_es_cell = EsCell.search(:name => es_cell_attrs[:name]).last
-
-    puts created_es_cell.inspect
 
     list.each do |name|
       assert setting == created_es_cell[name]
@@ -206,13 +194,3 @@ class EsCellsControllerTest < ActionController::TestCase
 
   end
 end
-
-#  distribution_loa                      :string(4)
-#  distribution_loxp                     :string(4)
-#  distribution_lacz                     :string(4)
-#  distribution_chr1                     :string(4)
-#  distribution_chr8a                    :string(4)
-#  distribution_chr8b                    :string(4)
-#  distribution_chr11a                   :string(4)
-#  distribution_chr11b                   :string(4)
-#  distribution_chry                     :string(4)
