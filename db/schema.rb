@@ -118,15 +118,15 @@ ActiveRecord::Schema.define(:version => 20120228101846) do
     t.integer  "pipeline_id"
     t.boolean  "report_to_public",                                    :default => true, :null => false
     t.string   "strain",                                :limit => 25
-    t.string   "distribution_loa",                      :limit => 4
-    t.string   "distribution_loxp",                     :limit => 4
-    t.string   "distribution_lacz",                     :limit => 4
-    t.string   "distribution_chr1",                     :limit => 4
-    t.string   "distribution_chr8a",                    :limit => 4
-    t.string   "distribution_chr8b",                    :limit => 4
-    t.string   "distribution_chr11a",                   :limit => 4
-    t.string   "distribution_chr11b",                   :limit => 4
-    t.string   "distribution_chry",                     :limit => 4
+    t.string   "distribution_qc_loa",                   :limit => 4
+    t.string   "distribution_qc_loxp",                  :limit => 4
+    t.string   "distribution_qc_lacz",                  :limit => 4
+    t.string   "distribution_qc_chr1",                  :limit => 4
+    t.string   "distribution_qc_chr8a",                 :limit => 4
+    t.string   "distribution_qc_chr8b",                 :limit => 4
+    t.string   "distribution_qc_chr11a",                :limit => 4
+    t.string   "distribution_qc_chr11b",                :limit => 4
+    t.string   "distribution_qc_chry",                  :limit => 4
   end
 
   add_index "es_cells", ["allele_id"], :name => "es_cells_allele_id_fk"

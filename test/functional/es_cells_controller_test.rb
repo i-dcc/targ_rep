@@ -157,8 +157,8 @@ class EsCellsControllerTest < ActionController::TestCase
     }
 
     distribution_attributes = [
-      :distribution_loa, :distribution_loxp, :distribution_lacz, :distribution_chr1,
-      :distribution_chr8a, :distribution_chr8b, :distribution_chr11a,:distribution_chr11b, :distribution_chry
+      :distribution_qc_loa, :distribution_qc_loxp, :distribution_qc_lacz, :distribution_qc_chr1,
+      :distribution_qc_chr8a, :distribution_qc_chr8b, :distribution_qc_chr11a,:distribution_qc_chr11b, :distribution_qc_chry
     ]
 
     settings = ['pass', 'fail', nil]
@@ -192,7 +192,7 @@ class EsCellsControllerTest < ActionController::TestCase
         :allele_id           => EsCell.first.allele_id,
         :mgi_allele_id       => es_cell_attrs[:mgi_allele_id],
         :pipeline_id         => pipeline.id,
-        :distribution_loa    => 'wibble'
+        :distribution_qc_loa    => 'wibble'
     }
     post :create, :es_cell => hash
     assert_response 400, "Trying to create an illegal ES Cell"

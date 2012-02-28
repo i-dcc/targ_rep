@@ -219,15 +219,15 @@ end
 #  pipeline_id                           :integer(4)
 #  report_to_public                      :boolean(1)      default(TRUE), not null
 #  strain                                :string(25)
-#  distribution_loa                      :string(4)
-#  distribution_loxp                     :string(4)
-#  distribution_lacz                     :string(4)
-#  distribution_chr1                     :string(4)
-#  distribution_chr8a                    :string(4)
-#  distribution_chr8b                    :string(4)
-#  distribution_chr11a                   :string(4)
-#  distribution_chr11b                   :string(4)
-#  distribution_chry                     :string(4)
+#  distribution_qc_loa                      :string(4)
+#  distribution_qc_loxp                     :string(4)
+#  distribution_qc_lacz                     :string(4)
+#  distribution_qc_chr1                     :string(4)
+#  distribution_qc_chr8a                    :string(4)
+#  distribution_qc_chr8b                    :string(4)
+#  distribution_qc_chr11a                   :string(4)
+#  distribution_qc_chr11b                   :string(4)
+#  distribution_qc_chry                     :string(4)
 #
 # Indexes
 #

@@ -43,15 +43,15 @@ class EsCellTest < ActiveSupport::TestCase
   end
 
   pass_fail_nil_only_qc_fields = [
-    :distribution_loa,
-    :distribution_loxp,
-    :distribution_lacz,
-    :distribution_chr1,
-    :distribution_chr8a,
-    :distribution_chr8b,
-    :distribution_chr11a,
-    :distribution_chr11b,
-    :distribution_chry
+    :distribution_qc_loa,
+    :distribution_qc_loxp,
+    :distribution_qc_lacz,
+    :distribution_qc_chr1,
+    :distribution_qc_chr8a,
+    :distribution_qc_chr8b,
+    :distribution_qc_chr11a,
+    :distribution_qc_chr11b,
+    :distribution_qc_chry
   ]
 
   pass_fail_nil_only_qc_fields.each do |qc_field|

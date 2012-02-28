@@ -30,15 +30,15 @@ qc_metrics = {
   "user_qc_five_prime_cassette_integrity" => { :name => "5' Cassette Integrity" },
   "user_qc_neo_sr_pcr"                    => { :name => "Neo SR-PCR" },
 
-  "distribution_loa"                      => { :name => "Distribution loa",     :values => ["pass","fail",nil] },
-  "distribution_loxp"                     => { :name => "Distribution loxp",    :values => ["pass","fail",nil] },
-  "distribution_lacz"                     => { :name => "Distribution lacz",    :values => ["pass","fail",nil] },
-  "distribution_chr1"                     => { :name => "Distribution chr1",    :values => ["pass","fail",nil] },
-  "distribution_chr8a"                    => { :name => "Distribution chr8a",   :values => ["pass","fail",nil] },
-  "distribution_chr8b"                    => { :name => "Distribution chr8b",   :values => ["pass","fail",nil] },
-  "distribution_chr11a"                   => { :name => "Distribution chr11a",  :values => ["pass","fail",nil] },
-  "distribution_chr11b"                   => { :name => "Distribution chr11b",  :values => ["pass","fail",nil] },
-  "distribution_chry"                     => { :name => "Distribution chry",    :values => ["pass","fail",nil] }
+  "distribution_qc_loa"                      => { :name => "Distribution loa",     :values => ["pass","fail",nil] },
+  "distribution_qc_loxp"                     => { :name => "Distribution loxp",    :values => ["pass","fail",nil] },
+  "distribution_qc_lacz"                     => { :name => "Distribution lacz",    :values => ["pass","fail",nil] },
+  "distribution_qc_chr1"                     => { :name => "Distribution chr1",    :values => ["pass","fail",nil] },
+  "distribution_qc_chr8a"                    => { :name => "Distribution chr8a",   :values => ["pass","fail",nil] },
+  "distribution_qc_chr8b"                    => { :name => "Distribution chr8b",   :values => ["pass","fail",nil] },
+  "distribution_qc_chr11a"                   => { :name => "Distribution chr11a",  :values => ["pass","fail",nil] },
+  "distribution_qc_chr11b"                   => { :name => "Distribution chr11b",  :values => ["pass","fail",nil] },
+  "distribution_qc_chry"                     => { :name => "Distribution chry",    :values => ["pass","fail",nil] }
 }
 
 qc_metrics.each do |field,data|
