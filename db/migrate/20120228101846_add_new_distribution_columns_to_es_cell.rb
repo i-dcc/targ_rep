@@ -23,23 +23,3 @@ class AddNewDistributionColumnsToEsCell < ActiveRecord::Migration
     remove_column :es_cells, :distribution_chry
   end
 end
-
-
-#Add these fields to the ES cells model and REST interface
-#
-#Distribution centre:
-#
-#QC fields:
-#distribution_loa << this could be found by 3' or 5' probe
-#distribution_loxp << taqman -based check with probe in loxp
-#distribution_lacz << taqman -based check with probe in lacz part of cassette
-#distribution_chr1
-#distribution_chr8a
-#distribution_chr8b
-#distribution_chr11a
-#distribution_chr11b
-#distribution_chry
-#
-#Each field has to store these values:
-#
-#pass, fail, null
