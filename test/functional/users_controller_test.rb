@@ -4,7 +4,7 @@ class UsersControllerTest < ActionController::TestCase
   setup do
     UserSession.create Factory.build( :user, :is_admin => true )
   end
-  
+
   should "get index" do
     get :index
     assert_response :success
@@ -24,7 +24,7 @@ class UsersControllerTest < ActionController::TestCase
 
     assert_redirected_to user_path( assigns(:user) )
   end
-  
+
   should "not create user" do
     assert_no_difference('User.count') do
       post :create, :user => Factory.attributes_for( :invalid_user )
@@ -46,9 +46,9 @@ class UsersControllerTest < ActionController::TestCase
   should "update user" do
     UserSession.create(User.first)
     put :update, :user => { }
-    assert_redirected_to user_path( User.first )
+    assert_redirected_to users_path
   end
-  
+
   should "not update user" do
     new_user = Factory.create( :user )
     UserSession.create(User.first)
