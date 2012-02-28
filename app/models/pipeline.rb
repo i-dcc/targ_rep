@@ -1,24 +1,22 @@
 class Pipeline < ActiveRecord::Base
-  
+
   Pipeline.include_root_in_json = false
-  
+
   ##
   ## Associations
   ##
-  
+
   has_many :targeting_vectors,  :class_name => "TargetingVector", :foreign_key => "pipeline_id", :dependent => :destroy
   has_many :es_cells,           :class_name => "EsCell",          :foreign_key => "pipeline_id", :dependent => :destroy
-  
+
   ##
   ## Validations
   ##
-  
+
   validates_uniqueness_of :name, :message => 'This pipeline name has already been taken'
   validates_presence_of   :name
-  
+
 end
-
-
 
 # == Schema Information
 #

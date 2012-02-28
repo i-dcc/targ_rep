@@ -42,8 +42,8 @@ class Allele < ActiveRecord::Base
     :cassette_type
   ]
 
-  validates_inclusion_of :cassette_type, 
-    :in => ['Promotorless','Promotor Driven'], 
+  validates_inclusion_of :cassette_type,
+    :in => ['Promotorless','Promotor Driven'],
     :message => "Cassette Type can only be 'Promotorless' or 'Promotor Driven'"
 
   validates_inclusion_of :strand,
@@ -84,7 +84,7 @@ class Allele < ActiveRecord::Base
   validates_numericality_of :loxp_start,         :only_integer => true, :greater_than => 0, :allow_nil => true
   validates_numericality_of :loxp_end,           :only_integer => true, :greater_than => 0, :allow_nil => true
 
-  validate :has_right_features, 
+  validate :has_right_features,
     :unless => "[mgi_accession_id, assembly, chromosome, strand, design_type,
     homology_arm_start, homology_arm_end, cassette_start, cassette_end].any?(&:nil?)"
 
@@ -301,7 +301,6 @@ class Allele < ActiveRecord::Base
 end
 
 # == Schema Information
-# Schema version: 20110701094136
 #
 # Table name: alleles
 #

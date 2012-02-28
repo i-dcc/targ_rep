@@ -71,7 +71,6 @@ class TargetingVector < ActiveRecord::Base
 end
 
 # == Schema Information
-# Schema version: 20110707091231
 #
 # Table name: targeting_vectors
 #

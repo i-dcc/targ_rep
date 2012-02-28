@@ -1,4 +1,4 @@
-class EsCell < ActiveRecord::Base  
+class EsCell < ActiveRecord::Base
   acts_as_audited
   stampable
 
@@ -30,7 +30,7 @@ class EsCell < ActiveRecord::Base
   validate :allele_consistency, :unless => "[allele,targeting_vector].any?(&:nil?)"
   validate :set_and_check_strain
 
-  # Validate QC fields - the ESCELL_QC_OPTIONS constant comes from the 
+  # Validate QC fields - the ESCELL_QC_OPTIONS constant comes from the
   # es_cell_qc_options.rb initializer.
   ESCELL_QC_OPTIONS.each_key do |qc_field|
     validates_inclusion_of qc_field,
@@ -110,14 +110,14 @@ class EsCell < ActiveRecord::Base
       end
     end
 
-    # Helper function to solve the IKMC Project ID consistency validation 
+    # Helper function to solve the IKMC Project ID consistency validation
     # errors when people are passing integers in as the id...
     def convert_ikmc_project_id_to_string
       self.ikmc_project_id = ikmc_project_id.to_s
     end
 
-    # Helper function to stamp the IKMC Project ID from 
-    # the parent targeting vector on this cell if it's not 
+    # Helper function to stamp the IKMC Project ID from
+    # the parent targeting vector on this cell if it's not
     # been specifically entered
     def stamp_tv_project_id_on_cell
       if ikmc_project_id.nil? and targeting_vector
@@ -172,7 +172,6 @@ class EsCell < ActiveRecord::Base
 end
 
 # == Schema Information
-# Schema version: 20110719134537
 #
 # Table name: es_cells
 #
@@ -220,6 +219,15 @@ end
 #  pipeline_id                           :integer(4)
 #  report_to_public                      :boolean(1)      default(TRUE), not null
 #  strain                                :string(25)
+#  distribution_loa                      :string(4)
+#  distribution_loxp                     :string(4)
+#  distribution_lacz                     :string(4)
+#  distribution_chr1                     :string(4)
+#  distribution_chr8a                    :string(4)
+#  distribution_chr8b                    :string(4)
+#  distribution_chr11a                   :string(4)
+#  distribution_chr11b                   :string(4)
+#  distribution_chry                     :string(4)
 #
 # Indexes
 #

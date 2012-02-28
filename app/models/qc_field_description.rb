@@ -4,8 +4,6 @@ class QcFieldDescription < ActiveRecord::Base
   validates_presence_of :description
 end
 
-
-
 # == Schema Information
 #
 # Table name: qc_field_descriptions
