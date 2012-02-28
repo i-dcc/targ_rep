@@ -6,29 +6,29 @@ class EsCellsControllerTest < ActionController::TestCase
     UserSession.create user
     Factory.create(:es_cell)
   end
-  
+
   teardown do
     session = UserSession.find
     session.destroy
   end
-  
+
   should "allow us to GET /index" do
     get :index
     assert_response :success
   end
-  
+
   should "not allow us to GET /new" do
     assert_raise(ActionController::UnknownAction) { get :new }
   end
-  
+
   should "not allow us to GET /edit without a cell id" do
     assert_raise(ActionController::UnknownAction) { get :edit }
   end
-  
+
   should "allow us to create, update and delete an es_cell we made" do
     pipeline      = Factory.create( :pipeline )
     es_cell_attrs = Factory.attributes_for( :es_cell )
-    
+
     # CREATE
     assert_difference('EsCell.count') do
       post :create, :es_cell => {
@@ -41,26 +41,26 @@ class EsCellsControllerTest < ActionController::TestCase
       }
     end
     assert_response :success, "Could not create ES Cell"
-    
+
     created_es_cell = EsCell.search(:name => es_cell_attrs[:name]).last
     created_es_cell.created_by = @request.session["user_credentials_id"]
     created_es_cell.save
-    
+
     # UPDATE
     put :update, :id => created_es_cell.id, :es_cell => { :name => 'new name' }
     assert_response :success, "Could not update ES Cell"
-    
+
     # DELETE
     assert_difference('EsCell.count', -1) do
       delete :destroy, :id => created_es_cell.id
     end
     assert_response :success, "Could not delete ES Cell"
   end
-    
+
   should "allow us to create without providing a targeting vector" do
     pipeline      = Factory.create( :pipeline )
     es_cell_attrs = Factory.attributes_for( :es_cell )
-    
+
     assert_difference('EsCell.count') do
       post :create, :es_cell => {
         :name               => es_cell_attrs[:name],
@@ -72,16 +72,16 @@ class EsCellsControllerTest < ActionController::TestCase
     end
     assert_response :success
   end
-  
+
   should "show an es_cell" do
     es_cell_id = EsCell.first.id
-    
+
     get :show, :format => "html", :id => es_cell_id
     assert_response 406, "Controller should not allow HTML display"
-    
+
     get :show, :format => "json", :id => es_cell_id
     assert_response :success, "Controller does not allow JSON display"
-    
+
     get :show, :format => "xml", :id => es_cell_id
     assert_response :success, "Controller does not allow XML display"
   end
@@ -90,7 +90,7 @@ class EsCellsControllerTest < ActionController::TestCase
     pipeline        = Factory.create( :pipeline )
     es_cell_attrs   = Factory.attributes_for( :es_cell )
     another_escell  = Factory.create( :es_cell )
-    
+
     # CREATE a valid ES Cell
     assert_difference('EsCell.count') do
       post :create, :es_cell => {
@@ -103,9 +103,9 @@ class EsCellsControllerTest < ActionController::TestCase
       }
     end
     assert_response :success
-    
+
     created_es_cell = EsCell.search(:name => es_cell_attrs[:name]).first
-    
+
     # UPDATE - should fail as we're trying to enter a duplicate name
     put :update, :id => created_es_cell.id, :es_cell => { :name => another_escell.name }
     assert_response 400
@@ -118,28 +118,101 @@ class EsCellsControllerTest < ActionController::TestCase
     end
     assert_response 302
   end
-  
+
   should "allow us to reparent an es_cell if we need to" do
     es_cell        = Factory.create( :es_cell, { :targeting_vector => nil } )
     current_parent = es_cell.allele
     new_parent     = Factory.create( :allele )
-    
+
     assert_equal( es_cell.allele_id, current_parent.id, "WTF? The es_cell doesn't have the correct allele_id in the first place..." )
-    
+
     put :update, :id => es_cell.id, :es_cell => { :allele_id => new_parent.id }
     assert_response :success
-    
+
     es_cell = EsCell.find(es_cell.id)
-    
+
     assert_not_equal( es_cell.allele_id, current_parent.id, "Ooops, we haven't switched parents..." )
     assert_equal( es_cell.allele_id, new_parent.id, "Ooops, we haven't switched parents..." )
   end
-  
+
   should "allow us to interact with the /bulk_edit view" do
     get :bulk_edit
     assert_response :success, "Unable to open /es_cells/bulk_edit"
-    
+
     post :bulk_edit, :es_cell_names => EsCell.first.name
     assert_response :success, "Unable to open /es_cells/bulk_edit with an es_cell_names parameter"
   end
+
+  should "allow us to create/get using new attributes" do
+    pipeline      = Factory.create( :pipeline )
+    es_cell_attrs = Factory.attributes_for( :es_cell )
+
+    hash = {
+        :name                => es_cell_attrs[:name],
+        :parental_cell_line  => es_cell_attrs[:parental_cell_line],
+        :targeting_vector_id => EsCell.first.targeting_vector_id,
+        :allele_id           => EsCell.first.allele_id,
+        :mgi_allele_id       => es_cell_attrs[:mgi_allele_id],
+        :pipeline_id         => pipeline.id,
+        :distribution_loa    => 'fail'
+    }
+    list = [
+      :distribution_loa,
+      :distribution_loxp,
+      :distribution_lacz,
+      :distribution_chr1,
+      :distribution_chr8a,
+      :distribution_chr8b,
+      :distribution_chr11a,
+      :distribution_chr11b,
+      :distribution_chry
+    ]
+
+    setting = 'fail'
+
+    list.each do |name|
+      hash[name] = setting
+    end
+
+    # CREATE
+    assert_difference('EsCell.count') do
+      post :create, :es_cell => hash
+    end
+    assert_response :success, "Could not create ES Cell"
+
+    created_es_cell = EsCell.search(:name => es_cell_attrs[:name]).last
+    created_es_cell.created_by = @request.session["user_credentials_id"]
+    created_es_cell.save
+
+    # GET
+#    get :update, :id => created_es_cell.id
+#    get :show, :es_cell => { :id => created_es_cell.id }, :format => :json
+#    put :update, :id => created_es_cell.id, :es_cell => { :name => 'new name' }
+#    get :show, :id => created_es_cell.id, :es_cell => { :id => created_es_cell.id }, :format => :json
+#    get :show, :es_cell => {:id => created_es_cell.id}, :format => :json
+#    get :show, :id => created_es_cell.id, :es_cell => {:id => created_es_cell.id}, :format => :json
+#    puts response.inspect
+
+    get :show, :id => created_es_cell.id, :es_cell => {:id => created_es_cell.id}
+    assert_response :success, "Could not read ES Cell"
+
+    created_es_cell = EsCell.search(:name => es_cell_attrs[:name]).last
+
+    puts created_es_cell.inspect
+
+    list.each do |name|
+      assert setting == created_es_cell[name]
+    end
+
+  end
 end
+
+#  distribution_loa                      :string(4)
+#  distribution_loxp                     :string(4)
+#  distribution_lacz                     :string(4)
+#  distribution_chr1                     :string(4)
+#  distribution_chr8a                    :string(4)
+#  distribution_chr8b                    :string(4)
+#  distribution_chr11a                   :string(4)
+#  distribution_chr11b                   :string(4)
+#  distribution_chry                     :string(4)
