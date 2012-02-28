@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110719134537) do
+ActiveRecord::Schema.define(:version => 20120228101846) do
 
   create_table "alleles", :force => true do |t|
     t.string   "assembly",            :limit => 50,  :default => "NCBIM37", :null => false
@@ -118,6 +118,15 @@ ActiveRecord::Schema.define(:version => 20110719134537) do
     t.integer  "pipeline_id"
     t.boolean  "report_to_public",                                    :default => true, :null => false
     t.string   "strain",                                :limit => 25
+    t.string   "distribution_loa",                      :limit => 4
+    t.string   "distribution_loxp",                     :limit => 4
+    t.string   "distribution_lacz",                     :limit => 4
+    t.string   "distribution_chr1",                     :limit => 4
+    t.string   "distribution_chr8a",                    :limit => 4
+    t.string   "distribution_chr8b",                    :limit => 4
+    t.string   "distribution_chr11a",                   :limit => 4
+    t.string   "distribution_chr11b",                   :limit => 4
+    t.string   "distribution_chry",                     :limit => 4
   end
 
   add_index "es_cells", ["allele_id"], :name => "es_cells_allele_id_fk"

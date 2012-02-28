@@ -34,11 +34,31 @@ class EsCellTest < ActiveSupport::TestCase
     :user_qc_mutant_specific_sr_pcr,
     :user_qc_five_prime_cassette_integrity,
     :user_qc_neo_sr_pcr
-  ]
+    ]
 
   pass_fail_only_qc_fields.each do |qc_field|
     should allow_value('pass').for(qc_field)
     should allow_value('fail').for(qc_field)
+    should_not allow_value('wibble').for(qc_field)
+  end
+
+  pass_fail_nil_only_qc_fields = [
+    :distribution_loa,
+    :distribution_loxp,
+    :distribution_lacz,
+    :distribution_chr1,
+    :distribution_chr8a,
+    :distribution_chr8b,
+    :distribution_chr11a,
+    :distribution_chr11b,
+    :distribution_chry
+  ]
+
+  pass_fail_nil_only_qc_fields.each do |qc_field|
+    should have_db_column(qc_field).of_type(:string).with_options(:null => true, :limit => 4)
+    should allow_value('pass').for(qc_field)
+    should allow_value('fail').for(qc_field)
+    should allow_value(nil).for(qc_field)
     should_not allow_value('wibble').for(qc_field)
   end
 
@@ -170,4 +190,3 @@ class EsCellTest < ActiveSupport::TestCase
     end
   end
 end
-

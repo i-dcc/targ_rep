@@ -1,5 +1,5 @@
 
-# This initializer is used to store the config for the available 
+# This initializer is used to store the config for the available
 # options for the ESCell QC metrics in a single location...
 
 qc_metrics = {
@@ -8,14 +8,14 @@ qc_metrics = {
   "production_qc_loxp_screen"             => { :name => "LoxP Screen", :values => ["pass","not confirmed","no reads detected"] },
   "production_qc_loss_of_allele"          => { :name => "Loss of WT Allele (LOA)" },
   "production_qc_vector_integrity"        => { :name => "Vector Integrity" },
-  
+
   "distribution_qc_copy_number"           => { :name => "Copy Number" },
   "distribution_qc_five_prime_lr_pcr"     => { :name => "5' LR-PCR" },
   "distribution_qc_three_prime_lr_pcr"    => { :name => "3' LR-PCR" },
   "distribution_qc_five_prime_sr_pcr"     => { :name => "5' SR-PCR" },
   "distribution_qc_three_prime_sr_pcr"    => { :name => "3' SR-PCR" },
   "distribution_qc_thawing"               => { :name => "Cells Thawed Correctly" },
-  
+
   "user_qc_karyotype"                     => { :name => "Karyotype",     :values => ["pass","fail","limit"] },
   "user_qc_southern_blot"                 => { :name => "Southern Blot", :values => ["pass","fail 5' end","fail 3' end","fail both ends","double integration"] },
   "user_qc_five_prime_lr_pcr"             => { :name => "5' LR-PCR" },
@@ -28,7 +28,17 @@ qc_metrics = {
   "user_qc_lacz_sr_pcr"                   => { :name => "LacZ SR-PCR" },
   "user_qc_mutant_specific_sr_pcr"        => { :name => "Mutant Specific SR-PCR" },
   "user_qc_five_prime_cassette_integrity" => { :name => "5' Cassette Integrity" },
-  "user_qc_neo_sr_pcr"                    => { :name => "Neo SR-PCR" }
+  "user_qc_neo_sr_pcr"                    => { :name => "Neo SR-PCR" },
+
+  "distribution_loa"                      => { :name => "Distribution loa",     :values => ["pass","fail",nil] },
+  "distribution_loxp"                     => { :name => "Distribution loxp",    :values => ["pass","fail",nil] },
+  "distribution_lacz"                     => { :name => "Distribution lacz",    :values => ["pass","fail",nil] },
+  "distribution_chr1"                     => { :name => "Distribution chr1",    :values => ["pass","fail",nil] },
+  "distribution_chr8a"                    => { :name => "Distribution chr8a",   :values => ["pass","fail",nil] },
+  "distribution_chr8b"                    => { :name => "Distribution chr8b",   :values => ["pass","fail",nil] },
+  "distribution_chr11a"                   => { :name => "Distribution chr11a",  :values => ["pass","fail",nil] },
+  "distribution_chr11b"                   => { :name => "Distribution chr11b",  :values => ["pass","fail",nil] },
+  "distribution_chry"                     => { :name => "Distribution chry",    :values => ["pass","fail",nil] }
 }
 
 qc_metrics.each do |field,data|
