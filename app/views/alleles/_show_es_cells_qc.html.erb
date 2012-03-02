@@ -41,6 +41,23 @@
     <%= render :partial => 'alleles/show_es_cells_qc_field', :locals => { :es_cell => es_cell, :symbol => :distribution_qc_thawing } %>
     <td colspan="4"></td>
   </tr>
+
+  <tr>
+    <%= render :partial => 'alleles/show_es_cells_qc_field', :locals => { :es_cell => es_cell, :symbol => :distribution_qc_loa } %>
+    <%= render :partial => 'alleles/show_es_cells_qc_field', :locals => { :es_cell => es_cell, :symbol => :distribution_qc_loxp } %>
+    <%= render :partial => 'alleles/show_es_cells_qc_field', :locals => { :es_cell => es_cell, :symbol => :distribution_qc_lacz } %>
+  </tr>
+  <tr>
+    <%= render :partial => 'alleles/show_es_cells_qc_field', :locals => { :es_cell => es_cell, :symbol => :distribution_qc_chr1 } %>
+    <%= render :partial => 'alleles/show_es_cells_qc_field', :locals => { :es_cell => es_cell, :symbol => :distribution_qc_chr8a } %>
+    <%= render :partial => 'alleles/show_es_cells_qc_field', :locals => { :es_cell => es_cell, :symbol => :distribution_qc_chr8b } %>
+  </tr>
+  <tr>
+    <%= render :partial => 'alleles/show_es_cells_qc_field', :locals => { :es_cell => es_cell, :symbol => :distribution_qc_chr11a } %>
+    <%= render :partial => 'alleles/show_es_cells_qc_field', :locals => { :es_cell => es_cell, :symbol => :distribution_qc_chr11b } %>
+    <%= render :partial => 'alleles/show_es_cells_qc_field', :locals => { :es_cell => es_cell, :symbol => :distribution_qc_chry } %>
+  </tr>
+
 </table>
 
 <table class="es_cell_qc_info">

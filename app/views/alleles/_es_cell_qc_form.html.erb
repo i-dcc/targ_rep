@@ -35,6 +35,23 @@
     <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_thawing } %>
     <td colspan="4"></td>
   </tr>
+
+  <tr>
+    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_loa } %>
+    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_loxp } %>
+    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_lacz } %>
+  </tr>
+  <tr>
+    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_chr1 } %>
+    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_chr8a } %>
+    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_chr8b } %>
+  </tr>
+  <tr>
+    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_chr11a } %>
+    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_chr11b } %>
+    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_chry } %>
+  </tr>
+
 </table>
 
 <table class="es_cell_qc_info">
@@ -42,7 +59,7 @@
   <tr>
     <td colspan="6">
       <em>
-        <strong>NOTE:</strong> if you have data contrary to these values, please use the conflict 
+        <strong>NOTE:</strong> if you have data contrary to these values, please use the conflict
         mechanism (below) to record and discuss this data conflict before changing any of these existing values.
       </em>
     </td>
