@@ -132,6 +132,7 @@ ActiveRecord::Schema.define(:version => 20120228101846) do
   add_index "es_cells", ["allele_id"], :name => "es_cells_allele_id_fk"
   add_index "es_cells", ["name"], :name => "index_es_cells_on_name", :unique => true
   add_index "es_cells", ["pipeline_id"], :name => "es_cells_pipeline_id_fk"
+  add_index "es_cells", ["targeting_vector_id"], :name => "es_cells_targeting_vector_id_fk"
 
   create_table "genbank_files", :force => true do |t|
     t.integer  "allele_id",                              :null => false
@@ -202,6 +203,7 @@ ActiveRecord::Schema.define(:version => 20120228101846) do
 
   add_foreign_key "es_cells", "alleles", :name => "es_cells_allele_id_fk", :dependent => :delete
   add_foreign_key "es_cells", "pipelines", :name => "es_cells_pipeline_id_fk", :dependent => :delete
+  add_foreign_key "es_cells", "targeting_vectors", :name => "es_cells_targeting_vector_id_fk", :dependent => :delete
 
   add_foreign_key "genbank_files", "alleles", :name => "genbank_files_allele_id_fk", :dependent => :delete
 
