@@ -219,20 +219,21 @@ end
 #  pipeline_id                           :integer(4)
 #  report_to_public                      :boolean(1)      default(TRUE), not null
 #  strain                                :string(25)
-#  distribution_qc_loa                      :string(4)
-#  distribution_qc_loxp                     :string(4)
-#  distribution_qc_lacz                     :string(4)
-#  distribution_qc_chr1                     :string(4)
-#  distribution_qc_chr8a                    :string(4)
-#  distribution_qc_chr8b                    :string(4)
-#  distribution_qc_chr11a                   :string(4)
-#  distribution_qc_chr11b                   :string(4)
-#  distribution_qc_chry                     :string(4)
+#  distribution_qc_loa                   :string(4)
+#  distribution_qc_loxp                  :string(4)
+#  distribution_qc_lacz                  :string(4)
+#  distribution_qc_chr1                  :string(4)
+#  distribution_qc_chr8a                 :string(4)
+#  distribution_qc_chr8b                 :string(4)
+#  distribution_qc_chr11a                :string(4)
+#  distribution_qc_chr11b                :string(4)
+#  distribution_qc_chry                  :string(4)
 #
 # Indexes
 #
-#  index_es_cells_on_name   (name) UNIQUE
-#  es_cells_allele_id_fk    (allele_id)
-#  es_cells_pipeline_id_fk  (pipeline_id)
+#  index_es_cells_on_name           (name) UNIQUE
+#  es_cells_targeting_vector_id_fk  (targeting_vector_id)
+#  es_cells_allele_id_fk            (allele_id)
+#  es_cells_pipeline_id_fk          (pipeline_id)
 #
 
