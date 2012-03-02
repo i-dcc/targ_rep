@@ -30,15 +30,15 @@ qc_metrics = {
   "user_qc_five_prime_cassette_integrity" => { :name => "5' Cassette Integrity" },
   "user_qc_neo_sr_pcr"                    => { :name => "Neo SR-PCR" },
 
-  "distribution_qc_loa"                      => { :name => "Distribution loa",     :values => ["pass","fail",nil] },
-  "distribution_qc_loxp"                     => { :name => "Distribution loxp",    :values => ["pass","fail",nil] },
-  "distribution_qc_lacz"                     => { :name => "Distribution lacz",    :values => ["pass","fail",nil] },
-  "distribution_qc_chr1"                     => { :name => "Distribution chr1",    :values => ["pass","fail",nil] },
-  "distribution_qc_chr8a"                    => { :name => "Distribution chr8a",   :values => ["pass","fail",nil] },
-  "distribution_qc_chr8b"                    => { :name => "Distribution chr8b",   :values => ["pass","fail",nil] },
-  "distribution_qc_chr11a"                   => { :name => "Distribution chr11a",  :values => ["pass","fail",nil] },
-  "distribution_qc_chr11b"                   => { :name => "Distribution chr11b",  :values => ["pass","fail",nil] },
-  "distribution_qc_chry"                     => { :name => "Distribution chry",    :values => ["pass","fail",nil] }
+  "distribution_qc_loa"                      => { :name => "LOA",             :values => ["pass","fail"] },
+  "distribution_qc_loxp"                     => { :name => "LOXP",            :values => ["pass","fail"] },
+  "distribution_qc_lacz"                     => { :name => "LACZ",            :values => ["pass","fail"] },
+  "distribution_qc_chr1"                     => { :name => "Chromosome 1",    :values => ["pass","fail"] },
+  "distribution_qc_chr8a"                    => { :name => "Chromosome 8a",   :values => ["pass","fail"] },
+  "distribution_qc_chr8b"                    => { :name => "Chromosome 8b",   :values => ["pass","fail"] },
+  "distribution_qc_chr11a"                   => { :name => "Chromosome 11a",  :values => ["pass","fail"] },
+  "distribution_qc_chr11b"                   => { :name => "Chromosome 11b",  :values => ["pass","fail"] },
+  "distribution_qc_chry"                     => { :name => "Chromosome Y",    :values => ["pass","fail"] }
 }
 
 qc_metrics.each do |field,data|
