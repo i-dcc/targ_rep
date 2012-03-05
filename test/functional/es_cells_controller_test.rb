@@ -44,7 +44,7 @@ class EsCellsControllerTest < ActionController::TestCase
 
     created_es_cell = EsCell.search(:name => es_cell_attrs[:name]).last
     created_es_cell.created_by = @request.session["user_credentials_id"]
-    created_es_cell.save
+    created_es_cell.save!
 
     # UPDATE
     put :update, :id => created_es_cell.id, :es_cell => { :name => 'new name' }
@@ -172,7 +172,7 @@ class EsCellsControllerTest < ActionController::TestCase
 
     created_es_cell = EsCell.search(:name => es_cell_attrs[:name]).last
     created_es_cell.created_by = @request.session["user_credentials_id"]
-    created_es_cell.save
+    created_es_cell.save!
 
     get :show, :id => created_es_cell.id, :es_cell => {:id => created_es_cell.id}
     assert_response :success, "Could not read ES Cell"
