@@ -73,7 +73,7 @@ class EsCellsController < ApplicationController
   # POST /es_cells/bulk_edit
   def bulk_edit
     unless params[:es_cell_names].nil?
-      es_cell_names = params[:es_cell_names].split("\n").map{ |elm| rv = elm.chomp ; rv.strip! || rv }.compact
+      es_cell_names = params[:es_cell_names].split("\n").map{ |elm| elm.chomp.strip }.compact
       @es_cells     = EsCell.all( :conditions => { :name => es_cell_names } )
       @es_cells.sort!{ |a,b| es_cell_names.index(a.name) <=> es_cell_names.index(b.name) }
     end
