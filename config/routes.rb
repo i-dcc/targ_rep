@@ -11,6 +11,7 @@ ActionController::Routing::Routes.draw do |map|
   map.targeting_vector_genbank_file '/alleles/:id/targeting-vector-genbank-file',  :controller => "alleles", :action => "targeting_vector_genbank_file"
   
   map.allele_image   '/alleles/:id/allele-image', :controller => "alleles", :action => "allele_image"
+  map.cassette_image   '/alleles/:id/cassette-image', :controller => "alleles", :action => "cassette_image"
   map.vector_image   '/alleles/:id/vector-image', :controller => "alleles", :action => "vector_image"
   
   map.login  "login",  :controller => "user_sessions", :action => "new" 

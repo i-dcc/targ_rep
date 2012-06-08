@@ -65,7 +65,7 @@
       <strong>Targeting Vector Genbank File: </strong>
       <% unless genbank_file.nil? or genbank_file.targeting_vector.nil? %>
         <a href="<%= targeting_vector_genbank_file_url(:id => @allele.id) %>" target="_blank" class="ss_sprite ss_magnifier">view</a>
-        <a href="<%= vector_image_url(:id => @allele.id) %>" target="_blank" class="ss_sprite ss_image">vector image</a>
+        <a href="<%= vector_image_url(:id => @allele.id) %>" target="_blank" class="ss_sprite ss_image">vector_image</a>
       <% else %>
         <em>not available</em>
       <% end %>
@@ -73,8 +73,9 @@
     <p>
       <strong>ES Cell Clone / Allele Genbank File: </strong>
       <% unless genbank_file.nil? or genbank_file.escell_clone.nil? %>
-        <a href="<%= escell_clone_genbank_file_url(:id => @allele.id) %>" target="_blank" class="ss_sprite ss_magnifier">view</a> | 
-        <a href="<%= allele_image_url(:id => @allele.id) %>" target="_blank" class="ss_sprite ss_image">allele image</a>
+        <a href="<%= escell_clone_genbank_file_url(:id => @allele.id) %>" target="_blank" class="ss_sprite ss_magnifier">view</a>
+        <a href="<%= allele_image_url(:id => @allele.id) %>" target="_blank" class="ss_sprite ss_image">allele_image</a>
+        <a href="<%= cassette_image_url(:id => @allele.id) %>" target="_blank" class="ss_sprite ss_image">cassette_image</a>
       <% else %>
         <em>not available</em>
       <% end %>

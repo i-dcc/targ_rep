@@ -6,6 +6,7 @@ class AllelesController < ApplicationController
       :escell_clone_genbank_file,
       :targeting_vector_genbank_file,
       :allele_image,
+      :cassette_image,
       :vector_image,
       :history
     ]
@@ -187,7 +188,18 @@ class AllelesController < ApplicationController
   # GET /alleles/1/allele-image/
   def allele_image
     send_data(
-      AlleleImage::Image.new( @allele.genbank_file.escell_clone ).render.to_blob { self.format = "PNG" },
+      AlleleImage::Image.new( @allele.genbank_file.escell_clone).render.to_blob { self.format = "PNG" },
+      {
+        :disposition => "inline",
+        :type => "image/png"
+      }
+    )
+  end
+
+  # GET /alleles/1/cassette-image/
+  def cassette_image
+    send_data(
+      AlleleImage::Image.new( @allele.genbank_file.escell_clone, true).render.to_blob { self.format = "PNG" },
       {
         :disposition => "inline",
         :type => "image/png"
