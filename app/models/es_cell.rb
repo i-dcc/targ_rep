@@ -164,7 +164,7 @@ class EsCell < ActiveRecord::Base
       when /^C2/     then 'C57BL/6N'
       when /^AB2/    then '129S7'
       when /^SI/     then '129S7'
-      when 'VGB6'    then 'VGB6'
+      when 'VGB6'    then 'C57Bl/6N'
       else
         errors.add( :parental_cell_line, "The parental cell line '#{self.parental_cell_line}' is not recognised" )
       end
@@ -235,4 +235,3 @@ end
 #  es_cells_allele_id_fk    (allele_id)
 #  es_cells_pipeline_id_fk  (pipeline_id)
 #
-
