@@ -1,7 +1,7 @@
 # Get all es_cells and set the strain...
 
 COUNT = 14490
-DEBUG = true
+DEBUG = false
 
 puts "Environment: #{Rails.env}"
 
