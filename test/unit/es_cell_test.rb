@@ -174,7 +174,7 @@ class EsCellTest < ActiveSupport::TestCase
         'SI2'       => '129S7',
         'SI2.2'     => '129S7',
         'SI6.C21'   => '129S7',
-        'VGB6'      => 'VGB6'
+        'VGB6'      => 'C57BL/6N'
       }
 
       good_tests.each do |cell_line,expected_strain|

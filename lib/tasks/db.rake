@@ -10,7 +10,6 @@ namespace :db do
       raise "Cannot find #{envname} database config" unless config
       if config['port'].blank?; config['port'] = '5432'; end
       system("cd #{Rails.root}; mysqldump --password=#{config['password']} --host=#{config['host']} --port=#{config['port']} --user=#{config['username']} --databases #{config['database']} | gzip -c | cat > tmp/dump.#{envname}-`date +%F-%T`.sql.gz") or raise("Failed to dump #{envname} DB")
-#      puts "cd #{Rails.root}; mysqldump --password=#{config['password']} --host=#{config['host']} --port=#{config['port']} --user=#{config['username']} --databases #{config['database']} | gzip -c | cat > tmp/dump.#{envname}-`date +%F-%T`.sql.gz"
     end
   end
 
