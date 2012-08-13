@@ -1,7 +1,7 @@
 namespace :db do
 
   ['development', 'staging', 'production'].each do |envname|
-    desc "Dump #{envname} DB into db/dump.#{envname}.sql"
+    desc "Dump #{envname} DB into tmp/dump.#{envname}-<date>.sql.gz"
     task "#{envname}:dump" do
       config = YAML.load_file("#{Rails.root}/config/database.yml")[envname]
       if ! config
