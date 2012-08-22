@@ -28,7 +28,7 @@ EsCell.transaction do
     if cell.parental_cell_line == 'VGB6' && cell.pipeline.name == 'KOMP-Regeneron' && cell.strain = 'VGB6'
       puts "Modifying EsCell id: #{cell.id} - #{cell.name}"
       cell.strain = 'C57BL/6N'
-      cell.save
+      cell.save!
       counter += 1
     end
   end
