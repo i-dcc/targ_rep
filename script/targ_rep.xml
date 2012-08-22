@@ -1,0 +1,1012 @@
+<add>
+<doc>
+<field name='allele_id'>18662</field>
+<field name='es_cell_name'>EPD0220_6_H07</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22517</field>
+<field name='mgi_allele_id'>MGI:4432115</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>18663</field>
+<field name='es_cell_name'>EPD0220_6_B05</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1e(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22517</field>
+<field name='mgi_allele_id'>MGI:4433390</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>18662</field>
+<field name='es_cell_name'>EPD0220_6_E07</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22517</field>
+<field name='mgi_allele_id'>MGI:4432115</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>14201</field>
+<field name='es_cell_name'>EPD0266_3_H02</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22523</field>
+<field name='mgi_allele_id'>MGI:4363939</field>
+<field name='parental_cell_line'>JM8A1.N3</field>
+<field name='strain'><![CDATA[C57BL/6N-A<tm1Brd>/a]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>3160</field>
+<field name='es_cell_name'>DEPD0003_10_B06</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(KOMP)Ucd]]></field>
+<field name='ikmc_project_id'>22525</field>
+<field name='mgi_allele_id'>MGI:4843782</field>
+<field name='parental_cell_line'>JM8A1.N3</field>
+<field name='strain'><![CDATA[C57BL/6N-A<tm1Brd>/a]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>3160</field>
+<field name='es_cell_name'>DEPD0003_10_F12</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(KOMP)Ucd]]></field>
+<field name='ikmc_project_id'>22525</field>
+<field name='mgi_allele_id'>MGI:4843782</field>
+<field name='parental_cell_line'>JM8A1.N3</field>
+<field name='strain'><![CDATA[C57BL/6N-A<tm1Brd>/a]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>1518</field>
+<field name='es_cell_name'>EPD0406_2_E07</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22534</field>
+<field name='mgi_allele_id'>MGI:4419859</field>
+<field name='parental_cell_line'>JM8A3.N1</field>
+<field name='strain'><![CDATA[C57BL/6N-A<tm1Brd>/a]]></field>
+<field name='mutation_subtype'>deletion</field>
+</doc>
+<doc>
+<field name='allele_id'>1518</field>
+<field name='es_cell_name'>EPD0406_2_F06</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22534</field>
+<field name='mgi_allele_id'>MGI:4419859</field>
+<field name='parental_cell_line'>JM8A3.N1</field>
+<field name='strain'><![CDATA[C57BL/6N-A<tm1Brd>/a]]></field>
+<field name='mutation_subtype'>deletion</field>
+</doc>
+<doc>
+<field name='allele_id'>17128</field>
+<field name='es_cell_name'>EPD0055_1_A01</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22549</field>
+<field name='mgi_allele_id'>MGI:4364648</field>
+<field name='parental_cell_line'>JM8.F6</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>8770</field>
+<field name='es_cell_name'>EPD0435_1_G09</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1e(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22561</field>
+<field name='mgi_allele_id'>MGI:4433786</field>
+<field name='parental_cell_line'>JM8A3.N1</field>
+<field name='strain'><![CDATA[C57BL/6N-A<tm1Brd>/a]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>5004</field>
+<field name='es_cell_name'>HEPD0543_10_C05</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(EUCOMM)Hmgu]]></field>
+<field name='ikmc_project_id'>22562</field>
+<field name='mgi_allele_id'>MGI:4435567</field>
+<field name='parental_cell_line'>JM8A1.N3</field>
+<field name='strain'><![CDATA[C57BL/6N-A<tm1Brd>/a]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>5005</field>
+<field name='es_cell_name'>HEPD0543_10_B05</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1e(EUCOMM)Hmgu]]></field>
+<field name='ikmc_project_id'>22562</field>
+<field name='mgi_allele_id'>MGI:4434983</field>
+<field name='parental_cell_line'>JM8A1.N3</field>
+<field name='strain'><![CDATA[C57BL/6N-A<tm1Brd>/a]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>1097</field>
+<field name='es_cell_name'>HEPD0523_3_E02</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1e(EUCOMM)Hmgu]]></field>
+<field name='ikmc_project_id'>22564</field>
+<field name='mgi_allele_id'>MGI:4434609</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>14634</field>
+<field name='es_cell_name'>EPD0137_1_A06</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1e(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22575</field>
+<field name='mgi_allele_id'>MGI:4363343</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>14634</field>
+<field name='es_cell_name'>EPD0137_1_C06</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1e(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22575</field>
+<field name='mgi_allele_id'>MGI:4363343</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>14634</field>
+<field name='es_cell_name'>EPD0137_1_A08</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1e(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22575</field>
+<field name='mgi_allele_id'>MGI:4363343</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>14634</field>
+<field name='es_cell_name'>EPD0137_1_B08</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1e(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22575</field>
+<field name='mgi_allele_id'>MGI:4363343</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>14634</field>
+<field name='es_cell_name'>EPD0137_1_C05</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1e(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22575</field>
+<field name='mgi_allele_id'>MGI:4363343</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>3762</field>
+<field name='es_cell_name'>EPD0407_2_G07</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22601</field>
+<field name='mgi_allele_id'>MGI:4419865</field>
+<field name='parental_cell_line'>JM8A1.N3</field>
+<field name='strain'><![CDATA[C57BL/6N-A<tm1Brd>/a]]></field>
+<field name='mutation_subtype'>deletion</field>
+</doc>
+<doc>
+<field name='allele_id'>6396</field>
+<field name='es_cell_name'>DEPD00506_5_C09</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1(KOMP)Ucd]]></field>
+<field name='ikmc_project_id'>22605</field>
+<field name='mgi_allele_id'>MGI:4456539</field>
+<field name='parental_cell_line'>JM8A3</field>
+<field name='strain'><![CDATA[C57BL/6N-A<tm1Brd>/a]]></field>
+<field name='mutation_subtype'>deletion</field>
+</doc>
+<doc>
+<field name='allele_id'>6396</field>
+<field name='es_cell_name'>DEPD00506_5_G10</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1(KOMP)Ucd]]></field>
+<field name='ikmc_project_id'>22605</field>
+<field name='mgi_allele_id'>MGI:4456539</field>
+<field name='parental_cell_line'>JM8A3</field>
+<field name='strain'><![CDATA[C57BL/6N-A<tm1Brd>/a]]></field>
+<field name='mutation_subtype'>deletion</field>
+</doc>
+<doc>
+<field name='allele_id'>8788</field>
+<field name='es_cell_name'>EPD0228_2_F04</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22610</field>
+<field name='mgi_allele_id'>MGI:4362954</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>6569</field>
+<field name='es_cell_name'>EPD0169_3_F12</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22623</field>
+<field name='mgi_allele_id'>MGI:4432479</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>7699</field>
+<field name='es_cell_name'>EPD0143_2_E05</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22626</field>
+<field name='mgi_allele_id'>MGI:4433163</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>7842</field>
+<field name='es_cell_name'>EPD0193_4_G10</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22633</field>
+<field name='mgi_allele_id'>MGI:4433105</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>3324</field>
+<field name='es_cell_name'>EPD0025_2_F07</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22636</field>
+<field name='mgi_allele_id'>MGI:4363206</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>3324</field>
+<field name='es_cell_name'>EPD0025_2_B08</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22636</field>
+<field name='mgi_allele_id'>MGI:4363206</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>3325</field>
+<field name='es_cell_name'>EPD0025_2_E08</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1e(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22636</field>
+<field name='mgi_allele_id'>MGI:4362373</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>3324</field>
+<field name='es_cell_name'>EPD0025_2_D09</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22636</field>
+<field name='mgi_allele_id'>MGI:4363206</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>8068</field>
+<field name='es_cell_name'>EPD0025_6_B11</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1e(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22643</field>
+<field name='mgi_allele_id'>MGI:4433851</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>12161</field>
+<field name='es_cell_name'>EPD0357_4_E04</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22648</field>
+<field name='mgi_allele_id'>MGI:4419672</field>
+<field name='parental_cell_line'>JM8A1.N3</field>
+<field name='strain'><![CDATA[C57BL/6N-A<tm1Brd>/a]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>12162</field>
+<field name='es_cell_name'>EPD0357_4_D02</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1e(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22648</field>
+<field name='mgi_allele_id'>MGI:4419313</field>
+<field name='parental_cell_line'>JM8A1.N3</field>
+<field name='strain'><![CDATA[C57BL/6N-A<tm1Brd>/a]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>12161</field>
+<field name='es_cell_name'>EPD0357_4_G02</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22648</field>
+<field name='mgi_allele_id'>MGI:4419672</field>
+<field name='parental_cell_line'>JM8A1.N3</field>
+<field name='strain'><![CDATA[C57BL/6N-A<tm1Brd>/a]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>15140</field>
+<field name='es_cell_name'>EPD0069_4_B01</field>
+<field name='allele_symbol_superscript'><![CDATA[tm2e(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22654</field>
+<field name='mgi_allele_id'>MGI:4434184</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>15139</field>
+<field name='es_cell_name'>EPD0058_2_F07</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22654</field>
+<field name='mgi_allele_id'>MGI:4432518</field>
+<field name='parental_cell_line'>JM8.F6</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>2771</field>
+<field name='es_cell_name'>EPD0278_5_F12</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22664</field>
+<field name='mgi_allele_id'>MGI:4432975</field>
+<field name='parental_cell_line'>JM8A1.N3</field>
+<field name='strain'><![CDATA[C57BL/6N-A<tm1Brd>/a]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>2771</field>
+<field name='es_cell_name'>EPD0278_5_B05</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22664</field>
+<field name='mgi_allele_id'>MGI:4432975</field>
+<field name='parental_cell_line'>JM8A1.N3</field>
+<field name='strain'><![CDATA[C57BL/6N-A<tm1Brd>/a]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>2772</field>
+<field name='es_cell_name'>EPD0278_5_D03</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1e(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22664</field>
+<field name='mgi_allele_id'>MGI:4434303</field>
+<field name='parental_cell_line'>JM8A1.N3</field>
+<field name='strain'><![CDATA[C57BL/6N-A<tm1Brd>/a]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>2771</field>
+<field name='es_cell_name'>EPD0278_5_D10</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22664</field>
+<field name='mgi_allele_id'>MGI:4432975</field>
+<field name='parental_cell_line'>JM8A1.N3</field>
+<field name='strain'><![CDATA[C57BL/6N-A<tm1Brd>/a]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>3209</field>
+<field name='es_cell_name'>DEPD00515_2_F02</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1(KOMP)Ucd]]></field>
+<field name='ikmc_project_id'>22673</field>
+<field name='mgi_allele_id'>MGI:4454054</field>
+<field name='parental_cell_line'>JM8A3.N1</field>
+<field name='strain'><![CDATA[C57BL/6N-A<tm1Brd>/a]]></field>
+<field name='mutation_subtype'>deletion</field>
+</doc>
+<doc>
+<field name='allele_id'>9805</field>
+<field name='es_cell_name'>EPD0057_1_H02</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22676</field>
+<field name='mgi_allele_id'>MGI:4433829</field>
+<field name='parental_cell_line'>JM8.F6</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>9806</field>
+<field name='es_cell_name'>EPD0057_1_B01</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1e(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22676</field>
+<field name='mgi_allele_id'>MGI:4432709</field>
+<field name='parental_cell_line'>JM8.F6</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>18752</field>
+<field name='es_cell_name'>EPD0224_1_H02</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1e(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22686</field>
+<field name='mgi_allele_id'>MGI:4365093</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>6345</field>
+<field name='es_cell_name'>EPD0425_3_B09</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22696</field>
+<field name='mgi_allele_id'>MGI:4433228</field>
+<field name='parental_cell_line'>JM8A3.N1</field>
+<field name='strain'><![CDATA[C57BL/6N-A<tm1Brd>/a]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>6345</field>
+<field name='es_cell_name'>EPD0425_3_G09</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22696</field>
+<field name='mgi_allele_id'>MGI:4433228</field>
+<field name='parental_cell_line'>JM8A3.N1</field>
+<field name='strain'><![CDATA[C57BL/6N-A<tm1Brd>/a]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>6345</field>
+<field name='es_cell_name'>EPD0425_3_F10</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22696</field>
+<field name='mgi_allele_id'>MGI:4433228</field>
+<field name='parental_cell_line'>JM8A3.N1</field>
+<field name='strain'><![CDATA[C57BL/6N-A<tm1Brd>/a]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>4031</field>
+<field name='es_cell_name'>EPD0097_2_A04</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1e(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22703</field>
+<field name='mgi_allele_id'>MGI:4364002</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>4030</field>
+<field name='es_cell_name'>EPD0097_2_E01</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22703</field>
+<field name='mgi_allele_id'>MGI:4362704</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>4031</field>
+<field name='es_cell_name'>EPD0097_2_C03</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1e(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22703</field>
+<field name='mgi_allele_id'>MGI:4364002</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>13451</field>
+<field name='es_cell_name'>EPD0406_5_H12</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22715</field>
+<field name='mgi_allele_id'>MGI:4419648</field>
+<field name='parental_cell_line'>JM8A3.N1</field>
+<field name='strain'><![CDATA[C57BL/6N-A<tm1Brd>/a]]></field>
+<field name='mutation_subtype'>deletion</field>
+</doc>
+<doc>
+<field name='allele_id'>6667</field>
+<field name='es_cell_name'>DEPD00517_3_B10</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1(KOMP)Ucd]]></field>
+<field name='ikmc_project_id'>22716</field>
+<field name='mgi_allele_id'>MGI:4454022</field>
+<field name='parental_cell_line'>JM8A1.N3</field>
+<field name='strain'><![CDATA[C57BL/6N-A<tm1Brd>/a]]></field>
+<field name='mutation_subtype'>deletion</field>
+</doc>
+<doc>
+<field name='allele_id'>6667</field>
+<field name='es_cell_name'>DEPD00517_3_B09</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1(KOMP)Ucd]]></field>
+<field name='ikmc_project_id'>22716</field>
+<field name='mgi_allele_id'>MGI:4454022</field>
+<field name='parental_cell_line'>JM8A1.N3</field>
+<field name='strain'><![CDATA[C57BL/6N-A<tm1Brd>/a]]></field>
+<field name='mutation_subtype'>deletion</field>
+</doc>
+<doc>
+<field name='allele_id'>9197</field>
+<field name='es_cell_name'>EPD0125_5_C02</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1e(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22718</field>
+<field name='mgi_allele_id'>MGI:4362189</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>15002</field>
+<field name='es_cell_name'>HEPD0549_7_F03</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1e(EUCOMM)Hmgu]]></field>
+<field name='ikmc_project_id'>22740</field>
+<field name='mgi_allele_id'>MGI:4435861</field>
+<field name='parental_cell_line'>JM8A1.N3</field>
+<field name='strain'><![CDATA[C57BL/6N-A<tm1Brd>/a]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>15002</field>
+<field name='es_cell_name'>HEPD0549_7_C01</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1e(EUCOMM)Hmgu]]></field>
+<field name='ikmc_project_id'>22740</field>
+<field name='mgi_allele_id'>MGI:4435861</field>
+<field name='parental_cell_line'>JM8A1.N3</field>
+<field name='strain'><![CDATA[C57BL/6N-A<tm1Brd>/a]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>12330</field>
+<field name='es_cell_name'>EPD0021_1_E03</field>
+<field name='allele_symbol_superscript'><![CDATA[tm2e(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22745</field>
+<field name='mgi_allele_id'>MGI:4433087</field>
+<field name='parental_cell_line'>JM8 parental</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>12330</field>
+<field name='es_cell_name'>EPD0021_1_B02</field>
+<field name='allele_symbol_superscript'><![CDATA[tm2e(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22745</field>
+<field name='mgi_allele_id'>MGI:4433087</field>
+<field name='parental_cell_line'>JM8 parental</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>12330</field>
+<field name='es_cell_name'>EPD0021_1_A02</field>
+<field name='allele_symbol_superscript'><![CDATA[tm2e(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22745</field>
+<field name='mgi_allele_id'>MGI:4433087</field>
+<field name='parental_cell_line'>JM8 parental</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>12329</field>
+<field name='es_cell_name'>EPD0021_1_E01</field>
+<field name='allele_symbol_superscript'><![CDATA[tm2a(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22745</field>
+<field name='mgi_allele_id'>MGI:4432519</field>
+<field name='parental_cell_line'>JM8 parental</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>12329</field>
+<field name='es_cell_name'>EPD0021_1_C03</field>
+<field name='allele_symbol_superscript'><![CDATA[tm2a(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22745</field>
+<field name='mgi_allele_id'>MGI:4432519</field>
+<field name='parental_cell_line'>JM8 parental</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>12329</field>
+<field name='es_cell_name'>EPD0014_2_G09</field>
+<field name='allele_symbol_superscript'><![CDATA[tm3a(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22745</field>
+<field name='mgi_allele_id'>MGI:4456741</field>
+<field name='parental_cell_line'>AB2.2</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>12330</field>
+<field name='es_cell_name'>EPD0014_2_D09</field>
+<field name='allele_symbol_superscript'><![CDATA[tm3e(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22745</field>
+<field name='mgi_allele_id'>MGI:4456751</field>
+<field name='parental_cell_line'>AB2.2</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>12330</field>
+<field name='es_cell_name'>EPD0014_2_G08</field>
+<field name='allele_symbol_superscript'><![CDATA[tm3e(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22745</field>
+<field name='mgi_allele_id'>MGI:4456751</field>
+<field name='parental_cell_line'>AB2.2</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>12329</field>
+<field name='es_cell_name'>EPD0021_1_A03</field>
+<field name='allele_symbol_superscript'><![CDATA[tm2a(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22745</field>
+<field name='mgi_allele_id'>MGI:4432519</field>
+<field name='parental_cell_line'>JM8 parental</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>12330</field>
+<field name='es_cell_name'>EPD0021_1_A01</field>
+<field name='allele_symbol_superscript'><![CDATA[tm2e(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22745</field>
+<field name='mgi_allele_id'>MGI:4433087</field>
+<field name='parental_cell_line'>JM8 parental</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>12329</field>
+<field name='es_cell_name'>EPD0021_1_D03</field>
+<field name='allele_symbol_superscript'><![CDATA[tm2a(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22745</field>
+<field name='mgi_allele_id'>MGI:4432519</field>
+<field name='parental_cell_line'>JM8 parental</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>12329</field>
+<field name='es_cell_name'>EPD0038_1_H01</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22746</field>
+<field name='mgi_allele_id'>MGI:4432028</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>13091</field>
+<field name='es_cell_name'>EPD0118_5_A03</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22747</field>
+<field name='mgi_allele_id'>MGI:4364487</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>13091</field>
+<field name='es_cell_name'>EPD0118_5_B04</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22747</field>
+<field name='mgi_allele_id'>MGI:4364487</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>10925</field>
+<field name='es_cell_name'>DEPD0003_15_C12</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1e(KOMP)Ucd]]></field>
+<field name='ikmc_project_id'>22753</field>
+<field name='mgi_allele_id'>MGI:4843794</field>
+<field name='parental_cell_line'>JM8A1.N3</field>
+<field name='strain'><![CDATA[C57BL/6N-A<tm1Brd>/a]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>10924</field>
+<field name='es_cell_name'>DEPD0003_15_F07</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(KOMP)Ucd]]></field>
+<field name='ikmc_project_id'>22753</field>
+<field name='mgi_allele_id'>MGI:4843580</field>
+<field name='parental_cell_line'>JM8A1.N3</field>
+<field name='strain'><![CDATA[C57BL/6N-A<tm1Brd>/a]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>2988</field>
+<field name='es_cell_name'>EPD0125_3_F08</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1e(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22754</field>
+<field name='mgi_allele_id'>MGI:4363530</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>9581</field>
+<field name='es_cell_name'>HEPD0520_6_E09</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(EUCOMM)Hmgu]]></field>
+<field name='ikmc_project_id'>22758</field>
+<field name='mgi_allele_id'>MGI:4435082</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>9581</field>
+<field name='es_cell_name'>HEPD0520_6_G07</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(EUCOMM)Hmgu]]></field>
+<field name='ikmc_project_id'>22758</field>
+<field name='mgi_allele_id'>MGI:4435082</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>9581</field>
+<field name='es_cell_name'>HEPD0520_6_F07</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(EUCOMM)Hmgu]]></field>
+<field name='ikmc_project_id'>22758</field>
+<field name='mgi_allele_id'>MGI:4435082</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>9581</field>
+<field name='es_cell_name'>HEPD0520_6_H06</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(EUCOMM)Hmgu]]></field>
+<field name='ikmc_project_id'>22758</field>
+<field name='mgi_allele_id'>MGI:4435082</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>9891</field>
+<field name='es_cell_name'>EPD0408_4_G11</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22775</field>
+<field name='mgi_allele_id'>MGI:4419593</field>
+<field name='parental_cell_line'>JM8A3.N1</field>
+<field name='strain'><![CDATA[C57BL/6N-A<tm1Brd>/a]]></field>
+<field name='mutation_subtype'>deletion</field>
+</doc>
+<doc>
+<field name='allele_id'>9891</field>
+<field name='es_cell_name'>EPD0408_4_B12</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22775</field>
+<field name='mgi_allele_id'>MGI:4419593</field>
+<field name='parental_cell_line'>JM8A3.N1</field>
+<field name='strain'><![CDATA[C57BL/6N-A<tm1Brd>/a]]></field>
+<field name='mutation_subtype'>deletion</field>
+</doc>
+<doc>
+<field name='allele_id'>9891</field>
+<field name='es_cell_name'>EPD0408_4_B10</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22775</field>
+<field name='mgi_allele_id'>MGI:4419593</field>
+<field name='parental_cell_line'>JM8A3.N1</field>
+<field name='strain'><![CDATA[C57BL/6N-A<tm1Brd>/a]]></field>
+<field name='mutation_subtype'>deletion</field>
+</doc>
+<doc>
+<field name='allele_id'>9891</field>
+<field name='es_cell_name'>EPD0408_4_A09</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22775</field>
+<field name='mgi_allele_id'>MGI:4419593</field>
+<field name='parental_cell_line'>JM8A3.N1</field>
+<field name='strain'><![CDATA[C57BL/6N-A<tm1Brd>/a]]></field>
+<field name='mutation_subtype'>deletion</field>
+</doc>
+<doc>
+<field name='allele_id'>15324</field>
+<field name='es_cell_name'>EPD0112_1_C06</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1e(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22794</field>
+<field name='mgi_allele_id'>MGI:4363313</field>
+<field name='parental_cell_line'>JM8.F6</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>15323</field>
+<field name='es_cell_name'>EPD0112_1_G07</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22794</field>
+<field name='mgi_allele_id'>MGI:4363742</field>
+<field name='parental_cell_line'>JM8.F6</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>13002</field>
+<field name='es_cell_name'>EPD0085_4_D06</field>
+<field name='allele_symbol_superscript'><![CDATA[tm2e(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22805</field>
+<field name='mgi_allele_id'>MGI:4364378</field>
+<field name='parental_cell_line'>JM8.F6</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>13001</field>
+<field name='es_cell_name'>EPD0085_4_A06</field>
+<field name='allele_symbol_superscript'><![CDATA[tm2a(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22805</field>
+<field name='mgi_allele_id'>MGI:4363971</field>
+<field name='parental_cell_line'>JM8.F6</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>13004</field>
+<field name='es_cell_name'>EPD0044_2_G11</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22808</field>
+<field name='mgi_allele_id'>MGI:4362558</field>
+<field name='parental_cell_line'>JM8.F6</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>13004</field>
+<field name='es_cell_name'>EPD0044_2_D10</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22808</field>
+<field name='mgi_allele_id'>MGI:4362558</field>
+<field name='parental_cell_line'>JM8.F6</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>13004</field>
+<field name='es_cell_name'>EPD0044_2_G10</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22808</field>
+<field name='mgi_allele_id'>MGI:4362558</field>
+<field name='parental_cell_line'>JM8.F6</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>13005</field>
+<field name='es_cell_name'>EPD0044_2_H10</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1e(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22808</field>
+<field name='mgi_allele_id'>MGI:4362794</field>
+<field name='parental_cell_line'>JM8.F6</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>13004</field>
+<field name='es_cell_name'>EPD0044_2_C11</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22808</field>
+<field name='mgi_allele_id'>MGI:4362558</field>
+<field name='parental_cell_line'>JM8.F6</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>13004</field>
+<field name='es_cell_name'>EPD0044_2_E12</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22808</field>
+<field name='mgi_allele_id'>MGI:4362558</field>
+<field name='parental_cell_line'>JM8.F6</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>13004</field>
+<field name='es_cell_name'>EPD0044_2_F12</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(KOMP)Wtsi]]></field>
+<field name='ikmc_project_id'>22808</field>
+<field name='mgi_allele_id'>MGI:4362558</field>
+<field name='parental_cell_line'>JM8.F6</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>6939</field>
+<field name='es_cell_name'>EPD0100_2_D05</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22811</field>
+<field name='mgi_allele_id'>MGI:4432509</field>
+<field name='parental_cell_line'>JM8.F6</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>6939</field>
+<field name='es_cell_name'>EPD0100_2_C06</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22811</field>
+<field name='mgi_allele_id'>MGI:4432509</field>
+<field name='parental_cell_line'>JM8.F6</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>6939</field>
+<field name='es_cell_name'>EPD0100_2_E08</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22811</field>
+<field name='mgi_allele_id'>MGI:4432509</field>
+<field name='parental_cell_line'>JM8.F6</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>6939</field>
+<field name='es_cell_name'>EPD0100_2_H08</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22811</field>
+<field name='mgi_allele_id'>MGI:4432509</field>
+<field name='parental_cell_line'>JM8.F6</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>6939</field>
+<field name='es_cell_name'>EPD0100_2_E07</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22811</field>
+<field name='mgi_allele_id'>MGI:4432509</field>
+<field name='parental_cell_line'>JM8.F6</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>6940</field>
+<field name='es_cell_name'>EPD0100_2_D08</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1e(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22811</field>
+<field name='mgi_allele_id'>MGI:4432425</field>
+<field name='parental_cell_line'>JM8.F6</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>8686</field>
+<field name='es_cell_name'>EPD0157_6_A04</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1e(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22822</field>
+<field name='mgi_allele_id'>MGI:4433582</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>17845</field>
+<field name='es_cell_name'>EPD0117_2_A09</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1e(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22834</field>
+<field name='mgi_allele_id'>MGI:4433473</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+<doc>
+<field name='allele_id'>17844</field>
+<field name='es_cell_name'>EPD0117_2_H09</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1a(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22834</field>
+<field name='mgi_allele_id'>MGI:4433227</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>conditional_ready</field>
+</doc>
+<doc>
+<field name='allele_id'>17845</field>
+<field name='es_cell_name'>EPD0117_2_B09</field>
+<field name='allele_symbol_superscript'><![CDATA[tm1e(EUCOMM)Wtsi]]></field>
+<field name='ikmc_project_id'>22834</field>
+<field name='mgi_allele_id'>MGI:4433473</field>
+<field name='parental_cell_line'>JM8.N4</field>
+<field name='strain'><![CDATA[]]></field>
+<field name='mutation_subtype'>targeted_non_conditional</field>
+</doc>
+</add>
