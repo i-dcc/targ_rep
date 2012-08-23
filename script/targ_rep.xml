@@ -999,14 +999,4 @@
 <field name='strain'><![CDATA[]]></field>
 <field name='mutation_subtype'>conditional_ready</field>
 </doc>
-<doc>
-<field name='allele_id'>17845</field>
-<field name='es_cell_name'>EPD0117_2_B09</field>
-<field name='allele_symbol_superscript'><![CDATA[tm1e(EUCOMM)Wtsi]]></field>
-<field name='ikmc_project_id'>22834</field>
-<field name='mgi_allele_id'>MGI:4433473</field>
-<field name='parental_cell_line'>JM8.N4</field>
-<field name='strain'><![CDATA[]]></field>
-<field name='mutation_subtype'>targeted_non_conditional</field>
-</doc>
 </add>
