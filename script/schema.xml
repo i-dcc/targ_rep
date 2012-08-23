@@ -433,16 +433,17 @@
        when adding a document.
    -->
 
-        <!--TARG_REP_FIELD_START-->
-        <field name="mgi_allele_id" type="text" indexed="true" stored="true" />
-        <field name="allele_id" type="text" indexed="true" stored="true" />
-        <field name="es_cell_name" type="text" indexed="true" stored="true" />
-        <field name="allele_symbol_superscript" type="text" indexed="true" stored="true" />
-        <field name="ikmc_project_id" type="text" indexed="true" stored="true" />
-        <field name="parental_cell_line" type="text" indexed="true" stored="true" />
-        <field name="strain" type="text" indexed="true" stored="true" />
-        <field name="mutation_subtype" type="text" indexed="true" stored="true" />
-        <!--TARG_REP_FIELD_END-->
+<!--TARG_REP_FIELD_START-->
+<field name='allele_id' type='text' indexed='true' stored='true' />
+<field name='name' type='text' indexed='true' stored='true' />
+<field name='allele_symbol_superscript' type='text' indexed='true' stored='true' />
+<field name='ikmc_project_id' type='text' indexed='true' stored='true' />
+<field name='mgi_allele_id' type='text' indexed='true' stored='true' />
+<field name='parental_cell_line' type='text' indexed='true' stored='true' />
+<field name='strain' type='text' indexed='true' stored='true' />
+<field name='allele_symbol_superscript' type='text' indexed='true' stored='true' />
+<field name='strain' type='text' indexed='true' stored='true' />
+<!--TARG_REP_FIELD_END-->
 
    <!-- general catchall field, containing all other searchable text fields (implemented
         via copyField further on in this schema  -->
@@ -509,22 +510,17 @@
         is added to the index.  It's used either to index the same field differently,
         or to add multiple fields to the same field for easier/faster searching.  -->
 
-        <!--TARG_REP_COPYFIELD_BEGIN-->
-  <copyField source="mgi_allele_id" dest="text" />
-  <copyField source="allele_id" dest="text" />
-  <copyField source="es_cell_name" dest="text" />
-  <copyField source="allele_symbol_superscript" dest="text" />
-  <copyField source="ikmc_project_id" dest="text" />
-  <copyField source="parental_cell_line" dest="text" />
-  <copyField source="strain" dest="text" />
-  <copyField source="mutation_subtype" dest="text" />
-        <!--TARG_REP_COPYFIELD_END-->
-
-
-
-
-
-
+<!--TARG_REP_COPYFIELD_BEGIN-->
+<copyField source='allele_id' dest='text' />
+<copyField source='name' dest='text' />
+<copyField source='allele_symbol_superscript' dest='text' />
+<copyField source='ikmc_project_id' dest='text' />
+<copyField source='mgi_allele_id' dest='text' />
+<copyField source='parental_cell_line' dest='text' />
+<copyField source='strain' dest='text' />
+<copyField source='allele_symbol_superscript' dest='text' />
+<copyField source='strain' dest='text' />
+<!--TARG_REP_COPYFIELD_END-->
 
    <!-- Above, multiple source fields are copied to the [text] field.
 	  Another way to map multiple source fields to the same
