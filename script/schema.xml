@@ -434,15 +434,17 @@
    -->
 
 <!--TARG_REP_FIELD_START-->
-<field name='allele_id' type='text' indexed='true' stored='true' />
-<field name='name' type='text' indexed='true' stored='true' />
-<field name='allele_symbol_superscript' type='text' indexed='true' stored='true' />
-<field name='ikmc_project_id' type='text' indexed='true' stored='true' />
-<field name='mgi_allele_id' type='text' indexed='true' stored='true' />
-<field name='parental_cell_line' type='text' indexed='true' stored='true' />
-<field name='strain' type='text' indexed='true' stored='true' />
-<field name='allele_symbol_superscript' type='text' indexed='true' stored='true' />
-<field name='strain' type='text' indexed='true' stored='true' />
+<field name='targ_rep_mgi_allele_id' type='text' indexed='true' stored='true' />
+<field name='targ_rep_product' type='text' indexed='true' stored='true' />
+<field name='targ_rep_mutation_subtype' type='text' indexed='true' stored='true' />
+<field name='targ_rep_strain' type='text' indexed='true' stored='true' />
+<field name='targ_rep_mgi_allele_name' type='text' indexed='true' stored='true' />
+<field name='targ_rep_allele_map_url' type='text' indexed='true' stored='true' />
+<field name='targ_rep_genbank_file_url' type='text' indexed='true' stored='true' />
+<field name='targ_rep_order_url' type='text' indexed='true' stored='true' />
+<field name='targ_rep_mutation_type' type='text' indexed='true' stored='true' />
+<field name='targ_rep_mutation_method' type='text' indexed='true' stored='true' />
+<field name='targ_rep_es_cell_name' type='text' indexed='true' stored='true' />
 <!--TARG_REP_FIELD_END-->
 
    <!-- general catchall field, containing all other searchable text fields (implemented
@@ -501,7 +503,7 @@
  <!-- Field to use to determine and enforce document uniqueness.
       Unless this field is marked with required="false", it will be a required field
    -->
- <uniqueKey>mgi_allele_id</uniqueKey>
+ <uniqueKey>targ_rep_mgi_allele_id</uniqueKey>
 
  <!-- SolrQueryParser configuration: defaultOperator="AND|OR" -->
  <solrQueryParser defaultOperator="AND"/>
@@ -511,15 +513,17 @@
         or to add multiple fields to the same field for easier/faster searching.  -->
 
 <!--TARG_REP_COPYFIELD_BEGIN-->
-<copyField source='allele_id' dest='text' />
-<copyField source='name' dest='text' />
-<copyField source='allele_symbol_superscript' dest='text' />
-<copyField source='ikmc_project_id' dest='text' />
-<copyField source='mgi_allele_id' dest='text' />
-<copyField source='parental_cell_line' dest='text' />
-<copyField source='strain' dest='text' />
-<copyField source='allele_symbol_superscript' dest='text' />
-<copyField source='strain' dest='text' />
+<copyField source='targ_rep_mgi_allele_id' dest='text' />
+<copyField source='targ_rep_product' dest='text' />
+<copyField source='targ_rep_mutation_subtype' dest='text' />
+<copyField source='targ_rep_strain' dest='text' />
+<copyField source='targ_rep_mgi_allele_name' dest='text' />
+<copyField source='targ_rep_allele_map_url' dest='text' />
+<copyField source='targ_rep_genbank_file_url' dest='text' />
+<copyField source='targ_rep_order_url' dest='text' />
+<copyField source='targ_rep_mutation_type' dest='text' />
+<copyField source='targ_rep_mutation_method' dest='text' />
+<copyField source='targ_rep_es_cell_name' dest='text' />
 <!--TARG_REP_COPYFIELD_END-->
 
    <!-- Above, multiple source fields are copied to the [text] field.

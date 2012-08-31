@@ -1,0 +1,128 @@
+<add>
+  <doc boost="10">
+    <field name='dummy_unique_key'>1</field>
+    <field name='gene'>Ccdc111</field>
+    <field name='product'>ES Cell</field>
+    <field name='allele_type'>Conditional Ready</field>
+    <field name='strain_of_origin'><![CDATA[C57BL/6N-A/a]]></field>
+    <field name='mgi_allele_name'><![CDATA[Ccdc111 <sup>tm1a(EUCOMM)Wtsi</sup>]]></field>
+    <field name='allele_map_url'><![CDATA[http://www.knockoutmouse.org/targ_rep/alleles/16776/allele-image]]></field>
+    <field name='genbank_file_url'><![CDATA[http://www.knockoutmouse.org/targ_rep/alleles/16776/escell-clone-genbank-file]]></field>
+    <field name='order_url'><![CDATA[http://www.eummcr.org/order.php]]></field>
+    <field name='order_source'>EUMMCR</field>
+  </doc>
+  <doc boost="10">
+    <field name='dummy_unique_key'>2</field>
+    <field name='gene'>Ccdc111</field>
+    <field name='product'>ES Cell</field>
+    <field name='allele_type'>Deletion</field>
+    <field name='strain_of_origin'><![CDATA[VGB6]]></field>
+    <field name='mgi_allele_name'><![CDATA[Ccdc111 <sup>tm1(KOMP)Vlcg</sup>]]></field>
+    <field name='allele_map_url'><![CDATA[http://www.knockoutmouse.org/targ_rep/alleles/39224/allele-image]]></field>
+    <field name='genbank_file_url'><![CDATA[http://www.knockoutmouse.org/targ_rep/alleles/39224/escell-clone-genbank-file]]></field>
+    <field name='order_url'><![CDATA[http://www.komp.org/geneinfo.php?project=VG18323]]></field>
+    <field name='order_source'>KOMP</field>
+  </doc>
+  <doc>
+    <field name='dummy_unique_key'>3</field>
+    <field name='gene'>Ccdc111</field>
+    <field name='product'>Mouse</field>
+    <field name='allele_type'>Conditional Ready</field>
+    <field name='strain_of_origin'><![CDATA[C57BL/6NTac/USA]]></field>
+    <field name='mgi_allele_name'></field>
+    <field name='allele_map_url'><![CDATA[http://www.knockoutmouse.org/targ_rep/alleles/16776/allele-image]]></field>
+    <field name='genbank_file_url'><![CDATA[http://www.knockoutmouse.org/targ_rep/alleles/16776/escell-clone-genbank-file]]></field>
+    <field name='order_url'><![CDATA[http://www.emmanet.org/mutant_types.php?keyword=Ccdc111]]></field>
+    <field name='order_source'>EMMA</field>
+  </doc>
+  <doc>
+    <field name='dummy_unique_key'>4</field>
+    <field name='gene'>Ccdc111</field>
+    <field name='product'>Mouse</field>
+    <field name='allele_type'>Cre Excised</field>
+    <field name='strain_of_origin'><![CDATA[C57BL/6NTac/USA]]></field>
+    <field name='mgi_allele_name'></field>
+    <field name='allele_map_url'></field>
+    <field name='genbank_file_url'></field>
+    <field name='order_url'></field>
+    <field name='order_source'></field>
+  </doc>
+
+
+
+  <doc boost="10">
+    <field name='dummy_unique_key'>5</field>
+    <field name='gene'>Cbx1</field>
+    <field name='product'>ES Cell</field>
+    <field name='allele_type'>Conditional Ready</field>
+    <field name='strain_of_origin'><![CDATA[C57BL/6N]]></field>
+    <field name='mgi_allele_name'><![CDATA[Cbx1 <sup>tm1a(EUCOMM)Wtsi</sup>]]></field>
+    <field name='allele_map_url'><![CDATA[http://www.knockoutmouse.org/targ_rep/alleles/902/allele-image]]></field>
+    <field name='genbank_file_url'><![CDATA[http://www.knockoutmouse.org/targ_rep/alleles/902/escell-clone-genbank-file]]></field>
+    <field name='order_url'><![CDATA[http://www.eummcr.org/order.php]]></field>
+    <field name='order_source'>EUMMCR</field>
+  </doc>
+  <doc boost="10">
+    <field name='dummy_unique_key'>6</field>
+    <field name='gene'>Cbx1</field>
+    <field name='product'>ES Cell</field>
+    <field name='allele_type'>Deletion</field>
+    <field name='strain_of_origin'><![CDATA[C57BL/6N]]></field>
+    <field name='mgi_allele_name'><![CDATA[Cbx1 <sup>tm1(KOMP)Vlcg</sup>]]></field>
+    <field name='allele_map_url'><![CDATA[http://www.knockoutmouse.org/targ_rep/alleles/37256/allele-image]]></field>
+    <field name='genbank_file_url'><![CDATA[http://www.knockoutmouse.org/targ_rep/alleles/37256/escell-clone-genbank-file]]></field>
+    <field name='order_url'><![CDATA[http://www.komp.org/geneinfo.php?project=VG19239]]></field>
+    <field name='order_source'>KOMP</field>
+  </doc>
+  <doc>
+    <field name='dummy_unique_key'>7</field>
+    <field name='gene'>Cbx1</field>
+    <field name='product'>Mouse</field>
+    <field name='allele_type'>Conditional Ready</field>
+    <field name='strain_of_origin'><![CDATA[C57BL/6Dnk]]></field>
+    <field name='mgi_allele_name'><![CDATA[]]></field>
+    <field name='allele_map_url'><![CDATA[http://www.knockoutmouse.org/targ_rep/alleles/902/allele-image]]></field>
+    <field name='genbank_file_url'><![CDATA[http://www.knockoutmouse.org/targ_rep/alleles/902/escell-clone-genbank-file]]></field>
+    <field name='order_url'><![CDATA[http://www.emmanet.org/mutant_types.php?keyword=Cbx1]]></field>
+    <field name='order_source'>EMMA</field>
+  </doc>
+
+  <doc boost="10">
+    <field name='dummy_unique_key'>8</field>
+    <field name='gene'>Zzz3</field>
+    <field name='product'>ES Cell</field>
+    <field name='allele_type'>Conditional Ready</field>
+    <field name='strain_of_origin'><![CDATA[C57BL/6N]]></field>
+    <field name='mgi_allele_name'><![CDATA[Zzz3 <sup>tm1a(EUCOMM)Wtsi</sup>]]></field>
+    <field name='allele_map_url'><![CDATA[http://www.knockoutmouse.org/targ_rep/alleles/9107/allele-image]]></field>
+    <field name='genbank_file_url'><![CDATA[http://www.knockoutmouse.org/targ_rep/alleles/9107/escell-clone-genbank-file]]></field>
+    <field name='order_url'><![CDATA[http://www.eummcr.org/order.php]]></field>
+    <field name='order_source'>EUMMCR</field>
+  </doc>
+  <doc>
+    <field name='dummy_unique_key'>9</field>
+    <field name='gene'>Zzz3</field>
+    <field name='product'>Mouse</field>
+    <field name='allele_type'>Conditional Ready</field>
+    <field name='strain_of_origin'><![CDATA[]]></field>
+    <field name='mgi_allele_name'><![CDATA[]]></field>
+    <field name='allele_map_url'><![CDATA[http://www.knockoutmouse.org/targ_rep/alleles/9107/allele-image]]></field>
+    <field name='genbank_file_url'><![CDATA[http://www.knockoutmouse.org/targ_rep/alleles/9107/escell-clone-genbank-file]]></field>
+    <field name='order_url'><![CDATA[http://www.emmanet.org/mutant_types.php?keyword=Zzz3]]></field>
+    <field name='order_source'>EMMA</field>
+  </doc>
+
+  <doc boost="10">
+    <field name='dummy_unique_key'>10</field>
+    <field name='gene'>Gaa</field>
+    <field name='product'>ES Cell</field>
+    <field name='allele_type'>Conditional Ready</field>
+    <field name='strain_of_origin'><![CDATA[C57BL/6N-A/a]]></field>
+    <field name='mgi_allele_name'><![CDATA[Gaa <sup>tm1a(KOMP)Wtsi</sup>]]></field>
+    <field name='allele_map_url'><![CDATA[http://www.knockoutmouse.org/targ_rep/alleles/18022/allele-image]]></field>
+    <field name='genbank_file_url'><![CDATA[http://www.knockoutmouse.org/targ_rep/alleles/18022/escell-clone-genbank-file]]></field>
+    <field name='order_url'><![CDATA[http://www.komp.org/geneinfo.php?project=CSD70795]]></field>
+    <field name='order_source'>KOMP</field>
+  </doc>
+
+</add>
