@@ -26,7 +26,7 @@ group :development, :test do
   gem 'vlad',                 :require => false
   gem 'vlad-git',             :require => false
   gem 'hoe',                  :require => false
-  gem 'shoulda', '> 2.11.0'
+  gem 'shoulda',              :require => false
   gem 'factory_girl'
   gem 'test-unit'
   gem 'annotate'
