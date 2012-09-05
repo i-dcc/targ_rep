@@ -31,6 +31,5 @@ group :development, :test do
   gem 'test-unit'
   gem 'annotate'
   gem 'awesome_print'
-  gem 'simplecov', '>= 0.4.0', :require => false
-  gem 'simplecov-rcov',        :require => false
+  gem 'mocha',                 :require => false
 end
