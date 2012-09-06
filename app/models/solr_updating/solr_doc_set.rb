@@ -1,2 +1,0 @@
-class SolrUpdating::SolrDocSet
-end

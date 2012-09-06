@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120228101846) do
+ActiveRecord::Schema.define(:version => 20120906111517) do
 
   create_table "alleles", :force => true do |t|
     t.string   "assembly",            :limit => 50,  :default => "NCBIM37", :null => false
@@ -173,6 +173,12 @@ ActiveRecord::Schema.define(:version => 20120228101846) do
   end
 
   add_index "qc_field_descriptions", ["qc_field"], :name => "index_qc_field_descriptions_on_qc_field", :unique => true
+
+  create_table "solr_updating_solr_commands", :force => true do |t|
+    t.text     "data",       :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "targeting_vectors", :force => true do |t|
     t.integer  "allele_id",                             :null => false
