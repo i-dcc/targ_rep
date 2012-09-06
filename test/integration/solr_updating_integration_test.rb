@@ -47,7 +47,7 @@ class SolrUpdatingIntegrationTest < ActiveSupport::TestCase
 
       SolrUpdating::IndexProxy.expects(:send).with(commands)
 
-      SolrUpdating::IndexUpdateQueue.run
+      SolrUpdating::Queue.run
     end
 
   end
