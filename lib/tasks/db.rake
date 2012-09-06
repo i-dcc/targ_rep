@@ -18,21 +18,42 @@ namespace :db do
     return config
   end
 
-  ['development', 'staging', 'production'].each do |envname|
+  def get_mysql_connection_options_from_config(config)
+    return "--password=#{config['password']} " +
+            "--host=#{config['host']} " +
+            "--port=#{config['port']} " +
+            "--user=#{config['username']} "
+  end
+
+  ['staging', 'production'].each do |envname|
+
     desc "Dump #{envname} DB into tmp/dump.#{envname}.sql.gz"
     task "#{envname}:dump" do
+      raise 'Cannot run in a live env!' if ['staging', 'production'].include? Rails.env
       config = get_db_config_for_env(envname)
-      system("cd #{Rails.root}; mysqldump --password=#{config['password']} --host=#{config['host']} --port=#{config['port']} --user=#{config['username']} --databases #{config['database']} | gzip -c > tmp/dump.#{envname}.sql.gz") or raise("Failed to dump #{envname} DB")
+      mysqldump_cmd = "mysqldump " +
+              get_mysql_connection_options_from_config(config) +
+              "--skip-add-drop-table " +
+              "#{config['database']}"
+      system("cd #{Rails.root}; #{mysqldump_cmd} | gzip -c > tmp/dump.#{envname}.sql.gz") or raise("Failed to dump #{envname} DB")
     end
 
     desc "Load tmp/dump.#{envname}.sql.gz into current environment DB"
-    task "#{envname}:load" => [:environment] do
+    task "#{envname}:load" => ['db:drop', 'db:create', :environment] do
+      raise 'Cannot run in a live env!' if ['staging', 'production'].include? Rails.env
       config = get_db_config_for_env(Rails.env)
-      system("cd #{Rails.root}; zcat tmp/dump.#{envname}.sql.gz | mysql --password=#{config['password']} --host=#{config['host']} --port=#{config['port']} --user=#{config['username']} #{config['database']}") or raise("Load failed")
+
+      mysql_connection_options = get_mysql_connection_options_from_config(config)
+
+      mysqldump_cmd = "mysqldump " +
+              "--no-data --add-drop-table " +
+              mysql_connection_options
+              "#{config['database']}"
+      system("cd #{Rails.root}; zcat tmp/dump.#{envname}.sql.gz | mysql #{get_mysql_connection_options_from_config(config)} #{config['database']}") or raise("Load failed")
     end
 
     desc "Copy the contents of the #{envname} DB into the current environment DB"
-
+    task "#{envname}:clone" => ["#{envname}dump", "#{envname}:load"]
   end
 
 end
