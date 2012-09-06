@@ -21,5 +21,9 @@ class SolrUpdating::IndexUpdateQueueTest < ActiveSupport::TestCase
       SolrUpdating::IndexUpdateQueue.remove_safely { |ds| ds.do_this_before_destroy }
     end
 
+    should 'do nothing if remove_safely is called while the queue is empty' do
+      flunk 'Peter'
+    end
+
   end
 end
