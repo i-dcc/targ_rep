@@ -40,12 +40,14 @@ class SolrUpdatingIntegrationTest < ActiveSupport::TestCase
         }
       ]
 
-      commands = [
-        {'delete' => {'query' => "id:#{allele.id},type:allele"} },
-        {'add' => {'doc' => docs}}
-      ]
+      commands = ActiveSupport::OrderedHash.new
+      commands['delete'] = {'query' => "id:#{allele.id},type:allele"}
+      commands['add'] = {'doc' => docs}
+      commands['commit'] = {}
+      commands['optimize'] = {}
+      commands_json = commands.to_json
 
-      SolrUpdating::IndexProxy::Allele.any_instance.expects(:send_update).with(commands)
+      SolrUpdating::IndexProxy::Allele.any_instance.expects(:send_update).with(commands_json)
 
       SolrUpdating::Queue.run
     end
