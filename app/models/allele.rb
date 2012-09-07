@@ -8,7 +8,15 @@ class Allele < ActiveRecord::Base
 
   has_one    :genbank_file,      :class_name => "GenbankFile",     :foreign_key => "allele_id",   :dependent => :destroy
   has_many   :targeting_vectors, :class_name => "TargetingVector", :foreign_key => "allele_id",   :dependent => :destroy
-  has_many   :es_cells,          :class_name => "EsCell",          :foreign_key => "allele_id",   :dependent => :destroy
+  has_many   :es_cells,          :class_name => "EsCell",          :foreign_key => "allele_id",   :dependent => :destroy do
+    def unique_solr_info
+      unique_es_cells = []
+      self.each do |es_cell|
+        unique_es_cells << {"strain" => es_cell.strain, "allele_symbol_superscript" => es_cell.allele_symbol_superscript}
+      end
+      return unique_es_cells.uniq
+    end
+  end
 
   accepts_nested_attributes_for :genbank_file,      :allow_destroy  => true
   accepts_nested_attributes_for :targeting_vectors, :allow_destroy  => true
@@ -154,14 +162,6 @@ class Allele < ActiveRecord::Base
       self.targeting_vectors.each { |tv| pipelines[tv.pipeline.name] = true } if self.targeting_vectors
       self.es_cells.each { |esc| pipelines[esc.pipeline.name] = true } if self.es_cells
       pipelines.keys.sort.join(', ')
-    end
-
-    def unique_solr_info
-      unique_es_cells = []
-      self.es_cells.each do |es_cell|
-        unique_es_cells << {"strain" => es_cell.strain, "allele_symbol_superscript" => es_cell.allele_symbol_superscript}
-      end
-      return unique_es_cells.uniq
     end
 
   protected

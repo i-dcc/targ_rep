@@ -219,6 +219,7 @@ class AlleleTest < ActiveSupport::TestCase
       assert( allele.save, "Allele 'has_correct_cassette_type' is not accepting L1L2_st1 as a Promotorless cassette!")
     end
 
+
     should "return an array of unique es_cells for solr update" do
       strains = [['JM8A','C57BL/6N-A<tm1Brd>/a'], ['JM8A','C57BL/6N-A<tm1Brd>/a'], ['C2','C57BL/6N'], ['JM8A','C57BL/6N-A<tm1Brd>/a']]
       allele_symbol_superscript = ['tm1e(EUCOMM)Hmgu', 'tm1e(EUCOMM)WTSI', 'tm1e(EUCOMM)WTSI', 'tm1e(EUCOMM)WTSI']
@@ -230,7 +231,7 @@ class AlleleTest < ActiveSupport::TestCase
       allele.reload
       allele.es_cells.each do |q|
       end
-      unique_es_cells = allele.unique_solr_info
+      unique_es_cells = allele.es_cells.unique_solr_info
       assert_equal unique_es_cells.class, Array
       assert_equal 3, unique_es_cells.count
       assert unique_es_cells.include?({"strain" => strains[0][1], "allele_symbol_superscript" => allele_symbol_superscript[0]})
