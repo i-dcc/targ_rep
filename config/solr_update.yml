@@ -1,0 +1,3 @@
+---
+index_proxy:
+  gene: http://www.knockoutmouse.org/martsearch/solr/select
