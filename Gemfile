@@ -23,12 +23,12 @@ gem 'rdoc'
 
 # bundler requires these gems in development and while running tests
 group :development, :test do
-  gem 'vlad',                 :require => false
-  gem 'vlad-git',             :require => false
-  gem 'hoe',                  :require => false
-  gem 'shoulda',              :require => false
-  gem 'factory_girl',         :require => false
-  gem 'test-unit',            :require => false
+  gem 'vlad',                  :require => false
+  gem 'vlad-git',              :require => false
+  gem 'hoe',                   :require => false
+  gem 'shoulda',               :require => false
+  gem 'factory_girl', '~>2.6.4'
+  gem 'test-unit',             :require => false
   gem 'annotate'
   gem 'awesome_print'
   gem 'mocha',                 :require => false
