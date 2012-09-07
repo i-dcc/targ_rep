@@ -10,4 +10,7 @@ class SolrUpdating::Queue
       solr_doc.destroy
     end
   end
+
+  def self.run
+  end
 end

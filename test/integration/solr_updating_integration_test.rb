@@ -5,12 +5,12 @@ class SolrUpdatingIntegrationTest < ActiveSupport::TestCase
 
     should 'queue update for an updated allele to the SOLR index' do
       eucomm = Pipeline.find_or_create_by_name('EUCOMM')
-      allele = Factory.create :allele, :mutation_subtype => 'conditional_ready'
-      es_cell = Factory.create :es_cell, :allele => allele, :strain => 'Blue', :pipeline => eucomm
-      es_cell = Factory.create :es_cell, :allele => allele, :strain => 'Red', :pipeline => eucomm
-      allele = es_cell.allele
-
-      SolrUpdating::SolrDocSet.destroy_all
+      allele = Factory.create :allele, :mutation_subtype => 'conditional_ready',
+              :mgi_accession_id => 'MGI:105369'
+      es_cell1 = Factory.create :es_cell, :allele => allele, :parental_cell_line => 'VGB6', :pipeline => eucomm
+      es_cell2 = Factory.create :es_cell, :allele => allele, :parental_cell_line => 'JM8A3.N1', :pipeline => eucomm
+      assert_equal 'C57BL/6N', es_cell1.strain
+      assert_equal 'C57BL/6N-A<tm1Brd>/a', es_cell2.strain
 
       allele.mutation_subtype = 'deletion'
       allele.save!
@@ -21,8 +21,8 @@ class SolrUpdatingIntegrationTest < ActiveSupport::TestCase
           'type' => 'allele',
           'product_type' => 'ES Cell',
           'allele_type' => 'Deletion',
-          'strain' => 'Blue',
-          'allele_name' => "#{es_cell.marker_symbol}<sup>es_cell.allele_symbol_superscript</sup>",
+          'strain' => es_cell2.strain,
+          'allele_name' => "Cbx1<sup>#{es_cell1.allele_symbol_superscript}</sup>",
           'allele_image_url' => "http://www.knockoutmouse.org/targ_rep/alleles/#{allele.id}/allele-image",
           'genebank_file_url' => "http://www.knockoutmouse.org/targ_rep/alleles/#{allele.id}/escell-clone-genbank-file",
           'order_url' => 'http://www.eummcr.org/order.php'
@@ -32,8 +32,8 @@ class SolrUpdatingIntegrationTest < ActiveSupport::TestCase
           'type' => 'allele',
           'product_type' => 'ES Cell',
           'allele_type' => 'Deletion',
-          'strain' => 'Red',
-          'allele_name' => "#{es_cell.marker_symbol}<sup>es_cell.allele_symbol_superscript</sup>",
+          'strain' => es_cell2.strain,
+          'allele_name' => "Cbx1<sup>#{es_cell2.allele_symbol_superscript}</sup>",
           'allele_image_url' => "http://www.knockoutmouse.org/targ_rep/alleles/#{allele.id}/allele-image",
           'genebank_file_url' => "http://www.knockoutmouse.org/targ_rep/alleles/#{allele.id}/escell-clone-genbank-file",
           'order_url' => 'http://www.eummcr.org/order.php'
@@ -45,7 +45,7 @@ class SolrUpdatingIntegrationTest < ActiveSupport::TestCase
         {'add' => {'doc' => docs}}
       ]
 
-      SolrUpdating::IndexProxy.expects(:send).with(commands)
+      SolrUpdating::IndexProxy::Allele.any_instance.expects(:send_update).with(commands)
 
       SolrUpdating::Queue.run
     end

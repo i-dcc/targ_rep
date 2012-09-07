@@ -20,4 +20,7 @@ module SolrUpdating::IndexProxy
     end
   end
 
+  class Allele
+  end
+
 end
