@@ -156,6 +156,14 @@ class Allele < ActiveRecord::Base
       pipelines.keys.sort.join(', ')
     end
 
+    def unique_solr_info
+      unique_es_cells = []
+      self.es_cells.each do |es_cell|
+        unique_es_cells << {"strain" => es_cell.strain, "allele_symbol_superscript" => es_cell.allele_symbol_superscript}
+      end
+      return unique_es_cells.uniq
+    end
+
   protected
     def has_right_features
       error_msg = "cannot be greater than %s position on this strand (#{strand})"
