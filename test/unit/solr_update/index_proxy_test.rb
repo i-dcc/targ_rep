@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class SolrUpdate::IndexProxyTest < ActiveSupport::TestCase
-  context 'SolrUpdate::IndexProxy' do
+  context 'SolrUpdate::IndexProxy::Gene' do
 
     should 'retrieve marker_symbol for an mgi_accession_id from a solr index' do
       index_proxy = SolrUpdate::IndexProxy::Gene.new
