@@ -1,4 +1,4 @@
-class SolrUpdating::SolrCommand < ActiveRecord::Base
+class SolrUpdate::SolrCommand < ActiveRecord::Base
   set_table_name :solr_updating_solr_commands
 end
 

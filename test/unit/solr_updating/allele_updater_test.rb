@@ -1,7 +1,7 @@
 require 'test_helper'
 
-class SolrUpdating::AlleleUpdaterTest < ActiveSupport::TestCase
-  context 'SolrUpdating::AlleleUpdater' do
+class SolrUpdate::AlleleUpdaterTest < ActiveSupport::TestCase
+  context 'SolrUpdate::AlleleUpdater' do
 
     should 'delete and then recreate Solr docs for allele when allele is updated'
 

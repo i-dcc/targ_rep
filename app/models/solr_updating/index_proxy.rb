@@ -1,4 +1,4 @@
-module SolrUpdating::IndexProxy
+module SolrUpdate::IndexProxy
 
   class Gene
     def initialize

@@ -1,7 +1,7 @@
 require 'test_helper'
 
-class SolrUpdating::SolrCommandTest < ActiveSupport::TestCase
-  context 'SolrUpdating::SolrCommand' do
+class SolrUpdate::SolrCommandTest < ActiveSupport::TestCase
+  context 'SolrUpdate::SolrCommand' do
 
     should have_db_column(:data).with_options(:null => false)
 

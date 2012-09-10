@@ -1,2 +1,2 @@
-class SolrUpdating::SolrDocSetFactory
+class SolrUpdate::SolrDocSetFactory
 end
