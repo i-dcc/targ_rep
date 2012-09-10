@@ -1,6 +1,11 @@
 require 'test_helper'
 
 class SolrUpdate::IndexProxyTest < ActiveSupport::TestCase
+
+  def should_work_on_get(name)
+    TODO
+  end
+
   context 'SolrUpdate::IndexProxy::Gene' do
 
     should 'retrieve marker_symbol for an mgi_accession_id from a solr index' do

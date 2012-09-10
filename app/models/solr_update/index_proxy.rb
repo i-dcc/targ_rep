@@ -1,9 +1,15 @@
 module SolrUpdate::IndexProxy
 
+  def self.get_uri_for(name)
+    return URI.parse(YAML.load_file(Rails.root + 'config/solr_update.yml')['index_proxy'].fetch(name))
+  end
+
   class Gene
     def initialize
-      @solr_uri = URI.parse(YAML.load_file(Rails.root + 'config/solr_update.yml')['index_proxy'].fetch('gene')).freeze
-      proxy_uri = URI.parse(ENV['HTTP_PROXY'])
+      @solr_uri = SolrUpdate::IndexProxy.get_uri_for('gene').freeze
+      if ENV['HTTP_PROXY'].present?
+        proxy_uri = URI.parse(ENV['HTTP_PROXY'])
+      end
       @http = Net::HTTP::Proxy(proxy_uri.host, proxy_uri.port, proxy_uri.user, proxy_uri.password)
     end
 
