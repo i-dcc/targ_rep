@@ -3,14 +3,14 @@ class SolrUpdate::Queue
     SolrUpdate::SolrCommand.add(doc_set)
   end
 
-  def self.remove_safely(&block)
-    solr_doc = SolrUpdate::SolrCommand.earliest
-    if solr_doc.present?
-      block.call(solr_doc)
-      solr_doc.destroy
-    end
-  end
-
   def self.run
+    proxy = SolrUpdate::IndexProxy::Allele.new
+    commands = SolrUpdate::SolrCommand.earliest_first
+    commands.each do |command|
+      SolrUpdate::SolrCommand.transaction do
+        proxy.send_update(command)
+        command.destroy
+      end
+    end
   end
 end
