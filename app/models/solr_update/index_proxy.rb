@@ -1,7 +1,7 @@
 module SolrUpdate::IndexProxy
 
   def self.get_uri_for(name)
-    return URI.parse(YAML.load_file(Rails.root + 'config/solr_update.yml')['index_proxy'].fetch(name))
+    return URI.parse(YAML.load_file(Rails.root + 'config/solr_update.yml').fetch(Rails.env).fetch('index_proxy').fetch(name))
   end
 
   class Gene
