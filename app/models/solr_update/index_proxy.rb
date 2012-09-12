@@ -9,12 +9,24 @@ module SolrUpdate::IndexProxy
       SolrUpdate::IndexProxy.get_uri_for(index_name)
     end
 
+    def self.should_use_proxy_for?(host)
+      ENV['NO_PROXY'].delete(' ').split(',').each do |no_proxy_host_part|
+        if host.include?(no_proxy_host_part)
+          return false
+        end
+      end
+
+      return true
+    end
+
     def initialize
       @solr_uri = self.class.get_uri.freeze
-      if ENV['HTTP_PROXY'].present?
+      if ENV['HTTP_PROXY'].present? and self.class.should_use_proxy_for?(@solr_uri.host)
         proxy_uri = URI.parse(ENV['HTTP_PROXY'])
+        @http = Net::HTTP::Proxy(proxy_uri.host, proxy_uri.port, proxy_uri.user, proxy_uri.password)
+      else
+        @http = Net::HTTP
       end
-      @http = Net::HTTP::Proxy(proxy_uri.host, proxy_uri.port, proxy_uri.user, proxy_uri.password)
     end
 
     def search(solr_params)

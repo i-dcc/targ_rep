@@ -2,6 +2,21 @@ require 'test_helper'
 
 class SolrUpdate::IndexProxyTest < ActiveSupport::TestCase
 
+  context 'SolrUpdate::IndexProxy::Base' do
+    context '#should_use_proxy_for?' do
+      should 'work' do
+        begin
+          old_no_proxy = ENV['NO_PROXY']
+          ENV['NO_PROXY'] = 'somedomain, fakedomain, nonexistent_domain'
+          assert_equal true, SolrUpdate::IndexProxy::Base.should_use_proxy_for?('testdomain.com')
+          assert_equal false, SolrUpdate::IndexProxy::Base.should_use_proxy_for?('fakedomain.com')
+        ensure
+          ENV['NO_PROXY'] = old_no_proxy if old_no_proxy
+        end
+      end
+    end
+  end
+
   context 'SolrUpdate::IndexProxy::Gene' do
     should 'retrieve marker_symbol for an mgi_accession_id from a solr index' do
       index_proxy = SolrUpdate::IndexProxy::Gene.new
