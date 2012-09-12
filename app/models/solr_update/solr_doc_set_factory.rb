@@ -1,2 +1,0 @@
-class SolrUpdate::SolrDocSetFactory
-end

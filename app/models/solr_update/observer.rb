@@ -1,6 +1,12 @@
-class SolrUpdate::Observer
+class SolrUpdate::Observer < ActiveRecord::Observer
+  observe Allele
+
   def after_save(allele)
-    doc_set = SolrUpdate::SolrDocSetFactory.create_solr_doc_set(allele)
-    SolrUpdate::IndexUpdateQueue.add(doc_set)
+    command = SolrUpdate::SolrCommandFactory.create_solr_command(allele)
+    SolrUpdate::Queue.add(command)
+  end
+
+  class << self
+    public :new
   end
 end

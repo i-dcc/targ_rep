@@ -4,10 +4,10 @@ class SolrUpdate::ObserverTest < ActiveSupport::TestCase
   context 'SolrUpdate::Observer' do
 
     should 'observe Allele object updates and queue an index update' do
-      doc_set = stub('doc_set')
+      command = stub('doc_set')
       allele = stub('allele')
-      SolrUpdate::SolrDocSetFactory.expects(:create_solr_doc_set).with(allele).returns(doc_set)
-      SolrUpdate::Queue.expects(:add).with(doc_set)
+      SolrUpdate::SolrCommandFactory.expects(:create_solr_command).with(allele).returns(command)
+      SolrUpdate::Queue.expects(:add).with(command)
 
       o = SolrUpdate::Observer.new
       o.after_save allele

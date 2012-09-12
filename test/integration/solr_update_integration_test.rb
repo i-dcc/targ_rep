@@ -10,7 +10,7 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
 
       # TODO Make this with a 'CommandFactory' or something
       commands = ActiveSupport::OrderedHash.new
-      commands['delete'] = {'query' => '*'}
+      commands['delete'] = {'query' => '*:*'}
       commands['commit'] = {}
       commands_json = commands.to_json
       allele_index_proxy.update(commands_json)

@@ -1,6 +1,6 @@
 class SolrUpdate::Queue
-  def self.add(doc_set)
-    SolrUpdate::SolrCommand.add(doc_set)
+  def self.add(command)
+    SolrUpdate::SolrCommand.add(command)
   end
 
   def self.run
