@@ -174,6 +174,16 @@ class AllelesController < ApplicationController
     )
   end
 
+  def escell_clone_cre_excised_genbank_file
+    send_data(
+      "<pre>#{@allele.genbank_file.escell_clone_cre_excised}</pre>",
+      {
+        :type        => 'text/html',
+        :disposition => 'inline'
+      }
+    )
+  end
+
   # GET /alleles/1/targeting-vector-genbank-file/
   def targeting_vector_genbank_file
     send_data(

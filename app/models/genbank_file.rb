@@ -18,6 +18,17 @@ class GenbankFile < ActiveRecord::Base
   validates_presence_of   :allele_id, :unless => :nested
   validates_uniqueness_of :allele_id, :message => "must be unique"
 
+  def escell_clone_cre_excised
+    return site_specific_recombination(escell_clone, 'cre')
+  end
+
+private
+  def site_specific_recombination(genbank_file,flag)
+    cre_excised_genbank_file =ruby IO.popen("CALL PERL MODULE OR SOMETHING???")
+    cre_excised_genbank_file.close_write
+    return cre_excised_genbank_file.read
+  end
+
 end
 
 # == Schema Information
