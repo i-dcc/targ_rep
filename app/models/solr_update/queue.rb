@@ -8,7 +8,7 @@ class SolrUpdate::Queue
     commands = SolrUpdate::SolrCommand.earliest_first
     commands.each do |command|
       SolrUpdate::SolrCommand.transaction do
-        proxy.send_update(command)
+        proxy.update(command)
         command.destroy
       end
     end

@@ -13,10 +13,10 @@ class SolrUpdate::QueueTest < ActiveSupport::TestCase
 
       SolrUpdate::SolrCommand.expects(:earliest_first).returns([solr_command_1, solr_command_2]).in_sequence(seq1)
 
-      SolrUpdate::IndexProxy::Allele.any_instance.expects(:send_update).with(solr_command_1).in_sequence(seq1)
+      SolrUpdate::IndexProxy::Allele.any_instance.expects(:update).with(solr_command_1).in_sequence(seq1)
       solr_command_1.expects(:destroy).with().in_sequence(seq1)
 
-      SolrUpdate::IndexProxy::Allele.any_instance.expects(:send_update).with(solr_command_2).in_sequence(seq1)
+      SolrUpdate::IndexProxy::Allele.any_instance.expects(:update).with(solr_command_2).in_sequence(seq1)
       solr_command_2.expects(:destroy).with().in_sequence(seq1)
 
 
