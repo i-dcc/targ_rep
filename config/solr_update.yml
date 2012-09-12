@@ -1,10 +1,14 @@
 ---
-development:
+development: &dev
   index_proxy:
-    gene: http://www.knockoutmouse.org/martsearch/solr/select
-    allele: http://ikmc.vm.bytemark.co.uk:8984/solr/allele/search
+    gene: http://ikmc.vm.bytemark.co.uk:8984/solr/gene
+    allele: http://ikmc.vm.bytemark.co.uk:8984/solr/allele
 
-test:
+test: *dev
+
+production: &pro
   index_proxy:
-    gene: http://ikmc.vm.bytemark.co.uk:8984/solr/gene/search
-    allele: http://ikmc.vm.bytemark.co.uk:8984/solr/allele/search
+    gene: http://ikmc.vm.bytemark.co.uk:8983/solr/gene
+    allele: http://ikmc.vm.bytemark.co.uk:8983/solr/allele
+
+staging: *pro
