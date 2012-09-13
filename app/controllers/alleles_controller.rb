@@ -5,6 +5,12 @@ class AllelesController < ApplicationController
       :update, :destroy,
       :escell_clone_genbank_file,
       :targeting_vector_genbank_file,
+      :escell_clone_cre_genbank_file,
+      :targeting_vector_cre_genbank_file,
+      :escell_clone_flp_genbank_file,
+      :targeting_vector_flp_genbank_file,
+      :escell_clone_flp_cre_genbank_file,
+      :targeting_vector_flp_cre_genbank_file,
       :allele_image,
       :cassette_image,
       :vector_image,
@@ -14,12 +20,17 @@ class AllelesController < ApplicationController
     :only => [
       :escell_clone_genbank_file,
       :targeting_vector_genbank_file,
+      :escell_clone_cre_genbank_file,
+      :targeting_vector_cre_genbank_file,
+      :escell_clone_flp_genbank_file,
+      :targeting_vector_flp_genbank_file,
+      :escell_clone_flp_cre_genbank_file,
+      :targeting_vector_flp_cre_genbank_file,
       :allele_image,
       :vector_image
     ]
-  before_filter :check_for_escell_genbank_file, :only => [ :escell_clone_genbank_file, :allele_image ]
-  before_filter :check_for_vector_genbank_file, :only => [ :targeting_vector_genbank_file, :vector_image ]
-
+  before_filter :check_for_escell_genbank_file, :only => [ :escell_clone_genbank_file, :escell_clone_cre_genbank_file, :escell_clone_flp_genbank_file, :escell_clone_flp_cre_genbank_file, :allele_image ]
+  before_filter :check_for_vector_genbank_file, :only => [ :targeting_vector_genbank_file, :targeting_vector_cre_genbank_file, :targeting_vector_flp_genbank_file, :targeting_vector_flp_cre_genbank_file, :vector_image ]
 
   # Must be after "find_allele" filter (as it requires an object)
   before_filter :ensure_creator_or_admin, :only => [:destroy]
@@ -174,9 +185,10 @@ class AllelesController < ApplicationController
     )
   end
 
-  def escell_clone_cre_excised_genbank_file
+  # GET /alleles/1/targeting-vector-genbank-file/
+  def targeting_vector_genbank_file
     send_data(
-      "<pre>#{@allele.genbank_file.escell_clone_cre_excised}</pre>",
+      "<pre>#{@allele.genbank_file.targeting_vector}</pre>",
       {
         :type        => 'text/html',
         :disposition => 'inline'
@@ -184,10 +196,59 @@ class AllelesController < ApplicationController
     )
   end
 
-  # GET /alleles/1/targeting-vector-genbank-file/
-  def targeting_vector_genbank_file
+  def escell_clone_cre_genbank_file
     send_data(
-      "<pre>#{@allele.genbank_file.targeting_vector}</pre>",
+      "<pre>#{@allele.genbank_file.escell_clone_cre}</pre>",
+      {
+        :type        => 'text/html',
+        :disposition => 'inline'
+      }
+    )
+  end
+
+  def targeting_vector_cre_genbank_file
+    send_data(
+      "<pre>#{@allele.genbank_file.targeting_vector_cre}</pre>",
+      {
+        :type        => 'text/html',
+        :disposition => 'inline'
+      }
+    )
+  end
+
+  def escell_clone_flp_genbank_file
+    send_data(
+      "<pre>#{@allele.genbank_file.escell_clone_flp}</pre>",
+      {
+        :type        => 'text/html',
+        :disposition => 'inline'
+      }
+    )
+  end
+
+  def targeting_vector_flp_genbank_file
+    send_data(
+      "<pre>#{@allele.genbank_file.targeting_vector_flp}</pre>",
+      {
+        :type        => 'text/html',
+        :disposition => 'inline'
+      }
+    )
+  end
+
+  def escell_clone_flp_cre_genbank_file
+    send_data(
+      "<pre>#{@allele.genbank_file.escell_clone_flp_cre}</pre>",
+      {
+        :type        => 'text/html',
+        :disposition => 'inline'
+      }
+    )
+  end
+
+  def targeting_vector_flp_cre_genbank_file
+    send_data(
+      "<pre>#{@allele.genbank_file.targeting_vector_flp_cre}</pre>",
       {
         :type        => 'text/html',
         :disposition => 'inline'

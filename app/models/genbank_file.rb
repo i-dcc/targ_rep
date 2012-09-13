@@ -18,15 +18,46 @@ class GenbankFile < ActiveRecord::Base
   validates_presence_of   :allele_id, :unless => :nested
   validates_uniqueness_of :allele_id, :message => "must be unique"
 
-  def escell_clone_cre_excised
-    return site_specific_recombination(escell_clone, 'cre')
+  def escell_clone_cre
+    return site_specific_recombination(self.escell_clone, 'apply_cre')
+  end
+
+  def targeting_vector_cre
+    return site_specific_recombination(self.targeting_vector, 'apply_cre')
+  end
+
+  def escell_clone_flp
+    return site_specific_recombination(self.escell_clone, 'apply_flp')
+  end
+
+  def targeting_vector_flp
+    return site_specific_recombination(self.targeting_vector, 'apply_flp')
+  end
+
+  def escell_clone_flp_cre
+    return site_specific_recombination(self.escell_clone, 'apply_flp_cre')
+  end
+
+  def targeting_vector_flp_cre
+    return site_specific_recombination(self.targeting_vector, 'apply_flp_cre')
   end
 
 private
   def site_specific_recombination(genbank_file,flag)
-    cre_excised_genbank_file =ruby IO.popen("CALL PERL MODULE OR SOMETHING???")
-    cre_excised_genbank_file.close_write
-    return cre_excised_genbank_file.read
+    require "open3"
+    if !genbank_file.blank?
+      Open3.popen3("#{GENBANK_RECOMBINATION_PATH}recombinate_sequence.pl --#{flag}") do |std_in, std_out, std_err|
+        std_in.write(genbank_file)
+        std_in.close_write
+        if !std_err.blank?
+          return std_out.read
+        else
+          raise "Error: #{std_err.read}"
+        end
+      end
+    else
+      raise "Error: No Genbank File Found"
+    end
   end
 
 end

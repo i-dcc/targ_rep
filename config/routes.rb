@@ -8,8 +8,14 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :es_cells, :collection => { :bulk_edit => [:get,:post], :update_multiple => :put }
 
   map.escell_clone_genbank_file     '/alleles/:id/escell-clone-genbank-file',      :controller => "alleles", :action => "escell_clone_genbank_file"
-  map.escell_clone_cre_excised_genbank_file     '/alleles/:id/escell-clone-cre-excised-genbank-file',      :controller => "alleles", :action => "escell_clone_cre_excised_genbank_file"
   map.targeting_vector_genbank_file '/alleles/:id/targeting-vector-genbank-file',  :controller => "alleles", :action => "targeting_vector_genbank_file"
+
+  map.escell_clone_cre_genbank_file     '/alleles/:id/escell-clone-cre-genbank-file',      :controller => "alleles", :action => "escell_clone_cre_genbank_file"
+  map.targeting_vector_cre_genbank_file     '/alleles/:id/targeting-vector-cre-genbank-file',      :controller => "alleles", :action => "targeting_vector_cre_genbank_file"
+  map.escell_clone_flp_genbank_file     '/alleles/:id/escell-clone-flp-genbank-file',      :controller => "alleles", :action => "escell_clone_flp_genbank_file"
+  map.targeting_vector_flp_genbank_file     '/alleles/:id/targeting-vector-flp-genbank-file',      :controller => "alleles", :action => "targeting_vector_flp_genbank_file"
+  map.escell_clone_flp_cre_genbank_file     '/alleles/:id/escell-clone-flp-cre-genbank-file',      :controller => "alleles", :action => "escell_clone_flp_cre_genbank_file"
+  map.targeting_vector_flp_cre_genbank_file     '/alleles/:id/targeting-vector-flp-cre-genbank-file',      :controller => "alleles", :action => "targeting_vector_flp_cre_genbank_file"
 
   map.allele_image   '/alleles/:id/allele-image', :controller => "alleles", :action => "allele_image"
   map.cassette_image   '/alleles/:id/cassette-image', :controller => "alleles", :action => "cassette_image"
