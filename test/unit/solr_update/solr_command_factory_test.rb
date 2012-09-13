@@ -16,7 +16,7 @@ class SolrUpdate::SolrCommandFactoryTest < ActiveSupport::TestCase
     context 'when creating solr command for an allele' do
 
       setup do
-        SolrUpdate::IndexProxy::Gene.stubs(:get_marker_symbol).with('MGI:9999999991').returns('Test1')
+        SolrUpdate::IndexProxy::Gene.any_instance.stubs(:get_marker_symbol).with('MGI:9999999991').returns('Test1')
 
         @allele = Factory.create :allele, :design_type => 'Knock Out',
                 :mgi_accession_id => 'MGI:9999999991'

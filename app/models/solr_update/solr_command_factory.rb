@@ -8,14 +8,15 @@ class SolrUpdate::SolrCommandFactory
   def create_solr_command
     commands = ActiveSupport::OrderedHash.new
 
-    marker_symbol = SolrUpdate::IndexProxy::Gene.get_marker_symbol(allele.mgi_accession_id)
+    marker_symbol = gene_index_proxy.get_marker_symbol(allele.mgi_accession_id)
     docs = allele.es_cells.unique_solr_info.map do |es_cell_info|
       {
         'type' => 'allele',
         'id' => allele.id,
         'allele_type' => formatted_allele_type,
         'strain' => es_cell_info['strain'],
-        'allele_name' => "#{marker_symbol}<sup>#{es_cell_info['allele_symbol_superscript']}</sup>"
+        'allele_name' => "#{marker_symbol}<sup>#{es_cell_info['allele_symbol_superscript']}</sup>",
+
       }
     end
 
@@ -26,10 +27,11 @@ class SolrUpdate::SolrCommandFactory
     return commands.to_json
   end
 
-  attr_reader :allele
+  attr_reader :allele, :gene_index_proxy
 
   def initialize(allele)
     @allele = allele
+    @gene_index_proxy = SolrUpdate::IndexProxy::Gene.new
   end
 
   def formatted_allele_type
