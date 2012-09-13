@@ -15,3 +15,6 @@ production: &pro
     allele: http://ikmc.vm.bytemark.co.uk:8983/solr/allele
 
 staging: *pro
+
+all:
+  targ_rep_url: http://www.knockoutmouse.org/targ_rep
