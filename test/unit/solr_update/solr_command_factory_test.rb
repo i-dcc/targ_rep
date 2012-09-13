@@ -23,7 +23,7 @@ class SolrUpdate::SolrCommandFactoryTest < ActiveSupport::TestCase
 
         fake_unique_solr_info = [
           {'strain' => 'C57BL/6N', 'allele_symbol_superscript' => 'tm1a(EUCOMM)Wtsi'},
-          {'strain' => 'C57BL/6N-A<tm1Brd>/a', 'allele_symbol_superscript' => 'tm1a(EUCOMM)Wtsi'}
+          {'strain' => 'C57BL/6N-A<tm1Brd>/a', 'allele_symbol_superscript' => 'tm2a(EUCOMM)Wtsi'}
         ]
 
         @allele.es_cells.stubs(:unique_solr_info).returns(fake_unique_solr_info)
@@ -45,7 +45,7 @@ class SolrUpdate::SolrCommandFactoryTest < ActiveSupport::TestCase
       end
 
       context 'the add commands' do
-        should 'set allele id' do
+        should 'set allele_id' do
           assert_equal [@allele.id, @allele.id], @commands['add'].map {|d| d['id']}
         end
 
@@ -59,6 +59,11 @@ class SolrUpdate::SolrCommandFactoryTest < ActiveSupport::TestCase
 
         should 'set strain' do
           assert_equal ['C57BL/6N', 'C57BL/6N-A<tm1Brd>/a'], @commands['add'].map {|d| d['strain']}
+        end
+
+        should 'set allele_name' do
+          assert_equal ['Test1<sup>tm1a(EUCOMM)Wtsi</sup>', 'Test1<sup>tm2a(EUCOMM)Wtsi</sup>'],
+                  @commands['add'].map {|d| d['allele_name']}
         end
 
       end
