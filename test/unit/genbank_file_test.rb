@@ -5,7 +5,7 @@ class GenbankFileTest < ActiveSupport::TestCase
 
   context "recombinate genbank es_clone sequence" do
     should "return a cre genbank file" do
-      genbank = Factory.create genbank_file
+      genbank = Factory.create :genbank_file
 
       assert_nothing_raised genbank.escell_clone_cre
       escell_clone_cre_genbank_file = genbank.escell_clone_cre
@@ -13,7 +13,7 @@ class GenbankFileTest < ActiveSupport::TestCase
     end
 
     should "return a flp genbank file" do
-      genbank = Factory.create genbank_file
+      genbank = Factory.create :genbank_file
 
       assert_nothing_raised genbank.escell_clone_flp
       escell_clone_flp_genbank_file = genbank.escell_clone_flp
@@ -21,7 +21,7 @@ class GenbankFileTest < ActiveSupport::TestCase
     end
 
     should "return a flp-cre genbank file" do
-      genbank = Factory.create genbank_file
+      genbank = Factory.create :genbank_file
 
       assert_nothing_raised genbank.escell_clone_flp_cre
       escell_clone_flp_cre_genbank_file = genbank.escell_clone_flp_cre
@@ -31,7 +31,7 @@ class GenbankFileTest < ActiveSupport::TestCase
 
   context "recombinate genbank targeting_vector sequence" do
     should "return a cre genbank file" do
-      genbank = Factory.create genbank_file
+      genbank = Factory.create :genbank_file
 
       assert_nothing_raised genbank.targeting_vector_cre
       targeting_vector_cre_genbank_file = genbank.targeting_vector_cre
@@ -39,7 +39,7 @@ class GenbankFileTest < ActiveSupport::TestCase
     end
 
     should "return a flp genbank file" do
-      genbank = Factory.create genbank_file
+      genbank = Factory.create :genbank_file
 
       assert_nothing_raised genbank.targeting_vector_flp
       targeting_vector_flp_genbank_file = genbank.targeting_vector_flp
@@ -47,7 +47,7 @@ class GenbankFileTest < ActiveSupport::TestCase
     end
 
     should "return a flp-cre genbank file" do
-      genbank = Factory.create genbank_file
+      genbank = Factory.create :genbank_file
 
       assert_nothing_raised genbank.targeting_vector_flp_cre
       targeting_vector_flp_cre_genbank_file = genbank.targeting_vector_flp_cre

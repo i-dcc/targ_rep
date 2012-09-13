@@ -30,7 +30,7 @@ CREATE TABLE `alleles` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_mol_struct` (`mgi_accession_id`,`project_design_id`,`assembly`,`chromosome`,`strand`,`homology_arm_start`,`homology_arm_end`,`cassette_start`,`cassette_end`,`loxp_start`,`loxp_end`,`cassette`,`backbone`),
   KEY `index_molecular_structures_on_mgi_accession_id` (`mgi_accession_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=40880 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=38620 DEFAULT CHARSET=latin1;
 
 CREATE TABLE `audits` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -47,7 +47,7 @@ CREATE TABLE `audits` (
   KEY `auditable_index` (`auditable_id`,`auditable_type`),
   KEY `user_index` (`user_id`,`user_type`),
   KEY `index_audits_on_created_at` (`created_at`)
-) ENGINE=InnoDB AUTO_INCREMENT=2777212 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2490190 DEFAULT CHARSET=latin1;
 
 CREATE TABLE `es_cell_qc_conflicts` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -125,7 +125,7 @@ CREATE TABLE `es_cells` (
   KEY `es_cells_pipeline_id_fk` (`pipeline_id`),
   CONSTRAINT `es_cells_allele_id_fk` FOREIGN KEY (`allele_id`) REFERENCES `alleles` (`id`) ON DELETE CASCADE,
   CONSTRAINT `es_cells_pipeline_id_fk` FOREIGN KEY (`pipeline_id`) REFERENCES `pipelines` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=234270 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=232072 DEFAULT CHARSET=latin1;
 
 CREATE TABLE `genbank_files` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -139,7 +139,7 @@ CREATE TABLE `genbank_files` (
   PRIMARY KEY (`id`),
   KEY `genbank_files_allele_id_fk` (`allele_id`),
   CONSTRAINT `genbank_files_allele_id_fk` FOREIGN KEY (`allele_id`) REFERENCES `alleles` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=42307 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=39736 DEFAULT CHARSET=latin1;
 
 CREATE TABLE `pipelines` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -159,7 +159,7 @@ CREATE TABLE `qc_field_descriptions` (
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_qc_field_descriptions_on_qc_field` (`qc_field`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
 CREATE TABLE `schema_migrations` (
   `version` varchar(255) NOT NULL,
@@ -192,7 +192,7 @@ CREATE TABLE `targeting_vectors` (
   KEY `targeting_vectors_pipeline_id_fk` (`pipeline_id`),
   CONSTRAINT `targeting_vectors_allele_id_fk` FOREIGN KEY (`allele_id`) REFERENCES `alleles` (`id`) ON DELETE CASCADE,
   CONSTRAINT `targeting_vectors_pipeline_id_fk` FOREIGN KEY (`pipeline_id`) REFERENCES `pipelines` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=181949 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=181079 DEFAULT CHARSET=latin1;
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -212,7 +212,7 @@ CREATE TABLE `users` (
   `current_login_ip` varchar(255) DEFAULT NULL,
   `last_login_ip` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=latin1;
 
 INSERT INTO schema_migrations (version) VALUES ('20091119090001');
 
