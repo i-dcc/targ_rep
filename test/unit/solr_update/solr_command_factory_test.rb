@@ -40,6 +40,10 @@ class SolrUpdate::SolrCommandFactoryTest < ActiveSupport::TestCase
         assert_equal "type:allele AND id:#{@allele.id}", @commands['delete']['query']
       end
 
+      should 'do a commit after adding new docs' do
+        assert_equal({}, @commands['commit'])
+      end
+
       context 'the add commands' do
         should 'set allele id' do
           assert_equal [@allele.id, @allele.id], @commands['add'].map {|d| d['id']}
@@ -53,7 +57,10 @@ class SolrUpdate::SolrCommandFactoryTest < ActiveSupport::TestCase
           assert_equal ['Conditional Ready', 'Conditional Ready'], @commands['add'].map {|d| d['allele_type']}
         end
 
-        should 'set strain'
+        should 'set strain' do
+          assert_equal ['C57BL/6N', 'C57BL/6N-A<tm1Brd>/a'], @commands['add'].map {|d| d['strain']}
+        end
+
       end
     end
 

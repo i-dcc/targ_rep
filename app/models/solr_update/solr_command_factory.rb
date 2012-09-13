@@ -12,13 +12,14 @@ class SolrUpdate::SolrCommandFactory
       {
         'type' => 'allele',
         'id' => allele.id,
-        'allele_type' => formatted_allele_type
+        'allele_type' => formatted_allele_type,
+        'strain' => es_cell_info['strain']
       }
     end
 
     commands['delete'] = {'query' => "type:allele AND id:#{allele.id}"}
     commands['add'] = docs
-    commands['commit'] = ''
+    commands['commit'] = {}
 
     return commands.to_json
   end
