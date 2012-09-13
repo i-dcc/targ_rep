@@ -4,8 +4,6 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
   context 'SOLR update system' do
 
     should 'queue update for an updated allele to the SOLR index' do
-      SolrUpdate::IndexProxy::Gene.stubs(:get_marker_symbol).with('MGI:9999999991').returns('Test1')
-
       allele_index_proxy = SolrUpdate::IndexProxy::Allele.new
 
       # TODO Make this with a 'CommandFactory' or something
@@ -20,7 +18,7 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
 
       eucomm = Pipeline.find_or_create_by_name('EUCOMM')
       allele = Factory.create :allele, :design_type => 'Insertion',
-              :mgi_accession_id => 'MGI:9999999991'
+              :mgi_accession_id => 'MGI:105369'
       es_cell1 = Factory.create(:es_cell,
         :allele => allele, :parental_cell_line => 'VGB6',
         :pipeline => eucomm,
@@ -49,7 +47,7 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
           'product_type' => 'ES Cell',
           'allele_type' => 'Targeted Non Conditional',
           'strain' => es_cell1.strain,
-          'allele_name' => "Test1<sup>tm1a(EUCOMM)Wtsi</sup>",
+          'allele_name' => "Cbx1<sup>tm1a(EUCOMM)Wtsi</sup>",
           'allele_image_url' => "http://www.knockoutmouse.org/targ_rep/alleles/#{allele.id}/allele-image",
           'genebank_file_url' => "http://www.knockoutmouse.org/targ_rep/alleles/#{allele.id}/escell-clone-genbank-file",
           'order_url' => 'http://www.eummcr.org/order.php'
@@ -60,7 +58,7 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
           'product_type' => 'ES Cell',
           'allele_type' => 'Targeted Non Conditional',
           'strain' => es_cell2.strain,
-          'allele_name' => "Test1<sup>tm2a(EUCOMM)Wtsi</sup>",
+          'allele_name' => "Cbx1<sup>tm2a(EUCOMM)Wtsi</sup>",
           'allele_image_url' => "http://www.knockoutmouse.org/targ_rep/alleles/#{allele.id}/allele-image",
           'genebank_file_url' => "http://www.knockoutmouse.org/targ_rep/alleles/#{allele.id}/escell-clone-genbank-file",
           'order_url' => 'http://www.eummcr.org/order.php'
