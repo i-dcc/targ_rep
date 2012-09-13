@@ -2,7 +2,7 @@ class SolrUpdate::SolrCommand < ActiveRecord::Base
   set_table_name :solr_update_solr_commands
 
   def self.earliest_first
-    return self.find(:all, :order => 'created_at asc').map(&:data)
+    return self.find(:all, :order => 'created_at asc')
   end
 
   def self.add(doc)
