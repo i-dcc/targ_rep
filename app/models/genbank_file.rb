@@ -46,7 +46,7 @@ private
   def site_specific_recombination(genbank_file,flag)
     require "open3"
     if !genbank_file.blank?
-      Open3.popen3("#{GENBANK_RECOMBINATION_PATH}recombinate_sequence.pl --#{flag}") do |std_in, std_out, std_err|
+      Open3.popen3("#{GENBANK_RECOMBINATION_SCRIPT_PATH} --#{flag}") do |std_in, std_out, std_err|
         std_in.write(genbank_file)
         std_in.close_write
         if !std_err.blank?
