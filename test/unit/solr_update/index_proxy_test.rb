@@ -25,7 +25,7 @@ class SolrUpdate::IndexProxyTest < ActiveSupport::TestCase
   end
 
   context 'SolrUpdate::IndexProxy::Allele' do
-    should 'send update commands to index and then gets them' do
+    should 'send update commands to index and then gets them: #search and #update' do
       docs = [
         {
           'id' => rand(999),
