@@ -1,0 +1,18 @@
+---
+development:
+  adapter: mysql2
+  host: localhost
+  database: targ_rep_development
+  username: rails
+  password: rails
+  pool: 5
+  timeout: 5000
+
+test:
+  adapter: mysql2
+  host: localhost
+  database: targ_rep_test
+  username: rails
+  password: rails
+  pool: 5
+  timeout: 5000

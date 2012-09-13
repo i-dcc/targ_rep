@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120228101846) do
+ActiveRecord::Schema.define(:version => 20120906111517) do
 
   create_table "alleles", :force => true do |t|
     t.string   "assembly",            :limit => 50,  :default => "NCBIM37", :null => false
@@ -145,6 +145,17 @@ ActiveRecord::Schema.define(:version => 20120228101846) do
 
   add_index "genbank_files", ["allele_id"], :name => "genbank_files_allele_id_fk"
 
+  create_table "genbank_files_vw", :id => false, :force => true do |t|
+    t.integer  "id",                          :default => 0,  :null => false
+    t.integer  "allele_id",                                   :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "created_by"
+    t.integer  "updated_by"
+    t.string   "vector_gb_file", :limit => 3, :default => "", :null => false
+    t.string   "allele_gb_file", :limit => 3, :default => "", :null => false
+  end
+
   create_table "pipelines", :force => true do |t|
     t.string   "name",       :null => false
     t.datetime "created_at"
@@ -162,6 +173,12 @@ ActiveRecord::Schema.define(:version => 20120228101846) do
   end
 
   add_index "qc_field_descriptions", ["qc_field"], :name => "index_qc_field_descriptions_on_qc_field", :unique => true
+
+  create_table "solr_updating_solr_commands", :force => true do |t|
+    t.text     "data",       :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "targeting_vectors", :force => true do |t|
     t.integer  "allele_id",                             :null => false
