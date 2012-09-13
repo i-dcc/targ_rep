@@ -70,20 +70,11 @@ module SolrUpdate::IndexProxy
     def self.index_name; 'gene'; end
 
     def get_marker_symbol(mgi_accession_id)
-      doc = nil
-      uri = @solr_uri.dup
-      uri.query = {:q => "mgi_accession_id:\"#{mgi_accession_id}\"", :wt => 'json'}.to_query
-      uri.path = uri.path + '/search'
-      @http.start(uri.host, uri.port) do |http|
-        request = Net::HTTP::Get.new uri.request_uri
-        http_response = http.request(request)
-        handle_http_response_error(http_response)
-
-        response = JSON.parse(http_response.body)
-        doc = response.fetch('response').fetch('docs').first
-      end
-      return doc.fetch('marker_symbol')
+      docs = search(:q => "mgi_accession_id:\"#{mgi_accession_id}\"")
+      return docs.first.fetch('marker_symbol')
     end
+
+    private :update
   end
 
   class Allele < Base
