@@ -10,13 +10,13 @@ class Allele < ActiveRecord::Base
   has_many   :targeting_vectors, :class_name => "TargetingVector", :foreign_key => "allele_id",   :dependent => :destroy
   has_many   :es_cells,          :class_name => "EsCell",          :foreign_key => "allele_id",   :dependent => :destroy do
     def unique_public_info
-      info_map = {}
+      info_map = ActiveSupport::OrderedHash.new
 
       self.each do |es_cell|
         key = {
           :strain => es_cell.strain,
           :allele_symbol_superscript => es_cell.allele_symbol_superscript,
-          :ikmc_project_id => es_cell.ikmc_project_id
+          :ikmc_project_id => es_cell.ikmc_project_id.to_s
         }
 
         info_map[key] ||= {:pipelines => []}

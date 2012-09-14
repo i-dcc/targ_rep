@@ -10,7 +10,49 @@ class SolrUpdate::SolrCommandFactoryTest < ActiveSupport::TestCase
       assert_equal 'Deletion', factory.__send__(:formatted_allele_type)
 
       allele.mutation_subtype = 'targeted_non_conditional'
-      assert_equal 'Targeted Non Conditional', factory.__send__(:formatted_allele_type)
+      assert_equal 'Targeted Non Conditional', factory.formatted_allele_type
+    end
+
+    context 'calculating order_url' do
+      setup do
+        SolrUpdate::IndexProxy::Gene.any_instance.stubs(:get_marker_symbol).with('MGI:9999999991').returns('Test1')
+        allele = Factory.create :allele, :mgi_accession_id => 'MGI:9999999991'
+        @factory = SolrUpdate::SolrCommandFactory.new(allele)
+      end
+
+      should 'work for one of the EUCOMM pipelines' do
+        ['EUCOMM', 'EUCOMMTools', 'EUCOMMToolsCre'].each do |pipeline|
+          data = {:pipeline => pipeline}
+          assert_equal 'http://www.eummcr.org/order.php', @factory.calculate_order_url(data)
+        end
+      end
+
+      should 'work for one of the KOMP pipelines without a valid project id' do
+        ['KOMP-CSD', 'KOMP-Regeneron'].each do |pipeline|
+          data = {:pipeline => pipeline, :ikmc_project_id => '123'}
+          assert_equal 'http://www.komp.org/geneinfo.php?project=CSD123', @factory.calculate_order_url(data)
+        end
+      end
+
+      should 'work for one of the KOMP pipelines with a valid project id' do
+        ['KOMP-CSD', 'KOMP-Regeneron'].each do |pipeline|
+          data = {:pipeline => pipeline, :ikmc_project_id => 'VG10003'}
+          assert_equal 'http://www.komp.org/geneinfo.php?project=VG10003', @factory.calculate_order_url(data)
+        end
+      end
+
+      should 'work for MirKO or Sanger MGP pipelines' do
+        ['MirKO', 'Sanger MGP'].each do |pipeline|
+          data = {:pipeline => pipeline}
+          assert_equal 'mailto:mouseinterest@sanger.ac.uk?Subject=Mutant ES Cell line for Test1', @factory.calculate_order_url(data)
+        end
+      end
+
+      should 'work for one of the NorCOMM pipeline' do
+        data = {:pipeline => 'NorCOMM'}
+        assert_equal 'http://www.phenogenomics.ca/services/cmmr/escell_services.html', @factory.calculate_order_url(data)
+      end
+
     end
 
     context 'when creating solr command for an allele' do
@@ -21,12 +63,12 @@ class SolrUpdate::SolrCommandFactoryTest < ActiveSupport::TestCase
         @allele = Factory.create :allele, :design_type => 'Knock Out',
                 :mgi_accession_id => 'MGI:9999999991'
 
-        fake_unique_solr_info = [
-          {'strain' => 'C57BL/6N', 'allele_symbol_superscript' => 'tm1a(EUCOMM)Wtsi'},
-          {'strain' => 'C57BL/6N-A<tm1Brd>/a', 'allele_symbol_superscript' => 'tm2a(EUCOMM)Wtsi'}
+        fake_unique_public_info = [
+          {:strain => 'C57BL/6N', :allele_symbol_superscript => 'tm1a(EUCOMM)Wtsi', :pipeline => 'EUCOMM'},
+          {:strain => 'C57BL/6N-A<tm1Brd>/a', :allele_symbol_superscript => 'tm2a(EUCOMM)Wtsi', :pipeline => 'EUCOMMTools'}
         ]
 
-        @allele.es_cells.stubs(:unique_solr_info).returns(fake_unique_solr_info)
+        @allele.es_cells.stubs(:unique_public_info).returns(fake_unique_public_info)
 
         @commands_json = SolrUpdate::SolrCommandFactory.create_solr_command(@allele)
         @commands = JSON.parse(@commands_json, :object_class => ActiveSupport::OrderedHash)
@@ -53,6 +95,10 @@ class SolrUpdate::SolrCommandFactoryTest < ActiveSupport::TestCase
           assert_equal ['allele', 'allele'], @commands['add'].map {|d| d['type']}
         end
 
+        should 'set product_type' do
+          assert_equal ['ES Cell', 'ES Cell'], @commands['add'].map {|d| d['product_type']}
+        end
+
         should 'set allele_type' do
           assert_equal ['Conditional Ready', 'Conditional Ready'], @commands['add'].map {|d| d['allele_type']}
         end
@@ -66,14 +112,19 @@ class SolrUpdate::SolrCommandFactoryTest < ActiveSupport::TestCase
                   @commands['add'].map {|d| d['allele_name']}
         end
 
-        should 'set allele_map_url' do
+        should 'set allele_image_url' do
           url = "http://www.knockoutmouse.org/targ_rep/alleles/#{@allele.id}/allele-image"
-          assert_equal [url, url], @commands['add'].map {|d| d['allele_map_url']}
+          assert_equal [url, url], @commands['add'].map {|d| d['allele_image_url']}
         end
 
         should 'set genbank_file_url' do
           url = "http://www.knockoutmouse.org/targ_rep/alleles/#{@allele.id}/escell-clone-genbank-file"
           assert_equal [url, url], @commands['add'].map {|d| d['genbank_file_url']}
+        end
+
+        should 'set order_url' do
+          url = 'http://www.eummcr.org/order.php'
+          assert_equal [url, url], @commands['add'].map {|d| d['order_url']}
         end
 
       end

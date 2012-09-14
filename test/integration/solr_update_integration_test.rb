@@ -31,8 +31,8 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
       allele.reload
 
       assert_equal 'insertion', allele.mutation_subtype
-      assert_equal 'C57BL/6N', es_cell1.strain
-      assert_equal 'C57BL/6N-A<tm1Brd>/a', es_cell2.strain
+      assert_equal 'C57BL/6N', allele.es_cells[0].strain
+      assert_equal 'C57BL/6N-A<tm1Brd>/a', allele.es_cells[1].strain
 
       SolrUpdate::SolrCommand.destroy_all
 
@@ -49,7 +49,7 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
           'strain' => es_cell1.strain,
           'allele_name' => "Cbx1<sup>tm1a(EUCOMM)Wtsi</sup>",
           'allele_image_url' => "http://www.knockoutmouse.org/targ_rep/alleles/#{allele.id}/allele-image",
-          'genebank_file_url' => "http://www.knockoutmouse.org/targ_rep/alleles/#{allele.id}/escell-clone-genbank-file",
+          'genbank_file_url' => "http://www.knockoutmouse.org/targ_rep/alleles/#{allele.id}/escell-clone-genbank-file",
           'order_url' => 'http://www.eummcr.org/order.php'
         },
         {
@@ -60,7 +60,7 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
           'strain' => es_cell2.strain,
           'allele_name' => "Cbx1<sup>tm2a(EUCOMM)Wtsi</sup>",
           'allele_image_url' => "http://www.knockoutmouse.org/targ_rep/alleles/#{allele.id}/allele-image",
-          'genebank_file_url' => "http://www.knockoutmouse.org/targ_rep/alleles/#{allele.id}/escell-clone-genbank-file",
+          'genbank_file_url' => "http://www.knockoutmouse.org/targ_rep/alleles/#{allele.id}/escell-clone-genbank-file",
           'order_url' => 'http://www.eummcr.org/order.php'
         }
       ]
@@ -69,6 +69,12 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
 
       fetched_docs = allele_index_proxy.search(:q => 'type:allele')
       fetched_docs.each {|d| d.delete('score')}
+
+      docs.zip(fetched_docs).each do |doc, fetched_doc|
+        doc.keys.each do |key|
+          assert_equal doc[key], fetched_doc[key], "#{key} expected to be #{doc[key]}, but was #{fetched_doc[key]}"
+        end
+      end
 
       assert_equal docs, fetched_docs
     end
