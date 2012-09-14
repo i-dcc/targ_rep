@@ -1,18 +1,29 @@
----
 development:
   adapter: mysql2
-  host: localhost
-  database: targ_rep_development
-  username: rails
-  password: rails
+  host: mcs4a.internal.sanger.ac.uk
+  port: 3307
+  database: idcc
+  username: idcc
+  password: WPbjGHdG
+  pool: 5
+  timeout: 5000
+
+staging:
+  adapter: mysql2
+  host: mcs4a.internal.sanger.ac.uk
+  port: 3307
+  database: idcc
+  username: idcc
+  password: WPbjGHdG
   pool: 5
   timeout: 5000
 
 test:
   adapter: mysql2
-  host: localhost
-  database: targ_rep_test
-  username: rails
-  password: rails
+  host: mcs4a.internal.sanger.ac.uk
+  port: 3307
+  database: idcc_test
+  username: idcc
+  password: WPbjGHdG
   pool: 5
   timeout: 5000
