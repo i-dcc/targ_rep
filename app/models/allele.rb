@@ -9,12 +9,23 @@ class Allele < ActiveRecord::Base
   has_one    :genbank_file,      :class_name => "GenbankFile",     :foreign_key => "allele_id",   :dependent => :destroy
   has_many   :targeting_vectors, :class_name => "TargetingVector", :foreign_key => "allele_id",   :dependent => :destroy
   has_many   :es_cells,          :class_name => "EsCell",          :foreign_key => "allele_id",   :dependent => :destroy do
-    def unique_solr_info
-      unique_es_cells = []
+    def unique_public_info
+      info_map = {}
+
       self.each do |es_cell|
-        unique_es_cells << {"strain" => es_cell.strain, "allele_symbol_superscript" => es_cell.allele_symbol_superscript}
+        key = {
+          :strain => es_cell.strain,
+          :allele_symbol_superscript => es_cell.allele_symbol_superscript
+        }
+
+        info_map[key] ||= {:pipelines => []}
+        info_map[key][:pipelines].push(es_cell.pipeline.name)
       end
-      return unique_es_cells.uniq
+
+      info = info_map.map do |key, value|
+        key.merge(:pipeline => value[:pipelines].first)
+      end
+      return info
     end
   end
 

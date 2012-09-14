@@ -40,6 +40,11 @@ class ActiveSupport::TestCase
   fixtures :all
 
   # Add more helper methods to be used by all tests here...
+  def create_standard_pipelines
+    ["KOMP-CSD", "KOMP-Regeneron", "NorCOMM", "EUCOMM", "mirKO", "Sanger MGP", "EUCOMMTools", "EUCOMMToolsCre"].each do |n|
+      Factory.create :pipeline, :name => n
+    end
+  end
 end
 
 class ActionController::TestCase
