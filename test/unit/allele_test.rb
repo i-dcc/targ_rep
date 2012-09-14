@@ -227,6 +227,7 @@ class AlleleTest < ActiveSupport::TestCase
       should "return an array of unique es cell data for public export" do
         strains = [['JM8A','C57BL/6N-A<tm1Brd>/a'], ['JM8A','C57BL/6N-A<tm1Brd>/a'], ['C2','C57BL/6N'], ['JM8A','C57BL/6N-A<tm1Brd>/a']]
         allele_symbol_superscript = ['tm1e(EUCOMM)Hmgu', 'tm1e(EUCOMM)WTSI', 'tm1e(EUCOMM)WTSI', 'tm1e(EUCOMM)WTSI']
+        ikmc_project_ids = ['1', '2', '3', '2']
         allele = Factory.create :allele
         (0..3).each do |i|
           Factory.create :es_cell,
@@ -234,14 +235,15 @@ class AlleleTest < ActiveSupport::TestCase
                   :parental_cell_line => strains[i][0],
                   :allele_symbol_superscript =>
                   allele_symbol_superscript[i],
+                  :ikmc_project_id => ikmc_project_ids[i],
                   :pipeline => Pipeline.find_by_name!('EUCOMM')
         end
         allele.reload
         unique_es_cells = allele.es_cells.unique_public_info
         assert_equal 3, unique_es_cells.count
-        assert unique_es_cells.include?({:strain => strains[0][1], :allele_symbol_superscript => allele_symbol_superscript[0], :pipeline => 'EUCOMM'})
-        assert unique_es_cells.include?({:strain => strains[1][1], :allele_symbol_superscript => allele_symbol_superscript[1], :pipeline => 'EUCOMM'})
-        assert unique_es_cells.include?({:strain => strains[2][1], :allele_symbol_superscript => allele_symbol_superscript[2], :pipeline => 'EUCOMM'})
+        assert unique_es_cells.include?({:strain => strains[0][1], :allele_symbol_superscript => allele_symbol_superscript[0], :pipeline => 'EUCOMM', :ikmc_project_id => '1'})
+        assert unique_es_cells.include?({:strain => strains[1][1], :allele_symbol_superscript => allele_symbol_superscript[1], :pipeline => 'EUCOMM', :ikmc_project_id => '2'})
+        assert unique_es_cells.include?({:strain => strains[2][1], :allele_symbol_superscript => allele_symbol_superscript[2], :pipeline => 'EUCOMM', :ikmc_project_id => '3'})
       end
 
       should ', if there are ES cells that differ only in pipeline, just emit a row for the first one' do
@@ -249,11 +251,13 @@ class AlleleTest < ActiveSupport::TestCase
         Factory.create :es_cell, :allele => allele,
                 :parental_cell_line => 'JM8A',
                 :allele_symbol_superscript => 'tm1a(EUCOMM)WTSI',
-                :pipeline => Pipeline.find_by_name!('EUCOMM')
+                :pipeline => Pipeline.find_by_name!('EUCOMM'),
+                :ikmc_project_id => '1'
         Factory.create :es_cell, :allele => allele,
                 :parental_cell_line => 'JM8A',
                 :allele_symbol_superscript => 'tm1a(EUCOMM)WTSI',
-                :pipeline => Pipeline.find_by_name!('mirKO')
+                :pipeline => Pipeline.find_by_name!('mirKO'),
+                :ikmc_project_id => '1'
         allele.reload
 
         unique_info = allele.es_cells.unique_public_info
@@ -261,6 +265,7 @@ class AlleleTest < ActiveSupport::TestCase
         expected = {
           :strain => 'C57BL/6N-A<tm1Brd>/a',
           :allele_symbol_superscript => 'tm1a(EUCOMM)WTSI',
+          :ikmc_project_id => '1',
           :pipeline => 'EUCOMM'
         }
         assert_equal(expected, unique_info.first)

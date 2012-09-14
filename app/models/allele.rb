@@ -15,7 +15,8 @@ class Allele < ActiveRecord::Base
       self.each do |es_cell|
         key = {
           :strain => es_cell.strain,
-          :allele_symbol_superscript => es_cell.allele_symbol_superscript
+          :allele_symbol_superscript => es_cell.allele_symbol_superscript,
+          :ikmc_project_id => es_cell.ikmc_project_id
         }
 
         info_map[key] ||= {:pipelines => []}
