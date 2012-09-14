@@ -16,7 +16,8 @@ class SolrUpdate::SolrCommandFactory
         'allele_type' => formatted_allele_type,
         'strain' => es_cell_info['strain'],
         'allele_name' => "#{marker_symbol}<sup>#{es_cell_info['allele_symbol_superscript']}</sup>",
-
+        'allele_map_url' => SolrUpdate::Config.fetch('targ_rep_url') + "/alleles/#{allele.id}/allele-image",
+        'genbank_file_url' => SolrUpdate::Config.fetch('targ_rep_url') + "/alleles/#{allele.id}/escell-clone-genbank-file"
       }
     end
 

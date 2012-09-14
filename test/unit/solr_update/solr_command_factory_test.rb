@@ -66,6 +66,16 @@ class SolrUpdate::SolrCommandFactoryTest < ActiveSupport::TestCase
                   @commands['add'].map {|d| d['allele_name']}
         end
 
+        should 'set allele_map_url' do
+          url = "http://www.knockoutmouse.org/targ_rep/alleles/#{@allele.id}/allele-image"
+          assert_equal [url, url], @commands['add'].map {|d| d['allele_map_url']}
+        end
+
+        should 'set genbank_file_url' do
+          url = "http://www.knockoutmouse.org/targ_rep/alleles/#{@allele.id}/escell-clone-genbank-file"
+          assert_equal [url, url], @commands['add'].map {|d| d['genbank_file_url']}
+        end
+
       end
     end
 
