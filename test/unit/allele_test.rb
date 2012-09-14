@@ -87,27 +87,27 @@ class AlleleTest < ActiveSupport::TestCase
       should "not be saved" do
         # Wrong start and end positions for the given strand
         @wrong_position1  = Factory.build( :allele, {
-                              :strand             => '+',
-                              :homology_arm_start => 2,
-                              :homology_arm_end   => 1
-                            })
+            :strand             => '+',
+            :homology_arm_start => 2,
+            :homology_arm_end   => 1
+          })
         @wrong_position2  = Factory.build( :allele, {
-                              :strand             => '-',
-                              :homology_arm_start => 1,
-                              :homology_arm_end   => 2
-                            })
+            :strand             => '-',
+            :homology_arm_start => 1,
+            :homology_arm_end   => 2
+          })
 
         # Homology arm site overlaps other features
         @wrong_position3  = Factory.build( :allele, {
-                              :strand             => '+',
-                              :homology_arm_start => 50,
-                              :homology_arm_end   => 120
-                            })
+            :strand             => '+',
+            :homology_arm_start => 50,
+            :homology_arm_end   => 120
+          })
         @wrong_position4  = Factory.build( :allele, {
-                              :strand             => '-',
-                              :homology_arm_start => 120,
-                              :homology_arm_end   => 50
-                            })
+            :strand             => '-',
+            :homology_arm_start => 120,
+            :homology_arm_end   => 50
+          })
 
         assert( !@wrong_position1.save, "Homology arm start cannot be greater than LoxP end on strand '+'" )
         assert( !@wrong_position2.save, "Homology arm end cannot be greater than LoxP start on strand '-'" )
@@ -120,27 +120,27 @@ class AlleleTest < ActiveSupport::TestCase
       should "not be saved" do
         # Wrong start and end positions for the given strand
         @wrong_position1  = Factory.build( :allele, {
-                              :strand         => '+',
-                              :cassette_start => 2,
-                              :cassette_end   => 1
-                            })
+            :strand         => '+',
+            :cassette_start => 2,
+            :cassette_end   => 1
+          })
         @wrong_position2  = Factory.build( :allele, {
-                              :strand         => '-',
-                              :cassette_start => 1,
-                              :cassette_end   => 2
-                            })
+            :strand         => '-',
+            :cassette_start => 1,
+            :cassette_end   => 2
+          })
 
         # LoxP site overlaps other features
         @wrong_position3  = Factory.build( :allele, {
-                              :strand             => '+',
-                              :cassette_start     => 5,
-                              :cassette_end       => 170
-                            })
+            :strand             => '+',
+            :cassette_start     => 5,
+            :cassette_end       => 170
+          })
         @wrong_position4  = Factory.build( :allele, {
-                              :strand             => '-',
-                              :cassette_start     => 170,
-                              :cassette_end       => 5
-                            })
+            :strand             => '-',
+            :cassette_start     => 170,
+            :cassette_end       => 5
+          })
 
         assert( !@wrong_position1.save, "Cassette start cannot be greater than LoxP end on strand '+'" )
         assert( !@wrong_position2.save, "Cassette end cannot be greater than LoxP start on strand '-'" )
@@ -153,27 +153,27 @@ class AlleleTest < ActiveSupport::TestCase
       should "not be saved" do
         # Wrong start and end positions for the given strand
         @wrong_position1  = Factory.build( :allele, {
-                              :strand     => '+',
-                              :loxp_start => 2,
-                              :loxp_end   => 1
-                            })
+            :strand     => '+',
+            :loxp_start => 2,
+            :loxp_end   => 1
+          })
         @wrong_position2  = Factory.build( :allele, {
-                              :strand     => '-',
-                              :loxp_start => 1,
-                              :loxp_end   => 2
-                            })
+            :strand     => '-',
+            :loxp_start => 1,
+            :loxp_end   => 2
+          })
 
         # LoxP site overlaps other features
         @wrong_position3  = Factory.build( :allele, {
-                              :strand             => '+',
-                              :loxp_start         => 5,
-                              :loxp_end           => 170
-                            })
+            :strand             => '+',
+            :loxp_start         => 5,
+            :loxp_end           => 170
+          })
         @wrong_position4  = Factory.build( :allele, {
-                              :strand             => '-',
-                              :loxp_start         => 170,
-                              :loxp_end           => 5
-                            })
+            :strand             => '-',
+            :loxp_start         => 170,
+            :loxp_end           => 5
+          })
 
         assert( !@wrong_position1.save, "LoxP start cannot be greater than LoxP end (strand '+')" )
         assert( !@wrong_position2.save, "LoxP end cannot be greater than LoxP start (strand '-')" )
@@ -185,11 +185,11 @@ class AlleleTest < ActiveSupport::TestCase
     context "with design type 'Deletion' and LoxP set" do
       should "not be saved" do
         allele = Factory.build( :allele, {
-                        :design_type        => 'Deletion',
-                        :strand             => '+',
-                        :loxp_start         => 100,
-                        :loxp_end           => 130
-                      })
+            :design_type        => 'Deletion',
+            :strand             => '+',
+            :loxp_start         => 100,
+            :loxp_end           => 130
+          })
         assert( !allele.save, "Allele validates presence of LoxP for design 'Deletion'" )
       end
     end
@@ -197,11 +197,11 @@ class AlleleTest < ActiveSupport::TestCase
     context "with design type 'Insertion' and LoxP set" do
       should "not be saved" do
         allele = Factory.build( :allele, {
-                        :design_type        => 'Insertion',
-                        :strand             => '+',
-                        :loxp_start         => 100,
-                        :loxp_end           => 130
-                      })
+            :design_type        => 'Insertion',
+            :strand             => '+',
+            :loxp_start         => 100,
+            :loxp_end           => 130
+          })
         assert( !allele.save, "Allele validates presence of LoxP for design 'Insertion'" )
       end
     end
@@ -220,18 +220,15 @@ class AlleleTest < ActiveSupport::TestCase
     end
 
 
-    should "return an array of unique es_cells for solr update" do
+    should "return an array of unique es_cells for solr update: #unique_public_info" do
       strains = [['JM8A','C57BL/6N-A<tm1Brd>/a'], ['JM8A','C57BL/6N-A<tm1Brd>/a'], ['C2','C57BL/6N'], ['JM8A','C57BL/6N-A<tm1Brd>/a']]
       allele_symbol_superscript = ['tm1e(EUCOMM)Hmgu', 'tm1e(EUCOMM)WTSI', 'tm1e(EUCOMM)WTSI', 'tm1e(EUCOMM)WTSI']
       allele = Factory.create :allele
       (0..3).each do |i|
         Factory.create :es_cell, :allele => allele, :parental_cell_line => strains[i][0], :allele_symbol_superscript =>  allele_symbol_superscript[i]
-        allele.reload
       end
       allele.reload
-      allele.es_cells.each do |q|
-      end
-      unique_es_cells = allele.es_cells.unique_solr_info
+      unique_es_cells = allele.es_cells.unique_public_info
       assert_equal unique_es_cells.class, Array
       assert_equal 3, unique_es_cells.count
       assert unique_es_cells.include?({"strain" => strains[0][1], "allele_symbol_superscript" => allele_symbol_superscript[0]})
