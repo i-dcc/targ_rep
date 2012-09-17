@@ -1,12 +1,27 @@
-class SolrUpdate::Observer < ActiveRecord::Observer
-  observe Allele
+module SolrUpdate::Observer
 
-  def after_save(allele)
-    command = SolrUpdate::SolrCommandFactory.create_solr_command(allele)
-    SolrUpdate::Queue.add(command)
+  class Allele < ActiveRecord::Observer
+    observe ::Allele
+
+    def after_save(allele)
+      SolrUpdate::Activator.update_allele_solr_docs(allele)
+    end
+
+    class << self
+      public :new
+    end
   end
 
-  class << self
-    public :new
+  class EsCell < ActiveRecord::Observer
+    observe ::EsCell
+
+    def after_save(es_cell)
+      SolrUpdate::Activator.update_allele_solr_docs(es_cell.allele)
+    end
+
+    class << self
+      public :new
+    end
   end
+
 end

@@ -1,16 +1,26 @@
 require 'test_helper'
 
 class SolrUpdate::ObserverTest < ActiveSupport::TestCase
-  context 'SolrUpdate::Observer' do
+  context 'SolrUpdate::Observer::Allele' do
 
-    should 'observe Allele object updates and queue an index update' do
-      command = stub('doc_set')
+    should 'activate a solr update for an allele when it changes' do
       allele = stub('allele')
-      SolrUpdate::SolrCommandFactory.expects(:create_solr_command).with(allele).returns(command)
-      SolrUpdate::Queue.expects(:add).with(command)
+      SolrUpdate::Activator.expects(:update_allele_solr_docs).with(allele)
 
-      o = SolrUpdate::Observer.new
+      o = SolrUpdate::Observer::Allele.new
       o.after_save allele
+    end
+  end
+
+  context 'SolrUpdate::Observer::EsCell' do
+    should 'activate a solr update for it\'s allele when an es_cell changes' do
+      allele = stub('allele')
+      es_cell = stub('es_cell', :allele => allele)
+
+      SolrUpdate::Activator.expects(:update_allele_solr_docs).with(allele)
+
+      o = SolrUpdate::Observer::EsCell.new
+      o.after_save es_cell
     end
 
   end

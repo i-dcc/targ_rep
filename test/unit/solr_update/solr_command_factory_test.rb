@@ -130,6 +130,5 @@ class SolrUpdate::SolrCommandFactoryTest < ActiveSupport::TestCase
       end
     end
 
-    should 'create solr command for an es_cell'
   end
 end

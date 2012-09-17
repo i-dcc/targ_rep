@@ -3,38 +3,44 @@ require 'test_helper'
 class SolrUpdateIntegrationTest < ActiveSupport::TestCase
   context 'SOLR update system' do
 
-    should 'queue update for an updated allele to the SOLR index' do
-      allele_index_proxy = SolrUpdate::IndexProxy::Allele.new
+    setup do
+      @allele_index_proxy = SolrUpdate::IndexProxy::Allele.new
 
       # TODO Make this with a 'CommandFactory' or something
       commands = ActiveSupport::OrderedHash.new
       commands['delete'] = {'query' => '*:*'}
       commands['commit'] = {}
       commands_json = commands.to_json
-      allele_index_proxy.update(commands_json)
+      @allele_index_proxy.update(commands_json)
 
-      fetched_docs = allele_index_proxy.search(:q => 'type:allele')
+      fetched_docs = @allele_index_proxy.search(:q => 'type:allele')
       assert fetched_docs.blank?, 'docs were not destroyed!'
 
       eucomm = Pipeline.find_or_create_by_name('EUCOMM')
-      allele = Factory.create :allele, :design_type => 'Insertion',
+      @allele = Factory.create :allele, :design_type => 'Insertion',
               :mgi_accession_id => 'MGI:105369'
-      es_cell1 = Factory.create(:es_cell,
-        :allele => allele, :parental_cell_line => 'VGB6',
+      @es_cell1 = Factory.create(:es_cell,
+        :allele => @allele, :parental_cell_line => 'VGB6',
         :pipeline => eucomm,
         :allele_symbol_superscript => 'tm1a(EUCOMM)Wtsi')
-      es_cell2 = Factory.create(:es_cell,
-        :allele => allele,
+      @es_cell2 = Factory.create(:es_cell,
+        :allele => @allele,
         :parental_cell_line => 'JM8A3.N1',
         :pipeline => eucomm,
         :allele_symbol_superscript => 'tm2a(EUCOMM)Wtsi')
-      allele.reload
+      @allele.reload
 
-      assert_equal 'insertion', allele.mutation_subtype
-      assert_equal 'C57BL/6N', allele.es_cells[0].strain
-      assert_equal 'C57BL/6N-A<tm1Brd>/a', allele.es_cells[1].strain
+      assert_equal 'insertion', @allele.mutation_subtype
+      assert_equal 'C57BL/6N', @allele.es_cells[0].strain
+      assert_equal 'C57BL/6N-A<tm1Brd>/a', @allele.es_cells[1].strain
 
       SolrUpdate::SolrCommand.destroy_all
+    end
+
+    should 'update the SOLR index when an allele is modified' do
+      allele = @allele
+      es_cell1 = @es_cell1
+      es_cell2 = @es_cell2
 
       allele.design_type = 'Knock Out'
       allele.save!
@@ -47,7 +53,7 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
           'product_type' => 'ES Cell',
           'allele_type' => 'Targeted Non Conditional',
           'strain' => es_cell1.strain,
-          'allele_name' => "Cbx1<sup>tm1a(EUCOMM)Wtsi</sup>",
+          'allele_name' => 'Cbx1<sup>tm1a(EUCOMM)Wtsi</sup>',
           'allele_image_url' => "http://www.knockoutmouse.org/targ_rep/alleles/#{allele.id}/allele-image",
           'genbank_file_url' => "http://www.knockoutmouse.org/targ_rep/alleles/#{allele.id}/escell-clone-genbank-file",
           'order_url' => 'http://www.eummcr.org/order.php'
@@ -58,7 +64,7 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
           'product_type' => 'ES Cell',
           'allele_type' => 'Targeted Non Conditional',
           'strain' => es_cell2.strain,
-          'allele_name' => "Cbx1<sup>tm2a(EUCOMM)Wtsi</sup>",
+          'allele_name' => 'Cbx1<sup>tm2a(EUCOMM)Wtsi</sup>',
           'allele_image_url' => "http://www.knockoutmouse.org/targ_rep/alleles/#{allele.id}/allele-image",
           'genbank_file_url' => "http://www.knockoutmouse.org/targ_rep/alleles/#{allele.id}/escell-clone-genbank-file",
           'order_url' => 'http://www.eummcr.org/order.php'
@@ -67,7 +73,7 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
 
       SolrUpdate::Queue.run
 
-      fetched_docs = allele_index_proxy.search(:q => 'type:allele')
+      fetched_docs = @allele_index_proxy.search(:q => 'type:allele')
       fetched_docs.each {|d| d.delete('score')}
 
       docs.zip(fetched_docs).each do |doc, fetched_doc|
@@ -77,6 +83,25 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
       end
 
       assert_equal docs, fetched_docs
+    end
+
+    should 'update the SOLR index for the entire set of allele docs when an one of its ES cells is modified' do
+      @es_cell1.allele_symbol_superscript = 'tm1b(EUCOMM)Wtsi'
+      @es_cell1.save!
+
+      SolrUpdate::Queue.run
+
+      fetched_docs = @allele_index_proxy.search(:q => 'type:allele')
+      fetched_docs.each {|d| d.delete('score')}
+
+      allele_symbol_superscripts = fetched_docs.map do |fetched_doc|
+        fetched_doc.fetch 'allele_name'
+      end
+      expected = [
+        'Cbx1<sup>tm1b(EUCOMM)Wtsi</sup>',
+        'Cbx1<sup>tm2a(EUCOMM)Wtsi</sup>'
+      ]
+      assert_equal expected, allele_symbol_superscripts.sort
     end
 
   end
