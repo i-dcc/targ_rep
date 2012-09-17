@@ -55,7 +55,7 @@ class SolrUpdate::SolrCommandFactoryTest < ActiveSupport::TestCase
 
     end
 
-    context 'when creating solr command for an allele' do
+    context 'when creating solr command for an allele that was updated' do
 
       setup do
         SolrUpdate::IndexProxy::Gene.any_instance.stubs(:get_marker_symbol).with('MGI:9999999991').returns('Test1')
@@ -70,7 +70,7 @@ class SolrUpdate::SolrCommandFactoryTest < ActiveSupport::TestCase
 
         @allele.es_cells.stubs(:unique_public_info).returns(fake_unique_public_info)
 
-        @commands_json = SolrUpdate::SolrCommandFactory.create_solr_command(@allele)
+        @commands_json = SolrUpdate::SolrCommandFactory.create_solr_command_to_update_in_index(@allele)
         @commands = JSON.parse(@commands_json, :object_class => ActiveSupport::OrderedHash)
       end
 
@@ -78,7 +78,7 @@ class SolrUpdate::SolrCommandFactoryTest < ActiveSupport::TestCase
         assert_equal %w{delete add commit}, @commands.keys
       end
 
-      should 'delete all docs for tha allele before adding them' do
+      should 'delete all docs for that allele before adding them' do
         assert_equal "type:allele AND id:#{@allele.id}", @commands['delete']['query']
       end
 
@@ -127,6 +127,28 @@ class SolrUpdate::SolrCommandFactoryTest < ActiveSupport::TestCase
           assert_equal [url, url], @commands['add'].map {|d| d['order_url']}
         end
 
+      end
+    end
+
+    context 'when creating SOLR command for an allele that was deleted' do
+      setup do
+        @allele = Factory.create :allele, :design_type => 'Knock Out',
+                :mgi_accession_id => 'MGI:9999999991'
+
+        @commands_json = SolrUpdate::SolrCommandFactory.create_solr_command_to_delete_from_index(@allele)
+        @commands = JSON.parse(@commands_json, :object_class => ActiveSupport::OrderedHash)
+      end
+
+      should 'delete and commit in that order' do
+        assert_equal %w{delete commit}, @commands.keys
+      end
+
+      should 'delete all docs for that allele' do
+        assert_equal "type:allele AND id:#{@allele.id}", @commands['delete']['query']
+      end
+
+      should 'do a commit after adding new docs' do
+        assert_equal({}, @commands['commit'])
       end
     end
 

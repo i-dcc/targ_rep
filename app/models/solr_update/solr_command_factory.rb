@@ -1,11 +1,16 @@
 class SolrUpdate::SolrCommandFactory
 
-  def self.create_solr_command(allele)
+  def self.create_solr_command_to_update_in_index(allele)
     factory = self.new(allele)
-    return factory.create_solr_command
+    return factory.create_solr_command_to_update_in_index
   end
 
-  def create_solr_command
+  def self.create_solr_command_to_delete_from_index(allele)
+    factory = self.new(allele)
+    return factory.create_solr_command_to_delete_from_index
+  end
+
+  def create_solr_command_to_update_in_index
     commands = ActiveSupport::OrderedHash.new
 
     marker_symbol = gene_index_proxy.get_marker_symbol(allele.mgi_accession_id)
@@ -25,6 +30,15 @@ class SolrUpdate::SolrCommandFactory
 
     commands['delete'] = {'query' => "type:allele AND id:#{allele.id}"}
     commands['add'] = docs
+    commands['commit'] = {}
+
+    return commands.to_json
+  end
+
+  def create_solr_command_to_delete_from_index
+    commands = ActiveSupport::OrderedHash.new
+
+    commands['delete'] = {'query' => "type:allele AND id:#{allele.id}"}
     commands['commit'] = {}
 
     return commands.to_json

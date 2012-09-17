@@ -7,6 +7,10 @@ module SolrUpdate::Observer
       SolrUpdate::Activator.update_allele_solr_docs(allele)
     end
 
+    def after_destroy(allele)
+      SolrUpdate::Activator.delete_allele_solr_docs(allele)
+    end
+
     class << self
       public :new
     end
@@ -16,6 +20,10 @@ module SolrUpdate::Observer
     observe ::EsCell
 
     def after_save(es_cell)
+      SolrUpdate::Activator.update_allele_solr_docs(es_cell.allele)
+    end
+
+    def after_destroy(es_cell)
       SolrUpdate::Activator.update_allele_solr_docs(es_cell.allele)
     end
 

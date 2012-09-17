@@ -33,11 +33,11 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
       assert_equal 'insertion', @allele.mutation_subtype
       assert_equal 'C57BL/6N', @allele.es_cells[0].strain
       assert_equal 'C57BL/6N-A<tm1Brd>/a', @allele.es_cells[1].strain
-
-      SolrUpdate::SolrCommand.destroy_all
     end
 
     should 'update the SOLR index when an allele is modified' do
+      SolrUpdate::SolrCommand.destroy_all
+
       allele = @allele
       es_cell1 = @es_cell1
       es_cell2 = @es_cell2
@@ -86,6 +86,8 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
     end
 
     should 'update the SOLR index for the entire set of allele docs when an one of its ES cells is modified' do
+      SolrUpdate::SolrCommand.destroy_all
+
       @es_cell1.allele_symbol_superscript = 'tm1b(EUCOMM)Wtsi'
       @es_cell1.save!
 
@@ -102,6 +104,31 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
         'Cbx1<sup>tm2a(EUCOMM)Wtsi</sup>'
       ]
       assert_equal expected, allele_symbol_superscripts.sort
+    end
+
+    should 'delete SOLR docs in index for alleles that are deleted from the DB' do
+      SolrUpdate::Queue.run
+
+      @es_cell2.destroy
+
+      SolrUpdate::Queue.run
+
+      fetched_docs = @allele_index_proxy.search(:q => 'type:allele')
+      fetched_docs.each {|d| d.delete('score')}
+      assert_equal 1, fetched_docs.size
+      assert_equal 'Cbx1<sup>tm1a(EUCOMM)Wtsi</sup>', fetched_docs.first['allele_name']
+    end
+
+    should 'delete SOLR docs in index for ES cells that are deleted from the DB' do
+      SolrUpdate::Queue.run
+
+      @allele.destroy
+
+      SolrUpdate::Queue.run
+
+      fetched_docs = @allele_index_proxy.search(:q => 'type:allele')
+      fetched_docs.each {|d| d.delete('score')}
+      assert_equal 0, fetched_docs.size
     end
 
   end
