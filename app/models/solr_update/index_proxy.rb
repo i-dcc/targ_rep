@@ -33,7 +33,7 @@ module SolrUpdate::IndexProxy
       docs = nil
       uri = @solr_uri.dup
       uri.query = solr_params.merge(:wt => 'json').to_query
-      uri.path = uri.path + '/search'
+      uri.path = uri.path + '/select'
 
       @http.start(uri.host, uri.port) do |http|
         request = Net::HTTP::Get.new uri.request_uri
