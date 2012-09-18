@@ -23,6 +23,11 @@ class SolrUpdate::IndexProxyTest < ActiveSupport::TestCase
       assert_equal 'Cbx1', index_proxy.get_marker_symbol('MGI:105369')
       assert_equal 'Tead1', index_proxy.get_marker_symbol('MGI:101876')
     end
+
+    should 'raise error if gene not found' do
+      index_proxy = SolrUpdate::IndexProxy::Gene.new
+      assert_raise(SolrUpdate::IndexProxy::LookupError) { index_proxy.get_marker_symbol('MGI:XXXXXXXXXXXXX') }
+    end
   end
 
   context 'SolrUpdate::IndexProxy::Allele' do
