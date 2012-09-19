@@ -1,4 +1,4 @@
-class SolrUpdate::SolrCommandFactory
+class SolrUpdate::CommandFactory
 
   def self.create_solr_command_to_update_in_index(allele)
     factory = self.new(allele)

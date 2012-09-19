@@ -1,7 +1,7 @@
 require 'test_helper'
 
-class SolrUpdate::SolrCommandFactoryTest < ActiveSupport::TestCase
-  context 'SolrUpdate::SolrCommandFactory' do
+class SolrUpdate::CommandFactoryTest < ActiveSupport::TestCase
+  context 'SolrUpdate::CommandFactory' do
 
     setup do
       SolrUpdate::IndexProxy::Gene.any_instance.stubs(:get_marker_symbol).with('MGI:9999999991').returns('Test1')
@@ -9,7 +9,7 @@ class SolrUpdate::SolrCommandFactoryTest < ActiveSupport::TestCase
 
     should 'format allele type from allele mutation_subtype: #formatted_allele_type' do
       allele = Factory.build :allele
-      factory = SolrUpdate::SolrCommandFactory.new(allele)
+      factory = SolrUpdate::CommandFactory.new(allele)
 
       allele.mutation_subtype = 'deletion'
       assert_equal 'Deletion', factory.__send__(:formatted_allele_type)
@@ -21,7 +21,7 @@ class SolrUpdate::SolrCommandFactoryTest < ActiveSupport::TestCase
     context 'calculating order_url' do
       setup do
         allele = Factory.create :allele, :mgi_accession_id => 'MGI:9999999991'
-        @factory = SolrUpdate::SolrCommandFactory.new(allele)
+        @factory = SolrUpdate::CommandFactory.new(allele)
       end
 
       should 'work for one of the EUCOMM pipelines' do
@@ -72,7 +72,7 @@ class SolrUpdate::SolrCommandFactoryTest < ActiveSupport::TestCase
 
         @allele.es_cells.stubs(:unique_public_info).returns(fake_unique_public_info)
 
-        @commands_json = SolrUpdate::SolrCommandFactory.create_solr_command_to_update_in_index(@allele)
+        @commands_json = SolrUpdate::CommandFactory.create_solr_command_to_update_in_index(@allele)
         @commands = JSON.parse(@commands_json, :object_class => ActiveSupport::OrderedHash)
       end
 
@@ -141,7 +141,7 @@ class SolrUpdate::SolrCommandFactoryTest < ActiveSupport::TestCase
         @allele = Factory.create :allele, :design_type => 'Knock Out',
                 :mgi_accession_id => 'MGI:9999999991'
 
-        @commands_json = SolrUpdate::SolrCommandFactory.create_solr_command_to_delete_from_index(@allele)
+        @commands_json = SolrUpdate::CommandFactory.create_solr_command_to_delete_from_index(@allele)
         @commands = JSON.parse(@commands_json, :object_class => ActiveSupport::OrderedHash)
       end
 
