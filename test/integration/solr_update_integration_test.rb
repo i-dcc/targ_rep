@@ -36,7 +36,7 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
     end
 
     should 'update the SOLR index when an allele is modified' do
-      SolrUpdate::SolrCommand.destroy_all
+      SolrUpdate::Queue::Item.destroy_all
 
       allele = @allele
       es_cell1 = @es_cell1
@@ -88,7 +88,7 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
     end
 
     should 'update the SOLR index for the entire set of allele docs when an one of its ES cells is modified' do
-      SolrUpdate::SolrCommand.destroy_all
+      SolrUpdate::Queue::Item.destroy_all
 
       @es_cell1.allele_symbol_superscript = 'tm1b(EUCOMM)Wtsi'
       @es_cell1.save!

@@ -1,16 +1,9 @@
 class SolrUpdate::Queue
-  def self.add(command)
-    SolrUpdate::SolrCommand.add(command)
+  def self.enqueue_for_update(object)
+    SolrUpdate::Queue::Item.add(object, 'update')
   end
 
-  def self.run
-    proxy = SolrUpdate::IndexProxy::Allele.new
-    commands = SolrUpdate::SolrCommand.earliest_first
-    commands.each do |command|
-      SolrUpdate::SolrCommand.transaction do
-        proxy.update(command.data)
-        command.destroy
-      end
-    end
+  def self.enqueue_for_delete(object)
+    SolrUpdate::Queue::Item.add(object, 'delete')
   end
 end
