@@ -4,6 +4,8 @@ class SolrUpdate::Queue::Item < ActiveRecord::Base
   belongs_to :allele
 
   def self.add(allele_id, command_type)
+    allele_id = allele_id.id if allele_id.kind_of?(Allele)
+
     existing = find_by_allele_id(allele_id)
     existing.destroy if existing
     self.create!(:allele_id => allele_id, :command_type => command_type)

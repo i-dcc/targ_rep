@@ -4,19 +4,19 @@ class SolrUpdate::QueueTest < ActiveSupport::TestCase
   context 'SolrUpdate::Queue' do
 
     should 'allow adding of queue items' do
-      object1_id = 23
-      object2_id = 56
-      object3_id = 67
+      object1 = stub('object1')
+      object2 = stub('object2')
+      object3 = stub('object3')
 
       seq = sequence('seq')
 
-      SolrUpdate::Queue::Item.expects(:add).with(object1_id, 'update').in_sequence(seq)
-      SolrUpdate::Queue::Item.expects(:add).with(object2_id, 'update').in_sequence(seq)
-      SolrUpdate::Queue::Item.expects(:add).with(object3_id, 'delete').in_sequence(seq)
+      SolrUpdate::Queue::Item.expects(:add).with(object1, 'update').in_sequence(seq)
+      SolrUpdate::Queue::Item.expects(:add).with(object2, 'update').in_sequence(seq)
+      SolrUpdate::Queue::Item.expects(:add).with(object3, 'delete').in_sequence(seq)
 
-      SolrUpdate::Queue.enqueue_for_update(object1_id)
-      SolrUpdate::Queue.enqueue_for_update(object2_id)
-      SolrUpdate::Queue.enqueue_for_delete(object3_id)
+      SolrUpdate::Queue.enqueue_for_update(object1)
+      SolrUpdate::Queue.enqueue_for_update(object2)
+      SolrUpdate::Queue.enqueue_for_delete(object3)
     end
 
     should 'be run and process items in order they were added' do

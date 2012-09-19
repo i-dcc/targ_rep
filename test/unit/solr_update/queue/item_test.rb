@@ -37,6 +37,12 @@ class SolrUpdate::Queue::ItemTest < ActiveSupport::TestCase
       assert_not_nil @item2
     end
 
+    should 'add model object directly instead of it\'s id' do
+      allele = Factory.create :allele, :id => 66
+      SolrUpdate::Queue::Item.add(allele, 'update')
+      assert_not_nil SolrUpdate::Queue::Item.find_by_allele_id_and_command_type(allele.id, 'update')
+    end
+
     should 'add only one command per item, removing any that are already present' do
       setup_for_add_and_process
       SolrUpdate::Queue::Item.add(@allele2_id, 'delete')
