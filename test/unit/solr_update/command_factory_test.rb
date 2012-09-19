@@ -1,62 +1,64 @@
 require 'test_helper'
 
 class SolrUpdate::CommandFactoryTest < ActiveSupport::TestCase
+
   context 'SolrUpdate::CommandFactory' do
 
     setup do
       SolrUpdate::IndexProxy::Gene.any_instance.stubs(:get_marker_symbol).with('MGI:9999999991').returns('Test1')
     end
 
-    should 'format allele type from allele mutation_subtype: #formatted_allele_type' do
-      allele = Factory.build :allele
-      factory = SolrUpdate::CommandFactory.new(allele)
-
-      allele.mutation_subtype = 'deletion'
-      assert_equal 'Deletion', factory.__send__(:formatted_allele_type)
-
-      allele.mutation_subtype = 'targeted_non_conditional'
-      assert_equal 'Targeted Non Conditional', factory.formatted_allele_type
-    end
-
-    context 'calculating order_url' do
+    context '::Util' do
       setup do
-        allele = Factory.create :allele, :mgi_accession_id => 'MGI:9999999991'
-        @factory = SolrUpdate::CommandFactory.new(allele)
+        @test_object = stub('test_object', :gene_index_proxy => SolrUpdate::IndexProxy::Gene.new)
+        @test_object.extend(SolrUpdate::CommandFactory::Util)
+        @mock_allele = stub('mock_allele', :mgi_accession_id => 'MGI:9999999991')
+        @test_object.stubs(:allele => @mock_allele)
       end
 
-      should 'work for one of the EUCOMM pipelines' do
-        ['EUCOMM', 'EUCOMMTools', 'EUCOMMToolsCre'].each do |pipeline|
-          data = {:pipeline => pipeline}
-          assert_equal 'http://www.eummcr.org/order.php', @factory.calculate_order_url(data)
+      should 'format allele type from allele mutation_subtype: #formatted_allele_type' do
+        @mock_allele.stubs(:mutation_subtype => 'deletion')
+        assert_equal 'Deletion', @test_object.formatted_allele_type
+
+        @mock_allele.stubs(:mutation_subtype => 'targeted_non_conditional')
+        assert_equal 'Targeted Non Conditional', @test_object.formatted_allele_type
+      end
+
+      context 'calculating order_url' do
+        should 'work for one of the EUCOMM pipelines' do
+          ['EUCOMM', 'EUCOMMTools', 'EUCOMMToolsCre'].each do |pipeline|
+            data = {:pipeline => pipeline}
+            assert_equal 'http://www.eummcr.org/order.php', @test_object.calculate_order_url(data)
+          end
         end
-      end
 
-      should 'work for one of the KOMP pipelines without a valid project id' do
-        ['KOMP-CSD', 'KOMP-Regeneron'].each do |pipeline|
-          data = {:pipeline => pipeline, :ikmc_project_id => '123'}
-          assert_equal 'http://www.komp.org/geneinfo.php?project=CSD123', @factory.calculate_order_url(data)
+        should 'work for one of the KOMP pipelines without a valid project id' do
+          ['KOMP-CSD', 'KOMP-Regeneron'].each do |pipeline|
+            data = {:pipeline => pipeline, :ikmc_project_id => '123'}
+            assert_equal 'http://www.komp.org/geneinfo.php?project=CSD123', @test_object.calculate_order_url(data)
+          end
         end
-      end
 
-      should 'work for one of the KOMP pipelines with a valid project id' do
-        ['KOMP-CSD', 'KOMP-Regeneron'].each do |pipeline|
-          data = {:pipeline => pipeline, :ikmc_project_id => 'VG10003'}
-          assert_equal 'http://www.komp.org/geneinfo.php?project=VG10003', @factory.calculate_order_url(data)
+        should 'work for one of the KOMP pipelines with a valid project id' do
+          ['KOMP-CSD', 'KOMP-Regeneron'].each do |pipeline|
+            data = {:pipeline => pipeline, :ikmc_project_id => 'VG10003'}
+            assert_equal 'http://www.komp.org/geneinfo.php?project=VG10003', @test_object.calculate_order_url(data)
+          end
         end
-      end
 
-      should 'work for MirKO or Sanger MGP pipelines' do
-        ['MirKO', 'Sanger MGP'].each do |pipeline|
-          data = {:pipeline => pipeline}
-          assert_equal 'mailto:mouseinterest@sanger.ac.uk?Subject=Mutant ES Cell line for Test1', @factory.calculate_order_url(data)
+        should 'work for MirKO or Sanger MGP pipelines' do
+          ['MirKO', 'Sanger MGP'].each do |pipeline|
+            data = {:pipeline => pipeline}
+            assert_equal 'mailto:mouseinterest@sanger.ac.uk?Subject=Mutant ES Cell line for Test1', @test_object.calculate_order_url(data)
+          end
         end
-      end
 
-      should 'work for one of the NorCOMM pipeline' do
-        data = {:pipeline => 'NorCOMM'}
-        assert_equal 'http://www.phenogenomics.ca/services/cmmr/escell_services.html', @factory.calculate_order_url(data)
-      end
+        should 'work for one of the NorCOMM pipeline' do
+          data = {:pipeline => 'NorCOMM'}
+          assert_equal 'http://www.phenogenomics.ca/services/cmmr/escell_services.html', @test_object.calculate_order_url(data)
+        end
 
+      end
     end
 
     context 'when creating solr command for an allele that was updated' do
@@ -70,9 +72,11 @@ class SolrUpdate::CommandFactoryTest < ActiveSupport::TestCase
           {:strain => 'C57BL/6N-A<tm1Brd>/a', :allele_symbol_superscript => 'tm2a(EUCOMM)Wtsi', :pipeline => 'EUCOMMTools'}
         ]
 
-        @allele.es_cells.stubs(:unique_public_info).returns(fake_unique_public_info)
+        es_cells = stub('es_cells')
+        es_cells.stubs(:unique_public_info).returns(fake_unique_public_info)
+        Allele.any_instance.stubs(:es_cells => es_cells)
 
-        @commands_json = SolrUpdate::CommandFactory.create_solr_command_to_update_in_index(@allele)
+        @commands_json = SolrUpdate::CommandFactory.create_solr_command_to_update_in_index(@allele.id)
         @commands = JSON.parse(@commands_json, :object_class => ActiveSupport::OrderedHash)
       end
 
@@ -141,7 +145,7 @@ class SolrUpdate::CommandFactoryTest < ActiveSupport::TestCase
         @allele = Factory.create :allele, :design_type => 'Knock Out',
                 :mgi_accession_id => 'MGI:9999999991'
 
-        @commands_json = SolrUpdate::CommandFactory.create_solr_command_to_delete_from_index(@allele)
+        @commands_json = SolrUpdate::CommandFactory.create_solr_command_to_delete_from_index(@allele.id)
         @commands = JSON.parse(@commands_json, :object_class => ActiveSupport::OrderedHash)
       end
 

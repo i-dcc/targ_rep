@@ -56,13 +56,13 @@ module SolrUpdate::IndexProxy
         request.content_type = 'application/json'
         request.body = commands_packet
         http_response = http.request(request)
-        handle_http_response_error(http_response)
+        handle_http_response_error(http_response, request)
       end
     end
 
-    def handle_http_response_error(http_response)
+    def handle_http_response_error(http_response, request = nil)
       if ! http_response.kind_of? Net::HTTPSuccess
-        raise "Error during update_json: #{http_response.message}\n#{http_response.body}"
+        raise "Error during update_json: #{http_response.message}\n#{http_response.body}\n\nRequest body:#{request.body}"
       end
    end
     protected :handle_http_response_error

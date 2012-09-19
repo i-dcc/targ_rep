@@ -108,7 +108,7 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
       assert_equal expected, allele_symbol_superscripts.sort
     end
 
-    should 'delete SOLR docs in index for alleles that are deleted from the DB' do
+    should 'update SOLR docs in index for alleles when one of their ES cells are deleted from the DB' do
       SolrUpdate::Queue.run
 
       @es_cell2.destroy
@@ -121,7 +121,7 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
       assert_equal 'Cbx1<sup>tm1a(EUCOMM)Wtsi</sup>', fetched_docs.first['allele_name']
     end
 
-    should 'delete SOLR docs in index for ES cells that are deleted from the DB' do
+    should 'delete SOLR docs in index for alleles that are deleted from the DB' do
       SolrUpdate::Queue.run
 
       @allele.destroy

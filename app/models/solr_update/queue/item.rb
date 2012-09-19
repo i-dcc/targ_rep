@@ -1,8 +1,19 @@
 class SolrUpdate::Queue::Item < ActiveRecord::Base
   set_table_name 'solr_update_queue_items'
 
-  def self.add(allele, command_type)
-    self.create!(:allele_id => allele.id, :command_type => command_type)
+  belongs_to :allele
+
+  def self.add(allele_id, command_type)
+    existing = find_by_allele_id(allele_id)
+    existing.destroy if existing
+    self.create!(:allele_id => allele_id, :command_type => command_type)
+  end
+
+  def self.process_in_order
+    self.earliest_first.each do |item|
+      yield(item.allele_id, item.command_type)
+      item.destroy
+    end
   end
 
   named_scope :earliest_first, :order => 'solr_update_queue_items.created_at asc'
