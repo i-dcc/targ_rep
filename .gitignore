@@ -4,3 +4,4 @@ coverage.data
 coverage/*
 db/*.sqlite3
 doc/*
+db/development_structure.sql
