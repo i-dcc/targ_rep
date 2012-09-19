@@ -2,6 +2,11 @@ require 'test_helper'
 
 class SolrUpdate::SolrCommandFactoryTest < ActiveSupport::TestCase
   context 'SolrUpdate::SolrCommandFactory' do
+
+    setup do
+      SolrUpdate::IndexProxy::Gene.any_instance.stubs(:get_marker_symbol).with('MGI:9999999991').returns('Test1')
+    end
+
     should 'format allele type from allele mutation_subtype: #formatted_allele_type' do
       allele = Factory.build :allele
       factory = SolrUpdate::SolrCommandFactory.new(allele)
@@ -15,7 +20,6 @@ class SolrUpdate::SolrCommandFactoryTest < ActiveSupport::TestCase
 
     context 'calculating order_url' do
       setup do
-        SolrUpdate::IndexProxy::Gene.any_instance.stubs(:get_marker_symbol).with('MGI:9999999991').returns('Test1')
         allele = Factory.create :allele, :mgi_accession_id => 'MGI:9999999991'
         @factory = SolrUpdate::SolrCommandFactory.new(allele)
       end
@@ -58,8 +62,6 @@ class SolrUpdate::SolrCommandFactoryTest < ActiveSupport::TestCase
     context 'when creating solr command for an allele that was updated' do
 
       setup do
-        SolrUpdate::IndexProxy::Gene.any_instance.stubs(:get_marker_symbol).with('MGI:9999999991').returns('Test1')
-
         @allele = Factory.create :allele, :design_type => 'Knock Out',
                 :mgi_accession_id => 'MGI:9999999991'
 
@@ -93,6 +95,10 @@ class SolrUpdate::SolrCommandFactoryTest < ActiveSupport::TestCase
 
         should 'set type' do
           assert_equal ['allele', 'allele'], @commands['add'].map {|d| d['type']}
+        end
+
+        should 'set mgi_accession_id' do
+          assert_equal ['MGI:9999999991', 'MGI:9999999991'], @commands['add'].map {|d| d['mgi_accession_id']}
         end
 
         should 'set product_type' do

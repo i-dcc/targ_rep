@@ -19,6 +19,7 @@ class SolrUpdate::SolrCommandFactory
         'type' => 'allele',
         'id' => allele.id,
         'product_type' => 'ES Cell',
+        'mgi_accession_id' => allele.mgi_accession_id,
         'allele_type' => formatted_allele_type,
         'strain' => es_cell_info[:strain],
         'allele_name' => "#{marker_symbol}<sup>#{es_cell_info[:allele_symbol_superscript]}</sup>",
