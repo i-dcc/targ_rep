@@ -5,9 +5,9 @@ class SolrUpdate::CommandFactory
       return allele.mutation_subtype.titleize
     end
 
-    def calculate_order_url(data)
+    def calculate_order_from_info(data)
       if(['EUCOMM', 'EUCOMMTools', 'EUCOMMToolsCre'].include?(data[:pipeline]))
-        return 'http://www.eummcr.org/order.php'
+        return {:url => 'http://www.eummcr.org/order.php', :name => 'EUMMCR'}
 
       elsif(['KOMP-CSD', 'KOMP-Regeneron'].include?(data[:pipeline]))
         if data[:ikmc_project_id].match(/^VG/)
@@ -15,14 +15,14 @@ class SolrUpdate::CommandFactory
         else
           project = 'CSD' + data[:ikmc_project_id]
         end
-        return "http://www.komp.org/geneinfo.php?project=#{project}"
+        return {:url => "http://www.komp.org/geneinfo.php?project=#{project}", :name => 'KOMP'}
 
       elsif(['MirKO', 'Sanger MGP'].include?(data[:pipeline]))
         marker_symbol = gene_index_proxy.get_marker_symbol(allele.mgi_accession_id)
-        return "mailto:mouseinterest@sanger.ac.uk?Subject=Mutant ES Cell line for #{marker_symbol}"
+        return {:url => "mailto:mouseinterest@sanger.ac.uk?Subject=Mutant ES Cell line for #{marker_symbol}", :name => 'Wtsi'}
 
       elsif('NorCOMM' == data[:pipeline])
-        return 'http://www.phenogenomics.ca/services/cmmr/escell_services.html'
+        return {:url => 'http://www.phenogenomics.ca/services/cmmr/escell_services.html', :name => 'NorCOMM'}
 
       else
         raise "Pipeline not recognized"
@@ -47,6 +47,7 @@ class SolrUpdate::CommandFactory
 
     marker_symbol = gene_index_proxy.get_marker_symbol(allele.mgi_accession_id)
     docs = allele.es_cells.unique_public_info.map do |es_cell_info|
+      order_from_info = calculate_order_from_info(es_cell_info)
       {
         'type' => 'allele',
         'id' => allele.id,
@@ -57,7 +58,8 @@ class SolrUpdate::CommandFactory
         'allele_name' => "#{marker_symbol}<sup>#{es_cell_info[:allele_symbol_superscript]}</sup>",
         'allele_image_url' => SolrUpdate::Config.fetch('targ_rep_url') + "/alleles/#{allele.id}/allele-image",
         'genbank_file_url' => SolrUpdate::Config.fetch('targ_rep_url') + "/alleles/#{allele.id}/escell-clone-genbank-file",
-        'order_url' => calculate_order_url(es_cell_info)
+        'order_from_url' => order_from_info[:url],
+        'order_from_name' => order_from_info[:name]
       }
     end
 

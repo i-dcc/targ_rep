@@ -24,38 +24,43 @@ class SolrUpdate::CommandFactoryTest < ActiveSupport::TestCase
         assert_equal 'Targeted Non Conditional', @test_object.formatted_allele_type
       end
 
-      context 'calculating order_url' do
+      context 'calculating order_from_url and order_from_link' do
         should 'work for one of the EUCOMM pipelines' do
+          expected = {:url => 'http://www.eummcr.org/order.php', :name => 'EUMMCR'}
           ['EUCOMM', 'EUCOMMTools', 'EUCOMMToolsCre'].each do |pipeline|
             data = {:pipeline => pipeline}
-            assert_equal 'http://www.eummcr.org/order.php', @test_object.calculate_order_url(data)
+            assert_equal expected, @test_object.calculate_order_from_info(data)
           end
         end
 
         should 'work for one of the KOMP pipelines without a valid project id' do
+          expected = {:url => 'http://www.komp.org/geneinfo.php?project=CSD123', :name => 'KOMP'}
           ['KOMP-CSD', 'KOMP-Regeneron'].each do |pipeline|
             data = {:pipeline => pipeline, :ikmc_project_id => '123'}
-            assert_equal 'http://www.komp.org/geneinfo.php?project=CSD123', @test_object.calculate_order_url(data)
+            assert_equal expected, @test_object.calculate_order_from_info(data)
           end
         end
 
         should 'work for one of the KOMP pipelines with a valid project id' do
+          expected = {:url => 'http://www.komp.org/geneinfo.php?project=VG10003', :name => 'KOMP'}
           ['KOMP-CSD', 'KOMP-Regeneron'].each do |pipeline|
             data = {:pipeline => pipeline, :ikmc_project_id => 'VG10003'}
-            assert_equal 'http://www.komp.org/geneinfo.php?project=VG10003', @test_object.calculate_order_url(data)
+            assert_equal expected, @test_object.calculate_order_from_info(data)
           end
         end
 
         should 'work for MirKO or Sanger MGP pipelines' do
+          expected = {:url => 'mailto:mouseinterest@sanger.ac.uk?Subject=Mutant ES Cell line for Test1', :name => 'Wtsi'}
           ['MirKO', 'Sanger MGP'].each do |pipeline|
             data = {:pipeline => pipeline}
-            assert_equal 'mailto:mouseinterest@sanger.ac.uk?Subject=Mutant ES Cell line for Test1', @test_object.calculate_order_url(data)
+            assert_equal expected, @test_object.calculate_order_from_info(data)
           end
         end
 
         should 'work for one of the NorCOMM pipeline' do
           data = {:pipeline => 'NorCOMM'}
-          assert_equal 'http://www.phenogenomics.ca/services/cmmr/escell_services.html', @test_object.calculate_order_url(data)
+          expected = {:url => 'http://www.phenogenomics.ca/services/cmmr/escell_services.html', :name => 'NorCOMM'}
+          assert_equal expected, @test_object.calculate_order_from_info(data)
         end
 
       end
@@ -132,9 +137,13 @@ class SolrUpdate::CommandFactoryTest < ActiveSupport::TestCase
           assert_equal [url, url], @commands['add'].map {|d| d['genbank_file_url']}
         end
 
-        should 'set order_url' do
+        should 'set order_from_url' do
           url = 'http://www.eummcr.org/order.php'
-          assert_equal [url, url], @commands['add'].map {|d| d['order_url']}
+          assert_equal [url, url], @commands['add'].map {|d| d['order_from_url']}
+        end
+
+        should 'set order_from_name' do
+          assert_equal ['EUMMCR', 'EUMMCR'], @commands['add'].map {|d| d['order_from_name']}
         end
 
       end
