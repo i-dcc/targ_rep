@@ -4,4 +4,4 @@ set -e
 
 rails_root=`dirname $0`/..
 
-testrb -I "${rails_root}:${rails_root}/test" "$@"
+bundle exec testrb -I "${rails_root}:${rails_root}/test" "$@"
