@@ -1,10 +1,18 @@
 GIT
-  remote: git@github.com:i-dcc/allele_image.git
+  remote: https://github.com/i-dcc/allele_image.git
   revision: 8b5a61e63d7574fec40793ce2c4231efc65e4d4d
   specs:
     allele_image (0.4.2)
       bio
       rmagick
+
+GIT
+  remote: https://github.com/mpi2/mpi2_solr_update.git
+  revision: f2593024faced15579a9aafb0b649047078e0b8d
+  specs:
+    mpi2_solr_update (1.0.0)
+      activesupport
+      json_pure
 
 GEM
   remote: http://rubygems.org/
@@ -25,7 +33,7 @@ GEM
     authlogic (2.1.6)
       activesupport
     awesome_print (0.4.0)
-    bio (1.4.2)
+    bio (1.4.3)
     biomart (0.2.2)
       builder
     builder (3.1.2)
@@ -98,6 +106,7 @@ DEPENDENCIES
   httparty
   json_pure
   mocha
+  mpi2_solr_update!
   mysql2 (< 0.3)
   parallel
   rails (~> 2.3.12)

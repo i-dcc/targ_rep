@@ -12,7 +12,7 @@ gem 'authlogic'
 gem 'searchlogic'
 gem 'acts_as_audited'
 gem 'foreigner'
-gem 'allele_image', :git => 'git@github.com:i-dcc/allele_image.git'
+gem 'allele_image', :git => 'https://github.com/i-dcc/allele_image.git'
 gem 'rsolr'
 gem 'hoptoad_notifier'
 gem 'parallel'
@@ -21,6 +21,7 @@ gem 'sequel'
 gem 'mysql2', '< 0.3'
 gem 'rdoc'
 gem 'json_pure'
+gem 'mpi2_solr_update', :git => 'https://github.com/mpi2/mpi2_solr_update.git'
 
 # bundler requires these gems in development and while running tests
 group :development, :test do
