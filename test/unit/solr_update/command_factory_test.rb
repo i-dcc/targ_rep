@@ -49,9 +49,9 @@ class SolrUpdate::CommandFactoryTest < ActiveSupport::TestCase
           end
         end
 
-        should 'work for MirKO or Sanger MGP pipelines' do
+        should 'work for mirKO or Sanger MGP pipelines' do
           expected = {:url => 'mailto:mouseinterest@sanger.ac.uk?Subject=Mutant ES Cell line for Test1', :name => 'Wtsi'}
-          ['MirKO', 'Sanger MGP'].each do |pipeline|
+          ['mirKO', 'Sanger MGP'].each do |pipeline|
             data = {:pipeline => pipeline}
             assert_equal expected, @test_object.calculate_order_from_info(data)
           end

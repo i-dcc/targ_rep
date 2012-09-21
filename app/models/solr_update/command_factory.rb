@@ -17,7 +17,7 @@ class SolrUpdate::CommandFactory
         end
         return {:url => "http://www.komp.org/geneinfo.php?project=#{project}", :name => 'KOMP'}
 
-      elsif(['MirKO', 'Sanger MGP'].include?(data[:pipeline]))
+      elsif(['mirKO', 'Sanger MGP'].include?(data[:pipeline]))
         marker_symbol = gene_index_proxy.get_marker_symbol(allele.mgi_accession_id)
         return {:url => "mailto:mouseinterest@sanger.ac.uk?Subject=Mutant ES Cell line for #{marker_symbol}", :name => 'Wtsi'}
 
