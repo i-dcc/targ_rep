@@ -1,0 +1,43 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  five_prime_sr_pcr: MyString
+  three_prime_sr_pcr: MyString
+  karyotype_low: 1.5
+  karyotype_high: 1.5
+  copy_number: MyString
+  five_prime_lr_pcr: MyString
+  three_prime_lr_pcr: MyString
+  thawing: MyString
+  loa: MyString
+  loxp: MyString
+  lacz: MyString
+  chr1: MyString
+  chr8a: MyString
+  chr8b: MyString
+  chr11a: MyString
+  chr11b: MyString
+  chry: MyString
+  es_cell: 
+  centre: 
+
+two:
+  five_prime_sr_pcr: MyString
+  three_prime_sr_pcr: MyString
+  karyotype_low: 1.5
+  karyotype_high: 1.5
+  copy_number: MyString
+  five_prime_lr_pcr: MyString
+  three_prime_lr_pcr: MyString
+  thawing: MyString
+  loa: MyString
+  loxp: MyString
+  lacz: MyString
+  chr1: MyString
+  chr8a: MyString
+  chr8b: MyString
+  chr11a: MyString
+  chr11b: MyString
+  chry: MyString
+  es_cell: 
+  centre: 

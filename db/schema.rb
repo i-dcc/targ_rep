@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120228101846) do
+ActiveRecord::Schema.define(:version => 20120921103010) do
 
   create_table "alleles", :force => true do |t|
     t.string   "assembly",            :limit => 50,  :default => "NCBIM37", :null => false
@@ -59,6 +59,36 @@ ActiveRecord::Schema.define(:version => 20120228101846) do
   add_index "audits", ["auditable_id", "auditable_type"], :name => "auditable_index"
   add_index "audits", ["created_at"], :name => "index_audits_on_created_at"
   add_index "audits", ["user_id", "user_type"], :name => "user_index"
+
+  create_table "centres", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "distribution_qcs", :force => true do |t|
+    t.string   "five_prime_sr_pcr"
+    t.string   "three_prime_sr_pcr"
+    t.float    "karyotype_low"
+    t.float    "karyotype_high"
+    t.string   "copy_number"
+    t.string   "five_prime_lr_pcr"
+    t.string   "three_prime_lr_pcr"
+    t.string   "thawing"
+    t.string   "loa"
+    t.string   "loxp"
+    t.string   "lacz"
+    t.string   "chr1"
+    t.string   "chr8a"
+    t.string   "chr8b"
+    t.string   "chr11a"
+    t.string   "chr11b"
+    t.string   "chry"
+    t.integer  "es_cell_id"
+    t.integer  "centre_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "es_cell_qc_conflicts", :force => true do |t|
     t.integer  "es_cell_id"

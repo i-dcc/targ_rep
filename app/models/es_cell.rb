@@ -12,9 +12,15 @@ class EsCell < ActiveRecord::Base
   belongs_to :allele,           :class_name => 'Allele',          :foreign_key => 'allele_id',           :validate => true
   belongs_to :targeting_vector, :class_name => 'TargetingVector', :foreign_key => 'targeting_vector_id', :validate => true
 
-  has_many :es_cell_qc_conflicts, :class_name => 'EsCellQcConflict', :foreign_key => 'es_cell_id', :dependent => :destroy
+  has_many :es_cell_qc_conflicts, :class_name => 'EsCellQcConflict', :foreign_key => 'es_cell_id', :dependent => :destroy   #, :accessible => true
+  has_many :distribution_qcs, :class_name => 'DistributionQc', :foreign_key => 'es_cell_id', :dependent => :destroy         #, :accessible => true
+
+  # see http://stackoverflow.com/questions/556262/how-to-use-rest-with-nested-resources-which-are-represented-in-xml
 
   accepts_nested_attributes_for :es_cell_qc_conflicts, :allow_destroy => true
+  accepts_nested_attributes_for :distribution_qcs, :allow_destroy => true
+
+  #attr_accessible :distribution_qcs
 
   ##
   ## Data validation
@@ -219,15 +225,15 @@ end
 #  pipeline_id                           :integer(4)
 #  report_to_public                      :boolean(1)      default(TRUE), not null
 #  strain                                :string(25)
-#  distribution_qc_loa                      :string(4)
-#  distribution_qc_loxp                     :string(4)
-#  distribution_qc_lacz                     :string(4)
-#  distribution_qc_chr1                     :string(4)
-#  distribution_qc_chr8a                    :string(4)
-#  distribution_qc_chr8b                    :string(4)
-#  distribution_qc_chr11a                   :string(4)
-#  distribution_qc_chr11b                   :string(4)
-#  distribution_qc_chry                     :string(4)
+#  distribution_qc_loa                   :string(4)
+#  distribution_qc_loxp                  :string(4)
+#  distribution_qc_lacz                  :string(4)
+#  distribution_qc_chr1                  :string(4)
+#  distribution_qc_chr8a                 :string(4)
+#  distribution_qc_chr8b                 :string(4)
+#  distribution_qc_chr11a                :string(4)
+#  distribution_qc_chr11b                :string(4)
+#  distribution_qc_chry                  :string(4)
 #
 # Indexes
 #

@@ -9,6 +9,8 @@ class EsCellTest < ActiveSupport::TestCase
   should belong_to(:pipeline)
   should belong_to(:allele)
   should belong_to(:targeting_vector)
+  should have_many(:es_cell_qc_conflicts)
+  should have_many(:distribution_qcs)
 
   should validate_uniqueness_of(:name).with_message('This ES Cell name has already been taken')
   should validate_presence_of(:name)
