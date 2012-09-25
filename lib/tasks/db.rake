@@ -34,8 +34,9 @@ namespace :db do
         config = get_db_config_for_env(envname)
         mysqldump_cmd = "mysqldump " +
                 get_mysql_connection_options_from_config(config) +
-                "--skip-add-drop-table " +
+                #"--skip-add-drop-table " +
                 "#{config['database']}"
+        #puts "cd #{Rails.root}; #{mysqldump_cmd} | gzip -c > tmp/dump.#{envname}.sql.gz"
         system("cd #{Rails.root}; #{mysqldump_cmd} | gzip -c > tmp/dump.#{envname}.sql.gz") or raise("Failed to dump #{envname} DB")
       end
 
@@ -50,6 +51,9 @@ namespace :db do
                 "--no-data --add-drop-table " +
                 mysql_connection_options
         "#{config['database']}"
+
+        #puts "cd #{Rails.root}; zcat tmp/dump.#{envname}.sql.gz | mysql #{get_mysql_connection_options_from_config(config)} #{config['database']}"
+
         system("cd #{Rails.root}; zcat tmp/dump.#{envname}.sql.gz | mysql #{get_mysql_connection_options_from_config(config)} #{config['database']}") or raise("Load failed")
       end
 
