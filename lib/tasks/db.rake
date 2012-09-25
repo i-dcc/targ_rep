@@ -34,7 +34,6 @@ namespace :db do
         config = get_db_config_for_env(envname)
         mysqldump_cmd = "mysqldump " +
                 get_mysql_connection_options_from_config(config) +
-                "--skip-add-drop-table " +
                 "#{config['database']}"
         system("cd #{Rails.root}; #{mysqldump_cmd} | gzip -c > tmp/dump.#{envname}.sql.gz") or raise("Failed to dump #{envname} DB")
       end

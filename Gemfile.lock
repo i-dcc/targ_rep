@@ -1,5 +1,5 @@
 GIT
-  remote: git@github.com:i-dcc/allele_image.git
+  remote: git://github.com/i-dcc/allele_image.git
   revision: 8b5a61e63d7574fec40793ce2c4231efc65e4d4d
   specs:
     allele_image (0.4.2)
@@ -25,7 +25,7 @@ GEM
     authlogic (2.1.6)
       activesupport
     awesome_print (0.4.0)
-    bio (1.4.2)
+    bio (1.4.3)
     biomart (0.2.2)
       builder
     builder (3.0.0)
