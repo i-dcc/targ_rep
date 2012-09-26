@@ -1,5 +1,6 @@
 require 'test_helper'
 require 'json'
+#require 'pp'
 
 class EsCellsControllerTest < ActionController::TestCase
   setup do
@@ -294,31 +295,56 @@ class EsCellsControllerTest < ActionController::TestCase
   #
   #end
 
-  #should "new update an es_cell (with new distribution_qc)" do
-  #  es_cell = Factory.create(:es_cell)
-  #
-  #  id = es_cell.distribution_qcs.first.id
-  #  centre_id = es_cell.distribution_qcs.first.centre.id
-  #  centre_name = es_cell.distribution_qcs.first.centre_name
-  #
-  #  put :update, :id => es_cell.id, :es_cell => { :distribution_qcs_attributes => [{:id => id, :chry => 'fail'}] }
-  #  assert_response :success
-  #
-  #  response = get :show, :format => "json", :id => es_cell.id
-  #  assert_response :success, "Controller does not allow JSON display"
-  #
-  #  object = JSON.load response.body
-  #
-  #  found = false
-  #  object['distribution_qcs'].each do |distribution_qc|
-  #    if distribution_qc['centre_id'] == centre_id
-  #      assert_equal 'fail', distribution_qc['chry']
-  #      found = true
-  #      break
-  #    end
-  #  end
-  #
-  #  assert found
-  #end
+  should "create an es_cell (with new distribution_qc)" do
+    pipeline      = Factory.create( :pipeline )
+    es_cell_attrs = Factory.attributes_for( :es_cell )
+
+    assert_difference('EsCell.count') do
+      post :create, :es_cell => {
+        :name                => es_cell_attrs[:name],
+        :parental_cell_line  => es_cell_attrs[:parental_cell_line],
+        :targeting_vector_id => EsCell.first.targeting_vector_id,
+        :allele_id           => EsCell.first.allele_id,
+        :mgi_allele_id       => es_cell_attrs[:mgi_allele_id],
+        :pipeline_id         => pipeline.id
+      }
+    end
+
+    es_cell = EsCell.last
+
+    assert_equal es_cell.name, es_cell_attrs[:name]
+    assert_equal es_cell.parental_cell_line, es_cell_attrs[:parental_cell_line]
+    assert_equal es_cell.targeting_vector_id, EsCell.first.targeting_vector_id
+    assert_equal es_cell.allele_id, EsCell.first.allele_id
+    assert_equal es_cell.mgi_allele_id, es_cell_attrs[:mgi_allele_id]
+    assert_equal es_cell.pipeline_id, pipeline.id
+    assert_equal 3, es_cell.distribution_qcs.size
+
+    #pp es_cell.distribution_qcs.first.centre
+    #pp es_cell.distribution_qcs.last.centre
+
+    id = es_cell.distribution_qcs.first.id
+    centre_id = es_cell.distribution_qcs.first.centre.id
+    centre_name = es_cell.distribution_qcs.first.centre_name
+
+    put :update, :id => es_cell.id, :es_cell => { :distribution_qcs_attributes => [{:id => id, :chry => 'fail'}] }
+    assert_response :success
+
+    response = get :show, :format => "json", :id => es_cell.id
+    assert_response :success, "Controller does not allow JSON display"
+
+    object = JSON.load response.body
+
+    found = false
+    object['distribution_qcs'].each do |distribution_qc|
+      if distribution_qc['centre_id'] == centre_id
+        assert_equal 'fail', distribution_qc['chry']
+        found = true
+        break
+      end
+    end
+
+    assert found
+  end
 
 end
