@@ -88,7 +88,8 @@ class EsCell < ActiveRecord::Base
       options.update(
         :include => {
           :creator => { :only => [:id, :username] },
-          :updater => { :only => [:id, :username] }
+          :updater => { :only => [:id, :username] },
+          :distribution_qcs => { :methods => [:centre_name], :except => [:id, :es_cell_id, :created_at, :updated_at, :centre_id] }
         }
       )
       super( options )
@@ -99,7 +100,8 @@ class EsCell < ActiveRecord::Base
         :skip_types => true,
         :include => {
           :creator => { :only => [:id, :username] },
-          :updater => { :only => [:id, :username] }
+          :updater => { :only => [:id, :username] },
+          :distribution_qcs => { :methods => [:centre_name], :except => [:id, :es_cell_id, :created_at, :updated_at, :centre_id] }
         }
       )
     end

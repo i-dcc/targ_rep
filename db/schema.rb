@@ -175,6 +175,17 @@ ActiveRecord::Schema.define(:version => 20120921103010) do
 
   add_index "genbank_files", ["allele_id"], :name => "genbank_files_allele_id_fk"
 
+  create_table "genbank_files_vw", :id => false, :force => true do |t|
+    t.integer  "id",                          :default => 0,  :null => false
+    t.integer  "allele_id",                                   :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "created_by"
+    t.integer  "updated_by"
+    t.string   "vector_gb_file", :limit => 3, :default => "", :null => false
+    t.string   "allele_gb_file", :limit => 3, :default => "", :null => false
+  end
+
   create_table "pipelines", :force => true do |t|
     t.string   "name",       :null => false
     t.datetime "created_at"

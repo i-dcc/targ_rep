@@ -1,4 +1,10 @@
 class DistributionQc < ActiveRecord::Base
+  acts_as_audited
+
+  #stampable
+
+  #attr_accessor :nested
+
   belongs_to :es_cell
   belongs_to :centre
 
@@ -11,6 +17,10 @@ class DistributionQc < ActiveRecord::Base
     :greater_than_or_equal_to => 0,
     :less_than_or_equal_to    => 1,
     :allow_nil                => true
+
+  def centre_name
+    centre.name
+  end
 
 end
 
@@ -41,4 +51,3 @@ end
 #  created_at         :datetime
 #  updated_at         :datetime
 #
-

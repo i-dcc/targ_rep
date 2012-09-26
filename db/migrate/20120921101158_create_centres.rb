@@ -5,6 +5,9 @@ class CreateCentres < ActiveRecord::Migration
 
       t.timestamps
     end
+
+   # add_index :centres, :name, :unique => true
+
   end
 
   def self.down
