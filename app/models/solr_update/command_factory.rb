@@ -31,6 +31,7 @@ class SolrUpdate::CommandFactory
   end
 
   include Util
+  include SolrUpdate::Util
 
   def self.create_solr_command_to_update_in_index(allele_id)
     factory = self.new(allele_id)
@@ -56,8 +57,8 @@ class SolrUpdate::CommandFactory
         'allele_type' => formatted_allele_type,
         'strain' => es_cell_info[:strain],
         'allele_name' => "#{marker_symbol}<sup>#{es_cell_info[:allele_symbol_superscript]}</sup>",
-        'allele_image_url' => SolrUpdate::Config.fetch('targ_rep_url') + "/alleles/#{allele.id}/allele-image",
-        'genbank_file_url' => SolrUpdate::Config.fetch('targ_rep_url') + "/alleles/#{allele.id}/escell-clone-genbank-file",
+        'allele_image_url' => allele_image_url(allele.id),
+        'genbank_file_url' => genbank_file_url(allele.id),
         'order_from_url' => order_from_info[:url],
         'order_from_name' => order_from_info[:name]
       }
