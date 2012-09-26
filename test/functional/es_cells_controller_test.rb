@@ -269,7 +269,9 @@ class EsCellsControllerTest < ActionController::TestCase
     object['distribution_qcs'].each do |distribution_qc|
       distribution_qc.keys.each do |key|
 #        puts " #{key}: '#{wtsi_distribution_qc[key.underscore.to_sym]}' '#{distribution_qc[key]}'"
-        assert_equal wtsi_distribution_qc[key.underscore.to_sym], distribution_qc[key] if key != 'centre_name'
+        if ! %W(centre_name centre_id id).include? key
+          assert_equal wtsi_distribution_qc[key.underscore.to_sym], distribution_qc[key], "Expected #{wtsi_distribution_qc[key.underscore.to_sym]} got #{distribution_qc[key]} for #{key}"
+        end
       end
     end
 
@@ -324,30 +326,93 @@ class EsCellsControllerTest < ActionController::TestCase
 
 
 
-  should "update an es_cell (with new distribution_qc)" do
+#  should "update an es_cell (with new distribution_qc)" do
+#
+#    es_cell = Factory.create(:es_cell)
+#
+#    wtsi_distribution_qc = Factory.create(:distribution_qc, { :es_cell => es_cell, :centre => Factory.create( :centre ) } )
+#   # ucd_centre = Factory.create(:distribution_qc, { :es_cell => es_cell, :centre => Factory.create( :centre ) } )
+#  #  eucomm_centre = Factory.create(:distribution_qc, { :es_cell => es_cell, :centre => Factory.create( :centre ) } )
+#
+#wtsi_distribution_qc.reload
+#
+#    centre_id = wtsi_distribution_qc.centre.id
+#
+#    puts "\n\nwtsi_distribution_qc:"
+#    pp wtsi_distribution_qc
+#
+#    puts "\n\nCentre.all"
+#    pp Centre.all
+#
+#    puts "\n\ncentre_id:"
+#    pp centre_id
+#
+#    #put :update, :id => es_cell.id, :es_cell => { :distribution_qcs_attributes => [{:centre_name => 'WTSI', :chry => 'fail'}] }
+#    put :update, :id => es_cell.id, :es_cell => { :distribution_qcs_attributes => [{:centre_id => centre_id, :chry => 'fail'}] }
+#    assert_response :success
+#
+#    put :update, :id => es_cell.id, :es_cell => { :distribution_qcs_attributes => [{:centre_id => centre_id, :chr8a => 'fail', :chry => 'fail'}] }
+#    assert_response :success
+#
+#    es_cell.reload
+#    puts "\n\nafter update wtsi_distribution_qc:"
+#    pp es_cell.distribution_qcs.first
+#
+#    assert_equal 'fail', es_cell.distribution_qcs.first.chry
+#
+#    #puts "\n\nafter update wtsi_distribution_qc:"
+#    #pp es_cell.distribution_qcs
+#
+#    #es_cell.distribution_qcs.each do |distribution_qc|
+#    #  if distribution_qc.centre_id == centre_id
+#    #    assert_equal 'fail', distribution_qc.chry
+#    #    break
+#    #  end
+#    #end
+#  end
 
+  should "update an es_cell (with new distribution_qc)" do
     es_cell = Factory.create(:es_cell)
 
-    wtsi_distribution_qc = Factory.create(:distribution_qc, { :es_cell => es_cell, :centre => Factory.create( :centre, { :name => 'WTSI' } ) } )
-    ucd_centre = Factory.create(:distribution_qc, { :es_cell => es_cell, :centre => Factory.create( :centre, { :name => 'UCD' } ) } )
-    eucomm_centre = Factory.create(:distribution_qc, { :es_cell => es_cell, :centre => Factory.create( :centre, { :name => 'EUCOMM' } ) } )
+    wtsi_distribution_qc = Factory.create(:distribution_qc, { :es_cell => es_cell, :centre => Factory.create( :centre ) } )
 
-    put :update, :id => es_cell.id, :es_cell => { :distribution_qcs_attributes => [{:centre_name => 'WTSI', :chry => 'fail'}] }
-    put :update, :id => es_cell.id, :es_cell => { :distribution_qcs_attributes => [{:centre_id => 1, :chry => 'fail'}] }
+    id = es_cell.distribution_qcs.first.id
+    centre_id = es_cell.distribution_qcs.first.centre.id
+    centre_name = es_cell.distribution_qcs.first.centre_name
 
+    #put :update, :id => es_cell.id, :es_cell => { :distribution_qcs_attributes => [{:centre_name => centre_name, :chry => 'fail'}] }
+    put :update, :id => es_cell.id, :es_cell => { :distribution_qcs_attributes => [{:id => id, :centre_id => centre_id, :chry => 'fail'}] }
     assert_response :success
 
-    es_cell.reload
 
-    #puts "\n\nafter update wtsi_distribution_qc:"
-    #pp es_cell.distribution_qcs
 
-    es_cell.distribution_qcs.each do |distribution_qc|
-      if distribution_qc.centre_id == 1
-        assert_equal 'fail', distribution_qc.chry
+    response = get :show, :format => "json", :id => es_cell.id
+    assert_response :success, "Controller does not allow JSON display"
+
+    puts "response:"
+    pp response.body
+
+    object = JSON.load response.body
+
+ #   pp object['distribution_qcs']
+
+  #  es_cell.reload
+
+  #  assert_equal 'fail', es_cell.distribution_qcs.first.chry
+
+ #   assert_equal 'fail', object['distribution_qcs'][0]['chry']
+
+ found = false
+    object['distribution_qcs'].each do |distribution_qc|
+      if distribution_qc['centre_id'] == centre_id
+        assert_equal 'fail', distribution_qc['chry']
+        found = true
         break
       end
     end
+
+    assert found
+
   end
 
 end

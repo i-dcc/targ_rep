@@ -30,4 +30,46 @@ class DistributionQcTest < ActiveSupport::TestCase
 
   should 'test centre_name'
 
+  # you would think it could do should validate_inclusion_of, but no
+  # and I can't work out how to do a loop either
+
+  #should allow_value('pass').for(:five_prime_sr_pcr)
+  #should allow_value('fail').for(:five_prime_sr_pcr)
+  #should allow_value('pass').for(:three_prime_sr_pcr)
+  #should allow_value('fail').for(:three_prime_sr_pcr)
+  #should allow_value('pass').for(:copy_number)
+  #should allow_value('fail').for(:copy_number)
+  #should allow_value('pass').for(:five_prime_lr_pcr)
+  #should allow_value('fail').for(:five_prime_lr_pcr)
+  #should allow_value('pass').for(:three_prime_lr_pcr)
+  #should allow_value('fail').for(:three_prime_lr_pcr)
+  #should allow_value('pass').for(:thawing)
+  #should allow_value('fail').for(:thawing)
+  #should allow_value('pass').for(:loa)
+  #should allow_value('passb').for(:loa)
+  #should allow_value('fail').for(:loa)
+  #should allow_value('pass').for(:loxp)
+  #should allow_value('passb').for(:loxp)
+  #should allow_value('fail').for(:loxp)
+  #should allow_value('passb').for(:lacz)
+  #should allow_value('pass').for(:lacz)
+  #should allow_value('fail').for(:lacz)
+  #should allow_value('pass').for(:chr1)
+  #should allow_value('passb').for(:chr1)
+  #should allow_value('fail').for(:chr1)
+  #should allow_value('pass').for(:chr8a)
+  #should allow_value('passb').for(:chr8a)
+  #should allow_value('fail').for(:chr8a)
+  #should allow_value('pass').for(:chr8b)
+  #should allow_value('fail').for(:chr8b)
+  #should allow_value('pass').for(:chr11a)
+  #should allow_value('passb').for(:chr11a)
+  #should allow_value('fail').for(:chr11a)
+  #should allow_value('pass').for(:chr11b)
+  #should allow_value('passb').for(:chr11b)
+  #should allow_value('fail').for(:chr11b)
+  #should allow_value('pass').for(:chry)
+  #should allow_value('passb').for(:chry)
+  #should allow_value('fail').for(:chry)
+
 end

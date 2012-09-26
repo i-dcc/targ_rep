@@ -45,7 +45,7 @@ qc_field_descriptions = QcFieldDescription.create([
 ])
 
 Centre.create([
-  { :name => 'WTSI' },
-  { :name => 'UCD' },
-  { :name => 'EUCOMM' }
+  { :id => 1, :name => 'WTSI' },
+  { :id => 2, :name => 'UCD' },
+  { :id => 3, :name => 'EUCOMM' }
 ])

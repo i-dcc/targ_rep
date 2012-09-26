@@ -89,7 +89,8 @@ class EsCell < ActiveRecord::Base
         :include => {
           :creator => { :only => [:id, :username] },
           :updater => { :only => [:id, :username] },
-          :distribution_qcs => { :methods => [:centre_name], :except => [:id, :es_cell_id, :created_at, :updated_at, :centre_id] }
+          #:distribution_qcs => { :methods => [:centre_name], :except => [:id, :es_cell_id, :created_at, :updated_at, :centre_id] }
+          :distribution_qcs => { :methods => [:centre_name], :except => [:es_cell_id, :created_at, :updated_at] }
         }
       )
       super( options )
@@ -101,7 +102,8 @@ class EsCell < ActiveRecord::Base
         :include => {
           :creator => { :only => [:id, :username] },
           :updater => { :only => [:id, :username] },
-          :distribution_qcs => { :methods => [:centre_name], :except => [:id, :es_cell_id, :created_at, :updated_at, :centre_id] }
+          #:distribution_qcs => { :methods => [:centre_name], :except => [:id, :es_cell_id, :created_at, :updated_at, :centre_id] }
+          :distribution_qcs => { :methods => [:centre_name], :except => [:es_cell_id, :created_at, :updated_at] }
         }
       )
     end

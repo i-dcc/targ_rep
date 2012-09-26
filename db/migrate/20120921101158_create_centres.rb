@@ -1,7 +1,7 @@
 class CreateCentres < ActiveRecord::Migration
   def self.up
     create_table :centres do |t|
-      t.string :name
+      t.string :name        #, :null => false
 
       t.timestamps
     end

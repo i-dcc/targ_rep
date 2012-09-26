@@ -25,9 +25,9 @@ class CreateDistributionQcs < ActiveRecord::Migration
     end
 
 # TODO: remove me!
-    Centre.create!(:name => "WTSI") if ! Centre.find_by_name "WTSI"
-    Centre.create!(:name => "UCD") if ! Centre.find_by_name "UCD"
-    Centre.create!(:name => "EUCOMM") if ! Centre.find_by_name "EUCOMM"
+    Centre.create!(:id => 1, :name => "WTSI") if ! Centre.find_by_name "WTSI"
+    Centre.create!(:id => 2, :name => "UCD") if ! Centre.find_by_name "UCD"
+    Centre.create!(:id => 3, :name => "EUCOMM") if ! Centre.find_by_name "EUCOMM"
 
     execute "
       insert into distribution_qcs (five_prime_sr_pcr, three_prime_sr_pcr, karyotype_low, karyotype_high, copy_number, five_prime_lr_pcr, three_prime_lr_pcr,

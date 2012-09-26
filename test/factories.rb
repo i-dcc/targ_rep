@@ -163,26 +163,26 @@ Factory.define :es_cell do |f|
   f.ikmc_project_id { ikmc_project_id }
 end
 
-Factory.define :es_cell_with_distribution_qc, :class => EsCell do |f|
-  f.name                { Factory.next(:epd_plate_name) }
-  f.parental_cell_line  { ['JM8 parental', 'JM8.F6', 'JM8.N19'][rand(3)] }
-  f.mgi_allele_id       { Factory.next(:mgi_allele_id) }
-
-  ikmc_project_id = Factory.next( :ikmc_project_id )
-
-  f.association :pipeline, :factory => :pipeline
-  f.association :allele, :factory => :allele
-  f.targeting_vector { |es_cell|
-    es_cell.association( :targeting_vector, {
-      :allele_id       => es_cell.allele_id,
-      :ikmc_project_id => ikmc_project_id
-    })
-  }
-  f.ikmc_project_id { ikmc_project_id }
-
+#Factory.define :es_cell_with_distribution_qc, :class => EsCell do |f|
+#  f.name                { Factory.next(:epd_plate_name) }
+#  f.parental_cell_line  { ['JM8 parental', 'JM8.F6', 'JM8.N19'][rand(3)] }
+#  f.mgi_allele_id       { Factory.next(:mgi_allele_id) }
+#
+#  ikmc_project_id = Factory.next( :ikmc_project_id )
+#
+#  f.association :pipeline, :factory => :pipeline
+#  f.association :allele, :factory => :allele
+#  f.targeting_vector { |es_cell|
+#    es_cell.association( :targeting_vector, {
+#      :allele_id       => es_cell.allele_id,
+#      :ikmc_project_id => ikmc_project_id
+#    })
+#  }
+#  f.ikmc_project_id { ikmc_project_id }
+#
 #  3.times do { f.distribution_qcs << Factory.build(:distribution_qc) }
-
-end
+#
+#end
 
 Factory.define :invalid_escell, :class => EsCell do |f|
 end

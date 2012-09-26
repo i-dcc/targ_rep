@@ -5,6 +5,8 @@ class DistributionQc < ActiveRecord::Base
 
   #attr_accessor :nested
 
+  #attr_accessible :chry
+
   belongs_to :es_cell
   belongs_to :centre
 
@@ -21,6 +23,23 @@ class DistributionQc < ActiveRecord::Base
   def centre_name
     centre.name
   end
+
+  #validates_inclusion_of :five_prime_sr_pcr, :in => %w( pass fail )
+  #validates_inclusion_of :three_prime_sr_pcr, :in => %w( pass fail )
+  #validates_inclusion_of :copy_number, :in => %w( pass fail )
+  #validates_inclusion_of :five_prime_lr_pcr, :in => %w( pass fail )
+  #validates_inclusion_of :three_prime_lr_pcr, :in => %w( pass fail )
+  #validates_inclusion_of :thawing, :in => %w( pass fail )
+  #
+  #validates_inclusion_of :loa, :in => %w( pass passb fail )
+  #validates_inclusion_of :loxp, :in => %w( pass passb fail )
+  #validates_inclusion_of :lacz, :in => %w( pass passb fail )
+  #validates_inclusion_of :chr1, :in => %w( pass passb fail )
+  #validates_inclusion_of :chr8a, :in => %w( pass passb fail )
+  #validates_inclusion_of :chr8b, :in => %w( pass fail )
+  #validates_inclusion_of :chr11a, :in => %w( pass passb fail )
+  #validates_inclusion_of :chr11b, :in => %w( pass passb fail )
+  #validates_inclusion_of :chry, :in => %w( pass passb fail )
 
 end
 
