@@ -32,6 +32,9 @@ class EsCellsController < ApplicationController
   # POST /es_cells.json
   def create
     @es_cell = EsCell.new( params[:es_cell] )
+    @es_cell.distribution_qcs.build :centre => Centre.find_by_name!('WTSI')
+    @es_cell.distribution_qcs.build :centre => Centre.find_by_name!('UCD')
+    @es_cell.distribution_qcs.build :centre => Centre.find_by_name!('EUCOMM')
 
     respond_to do |format|
       if @es_cell.save

@@ -20,9 +20,38 @@ class DistributionQc < ActiveRecord::Base
     :less_than_or_equal_to    => 1,
     :allow_nil                => true
 
+  #before_validation do |distribution_qc|
+  #
+  #  puts "### before_validation '#{@centre_name}'"
+  #
+  #  if @centre_name && ! self.centre
+  #    self.centre = Centre.find_by_name @centre_name
+  #    if ! self.centre
+  #      errors.add( :centre, "The centre #{@centre_name} is unknown." )
+  #    end
+  #  end
+  #end
+
   def centre_name
     centre.name
   end
+
+  #def centre_name
+  #  if ! @centre_name.blank?
+  #    return @centre_name
+  #  else
+  #    if self.centre
+  #      @centre_name = self.centre.try(:name)
+  #    end
+  #  end
+  #end
+  #
+  #def centre_name=(arg)
+  #
+  #  puts "### centre_name= #{arg}"
+  #
+  #  @centre_name = arg
+  #end
 
   #validates_inclusion_of :five_prime_sr_pcr, :in => %w( pass fail )
   #validates_inclusion_of :three_prime_sr_pcr, :in => %w( pass fail )

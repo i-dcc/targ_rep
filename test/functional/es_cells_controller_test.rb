@@ -1,5 +1,4 @@
 require 'test_helper'
-require 'pp'
 require 'json'
 
 class EsCellsControllerTest < ActionController::TestCase
@@ -200,49 +199,6 @@ class EsCellsControllerTest < ActionController::TestCase
     assert_response 400, "Trying to create an illegal ES Cell"
   end
 
-
-
-
-#  should "show an es_cell (with new distribution_qc_test)" do
-#
-##    centre = Factory.create(:centre, { :name => 'WTSI } )
-#
-#    es_cell = Factory.create(:es_cell)
-#
-##pp Centre.all
-#
-#    #wtsi_centre        = Factory.create( :centre, { :name => 'WTSI' } )
-#    #ucd_centre        = Factory.create( :centre, { :name => 'UCD' } )
-#    #eucomm_centre        = Factory.create( :centre, { :name => 'EUCOMM' } )
-#    #
-#    #wtsi_distribution_qc = Factory.create(:distribution_qc)
-#    #wtsi_distribution_qc.centre = wtsi_centre
-#    #
-#    #wtsi_distribution_qc.es_cell = es_cell
-#
-#    wtsi_distribution_qc = Factory.create(:distribution_qc, { :es_cell => es_cell, :centre => Factory.create( :centre, { :name => 'WTSI' } ) } )
-#    ucd_centre = Factory.create(:distribution_qc, { :es_cell => es_cell, :centre => Factory.create( :centre, { :name => 'UCD' } ) } )
-#    eucomm_centre = Factory.create(:distribution_qc, { :es_cell => es_cell, :centre => Factory.create( :centre, { :name => 'EUCOMM' } ) } )
-#
-#    pp wtsi_distribution_qc
-#    pp ucd_centre
-#    pp eucomm_centre
-#
-#    #es_cell_id = EsCell.last.id
-#    #
-#    #get :show, :format => "html", :id => es_cell_id
-#    #assert_response 406, "Controller should not allow HTML display"
-#    #
-#    #response = get :show, :format => "json", :id => es_cell_id
-#    #assert_response :success, "Controller does not allow JSON display"
-#    #
-#    #puts "response:"
-#    #pp response.body
-#    #
-#    #get :show, :format => "xml", :id => es_cell_id
-#    #assert_response :success, "Controller does not allow XML display"
-#  end
-
   should "show an es_cell (with new distribution_qc)" do
 
     es_cell = Factory.create(:es_cell)
@@ -259,16 +215,10 @@ class EsCellsControllerTest < ActionController::TestCase
     response = get :show, :format => "json", :id => es_cell_id
     assert_response :success, "Controller does not allow JSON display"
 
-    #puts "response:"
-    #pp response.body
-
     object = JSON.load response.body
-
- #   pp object['distribution_qcs']
 
     object['distribution_qcs'].each do |distribution_qc|
       distribution_qc.keys.each do |key|
-#        puts " #{key}: '#{wtsi_distribution_qc[key.underscore.to_sym]}' '#{distribution_qc[key]}'"
         if ! %W(centre_name centre_id id).include? key
           assert_equal wtsi_distribution_qc[key.underscore.to_sym], distribution_qc[key], "Expected #{wtsi_distribution_qc[key.underscore.to_sym]} got #{distribution_qc[key]} for #{key}"
         end
@@ -279,98 +229,6 @@ class EsCellsControllerTest < ActionController::TestCase
     assert_response :success, "Controller does not allow XML display"
   end
 
-#  should "update an es_cell (with new distribution_qc)" do
-#
-#    es_cell = Factory.create(:es_cell)
-#
-#    wtsi_distribution_qc = Factory.create(:distribution_qc, { :es_cell => es_cell, :centre => Factory.create( :centre, { :name => 'WTSI' } ) } )
-#    ucd_centre = Factory.create(:distribution_qc, { :es_cell => es_cell, :centre => Factory.create( :centre, { :name => 'UCD' } ) } )
-#    eucomm_centre = Factory.create(:distribution_qc, { :es_cell => es_cell, :centre => Factory.create( :centre, { :name => 'EUCOMM' } ) } )
-#
-#   # response = get :show, :format => "json", :id => es_cell.id
-#   # assert_response :success, "Controller does not allow JSON display"
-#
-#    #puts "response:"
-#    #pp response.body
-#
-#    #object = JSON.load response.body
-#
-#    #object['distribution_qcs'][0]['chry'] = fail
-#
-#    #put :update, :id => es_cell.id, :es_cell => { :distribution_qcs => [{:centre_name => 'WTSI', :chry => 'fail'}] }
-#    #put :update, :id => es_cell.id, :es_cell => { :distribution_qcs => [{:centre_id => wtsi_distribution_qc.centre.id, :chry => 'fail'}] }
-#    #put :update, :id => es_cell.id, :es_cell => { :distribution_qcs => es_cell.distribution_qcs }
-#    #put :update, :id => es_cell.id, :es_cell => object
-#
-#
-#    puts "\n\nafter build es_cell:"
-#    pp es_cell.distribution_qcs
-#
-#
-#    wtsi_distribution_qc.chry = 'fail'
-#
-#    puts "\n\nafter mod wtsi_distribution_qc:"
-#    pp wtsi_distribution_qc
-#
-##    put :update, :id => es_cell.id, :es_cell => { :distribution_qcs => [wtsi_distribution_qc] }
-#
-##    put :update, :id => es_cell.id, :es_cell => { :distribution_qcs => [{:centre_id => wtsi_distribution_qc.centre.id, :chry => 'fail'}] }
-#    put :update, :id => es_cell.id, :es_cell => { :distribution_qcs_attributes => [{:centre_id => 1, :chry => 'fail'}] }
-#
-#    assert_response :success
-#
-#    es_cell.reload
-#    puts "\n\nafter update wtsi_distribution_qc:"
-#    pp es_cell.distribution_qcs
-#  end
-
-
-
-#  should "update an es_cell (with new distribution_qc)" do
-#
-#    es_cell = Factory.create(:es_cell)
-#
-#    wtsi_distribution_qc = Factory.create(:distribution_qc, { :es_cell => es_cell, :centre => Factory.create( :centre ) } )
-#   # ucd_centre = Factory.create(:distribution_qc, { :es_cell => es_cell, :centre => Factory.create( :centre ) } )
-#  #  eucomm_centre = Factory.create(:distribution_qc, { :es_cell => es_cell, :centre => Factory.create( :centre ) } )
-#
-#wtsi_distribution_qc.reload
-#
-#    centre_id = wtsi_distribution_qc.centre.id
-#
-#    puts "\n\nwtsi_distribution_qc:"
-#    pp wtsi_distribution_qc
-#
-#    puts "\n\nCentre.all"
-#    pp Centre.all
-#
-#    puts "\n\ncentre_id:"
-#    pp centre_id
-#
-#    #put :update, :id => es_cell.id, :es_cell => { :distribution_qcs_attributes => [{:centre_name => 'WTSI', :chry => 'fail'}] }
-#    put :update, :id => es_cell.id, :es_cell => { :distribution_qcs_attributes => [{:centre_id => centre_id, :chry => 'fail'}] }
-#    assert_response :success
-#
-#    put :update, :id => es_cell.id, :es_cell => { :distribution_qcs_attributes => [{:centre_id => centre_id, :chr8a => 'fail', :chry => 'fail'}] }
-#    assert_response :success
-#
-#    es_cell.reload
-#    puts "\n\nafter update wtsi_distribution_qc:"
-#    pp es_cell.distribution_qcs.first
-#
-#    assert_equal 'fail', es_cell.distribution_qcs.first.chry
-#
-#    #puts "\n\nafter update wtsi_distribution_qc:"
-#    #pp es_cell.distribution_qcs
-#
-#    #es_cell.distribution_qcs.each do |distribution_qc|
-#    #  if distribution_qc.centre_id == centre_id
-#    #    assert_equal 'fail', distribution_qc.chry
-#    #    break
-#    #  end
-#    #end
-#  end
-
   should "update an es_cell (with new distribution_qc)" do
     es_cell = Factory.create(:es_cell)
 
@@ -380,29 +238,19 @@ class EsCellsControllerTest < ActionController::TestCase
     centre_id = es_cell.distribution_qcs.first.centre.id
     centre_name = es_cell.distribution_qcs.first.centre_name
 
-    #put :update, :id => es_cell.id, :es_cell => { :distribution_qcs_attributes => [{:centre_name => centre_name, :chry => 'fail'}] }
     put :update, :id => es_cell.id, :es_cell => { :distribution_qcs_attributes => [{:id => id, :centre_id => centre_id, :chry => 'fail'}] }
+#    put :update, :id => es_cell.id, :es_cell => { :distribution_qcs_attributes => [{:id => id, :centre_name => 'fred', :chry => 'fail'}] }
     assert_response :success
-
-
 
     response = get :show, :format => "json", :id => es_cell.id
     assert_response :success, "Controller does not allow JSON display"
 
-    puts "response:"
-    pp response.body
+    #puts "response:"
+    #puts response.body
 
     object = JSON.load response.body
 
- #   pp object['distribution_qcs']
-
-  #  es_cell.reload
-
-  #  assert_equal 'fail', es_cell.distribution_qcs.first.chry
-
- #   assert_equal 'fail', object['distribution_qcs'][0]['chry']
-
- found = false
+    found = false
     object['distribution_qcs'].each do |distribution_qc|
       if distribution_qc['centre_id'] == centre_id
         assert_equal 'fail', distribution_qc['chry']
@@ -414,5 +262,63 @@ class EsCellsControllerTest < ActionController::TestCase
     assert found
 
   end
+
+  #should "update an es_cell (creating a new distribution_qc)" do
+  #  es_cell = Factory.create(:es_cell)
+  #
+  #  centre = Factory.create( :centre )
+  #
+  #  puts "### just before update"
+  #
+  #  put :update, :id => es_cell.id, :es_cell => { :distribution_qcs_attributes => [{:centre_name => centre.name, :chry => 'fail'}] }
+  #  assert_response :success
+  #
+  #  response = get :show, :format => "json", :id => es_cell.id
+  #  assert_response :success, "Controller does not allow JSON display"
+  #
+  #  puts "response:"
+  #  puts response.body
+  #
+  #  object = JSON.load response.body
+  #
+  #  found = false
+  #  object['distribution_qcs'].each do |distribution_qc|
+  #    if distribution_qc['centre_name'] == centre.name
+  #      assert_equal 'fail', distribution_qc['chry']
+  #      found = true
+  #      break
+  #    end
+  #  end
+  #
+  #  assert found
+  #
+  #end
+
+  #should "new update an es_cell (with new distribution_qc)" do
+  #  es_cell = Factory.create(:es_cell)
+  #
+  #  id = es_cell.distribution_qcs.first.id
+  #  centre_id = es_cell.distribution_qcs.first.centre.id
+  #  centre_name = es_cell.distribution_qcs.first.centre_name
+  #
+  #  put :update, :id => es_cell.id, :es_cell => { :distribution_qcs_attributes => [{:id => id, :chry => 'fail'}] }
+  #  assert_response :success
+  #
+  #  response = get :show, :format => "json", :id => es_cell.id
+  #  assert_response :success, "Controller does not allow JSON display"
+  #
+  #  object = JSON.load response.body
+  #
+  #  found = false
+  #  object['distribution_qcs'].each do |distribution_qc|
+  #    if distribution_qc['centre_id'] == centre_id
+  #      assert_equal 'fail', distribution_qc['chry']
+  #      found = true
+  #      break
+  #    end
+  #  end
+  #
+  #  assert found
+  #end
 
 end
