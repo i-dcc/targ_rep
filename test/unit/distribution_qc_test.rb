@@ -28,7 +28,12 @@ class DistributionQcTest < ActiveSupport::TestCase
   should have_db_column(:es_cell_id).of_type(:integer)
   should have_db_column(:centre_id).of_type(:integer)
 
-  should 'test centre_name'
+  should 'test centre_name' do
+    name = 'Some Centre Name'
+    centre = Centre.create( :name => name )
+    dqc = DistributionQc.create( :centre => centre )
+    assert_equal name, dqc.centre_name
+  end
 
   # you would think it could do should validate_inclusion_of, but no
   # and I can't work out how to do a loop either

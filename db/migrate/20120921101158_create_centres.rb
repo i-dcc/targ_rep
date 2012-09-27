@@ -1,12 +1,10 @@
 class CreateCentres < ActiveRecord::Migration
   def self.up
     create_table :centres do |t|
-      t.string :name        #, :null => false
+      t.string :name
 
       t.timestamps
     end
-
-   # add_index :centres, :name, :unique => true
 
   end
 

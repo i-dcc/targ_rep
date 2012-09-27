@@ -1,6 +1,5 @@
 require 'test_helper'
 require 'json'
-require 'pp'
 
 class EsCellsControllerTest < ActionController::TestCase
   setup do
@@ -218,12 +217,17 @@ class EsCellsControllerTest < ActionController::TestCase
 
     object = JSON.load response.body
 
+    found = false
+
     object['distribution_qcs'].each do |distribution_qc|
       distribution_qc.keys.each do |key|
         next if %W(centre_name centre_id id).include? key
         assert_equal wtsi_distribution_qc[key.underscore.to_sym], distribution_qc[key], "Expected #{wtsi_distribution_qc[key.underscore.to_sym]} got #{distribution_qc[key]} for #{key}"
+        found = true
       end
     end
+
+    assert found, "Did not find expected values (3)!"
 
     get :show, :format => "xml", :id => es_cell_id
     assert_response :success, "Controller does not allow XML display"

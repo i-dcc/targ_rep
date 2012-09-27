@@ -20,8 +20,6 @@ class EsCell < ActiveRecord::Base
   accepts_nested_attributes_for :es_cell_qc_conflicts, :allow_destroy => true
   accepts_nested_attributes_for :distribution_qcs, :allow_destroy => true
 
-  #attr_accessible :distribution_qcs
-
   ##
   ## Data validation
   ##

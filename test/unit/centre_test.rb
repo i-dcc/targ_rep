@@ -6,7 +6,7 @@ class CentreTest < ActiveSupport::TestCase
 
   should have_db_column(:name).of_type(:string)
 
-  should validate_uniqueness_of :name
+  should validate_uniqueness_of(:name).with_message('This Centre name has already been taken')
 
   should validate_presence_of :name
 

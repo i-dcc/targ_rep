@@ -1,8 +1,6 @@
 class DistributionQc < ActiveRecord::Base
   acts_as_audited
 
-  #stampable
-
   belongs_to :es_cell
   belongs_to :centre
 

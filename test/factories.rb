@@ -59,7 +59,7 @@ Factory.define :allele do |f|
 
   #     Features positions chose for this factory:
   #     They have been fixed so that complex tests can be cleaner. Otherwise,
-  #     fot testing a single feature, each other feature position has to be
+  #     for testing a single feature, each other feature position has to be
   #     reset.
   #
   #     +--------------------+------------+------------+
@@ -162,27 +162,6 @@ Factory.define :es_cell do |f|
   }
   f.ikmc_project_id { ikmc_project_id }
 end
-
-#Factory.define :es_cell_with_distribution_qc, :class => EsCell do |f|
-#  f.name                { Factory.next(:epd_plate_name) }
-#  f.parental_cell_line  { ['JM8 parental', 'JM8.F6', 'JM8.N19'][rand(3)] }
-#  f.mgi_allele_id       { Factory.next(:mgi_allele_id) }
-#
-#  ikmc_project_id = Factory.next( :ikmc_project_id )
-#
-#  f.association :pipeline, :factory => :pipeline
-#  f.association :allele, :factory => :allele
-#  f.targeting_vector { |es_cell|
-#    es_cell.association( :targeting_vector, {
-#      :allele_id       => es_cell.allele_id,
-#      :ikmc_project_id => ikmc_project_id
-#    })
-#  }
-#  f.ikmc_project_id { ikmc_project_id }
-#
-#  3.times do { f.distribution_qcs << Factory.build(:distribution_qc) }
-#
-#end
 
 Factory.define :invalid_escell, :class => EsCell do |f|
 end
