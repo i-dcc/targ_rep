@@ -6,9 +6,9 @@ class SolrUpdate::DocFactory
     @@gene_index_proxy ||= SolrUpdate::IndexProxy::Gene.new
   end
 
-  def self.create_for(doc_type, object)
-    raise unless doc_type == 'allele'
-    return create_for_allele(object)
+  def self.create(reference)
+    raise unless reference['type'] == 'allele'
+    return create_for_allele(Allele.find(reference['id']))
   end
 
   def self.create_for_allele(allele)

@@ -5,13 +5,13 @@ class SolrUpdate::Queue::ItemTest < ActiveSupport::TestCase
   class MockError < RuntimeError; end
 
   def setup_for_add_and_process
-    @allele1_id = 57
-    @allele2_id = 92
-    SolrUpdate::Queue::Item.add(@allele1_id, 'delete')
-    SolrUpdate::Queue::Item.add(@allele2_id, 'update')
+    @allele1_reference = {'type' => 'allele', 'id' => 57}
+    @allele2_reference = {'type' => 'allele', 'id' => 92}
+    SolrUpdate::Queue::Item.add(@allele1_reference, 'delete')
+    SolrUpdate::Queue::Item.add(@allele2_reference, 'update')
 
-    @item1 = SolrUpdate::Queue::Item.find_by_allele_id_and_command_type(@allele1_id, 'delete')
-    @item2 = SolrUpdate::Queue::Item.find_by_allele_id_and_command_type(@allele2_id, 'update')
+    @item1 = SolrUpdate::Queue::Item.find_by_allele_id_and_command_type(@allele1_reference['id'], 'delete')
+    @item2 = SolrUpdate::Queue::Item.find_by_allele_id_and_command_type(@allele2_reference['id'], 'update')
   end
 
   context 'SolrUpdate::Queue::Item' do
@@ -45,10 +45,10 @@ class SolrUpdate::Queue::ItemTest < ActiveSupport::TestCase
 
     should 'add only one command per item, removing any that are already present' do
       setup_for_add_and_process
-      SolrUpdate::Queue::Item.add(@allele2_id, 'delete')
+      SolrUpdate::Queue::Item.add(@allele2_reference, 'delete')
 
       assert_nil SolrUpdate::Queue::Item.find_by_id(@item2.id)
-      assert_not_nil SolrUpdate::Queue::Item.find_by_allele_id_and_command_type(@allele2_id, 'delete')
+      assert_not_nil SolrUpdate::Queue::Item.find_by_allele_id_and_command_type(@allele2_reference['id'], 'delete')
     end
 
     should 'process objects in the order they were added and deletes them' do
@@ -56,11 +56,11 @@ class SolrUpdate::Queue::ItemTest < ActiveSupport::TestCase
 
       things_processed = []
 
-      SolrUpdate::Queue::Item.process_in_order do |allele_id, command_type|
-        things_processed.push([allele_id, command_type])
+      SolrUpdate::Queue::Item.process_in_order do |allele_reference, command_type|
+        things_processed.push([allele_reference, command_type])
       end
 
-      assert_equal [[@allele1_id, 'delete'], [@allele2_id, 'update']], things_processed
+      assert_equal [[@allele1_reference, 'delete'], [@allele2_reference, 'update']], things_processed
       assert_nil SolrUpdate::Queue::Item.find_by_id(@item1.id)
       assert_nil SolrUpdate::Queue::Item.find_by_id(@item2.id)
     end
@@ -69,8 +69,8 @@ class SolrUpdate::Queue::ItemTest < ActiveSupport::TestCase
       setup_for_add_and_process
 
       assert_raise(MockError) do
-        SolrUpdate::Queue::Item.process_in_order do |allele_id, command_type|
-          raise MockError if allele_id == @allele2_id
+        SolrUpdate::Queue::Item.process_in_order do |allele_ref, command_type|
+          raise MockError if allele_ref == @allele2_reference
         end
       end
 

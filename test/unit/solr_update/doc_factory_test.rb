@@ -10,8 +10,17 @@ class SolrUpdate::DocFactoryTest < ActiveSupport::TestCase
   end
 
   context 'SolrUpdate::DocFactory' do
+
     setup do
       SolrUpdate::IndexProxy::Gene.any_instance.stubs(:get_marker_symbol).with('MGI:9999999991').returns('Test1')
+    end
+
+    should '#create when reference type is allele' do
+      @allele = Factory.create :allele, :id => 55
+      reference = {'type' => 'allele', 'id' => 55}
+      test_docs = [{'test' => true}]
+      SolrUpdate::DocFactory.expects(:create_for_allele).with(@allele).returns(test_docs)
+      assert_equal test_docs, SolrUpdate::DocFactory.create(reference)
     end
 
     context 'when creating sor docs for allele' do
@@ -29,7 +38,7 @@ class SolrUpdate::DocFactoryTest < ActiveSupport::TestCase
         es_cells.stubs(:unique_public_info).returns(@fake_unique_public_info)
         @allele.stubs(:es_cells).returns(es_cells)
 
-        @docs = SolrUpdate::DocFactory.create_for('allele', @allele)
+        @docs = SolrUpdate::DocFactory.create_for_allele(@allele)
       end
 
       should 'set allele_id' do
@@ -51,7 +60,7 @@ class SolrUpdate::DocFactoryTest < ActiveSupport::TestCase
       should 'set allele_type' do
         assert_equal ['Conditional Ready', 'Conditional Ready'], @docs.map {|d| d['allele_type']}
         @allele.stubs(:mutation_subtype).returns('targeted_non_conditional')
-        @docs = SolrUpdate::DocFactory.create_for('allele', @allele)
+        @docs = SolrUpdate::DocFactory.create_for_allele(@allele)
         assert_equal ['Targeted Non Conditional', 'Targeted Non Conditional'], @docs.map {|d| d['allele_type']}
       end
 
@@ -85,7 +94,7 @@ class SolrUpdate::DocFactoryTest < ActiveSupport::TestCase
             {:pipeline => 'EUCOMMToolsCre'}
           ]
 
-          @docs = SolrUpdate::DocFactory.create_for('allele', @allele)
+          @docs = SolrUpdate::DocFactory.create_for_allele(@allele)
 
           assert_equal [expected_url]*3, @docs.map {|d| d['order_from_url']}
           assert_equal [expected_name]*3, @docs.map {|d| d['order_from_name']}
@@ -100,7 +109,7 @@ class SolrUpdate::DocFactoryTest < ActiveSupport::TestCase
             {:pipeline => 'KOMP-Regeneron', :ikmc_project_id => '123'}
           ]
 
-          @docs = SolrUpdate::DocFactory.create_for('allele', @allele)
+          @docs = SolrUpdate::DocFactory.create_for_allele(@allele)
 
           assert_equal [expected_url]*2, @docs.map{|d| d['order_from_url']}
           assert_equal [expected_name]*2, @docs.map{|d| d['order_from_name']}
@@ -115,7 +124,7 @@ class SolrUpdate::DocFactoryTest < ActiveSupport::TestCase
             {:ikmc_project_id => 'VG10003', :pipeline => 'KOMP-Regeneron'}
           ]
 
-          @docs = SolrUpdate::DocFactory.create_for('allele', @allele)
+          @docs = SolrUpdate::DocFactory.create_for_allele(@allele)
 
           assert_equal [expected_url]*2, @docs.map{|d| d['order_from_url']}
           assert_equal [expected_name]*2, @docs.map{|d| d['order_from_name']}
@@ -130,7 +139,7 @@ class SolrUpdate::DocFactoryTest < ActiveSupport::TestCase
             {:pipeline => 'Sanger MGP'}
           ]
 
-          @docs = SolrUpdate::DocFactory.create_for('allele', @allele)
+          @docs = SolrUpdate::DocFactory.create_for_allele(@allele)
 
           assert_equal [expected_url]*2, @docs.map{|d| d['order_from_url']}
           assert_equal [expected_name]*2, @docs.map{|d| d['order_from_name']}
@@ -144,7 +153,7 @@ class SolrUpdate::DocFactoryTest < ActiveSupport::TestCase
             {:pipeline => 'NorCOMM'}
           ]
 
-          @docs = SolrUpdate::DocFactory.create_for('allele', @allele)
+          @docs = SolrUpdate::DocFactory.create_for_allele(@allele)
 
           assert_equal [expected_url], @docs.map{|d| d['order_from_url']}
           assert_equal [expected_name], @docs.map{|d| d['order_from_name']}
