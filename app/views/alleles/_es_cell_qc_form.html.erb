@@ -13,16 +13,7 @@
 </table>
 
 
-<%#= debug f %>
-<%#= debug @allele %>
-
-<%# f.distribution_qcs.each do |distribution_qc| %>
-    <%#= render :partial => 'alleles/edit_distribution_centre_qc', :locals => { :distribution_qc => distribution_qc } %>
-    <%#= distribution_qc.id %>
-<%# end %>
-
 <% f.fields_for :distribution_qcs do |distribution_qc| %>
-  <%#= debug distribution_qc %>
   <%= render :partial => 'alleles/edit_distribution_centre_qc', :locals => { :f => distribution_qc } %>
 <% end %>
 
