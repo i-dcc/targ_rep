@@ -14,26 +14,27 @@ class DistributionQc < ActiveRecord::Base
     :less_than_or_equal_to    => 1,
     :allow_nil                => true
 
-  def centre_name
-    centre.name
-  end
+  def centre_name; centre.name; end
 
-  validates_inclusion_of :five_prime_sr_pcr, :in => %w( pass fail ), :allow_blank => true
-  validates_inclusion_of :three_prime_sr_pcr, :in => %w( pass fail ), :allow_blank => true
-  validates_inclusion_of :copy_number, :in => %w( pass fail ), :allow_blank => true
-  validates_inclusion_of :five_prime_lr_pcr, :in => %w( pass fail ), :allow_blank => true
-  validates_inclusion_of :three_prime_lr_pcr, :in => %w( pass fail ), :allow_blank => true
-  validates_inclusion_of :thawing, :in => %w( pass fail ), :allow_blank => true
+  short_values = %w( pass fail )
+  long_values = short_values + ['passb']
 
-  validates_inclusion_of :loa, :in => %w( pass passb fail ), :allow_blank => true
-  validates_inclusion_of :loxp, :in => %w( pass passb fail ), :allow_blank => true
-  validates_inclusion_of :lacz, :in => %w( pass passb fail ), :allow_blank => true
-  validates_inclusion_of :chr1, :in => %w( pass passb fail ), :allow_blank => true
-  validates_inclusion_of :chr8a, :in => %w( pass passb fail ), :allow_blank => true
-  validates_inclusion_of :chr8b, :in => %w( pass fail ), :allow_blank => true
-  validates_inclusion_of :chr11a, :in => %w( pass passb fail ), :allow_blank => true
-  validates_inclusion_of :chr11b, :in => %w( pass passb fail ), :allow_blank => true
-  validates_inclusion_of :chry, :in => %w( pass passb fail ), :allow_blank => true
+  validates_inclusion_of :five_prime_sr_pcr, :in => short_values, :allow_blank => true
+  validates_inclusion_of :three_prime_sr_pcr, :in => short_values, :allow_blank => true
+  validates_inclusion_of :copy_number, :in => short_values, :allow_blank => true
+  validates_inclusion_of :five_prime_lr_pcr, :in => short_values, :allow_blank => true
+  validates_inclusion_of :three_prime_lr_pcr, :in => short_values, :allow_blank => true
+  validates_inclusion_of :thawing, :in => short_values, :allow_blank => true
+
+  validates_inclusion_of :loa, :in => long_values, :allow_blank => true
+  validates_inclusion_of :loxp, :in => long_values, :allow_blank => true
+  validates_inclusion_of :lacz, :in => long_values, :allow_blank => true
+  validates_inclusion_of :chr1, :in => long_values, :allow_blank => true
+  validates_inclusion_of :chr8a, :in => long_values, :allow_blank => true
+  validates_inclusion_of :chr8b, :in => long_values, :allow_blank => true
+  validates_inclusion_of :chr11a, :in => long_values, :allow_blank => true
+  validates_inclusion_of :chr11b, :in => long_values, :allow_blank => true
+  validates_inclusion_of :chry, :in => long_values, :allow_blank => true
 
 end
 

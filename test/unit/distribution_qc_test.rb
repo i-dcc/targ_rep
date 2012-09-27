@@ -28,53 +28,53 @@ class DistributionQcTest < ActiveSupport::TestCase
   should have_db_column(:es_cell_id).of_type(:integer)
   should have_db_column(:centre_id).of_type(:integer)
 
-  should 'test centre_name' do
+  should 'return centre_name' do
     name = 'Some Centre Name'
     centre = Centre.create( :name => name )
     dqc = DistributionQc.create( :centre => centre )
     assert_equal name, dqc.centre_name
   end
 
-  # you would think it could do should validate_inclusion_of, but no
-  # and I can't work out how to do a loop either
+  short_values = %w( pass fail ) + [nil, '']
+  long_values = short_values + ['passb']
 
-  should allow_value('pass').for(:five_prime_sr_pcr)
-  should allow_value('fail').for(:five_prime_sr_pcr)
-  should allow_value('pass').for(:three_prime_sr_pcr)
-  should allow_value('fail').for(:three_prime_sr_pcr)
-  should allow_value('pass').for(:copy_number)
-  should allow_value('fail').for(:copy_number)
-  should allow_value('pass').for(:five_prime_lr_pcr)
-  should allow_value('fail').for(:five_prime_lr_pcr)
-  should allow_value('pass').for(:three_prime_lr_pcr)
-  should allow_value('fail').for(:three_prime_lr_pcr)
-  should allow_value('pass').for(:thawing)
-  should allow_value('fail').for(:thawing)
-  should allow_value('pass').for(:loa)
-  should allow_value('passb').for(:loa)
-  should allow_value('fail').for(:loa)
-  should allow_value('pass').for(:loxp)
-  should allow_value('passb').for(:loxp)
-  should allow_value('fail').for(:loxp)
-  should allow_value('passb').for(:lacz)
-  should allow_value('pass').for(:lacz)
-  should allow_value('fail').for(:lacz)
-  should allow_value('pass').for(:chr1)
-  should allow_value('passb').for(:chr1)
-  should allow_value('fail').for(:chr1)
-  should allow_value('pass').for(:chr8a)
-  should allow_value('passb').for(:chr8a)
-  should allow_value('fail').for(:chr8a)
-  should allow_value('pass').for(:chr8b)
-  should allow_value('fail').for(:chr8b)
-  should allow_value('pass').for(:chr11a)
-  should allow_value('passb').for(:chr11a)
-  should allow_value('fail').for(:chr11a)
-  should allow_value('pass').for(:chr11b)
-  should allow_value('passb').for(:chr11b)
-  should allow_value('fail').for(:chr11b)
-  should allow_value('pass').for(:chry)
-  should allow_value('passb').for(:chry)
-  should allow_value('fail').for(:chry)
+  short_attributes = [
+    :five_prime_sr_pcr,
+    :three_prime_sr_pcr,
+    :copy_number,
+    :five_prime_lr_pcr,
+    :three_prime_lr_pcr,
+    :thawing
+  ]
+
+  long_attributes = [
+    :loa,
+    :loxp,
+    :lacz,
+    :chr1,
+    :chr8a,
+    :chr8b,
+    :chr11a,
+    :chr11b,
+    :chry
+  ]
+
+  short_attributes.each do |attr|
+    short_values.each do |value|
+      should allow_value(value).for(attr)
+    end
+  end
+
+  long_attributes.each do |attr|
+    long_values.each do |value|
+      should allow_value(value).for(attr)
+    end
+  end
+
+  all_attributes = short_attributes + long_attributes
+
+  all_attributes.each do |attr|
+    should_not allow_value('nonsense').for(attr)
+  end
 
 end
