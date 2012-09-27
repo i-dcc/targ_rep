@@ -204,9 +204,9 @@ class EsCellsControllerTest < ActionController::TestCase
 
     es_cell = Factory.create(:es_cell)
 
-    wtsi_distribution_qc = Factory.create(:distribution_qc, { :es_cell => es_cell, :centre => Factory.create( :centre, { :name => 'WTSI' } ) } )
-    ucd_centre = Factory.create(:distribution_qc, { :es_cell => es_cell, :centre => Factory.create( :centre, { :name => 'UCD' } ) } )
-    eucomm_centre = Factory.create(:distribution_qc, { :es_cell => es_cell, :centre => Factory.create( :centre, { :name => 'EUCOMM' } ) } )
+    wtsi_distribution_qc = Factory.create(:distribution_qc, { :es_cell => es_cell, :centre => Centre.find_by_name!('WTSI') } )
+    ucd_centre = Factory.create(:distribution_qc, { :es_cell => es_cell, :centre => Centre.find_by_name!('UCD') } )
+    eucomm_centre = Factory.create(:distribution_qc, { :es_cell => es_cell, :centre => Centre.find_by_name!('EUCOMM') } )
 
     es_cell_id = es_cell.id
 
@@ -220,9 +220,8 @@ class EsCellsControllerTest < ActionController::TestCase
 
     object['distribution_qcs'].each do |distribution_qc|
       distribution_qc.keys.each do |key|
-        if ! %W(centre_name centre_id id).include? key
-          assert_equal wtsi_distribution_qc[key.underscore.to_sym], distribution_qc[key], "Expected #{wtsi_distribution_qc[key.underscore.to_sym]} got #{distribution_qc[key]} for #{key}"
-        end
+        next if %W(centre_name centre_id id).include? key
+        assert_equal wtsi_distribution_qc[key.underscore.to_sym], distribution_qc[key], "Expected #{wtsi_distribution_qc[key.underscore.to_sym]} got #{distribution_qc[key]} for #{key}"
       end
     end
 
@@ -230,16 +229,65 @@ class EsCellsControllerTest < ActionController::TestCase
     assert_response :success, "Controller does not allow XML display"
   end
 
+  #should "update an es_cell (with new distribution_qc)" do
+  #  es_cell = Factory.create(:es_cell)
+  #
+  #  wtsi_distribution_qc = Factory.create(:distribution_qc, { :es_cell => es_cell, :centre => Factory.create( :centre ) } )
+  #
+  #  id = es_cell.distribution_qcs.first.id
+  #  centre_id = es_cell.distribution_qcs.first.centre.id
+  #  centre_name = es_cell.distribution_qcs.first.centre_name
+  #
+  #  put :update, :id => es_cell.id, :es_cell => { :distribution_qcs_attributes => [{:id => id, :centre_id => centre_id, :chry => 'fail'}] }
+  #  assert_response :success
+  #
+  #  response = get :show, :format => "json", :id => es_cell.id
+  #  assert_response :success, "Controller does not allow JSON display"
+  #
+  #  object = JSON.load response.body
+  #
+  #  found = false
+  #  object['distribution_qcs'].each do |distribution_qc|
+  #    if distribution_qc['centre_id'] == centre_id
+  #      assert_equal 'fail', distribution_qc['chry']
+  #      found = true
+  #      break
+  #    end
+  #  end
+  #
+  #  assert found
+  #
+  #end
+
   should "update an es_cell (with new distribution_qc)" do
     es_cell = Factory.create(:es_cell)
 
     wtsi_distribution_qc = Factory.create(:distribution_qc, { :es_cell => es_cell, :centre => Factory.create( :centre ) } )
 
     id = es_cell.distribution_qcs.first.id
-    centre_id = es_cell.distribution_qcs.first.centre.id
-    centre_name = es_cell.distribution_qcs.first.centre_name
 
-    put :update, :id => es_cell.id, :es_cell => { :distribution_qcs_attributes => [{:id => id, :centre_id => centre_id, :chry => 'fail'}] }
+    target = {
+      :id => id,
+      :five_prime_sr_pcr => ['pass', 'fail'].sample,
+      :three_prime_sr_pcr => ['pass', 'fail'].sample,
+      :copy_number => ['pass', 'fail'].sample,
+      :five_prime_lr_pcr => ['pass', 'fail'].sample,
+      :three_prime_lr_pcr => ['pass', 'fail'].sample,
+      :thawing => ['pass', 'fail'].sample,
+      :loa => ['pass', 'fail', 'passb'].sample,
+      :loxp => ['pass', 'fail'].sample,
+      :lacz => ['pass', 'fail'].sample,
+      :chr1 => ['pass', 'fail'].sample,
+      :chr8a => ['pass', 'fail'].sample,
+      :chr8b => ['pass', 'fail'].sample,
+      :chr11a => ['pass', 'fail'].sample,
+      :chr11b => ['pass', 'fail'].sample,
+      :chry => ['pass', 'fail', 'passb'].sample,
+      :karyotype_low => [0.1, 0.2, 0.3, 0.4, 0.5].sample,
+      :karyotype_high => [0.1, 0.2, 0.3, 0.4, 0.5].sample
+    }
+
+    put :update, :id => es_cell.id, :es_cell => { :distribution_qcs_attributes => [ target ] }
     assert_response :success
 
     response = get :show, :format => "json", :id => es_cell.id
@@ -249,15 +297,23 @@ class EsCellsControllerTest < ActionController::TestCase
 
     found = false
     object['distribution_qcs'].each do |distribution_qc|
-      if distribution_qc['centre_id'] == centre_id
-        assert_equal 'fail', distribution_qc['chry']
+      if distribution_qc['id'] == id
+        target.keys.each do |key|
+            key2 = key.to_s.gsub(/\:/, '')
+            assert_equal target[key], distribution_qc[key2], "Expected '#{target[key]}' - found '#{distribution_qc[key2]}' for key #{key}"
+        end
         found = true
         break
       end
     end
 
-    assert found
+    assert found, "Did not find expected values (2)!"
 
+    dqc = DistributionQc.find id
+
+    target.keys.each do |key|
+      assert_equal target[key], dqc[key], "Expected '#{target[key]}' - found '#{dqc[key]}' for key #{key}"
+    end
   end
 
   should "create an es_cell (with new distribution_qc)" do
@@ -286,16 +342,9 @@ class EsCellsControllerTest < ActionController::TestCase
     assert_equal 3, es_cell.distribution_qcs.size
 
     id = es_cell.distribution_qcs.first.id
-   # centre_id = es_cell.distribution_qcs.first.centre.id
-   # centre_name = es_cell.distribution_qcs.first.centre_name
-
 
     response = get :show, :format => "json", :id => es_cell.id
     assert_response :success, "Controller does not allow JSON display"
-
- #   puts response.body
-
-
 
     target = {
       :id => id,
@@ -324,31 +373,28 @@ class EsCellsControllerTest < ActionController::TestCase
     response = get :show, :format => "json", :id => es_cell.id
     assert_response :success, "Controller does not allow JSON display"
 
-  #  puts response.body
-
     object = JSON.load response.body
 
-   # puts "Looking for #{id}"
-
+    found = false
     object['distribution_qcs'].each do |distribution_qc|
-
       if distribution_qc['id'] == id
-
-   # pp distribution_qc
-
-
         target.keys.each do |key|
-            next if [:centre_name, :centre_id, :id].include? key
             key2 = key.to_s.gsub(/\:/, '')
-          #  puts "Expected '#{target[key]}' - found '#{distribution_qc[key]}' for key #{key}"
             assert_equal target[key], distribution_qc[key2], "Expected '#{target[key]}' - found '#{distribution_qc[key2]}' for key #{key}"
-          end
         end
-
-        return
+        found = true
+        break
+      end
     end
 
-    assert false, "Did not find expected values!"
+    assert found, "Did not find expected values (1)!"
+
+    dqc = DistributionQc.find id
+
+    target.keys.each do |key|
+      assert_equal target[key], dqc[key], "Expected '#{target[key]}' - found '#{dqc[key]}' for key #{key}"
+    end
+
   end
 
 end

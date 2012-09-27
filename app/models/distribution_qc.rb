@@ -3,10 +3,6 @@ class DistributionQc < ActiveRecord::Base
 
   #stampable
 
-  #attr_accessor :nested
-
-  #attr_accessible :chry
-
   belongs_to :es_cell
   belongs_to :centre
 
@@ -20,55 +16,26 @@ class DistributionQc < ActiveRecord::Base
     :less_than_or_equal_to    => 1,
     :allow_nil                => true
 
-  #before_validation do |distribution_qc|
-  #
-  #  puts "### before_validation '#{@centre_name}'"
-  #
-  #  if @centre_name && ! self.centre
-  #    self.centre = Centre.find_by_name @centre_name
-  #    if ! self.centre
-  #      errors.add( :centre, "The centre #{@centre_name} is unknown." )
-  #    end
-  #  end
-  #end
-
   def centre_name
     centre.name
   end
 
-  #def centre_name
-  #  if ! @centre_name.blank?
-  #    return @centre_name
-  #  else
-  #    if self.centre
-  #      @centre_name = self.centre.try(:name)
-  #    end
-  #  end
-  #end
-  #
-  #def centre_name=(arg)
-  #
-  #  puts "### centre_name= #{arg}"
-  #
-  #  @centre_name = arg
-  #end
+  validates_inclusion_of :five_prime_sr_pcr, :in => %w( pass fail ), :allow_blank => true
+  validates_inclusion_of :three_prime_sr_pcr, :in => %w( pass fail ), :allow_blank => true
+  validates_inclusion_of :copy_number, :in => %w( pass fail ), :allow_blank => true
+  validates_inclusion_of :five_prime_lr_pcr, :in => %w( pass fail ), :allow_blank => true
+  validates_inclusion_of :three_prime_lr_pcr, :in => %w( pass fail ), :allow_blank => true
+  validates_inclusion_of :thawing, :in => %w( pass fail ), :allow_blank => true
 
-  #validates_inclusion_of :five_prime_sr_pcr, :in => %w( pass fail )
-  #validates_inclusion_of :three_prime_sr_pcr, :in => %w( pass fail )
-  #validates_inclusion_of :copy_number, :in => %w( pass fail )
-  #validates_inclusion_of :five_prime_lr_pcr, :in => %w( pass fail )
-  #validates_inclusion_of :three_prime_lr_pcr, :in => %w( pass fail )
-  #validates_inclusion_of :thawing, :in => %w( pass fail )
-  #
-  #validates_inclusion_of :loa, :in => %w( pass passb fail )
-  #validates_inclusion_of :loxp, :in => %w( pass passb fail )
-  #validates_inclusion_of :lacz, :in => %w( pass passb fail )
-  #validates_inclusion_of :chr1, :in => %w( pass passb fail )
-  #validates_inclusion_of :chr8a, :in => %w( pass passb fail )
-  #validates_inclusion_of :chr8b, :in => %w( pass fail )
-  #validates_inclusion_of :chr11a, :in => %w( pass passb fail )
-  #validates_inclusion_of :chr11b, :in => %w( pass passb fail )
-  #validates_inclusion_of :chry, :in => %w( pass passb fail )
+  validates_inclusion_of :loa, :in => %w( pass passb fail ), :allow_blank => true
+  validates_inclusion_of :loxp, :in => %w( pass passb fail ), :allow_blank => true
+  validates_inclusion_of :lacz, :in => %w( pass passb fail ), :allow_blank => true
+  validates_inclusion_of :chr1, :in => %w( pass passb fail ), :allow_blank => true
+  validates_inclusion_of :chr8a, :in => %w( pass passb fail ), :allow_blank => true
+  validates_inclusion_of :chr8b, :in => %w( pass fail ), :allow_blank => true
+  validates_inclusion_of :chr11a, :in => %w( pass passb fail ), :allow_blank => true
+  validates_inclusion_of :chr11b, :in => %w( pass passb fail ), :allow_blank => true
+  validates_inclusion_of :chry, :in => %w( pass passb fail ), :allow_blank => true
 
 end
 
