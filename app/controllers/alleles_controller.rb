@@ -58,7 +58,7 @@ class AllelesController < ApplicationController
       :include => [
         :genbank_file,
         { :targeting_vectors => :pipeline },
-        { :es_cells => [ :pipeline, :es_cell_qc_conflicts ] }
+        { :es_cells => [ :pipeline, :es_cell_qc_conflicts, :distribution_qcs ] }
       ]
     )
     @es_cells = @allele.es_cells.sort{ |a,b| a.name <=> b.name }
@@ -84,7 +84,7 @@ class AllelesController < ApplicationController
       :include => [
         :genbank_file,
         { :targeting_vectors => :pipeline },
-        { :es_cells => [ :pipeline, :es_cell_qc_conflicts ] }
+        { :es_cells => [ :pipeline, :es_cell_qc_conflicts, :distribution_qcs ] }
       ]
     )
     @allele.genbank_file = GenbankFile.new if @allele.genbank_file.nil?

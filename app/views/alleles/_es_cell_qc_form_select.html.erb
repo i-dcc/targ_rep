@@ -1,2 +1,11 @@
+<% @readonly = defined?(readonly) && readonly %>
+
 <%= render :partial => 'alleles/show_es_cells_qc_title', :locals => { :symbol => symbol } %>
-<td><%= f.select( symbol, ESCELL_QC_OPTIONS[symbol.to_s][:values], { :include_blank => true } ) %></td>
+
+<%# debug symbol %>
+
+<% if @readonly %>
+  <td><%= print_dash_on_empty(f.object[symbol]) %></td>
+<% else %>
+  <td><%= f.select( symbol, ESCELL_QC_OPTIONS[symbol.to_s][:values], { :include_blank => true } ) %></td>
+<% end %>

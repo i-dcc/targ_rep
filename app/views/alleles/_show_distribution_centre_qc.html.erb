@@ -1,0 +1,53 @@
+<table class="es_cell_qc_info">
+  <caption>Distribution Centre QC (<%= distribution_qc.centre_name %>)</caption>
+
+
+  <tr>
+    <%= render :partial => 'alleles/show_distribution_centre_qc_title', :locals => { :name => "Karyotype", :symbol => :karyotype } %>
+    <td>
+      <% if ![nil,""].include?(distribution_qc.karyotype_low) and ![nil,""].include?(distribution_qc.karyotype_high) %>
+        <%= distribution_qc.karyotype_low %> - <%= distribution_qc.karyotype_high %>
+      <% else %>
+        -
+      <% end %>
+    </td>
+    <%= render :partial => 'alleles/show_distribution_centre_qc_field', :locals => { :distribution_qc => distribution_qc, :symbol => :copy_number } %>
+    <td width="24%"></td>
+    <td></td>
+  </tr>
+
+
+
+
+  <tr>
+    <%= render :partial => 'alleles/show_distribution_centre_qc_field', :locals => { :distribution_qc => distribution_qc, :symbol => :five_prime_lr_pcr } %>
+    <%= render :partial => 'alleles/show_distribution_centre_qc_field', :locals => { :distribution_qc => distribution_qc, :symbol => :three_prime_lr_pcr } %>
+    <td colspan="2"></td>
+  </tr>
+  <tr>
+    <%= render :partial => 'alleles/show_distribution_centre_qc_field', :locals => { :distribution_qc => distribution_qc, :symbol => :five_prime_sr_pcr } %>
+    <%= render :partial => 'alleles/show_distribution_centre_qc_field', :locals => { :distribution_qc => distribution_qc, :symbol => :three_prime_sr_pcr } %>
+    <td colspan="2"></td>
+  </tr>
+  <tr>
+    <%= render :partial => 'alleles/show_distribution_centre_qc_field', :locals => { :distribution_qc => distribution_qc, :symbol => :thawing } %>
+    <td colspan="4"></td>
+  </tr>
+
+  <tr>
+    <%= render :partial => 'alleles/show_distribution_centre_qc_field', :locals => { :distribution_qc => distribution_qc, :symbol => :loa } %>
+    <%= render :partial => 'alleles/show_distribution_centre_qc_field', :locals => { :distribution_qc => distribution_qc, :symbol => :loxp } %>
+    <%= render :partial => 'alleles/show_distribution_centre_qc_field', :locals => { :distribution_qc => distribution_qc, :symbol => :lacz } %>
+  </tr>
+  <tr>
+    <%= render :partial => 'alleles/show_distribution_centre_qc_field', :locals => { :distribution_qc => distribution_qc, :symbol => :chr1 } %>
+    <%= render :partial => 'alleles/show_distribution_centre_qc_field', :locals => { :distribution_qc => distribution_qc, :symbol => :chr8a } %>
+    <%= render :partial => 'alleles/show_distribution_centre_qc_field', :locals => { :distribution_qc => distribution_qc, :symbol => :chr8b } %>
+  </tr>
+  <tr>
+    <%= render :partial => 'alleles/show_distribution_centre_qc_field', :locals => { :distribution_qc => distribution_qc, :symbol => :chr11a } %>
+    <%= render :partial => 'alleles/show_distribution_centre_qc_field', :locals => { :distribution_qc => distribution_qc, :symbol => :chr11b } %>
+    <%= render :partial => 'alleles/show_distribution_centre_qc_field', :locals => { :distribution_qc => distribution_qc, :symbol => :chry } %>
+  </tr>
+
+</table>

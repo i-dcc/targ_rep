@@ -12,44 +12,59 @@
   </tr>
 </table>
 
+
+<%#= debug f %>
+<%#= debug @allele %>
+
+<%# f.distribution_qcs.each do |distribution_qc| %>
+    <%#= render :partial => 'alleles/edit_distribution_centre_qc', :locals => { :distribution_qc => distribution_qc } %>
+    <%#= distribution_qc.id %>
+<%# end %>
+
+<% f.fields_for :distribution_qcs do |distribution_qc| %>
+  <%#= debug distribution_qc %>
+  <%= render :partial => 'alleles/edit_distribution_centre_qc', :locals => { :f => distribution_qc } %>
+<% end %>
+
+
 <table class="es_cell_qc_info">
-  <caption>Distribution Centre QC <em>- please only enter if you are a distribution centre</em></caption>
+  <caption>Distribution Centre QC (original) <em>- please only enter if you are a distribution centre</em></caption>
   <tr>
     <%= render :partial => 'alleles/show_es_cells_qc_title', :locals => { :name => "Karyotype (Low)", :symbol => :distribution_qc_karyotype_low } %>
-    <td><%= f.text_field :distribution_qc_karyotype_low %></td>
+    <td><%= print_dash_on_empty f.object.distribution_qc_karyotype_low %></td>
     <%= render :partial => 'alleles/show_es_cells_qc_title', :locals => { :name => "Karyotype (High)", :symbol => :distribution_qc_karyotype_high } %>
-    <td><%= f.text_field :distribution_qc_karyotype_high %></td>
-    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_copy_number } %>
+    <td><%= print_dash_on_empty f.object.distribution_qc_karyotype_high %></td>
+    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_copy_number, :readonly => true } %>
   </tr>
   <tr>
-    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_five_prime_lr_pcr } %>
-    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_three_prime_lr_pcr } %>
+    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_five_prime_lr_pcr, :readonly => true } %>
+    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_three_prime_lr_pcr, :readonly => true } %>
     <td colspan="2"></td>
   </tr>
   <tr>
-    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_five_prime_sr_pcr } %>
-    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_three_prime_sr_pcr } %>
+    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_five_prime_sr_pcr, :readonly => true } %>
+    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_three_prime_sr_pcr, :readonly => true } %>
     <td colspan="2"></td>
   </tr>
   <tr>
-    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_thawing } %>
+    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_thawing, :readonly => true } %>
     <td colspan="4"></td>
   </tr>
 
   <tr>
-    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_loa } %>
-    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_loxp } %>
-    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_lacz } %>
+    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_loa, :readonly => true } %>
+    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_loxp, :readonly => true } %>
+    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_lacz, :readonly => true } %>
   </tr>
   <tr>
-    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_chr1 } %>
-    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_chr8a } %>
-    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_chr8b } %>
+    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_chr1, :readonly => true } %>
+    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_chr8a, :readonly => true } %>
+    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_chr8b, :readonly => true } %>
   </tr>
   <tr>
-    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_chr11a } %>
-    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_chr11b } %>
-    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_chry } %>
+    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_chr11a, :readonly => true } %>
+    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_chr11b, :readonly => true } %>
+    <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_chry, :readonly => true } %>
   </tr>
 
 </table>

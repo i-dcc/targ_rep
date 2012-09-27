@@ -1,0 +1,4 @@
+
+<%= render :partial => 'alleles/show_distribution_centre_qc_title', :locals => { :symbol => symbol } %>
+
+<td><%= print_dash_on_empty( distribution_qc.attributes[ symbol.to_s ] ) %></td>

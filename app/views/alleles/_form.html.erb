@@ -24,7 +24,7 @@
     <p>
       <%= f.label :chromosome %><br />
       <% chromosomes = ('1'..'19').to_a.push('X').push('Y').push('MT').unshift('') %>
-      <%= select( :allele, :chromosome, chromosomes ) %> 
+      <%= select( :allele, :chromosome, chromosomes ) %>
     </p>
     <p>
       <%= f.label :strand %><br />
@@ -35,16 +35,16 @@
       <%= f.text_field :assembly, :class => :text %>
     </p>
   </fieldset>
-  
+
   <fieldset>
     <legend>Design Details</legend>
     <p>
       <%= f.label :design_type, "Design Type" %><br />
-      <%= select( :allele, :design_type, ['','Knock Out', 'Deletion','Insertion'] ) %> 
+      <%= select( :allele, :design_type, ['','Knock Out', 'Deletion','Insertion'] ) %>
     </p>
     <p>
       <%= f.label :design_subtype, "Design Subtype" %><br />
-      <%= select( :allele, :design_subtype, ['','frameshift', 'domain'] ) %> 
+      <%= select( :allele, :design_subtype, ['','frameshift', 'domain'] ) %>
     </p>
     <p>
       <%= f.label :subtype_description, "Subtype Description" %><br />
@@ -56,7 +56,7 @@
     </p>
     <p>
       <%= f.label :cassette_type %><br />
-      <%= select( :allele, :cassette_type, ['','Promotorless', 'Promotor Driven'] ) %> 
+      <%= select( :allele, :cassette_type, ['','Promotorless', 'Promotor Driven'] ) %>
     </p>
     <p>
       <%= f.label :backbone %><br />
@@ -169,6 +169,7 @@
     </thead>
     <tbody id="es_cells">
       <% f.fields_for :es_cells do |es_cell_form| %>
+        <%#= debug es_cell_form %>
         <%= render :partial => 'es_cell_form', :locals => { :f => es_cell_form } %>
       <% end -%>
     </tbody>

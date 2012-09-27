@@ -12,8 +12,19 @@
   </tr>
 </table>
 
+
+
+
+
+<% es_cell.distribution_qcs.each do |distribution_qc| %>
+    <%= render :partial => 'alleles/show_distribution_centre_qc', :locals => { :distribution_qc => distribution_qc } %>
+<% end %>
+
+
+
+
 <table class="es_cell_qc_info">
-  <caption>Distribution Centre QC</caption>
+  <caption>Distribution Centre QC (original)</caption>
   <tr>
     <%= render :partial => 'alleles/show_es_cells_qc_title', :locals => { :name => "Karyotype", :symbol => :distribution_qc_karyotype } %>
     <td>
