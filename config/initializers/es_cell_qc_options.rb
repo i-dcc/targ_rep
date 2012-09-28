@@ -40,21 +40,21 @@ qc_metrics = {
   "distribution_qc_chr11b"                   => { :name => "Chromosome 11b",  :values => ["pass","fail"] },
   "distribution_qc_chry"                     => { :name => "Chromosome Y",    :values => ["pass","fail"] },
 
-  "copy_number"              => { :name => "Copy Number" },
-  "five_prime_lr_pcr"        => { :name => "5' LR-PCR" },
-  "three_prime_lr_pcr"       => { :name => "3' LR-PCR" },
-  "five_prime_sr_pcr"        => { :name => "5' SR-PCR" },
-  "three_prime_sr_pcr"       => { :name => "3' SR-PCR" },
-  "thawing"                  => { :name => "Cells Thawed Correctly" },
-  "loa"                      => { :name => "LOA",             :values => ["pass","fail"] },
-  "loxp"                     => { :name => "LOXP",            :values => ["pass","fail"] },
-  "lacz"                     => { :name => "LACZ",            :values => ["pass","fail"] },
-  "chr1"                     => { :name => "Chromosome 1",    :values => ["pass","fail"] },
-  "chr8a"                    => { :name => "Chromosome 8a",   :values => ["pass","fail"] },
-  "chr8b"                    => { :name => "Chromosome 8b",   :values => ["pass","fail"] },
-  "chr11a"                   => { :name => "Chromosome 11a",  :values => ["pass","fail"] },
-  "chr11b"                   => { :name => "Chromosome 11b",  :values => ["pass","fail"] },
-  "chry"                     => { :name => "Chromosome Y",    :values => ["pass","fail"] }
+  #"copy_number"              => { :name => "Copy Number" },
+  #"five_prime_lr_pcr"        => { :name => "5' LR-PCR" },
+  #"three_prime_lr_pcr"       => { :name => "3' LR-PCR" },
+  #"five_prime_sr_pcr"        => { :name => "5' SR-PCR" },
+  #"three_prime_sr_pcr"       => { :name => "3' SR-PCR" },
+  #"thawing"                  => { :name => "Cells Thawed Correctly" },
+  #"loa"                      => { :name => "LOA",             :values => ["pass","fail"] },
+  #"loxp"                     => { :name => "LOXP",            :values => ["pass","fail"] },
+  #"lacz"                     => { :name => "LACZ",            :values => ["pass","fail"] },
+  #"chr1"                     => { :name => "Chromosome 1",    :values => ["pass","fail"] },
+  #"chr8a"                    => { :name => "Chromosome 8a",   :values => ["pass","fail"] },
+  #"chr8b"                    => { :name => "Chromosome 8b",   :values => ["pass","fail"] },
+  #"chr11a"                   => { :name => "Chromosome 11a",  :values => ["pass","fail"] },
+  #"chr11b"                   => { :name => "Chromosome 11b",  :values => ["pass","fail"] },
+  #"chry"                     => { :name => "Chromosome Y",    :values => ["pass","fail"] }
 }
 
 qc_metrics.each do |field,data|
@@ -85,3 +85,5 @@ user_qc_options.uniq!
 
 ESCELL_QC_CONFLICT_FIELDS  = user_qc_fields
 ESCELL_QC_CONFLICT_OPTIONS = user_qc_options
+
+DISTRIBUTION_CENTRE_QC_OPTIONS = DistributionQc.get_qc_metrics

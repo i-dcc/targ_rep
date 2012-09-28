@@ -338,4 +338,3 @@ end
 #  index_mol_struct                                (mgi_accession_id,project_design_id,assembly,chromosome,strand,homology_arm_start,homology_arm_end,cassette_start,cassette_end,loxp_start,loxp_end,cassette,backbone) UNIQUE
 #  index_molecular_structures_on_mgi_accession_id  (mgi_accession_id)
 #
-

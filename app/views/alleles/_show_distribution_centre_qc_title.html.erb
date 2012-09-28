@@ -2,7 +2,7 @@
   <% if defined? name %>
     <%= name %>
   <% else %>
-    <%= ESCELL_QC_OPTIONS[symbol.to_s] ? ESCELL_QC_OPTIONS[symbol.to_s][:name] : symbol.to_s %>
+    <%= DISTRIBUTION_CENTRE_QC_OPTIONS[symbol.to_s] ? DISTRIBUTION_CENTRE_QC_OPTIONS[symbol.to_s][:name] : symbol.to_s %>
   <% end %>
   <% unless @qc_field_descs[symbol].nil? %>
     <% if @qc_field_descs[symbol].url and !@qc_field_descs[symbol].url.empty? %>

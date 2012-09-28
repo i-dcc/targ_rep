@@ -1,8 +1,14 @@
 class DistributionQc < ActiveRecord::Base
   acts_as_audited
 
+  extend AccessAssociationByAttribute
+
+  attr_accessor :nested
+
   belongs_to :es_cell
   belongs_to :centre
+
+#  access_association_by_attribute :centre, :name
 
   validates_numericality_of :karyotype_low,
     :greater_than_or_equal_to => 0,
@@ -16,25 +22,90 @@ class DistributionQc < ActiveRecord::Base
 
   def centre_name; centre.name; end
 
-  short_values = %w( pass fail )
-  long_values = short_values + ['passb']
+  SHORT_VALUES = %w( pass fail )
+  LONG_VALUES = SHORT_VALUES + ['passb']
 
-  validates_inclusion_of :five_prime_sr_pcr, :in => short_values, :allow_blank => true
-  validates_inclusion_of :three_prime_sr_pcr, :in => short_values, :allow_blank => true
-  validates_inclusion_of :copy_number, :in => short_values, :allow_blank => true
-  validates_inclusion_of :five_prime_lr_pcr, :in => short_values, :allow_blank => true
-  validates_inclusion_of :three_prime_lr_pcr, :in => short_values, :allow_blank => true
-  validates_inclusion_of :thawing, :in => short_values, :allow_blank => true
+  validates_inclusion_of :five_prime_sr_pcr, :in => SHORT_VALUES, :allow_blank => true
+  validates_inclusion_of :three_prime_sr_pcr, :in => SHORT_VALUES, :allow_blank => true
+  validates_inclusion_of :copy_number, :in => SHORT_VALUES, :allow_blank => true
+  validates_inclusion_of :five_prime_lr_pcr, :in => SHORT_VALUES, :allow_blank => true
+  validates_inclusion_of :three_prime_lr_pcr, :in => SHORT_VALUES, :allow_blank => true
+  validates_inclusion_of :thawing, :in => SHORT_VALUES, :allow_blank => true
 
-  validates_inclusion_of :loa, :in => long_values, :allow_blank => true
-  validates_inclusion_of :loxp, :in => long_values, :allow_blank => true
-  validates_inclusion_of :lacz, :in => long_values, :allow_blank => true
-  validates_inclusion_of :chr1, :in => long_values, :allow_blank => true
-  validates_inclusion_of :chr8a, :in => long_values, :allow_blank => true
-  validates_inclusion_of :chr8b, :in => long_values, :allow_blank => true
-  validates_inclusion_of :chr11a, :in => long_values, :allow_blank => true
-  validates_inclusion_of :chr11b, :in => long_values, :allow_blank => true
-  validates_inclusion_of :chry, :in => long_values, :allow_blank => true
+  validates_inclusion_of :loa, :in => LONG_VALUES, :allow_blank => true
+  validates_inclusion_of :loxp, :in => LONG_VALUES, :allow_blank => true
+  validates_inclusion_of :lacz, :in => LONG_VALUES, :allow_blank => true
+  validates_inclusion_of :chr1, :in => LONG_VALUES, :allow_blank => true
+  validates_inclusion_of :chr8a, :in => LONG_VALUES, :allow_blank => true
+  validates_inclusion_of :chr8b, :in => LONG_VALUES, :allow_blank => true
+  validates_inclusion_of :chr11a, :in => LONG_VALUES, :allow_blank => true
+  validates_inclusion_of :chr11b, :in => LONG_VALUES, :allow_blank => true
+  validates_inclusion_of :chry, :in => LONG_VALUES, :allow_blank => true
+
+  #qc_metrics.each do |field,data|
+  #  if data[:values].nil?
+  #    qc_metrics[field][:values] = ['pass','fail']
+  #  end
+  #end
+
+  def self.get_qc_metrics
+    qc_metrics = {
+      "copy_number"              => { :name => "Copy Number" },
+      "five_prime_lr_pcr"        => { :name => "5' LR-PCR" },
+      "three_prime_lr_pcr"       => { :name => "3' LR-PCR" },
+      "five_prime_sr_pcr"        => { :name => "5' SR-PCR" },
+      "three_prime_sr_pcr"       => { :name => "3' SR-PCR" },
+      "thawing"                  => { :name => "Cells Thawed Correctly" },
+      "loa"                      => { :name => "LOA"},
+      "loxp"                     => { :name => "LOXP"},
+      "lacz"                     => { :name => "LACZ"},
+      "chr1"                     => { :name => "Chromosome 1"},
+      "chr8a"                    => { :name => "Chromosome 8a"},
+      "chr8b"                    => { :name => "Chromosome 8b"},
+      "chr11a"                   => { :name => "Chromosome 11a"},
+      "chr11b"                   => { :name => "Chromosome 11b"},
+      "chry"                     => { :name => "Chromosome Y"}
+    }
+
+    short_attributes = [
+      :five_prime_sr_pcr,
+      :three_prime_sr_pcr,
+      :copy_number,
+      :five_prime_lr_pcr,
+      :three_prime_lr_pcr,
+      :thawing
+    ]
+
+    long_attributes = [
+      :loa,
+      :loxp,
+      :lacz,
+      :chr1,
+      :chr8a,
+      :chr8b,
+      :chr11a,
+      :chr11b,
+      :chry
+    ]
+
+    short_attributes.each do |attr|
+      field = attr.to_s.gsub(/\:/, '')
+      qc_metrics[field][:values] = []
+      SHORT_VALUES.each do |value|
+        qc_metrics[field][:values].push value
+      end
+    end
+
+    long_attributes.each do |attr|
+      field = attr.to_s.gsub(/\:/, '')
+      qc_metrics[field][:values] = []
+      LONG_VALUES.each do |value|
+        qc_metrics[field][:values].push value
+      end
+    end
+
+    qc_metrics.clone
+  end
 
 end
 

@@ -1,3 +1,4 @@
+
 class AllelesController < ApplicationController
   before_filter :require_user, :only => [:index, :show, :new, :edit, :create, :update, :destroy]
   before_filter :find_allele,
@@ -40,6 +41,7 @@ class AllelesController < ApplicationController
       :page    => params[:page],
       :select  => "distinct alleles.*",
       :include => [ { :targeting_vectors => :pipeline }, { :es_cells => :pipeline } ]
+#      :include => [ { :targeting_vectors => :pipeline }, { :es_cells => { :distribution_qcs, :pipeline } } ]
     )
 
     respond_to do |format|
@@ -58,7 +60,8 @@ class AllelesController < ApplicationController
       :include => [
         :genbank_file,
         { :targeting_vectors => :pipeline },
-        { :es_cells => [ :pipeline, :es_cell_qc_conflicts, :distribution_qcs ] }
+        { :es_cells => [ :pipeline, :es_cell_qc_conflicts   #, :distribution_qcs
+                        ] }
       ]
     )
     @es_cells = @allele.es_cells.sort{ |a,b| a.name <=> b.name }
@@ -84,7 +87,8 @@ class AllelesController < ApplicationController
       :include => [
         :genbank_file,
         { :targeting_vectors => :pipeline },
-        { :es_cells => [ :pipeline, :es_cell_qc_conflicts, :distribution_qcs ] }
+        { :es_cells => [ :pipeline, :es_cell_qc_conflicts   #, :distribution_qcs
+                        ] }
       ]
     )
     @allele.genbank_file = GenbankFile.new if @allele.genbank_file.nil?
@@ -124,6 +128,7 @@ class AllelesController < ApplicationController
   # PUT /alleles/1.xml
   def update
     respond_to do |format|
+
       if @allele.update_attributes(params[:allele])
         # Useful for all formats, not only HTML
         update_links_escell_to_targ_vec( @allele.id, params[:allele] )
@@ -264,6 +269,7 @@ class AllelesController < ApplicationController
     end
 
     def format_nested_params
+
       # Specific to create/update methods - webservice interface
       params[:allele] = params.delete(:molecular_structure) if params[:molecular_structure]
       allele_params = params[:allele]
@@ -289,6 +295,15 @@ class AllelesController < ApplicationController
       if allele_params.include? :es_cells
         allele_params[:es_cells].each { |attrs| attrs[:nested] = true }
         allele_params[:es_cells_attributes] = allele_params.delete(:es_cells)
+
+
+
+        #if allele_params.include? :es_cells.distribution_qcs
+        #  raise "found distribution_qcs!"
+        #end
+
+
+
       elsif not allele_params.include? :es_cells_attributes
         allele_params[:es_cells_attributes] = []
       end
@@ -336,6 +351,22 @@ class AllelesController < ApplicationController
           allele_params.delete(:genbank_file_attributes)
         end
       end
+
+
+
+
+      ##
+      ##  Distributed QC
+      ##
+
+      ##raise "distribution_qcs!"
+      #
+      #if allele_params.include? :distribution_qcs
+      #  allele_params[:distribution_qcs].update({ :nested => true })
+      #  allele_params[:distribution_qcs_attributes] = allele_params.delete(:distribution_qcs)
+      #end
+
+
     end
 
     def four_oh_four
