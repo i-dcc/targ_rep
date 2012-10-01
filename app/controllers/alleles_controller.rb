@@ -60,8 +60,7 @@ class AllelesController < ApplicationController
       :include => [
         :genbank_file,
         { :targeting_vectors => :pipeline },
-        { :es_cells => [ :pipeline, :es_cell_qc_conflicts   #, :distribution_qcs
-                        ] }
+        { :es_cells => [ :pipeline, :es_cell_qc_conflicts ] }
       ]
     )
     @es_cells = @allele.es_cells.sort{ |a,b| a.name <=> b.name }
@@ -87,8 +86,7 @@ class AllelesController < ApplicationController
       :include => [
         :genbank_file,
         { :targeting_vectors => :pipeline },
-        { :es_cells => [ :pipeline, :es_cell_qc_conflicts   #, :distribution_qcs
-                        ] }
+        { :es_cells => [ :pipeline, :es_cell_qc_conflicts ] }
       ]
     )
     @allele.genbank_file = GenbankFile.new if @allele.genbank_file.nil?
@@ -355,13 +353,12 @@ class AllelesController < ApplicationController
 
 
 
-      ##
-      ##  Distributed QC
-      ##
-
-      ##raise "distribution_qcs!"
+      ###
+      ###  Distributed QC
+      ###
       #
       #if allele_params.include? :distribution_qcs
+      #  raise "distribution_qcs!"
       #  allele_params[:distribution_qcs].update({ :nested => true })
       #  allele_params[:distribution_qcs_attributes] = allele_params.delete(:distribution_qcs)
       #end

@@ -17,7 +17,8 @@
 
 
 <% es_cell.distribution_qcs.each do |distribution_qc| %>
-    <%= render :partial => 'alleles/show_distribution_centre_qc', :locals => { :distribution_qc => distribution_qc } %>
+    <%#= debug current_user %>
+    <%= render :partial => 'alleles/show_distribution_centre_qc', :locals => { :distribution_qc => distribution_qc, :readonly => true } %>
 <% end %>
 
 

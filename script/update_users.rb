@@ -49,25 +49,16 @@ targets =
   { :id => 39, :username => 'af11@sanger.ac.uk', :centre =>'WTSI'}
 ]
 
-#centre_wtsi = Centre.find_by_name 'WTSI'
-#centre_eucomm = Centre.find_by_name 'EUCOMM'
-#centre_komp = Centre.find_by_name 'KOMP'
-
 User.transaction do
   targets.each do |target|
     user = User.find target[:id]
-
-    #puts user.inspect
 
     raise "User has unexpected username - expected '#{target[:username]}' - found: '#{user.username}'" if target[:username] != user.username
 
     centre = Centre.find_by_name(target[:centre])
     raise "Cannot find centre '#{target[:centre]}'!" if ! centre
 
-#        user.centre_id = Centre.find_by_name!(target[:centre]).id
     user.centre = centre
     user.save!
-
-  #  puts user.inspect
   end
 end

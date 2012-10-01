@@ -175,6 +175,18 @@ class EsCell < ActiveRecord::Base
         errors.add( :parental_cell_line, "The parental cell line '#{self.parental_cell_line}' is not recognised" )
       end
     end
+
+    public
+
+    def check_dc(centre)
+      self.distribution_qcs.each do |distribution_qc|
+        return if distribution_qc.centre == centre
+      end
+
+      self.distribution_qcs.build
+      self.distribution_qcs.first.centre = centre
+    end
+
 end
 
 # == Schema Information

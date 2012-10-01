@@ -12,9 +12,21 @@
   </tr>
 </table>
 
+<% f.object.check_dc(current_user.centre) %>
 
+<% found = false %>
 <% f.fields_for :distribution_qcs do |distribution_qc| %>
-  <%= render :partial => 'alleles/edit_distribution_centre_qc', :locals => { :f => distribution_qc } %>
+  <% if distribution_qc.object.centre_id == current_user.centre.id%>
+    <%= render :partial => 'alleles/edit_distribution_centre_qc', :locals => { :f => distribution_qc, :readonly => false } %>
+    <% found = true %>
+  <% else %>
+    <%#= debug distribution_qc %>
+    <%#= debug current_user %>
+    <%= render :partial => 'alleles/edit_distribution_centre_qc', :locals => { :f => distribution_qc, :readonly => true } %>
+  <% end %>
+<% end %>
+
+<% if ! found %>
 <% end %>
 
 
@@ -22,9 +34,9 @@
   <caption>Distribution Centre QC (original) <em>- please only enter if you are a distribution centre</em></caption>
   <tr>
     <%= render :partial => 'alleles/show_es_cells_qc_title', :locals => { :name => "Karyotype (Low)", :symbol => :distribution_qc_karyotype_low } %>
-    <td><%= print_dash_on_empty f.object.distribution_qc_karyotype_low %></td>
+    <td><%= f.text_field :distribution_qc_karyotype_low %></td>
     <%= render :partial => 'alleles/show_es_cells_qc_title', :locals => { :name => "Karyotype (High)", :symbol => :distribution_qc_karyotype_high } %>
-    <td><%= print_dash_on_empty f.object.distribution_qc_karyotype_high %></td>
+    <td><%= f.text_field :distribution_qc_karyotype_high %></td>
     <%= render :partial => 'alleles/es_cell_qc_form_select', :locals => { :f => f, :symbol => :distribution_qc_copy_number, :readonly => true } %>
   </tr>
   <tr>

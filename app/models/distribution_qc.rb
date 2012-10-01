@@ -20,7 +20,7 @@ class DistributionQc < ActiveRecord::Base
     :less_than_or_equal_to    => 1,
     :allow_nil                => true
 
-  def centre_name; self.centre.name; end
+ # def centre_name; self.centre.name; end
 
   SHORT_VALUES = %w( pass fail )
   LONG_VALUES = SHORT_VALUES + ['passb']
@@ -41,12 +41,6 @@ class DistributionQc < ActiveRecord::Base
   validates_inclusion_of :chr11a, :in => LONG_VALUES, :allow_blank => true
   validates_inclusion_of :chr11b, :in => LONG_VALUES, :allow_blank => true
   validates_inclusion_of :chry, :in => LONG_VALUES, :allow_blank => true
-
-  #qc_metrics.each do |field,data|
-  #  if data[:values].nil?
-  #    qc_metrics[field][:values] = ['pass','fail']
-  #  end
-  #end
 
   def self.get_qc_metrics
     qc_metrics = {

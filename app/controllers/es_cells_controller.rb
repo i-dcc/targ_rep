@@ -1,3 +1,6 @@
+
+require 'pp'
+
 class EsCellsController < ApplicationController
   before_filter :find_escell, :only => [:show, :update, :destroy]
   before_filter :find_escells, :only => :index
@@ -32,9 +35,6 @@ class EsCellsController < ApplicationController
   # POST /es_cells.json
   def create
     @es_cell = EsCell.new( params[:es_cell] )
-    #@es_cell.distribution_qcs.build :centre => Centre.find_by_name!('WTSI')
-    #@es_cell.distribution_qcs.build :centre => Centre.find_by_name!('KOMP')
-    #@es_cell.distribution_qcs.build :centre => Centre.find_by_name!('EUCOMM')
 
     respond_to do |format|
       if @es_cell.save
@@ -75,11 +75,31 @@ class EsCellsController < ApplicationController
   # GET /es_cells/bulk_edit
   # POST /es_cells/bulk_edit
   def bulk_edit
+
+    @es_cells = nil
+
     unless params[:es_cell_names].nil?
       es_cell_names = params[:es_cell_names].split("\n").map{ |elm| elm.chomp.strip }.compact
-      @es_cells     = EsCell.all( :conditions => { :name => es_cell_names } )
+
+            @es_cells     = EsCell.all( :conditions => { :name => es_cell_names }, :joins => :distribution_qcs )
+      #      @es_cells     = EsCell.all( :conditions => { :name => es_cell_names }, :include => [:distribution_qcs] )
+
+      #@es_cells     = EsCell.find(:all, :include => [:distribution_qcs], :conditions => { :name => es_cell_names } )
+
+      #>> Post.find(:all, :include => [:comments], :conditions => [“comments.created_at > ?”, 1.week.ago.to_s(:db)])
+
       @es_cells.sort!{ |a,b| es_cell_names.index(a.name) <=> es_cell_names.index(b.name) }
     end
+
+
+    #puts "#### bulk_edit:"
+    #pp @es_cells
+
+    es_cell = EsCell.find @es_cells.first.id
+
+    puts "#### Number of distribution_qcs = #{es_cell.distribution_qcs.size}"
+
+
   end
 
   # PUT /es_cells/update_multiple
