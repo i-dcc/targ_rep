@@ -10,8 +10,8 @@ class SolrUpdate::Queue::ItemTest < ActiveSupport::TestCase
     SolrUpdate::Queue::Item.add(@allele1_reference, 'delete')
     SolrUpdate::Queue::Item.add(@allele2_reference, 'update')
 
-    @item1 = SolrUpdate::Queue::Item.find_by_allele_id_and_command_type(@allele1_reference['id'], 'delete')
-    @item2 = SolrUpdate::Queue::Item.find_by_allele_id_and_command_type(@allele2_reference['id'], 'update')
+    @item1 = SolrUpdate::Queue::Item.find_by_allele_id_and_action(@allele1_reference['id'], 'delete')
+    @item2 = SolrUpdate::Queue::Item.find_by_allele_id_and_action(@allele2_reference['id'], 'update')
   end
 
   context 'SolrUpdate::Queue::Item' do
@@ -22,9 +22,9 @@ class SolrUpdate::Queue::ItemTest < ActiveSupport::TestCase
     should belong_to(:allele)
 
     should 'return entries in #earliest_first order' do
-      SolrUpdate::Queue::Item.create!(:allele_id => 2, :command_type => 'update', :created_at => '2012-01-02 00:00:00 UTC')
-      SolrUpdate::Queue::Item.create!(:allele_id => 1, :command_type => 'update', :created_at => '2012-01-01 00:00:00 UTC')
-      SolrUpdate::Queue::Item.create!(:allele_id => 3, :command_type => 'delete', :created_at => '2012-01-03 00:00:00 UTC')
+      SolrUpdate::Queue::Item.create!(:allele_id => 2, :action => 'update', :created_at => '2012-01-02 00:00:00 UTC')
+      SolrUpdate::Queue::Item.create!(:allele_id => 1, :action => 'update', :created_at => '2012-01-01 00:00:00 UTC')
+      SolrUpdate::Queue::Item.create!(:allele_id => 3, :action => 'delete', :created_at => '2012-01-03 00:00:00 UTC')
 
       commands = SolrUpdate::Queue::Item.earliest_first
       assert_equal [1, 2, 3], commands.map(&:allele_id)
@@ -40,7 +40,7 @@ class SolrUpdate::Queue::ItemTest < ActiveSupport::TestCase
     should 'add model object directly instead of it\'s id' do
       allele = Factory.create :allele, :id => 66
       SolrUpdate::Queue::Item.add(allele, 'update')
-      assert_not_nil SolrUpdate::Queue::Item.find_by_allele_id_and_command_type(allele.id, 'update')
+      assert_not_nil SolrUpdate::Queue::Item.find_by_allele_id_and_action(allele.id, 'update')
     end
 
     should 'add only one command per item, removing any that are already present' do
@@ -48,7 +48,7 @@ class SolrUpdate::Queue::ItemTest < ActiveSupport::TestCase
       SolrUpdate::Queue::Item.add(@allele2_reference, 'delete')
 
       assert_nil SolrUpdate::Queue::Item.find_by_id(@item2.id)
-      assert_not_nil SolrUpdate::Queue::Item.find_by_allele_id_and_command_type(@allele2_reference['id'], 'delete')
+      assert_not_nil SolrUpdate::Queue::Item.find_by_allele_id_and_action(@allele2_reference['id'], 'delete')
     end
 
     should 'process objects in the order they were added and deletes them' do
@@ -56,8 +56,8 @@ class SolrUpdate::Queue::ItemTest < ActiveSupport::TestCase
 
       things_processed = []
 
-      SolrUpdate::Queue::Item.process_in_order do |allele_reference, command_type|
-        things_processed.push([allele_reference, command_type])
+      SolrUpdate::Queue::Item.process_in_order do |allele_reference, action|
+        things_processed.push([allele_reference, action])
       end
 
       assert_equal [[@allele1_reference, 'delete'], [@allele2_reference, 'update']], things_processed
@@ -69,7 +69,7 @@ class SolrUpdate::Queue::ItemTest < ActiveSupport::TestCase
       setup_for_add_and_process
 
       assert_raise(MockError) do
-        SolrUpdate::Queue::Item.process_in_order do |allele_ref, command_type|
+        SolrUpdate::Queue::Item.process_in_order do |allele_ref, action|
           raise MockError if allele_ref == @allele2_reference
         end
       end

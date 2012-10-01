@@ -3,7 +3,7 @@ class CreateSolrUpdateQueueItems < ActiveRecord::Migration
     create_table :solr_update_queue_items do |table|
       table.timestamps
       table.integer :allele_id, :null => false
-      table.column :command_type, "ENUM('update', 'delete')"
+      table.column :action, "ENUM('update', 'delete')"
     end
     add_index :solr_update_queue_items, :allele_id, :unique => true
   end
