@@ -26,7 +26,7 @@ class CreateDistributionQcs < ActiveRecord::Migration
 
 # TODO: remove me!
     Centre.create!(:id => 1, :name => "WTSI") if ! Centre.find_by_name "WTSI"
-    Centre.create!(:id => 2, :name => "UCD") if ! Centre.find_by_name "UCD"
+    Centre.create!(:id => 2, :name => "KOMP") if ! Centre.find_by_name "KOMP"
     Centre.create!(:id => 3, :name => "EUCOMM") if ! Centre.find_by_name "EUCOMM"
 
     execute "

@@ -5,10 +5,10 @@ class DistributionQc < ActiveRecord::Base
 
   attr_accessor :nested
 
-  belongs_to :es_cell
-  belongs_to :centre
+  belongs_to :es_cell,        :class_name => 'EsCell',        :foreign_key => 'es_cell_id'
+  belongs_to :centre,         :class_name => 'Centre',        :foreign_key => 'centre_id'
 
-#  access_association_by_attribute :centre, :name
+  access_association_by_attribute :centre, :name
 
   validates_numericality_of :karyotype_low,
     :greater_than_or_equal_to => 0,
@@ -20,7 +20,7 @@ class DistributionQc < ActiveRecord::Base
     :less_than_or_equal_to    => 1,
     :allow_nil                => true
 
-  def centre_name; centre.name; end
+  def centre_name; self.centre.name; end
 
   SHORT_VALUES = %w( pass fail )
   LONG_VALUES = SHORT_VALUES + ['passb']

@@ -10,7 +10,7 @@ class UserTest < Test::Unit::TestCase
         assert( user.delete, "User cannot be deleted after use")
       end
     end
-    
+
     context "with empty attributes" do
       user = Factory.build( :invalid_user )
       should "not be saved" do
@@ -19,5 +19,6 @@ class UserTest < Test::Unit::TestCase
       end
     end
   end
-end
 
+  should have_db_column(:centre_id).of_type(:integer)
+end

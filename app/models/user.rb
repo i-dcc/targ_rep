@@ -2,6 +2,8 @@ class User < ActiveRecord::Base
   acts_as_authentic
   model_stamper
 
+  belongs_to :centre,         :class_name => 'Centre',        :foreign_key => 'centre_id'
+
   User.include_root_in_json = false
 
   public
@@ -34,5 +36,10 @@ end
 #  current_login_at   :datetime
 #  current_login_ip   :string(255)
 #  last_login_ip      :string(255)
+#  centre_id          :integer(4)
+#
+# Indexes
+#
+#  users_centre_id_fk  (centre_id)
 #
 

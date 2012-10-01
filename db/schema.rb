@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120921103010) do
+ActiveRecord::Schema.define(:version => 20121001090312) do
 
   create_table "alleles", :force => true do |t|
     t.string   "assembly",            :limit => 50,  :default => "NCBIM37", :null => false
@@ -237,7 +237,10 @@ ActiveRecord::Schema.define(:version => 20120921103010) do
     t.datetime "current_login_at"
     t.string   "current_login_ip"
     t.string   "last_login_ip"
+    t.integer  "centre_id"
   end
+
+  add_index "users", ["centre_id"], :name => "users_centre_id_fk"
 
   add_foreign_key "es_cell_qc_conflicts", "es_cells", :name => "es_cell_qc_conflicts_es_cell_id_fk", :dependent => :delete
 
@@ -248,5 +251,7 @@ ActiveRecord::Schema.define(:version => 20120921103010) do
 
   add_foreign_key "targeting_vectors", "alleles", :name => "targeting_vectors_allele_id_fk", :dependent => :delete
   add_foreign_key "targeting_vectors", "pipelines", :name => "targeting_vectors_pipeline_id_fk", :dependent => :delete
+
+  add_foreign_key "users", "centres", :name => "users_centre_id_fk"
 
 end

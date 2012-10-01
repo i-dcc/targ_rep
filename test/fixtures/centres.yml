@@ -4,7 +4,20 @@ one:
   name: WTSI
 
 two:
-  name: UCD
+  name: KOMP
 
 three:
   name: EUCOMM
+
+
+
+# == Schema Information
+#
+# Table name: centres
+#
+#  id         :integer(4)      not null, primary key
+#  name       :string(255)
+#  created_at :datetime
+#  updated_at :datetime
+#
+
