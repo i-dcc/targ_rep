@@ -2,7 +2,7 @@
 # The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
 #
 # Examples:
-#   
+#
 #   cities = City.create([{ :name => 'Chicago' }, { :name => 'Copenhagen' }])
 #   Major.create(:name => 'Daley', :city => cities.first)
 
@@ -44,3 +44,23 @@ qc_field_descriptions = QcFieldDescription.create([
   # }
 ])
 
+mutation_methods = MutationMethod.create([
+  { :id => 1, :name => 'Targeted mutation' },
+  { :id => 2, :name => 'Recombination mediated cassette exchange' }
+])
+
+mutation_types = MutationType.create([
+  { :id => 1, :name => 'Conditional Ready' },
+  { :id => 2, :name => 'Deletion' },
+  { :id => 3, :name => 'Targeted non-conditional' },
+  { :id => 4, :name => 'Cre knock-in' },
+  { :id => 5, :name => 'Cre BAC' }
+])
+
+mutation_sub_types = MutationSubType.create([
+  { :id => 1, :name => 'Domain disruption' },
+  { :id => 2, :name => 'Frameshift' },
+  { :id => 3, :name => 'Artificial intron' },
+  { :id => 4, :name => 'Hprt' },
+  { :id => 5, :name => 'Rosa26' }
+])
