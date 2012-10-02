@@ -30,7 +30,7 @@ Rails::Initializer.run do |config|
 
   # Activate observers that should always be running
   # config.active_record.observers = :cacher, :garbage_collector, :forum_observer
-  if Rails.env.test?
+  if RAILS_ENV == 'test'
   config.active_record.observers = ['SolrUpdate::Observer::Allele', 'SolrUpdate::Observer::EsCell']
   end
 
