@@ -1,5 +1,5 @@
 GIT
-  remote: https://github.com/i-dcc/allele_image.git
+  remote: git://github.com/i-dcc/allele_image.git
   revision: 8b5a61e63d7574fec40793ce2c4231efc65e4d4d
   specs:
     allele_image (0.4.2)
@@ -7,7 +7,7 @@ GIT
       rmagick
 
 GIT
-  remote: https://github.com/mpi2/mpi2_solr_update.git
+  remote: git://github.com/mpi2/mpi2_solr_update.git
   revision: 07e66b28b23b1eea235a144d5f3f3217b39f698e
   specs:
     mpi2_solr_update (1.0.0)
