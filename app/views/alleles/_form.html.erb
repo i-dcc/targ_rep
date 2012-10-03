@@ -169,7 +169,6 @@
     </thead>
     <tbody id="es_cells">
       <% f.fields_for :es_cells do |es_cell_form| %>
-        <%#= debug es_cell_form %>
         <%= render :partial => 'es_cell_form', :locals => { :f => es_cell_form } %>
       <% end -%>
     </tbody>

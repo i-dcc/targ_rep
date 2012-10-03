@@ -41,7 +41,6 @@ class AllelesController < ApplicationController
       :page    => params[:page],
       :select  => "distinct alleles.*",
       :include => [ { :targeting_vectors => :pipeline }, { :es_cells => :pipeline } ]
-#      :include => [ { :targeting_vectors => :pipeline }, { :es_cells => { :distribution_qcs, :pipeline } } ]
     )
 
     respond_to do |format|
@@ -268,8 +267,6 @@ class AllelesController < ApplicationController
 
     def format_nested_params
 
-     # puts "#### format_nested_params!!!"
-
       # Specific to create/update methods - webservice interface
       params[:allele] = params.delete(:molecular_structure) if params[:molecular_structure]
       allele_params = params[:allele]
@@ -295,15 +292,6 @@ class AllelesController < ApplicationController
       if allele_params.include? :es_cells
         allele_params[:es_cells].each { |attrs| attrs[:nested] = true }
         allele_params[:es_cells_attributes] = allele_params.delete(:es_cells)
-
-
-
-        #if allele_params[:es_cells].include? :distribution_qcs_attributes
-        #  raise "found distribution_qcs_attributes!"
-        #end
-
-
-
       elsif not allele_params.include? :es_cells_attributes
         allele_params[:es_cells_attributes] = []
       end
@@ -351,20 +339,6 @@ class AllelesController < ApplicationController
           allele_params.delete(:genbank_file_attributes)
         end
       end
-
-
-
-
-      ###
-      ###  Distributed QC
-      ###
-      #
-      #if allele_params.include? :distribution_qcs
-      #  raise "distribution_qcs!"
-      #  allele_params[:distribution_qcs].update({ :nested => true })
-      #  allele_params[:distribution_qcs_attributes] = allele_params.delete(:distribution_qcs)
-      #end
-
 
     end
 

@@ -30,7 +30,6 @@
 
     <% form_tag update_multiple_es_cells_path, :method => :put do %>
       <% @es_cells.each do |es_cell| %>
-        <%# @distribution_qcs = es_cell.distribution_qcs || [] %>
         <% fields_for "es_cells[]", es_cell do |f| %>
           <%= f.hidden_field :name %>
           <h3><%=h es_cell.name %></h3>

@@ -87,7 +87,7 @@ class EsCell < ActiveRecord::Base
         :include => {
           :creator => { :only => [:id, :username] },
           :updater => { :only => [:id, :username] },
-          :distribution_qcs => { :methods => [:centre_name], :except => [:es_cell_id, :created_at, :updated_at] }
+          :distribution_qcs => { :except => [:es_cell_id, :created_at, :updated_at] }
         }
       )
       super( options )
@@ -99,7 +99,7 @@ class EsCell < ActiveRecord::Base
         :include => {
           :creator => { :only => [:id, :username] },
           :updater => { :only => [:id, :username] },
-          :distribution_qcs => { :methods => [:centre_name], :except => [:es_cell_id, :created_at, :updated_at] }
+          :distribution_qcs => { :except => [:es_cell_id, :created_at, :updated_at] }
         }
       )
     end
@@ -178,7 +178,7 @@ class EsCell < ActiveRecord::Base
 
     public
 
-    def check_dc(centre)
+    def build_distribution_qc(centre)
       self.distribution_qcs.each do |distribution_qc|
         return if distribution_qc.centre == centre
       end

@@ -13,12 +13,7 @@
 </table>
 
 
-
-
-
-
-
-<% f.object.check_dc(current_user.centre) %>
+<% f.object.build_distribution_qc(current_user.centre) %>
 
 <% @bulk_edit = defined?(@bulk_edit) && @bulk_edit %>
 
@@ -50,10 +45,6 @@
 <% end %>
 
 <% end %>
-
-
-
-
 
 
 <% if @original %>

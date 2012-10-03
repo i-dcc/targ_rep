@@ -1,10 +1,7 @@
-
 <% @show_hide = false %>
 <% @show_hide_style = "" %>
-<%# @readonly = defined?(readonly) && readonly %>
 
 <table>
-
 <% if @show_hide %>
   <% @show_hide_style = "style='display:none;'" %>
   <tr><td><a href="#" class="es_cell_qc_toggle ss_sprite ss_magnifier">show/hide Distribution Centre QC for <%= distribution_qc.object.centre_name %></a></td></tr>
@@ -17,27 +14,19 @@
   <tr>
     <%= render :partial => 'alleles/show_distribution_centre_qc_title', :locals => { :name => "Karyotype (Low)", :symbol => :karyotype_low, :readonly => @readonly } %>
 
-
-
     <% if @readonly %>
     <td><%= print_dash_on_empty(distribution_qc.object.karyotype_low) %></td>
     <% else %>
     <td><%= distribution_qc.text_field :karyotype_low %></td>
     <% end %>
 
-
-
-
     <%= render :partial => 'alleles/show_distribution_centre_qc_title', :locals => { :name => "Karyotype (High)", :symbol => :karyotype_high, :readonly => @readonly } %>
-
-
 
     <% if @readonly %>
     <td><%= print_dash_on_empty(distribution_qc.object.karyotype_high) %></td>
     <% else %>
     <td><%= distribution_qc.text_field :karyotype_high %></td>
     <% end %>
-
 
     <%= render :partial => 'alleles/distribution_centre_qc_form_select', :locals => { :distribution_qc => distribution_qc, :symbol => :copy_number, :readonly => @readonly } %>
   </tr>

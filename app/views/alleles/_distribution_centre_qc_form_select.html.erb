@@ -2,8 +2,6 @@
 
 <%= render :partial => 'alleles/show_distribution_centre_qc_title', :locals => { :symbol => symbol } %>
 
-<%#= debug symbol %>
-
 <% if @readonly %>
   <td><%= print_dash_on_empty(distribution_qc.object[symbol]) %></td>
 <% else %>

@@ -116,8 +116,5 @@ class ApplicationController < ActionController::Base
       QcFieldDescription.all.each do |desc|
         @qc_field_descs[ desc.qc_field.to_sym ] = desc
       end
-
-      #puts "#### get_qc_field_descriptions:"
-      #pp @qc_field_descs
     end
 end

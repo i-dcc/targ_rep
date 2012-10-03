@@ -20,8 +20,6 @@ class DistributionQc < ActiveRecord::Base
     :less_than_or_equal_to    => 1,
     :allow_nil                => true
 
- # def centre_name; self.centre.name; end
-
   SHORT_VALUES = %w( pass fail )
   LONG_VALUES = SHORT_VALUES + ['passb']
 
