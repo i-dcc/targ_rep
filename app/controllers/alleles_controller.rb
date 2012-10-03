@@ -268,6 +268,8 @@ class AllelesController < ApplicationController
 
     def format_nested_params
 
+     # puts "#### format_nested_params!!!"
+
       # Specific to create/update methods - webservice interface
       params[:allele] = params.delete(:molecular_structure) if params[:molecular_structure]
       allele_params = params[:allele]
@@ -296,8 +298,8 @@ class AllelesController < ApplicationController
 
 
 
-        #if allele_params.include? :es_cells.distribution_qcs
-        #  raise "found distribution_qcs!"
+        #if allele_params[:es_cells].include? :distribution_qcs_attributes
+        #  raise "found distribution_qcs_attributes!"
         #end
 
 

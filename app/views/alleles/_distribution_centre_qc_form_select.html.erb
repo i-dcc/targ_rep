@@ -5,7 +5,7 @@
 <%#= debug symbol %>
 
 <% if @readonly %>
-  <td><%= print_dash_on_empty(f.object[symbol]) %></td>
+  <td><%= print_dash_on_empty(distribution_qc.object[symbol]) %></td>
 <% else %>
-  <td><%= f.select( symbol, DISTRIBUTION_CENTRE_QC_OPTIONS[symbol.to_s][:values], { :include_blank => true } ) %></td>
+  <td><%= distribution_qc.select( symbol, DISTRIBUTION_CENTRE_QC_OPTIONS[symbol.to_s][:values], { :include_blank => true, :name => 'whatever' } ) %></td>
 <% end %>

@@ -2,14 +2,14 @@
 
 <div class="grid_12">
   <h2>ES Cell Bulk Editing</h2>
-  
+
   <% form_tag( { :action => 'bulk_edit' }, { :method => :post } ) do %>
     Enter a list of ES Cell names (one ES Cell per line) to edit and press search:<br />
-    <%= 
-      text_area_tag( 
-        :es_cell_names, 
-        params[:es_cell_names], 
-        :rows => 10, 
+    <%=
+      text_area_tag(
+        :es_cell_names,
+        params[:es_cell_names],
+        :rows => 10,
         :cols => 25,
         :style => "height:auto"
       )
@@ -17,19 +17,20 @@
     <br />
     <button type="submit" class="button">
       <%= image_tag "led-icons/find.png", :alt => "" %> Search
-    </button> 
-    
+    </button>
+
   <% end %>
 </div>
 
 <% if @es_cells and @es_cells.size > 0 %>
   <div class="grid_12 clear hr alpha omega"></div>
-  
+
   <div class="grid_12">
     <% pipeline_list = Pipeline.find(:all, :order => "name").collect {|p| [ p.name, p.id ] } %>
 
     <% form_tag update_multiple_es_cells_path, :method => :put do %>
       <% @es_cells.each do |es_cell| %>
+        <%# @distribution_qcs = es_cell.distribution_qcs || [] %>
         <% fields_for "es_cells[]", es_cell do |f| %>
           <%= f.hidden_field :name %>
           <h3><%=h es_cell.name %></h3>
@@ -81,7 +82,7 @@
 
       <button type="submit" class="button positive">
         <%= image_tag "led-icons/accept.png", :alt => "" %> Save
-      </button> 
+      </button>
     <% end %>
   </div>
 <% end %>
