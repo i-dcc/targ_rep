@@ -39,12 +39,18 @@ class SolrUpdate::DocFactory
       return {:url => 'http://www.eummcr.org/order.php', :name => 'EUMMCR'}
 
     elsif(['KOMP-CSD', 'KOMP-Regeneron'].include?(data[:pipeline]))
-      if data[:ikmc_project_id].match(/^VG/)
-        project = data[:ikmc_project_id]
+      if ! data[:ikmc_project_id].blank?
+        if data[:ikmc_project_id].match(/^VG/)
+          project = data[:ikmc_project_id]
+        else
+          project = 'CSD' + data[:ikmc_project_id]
+        end
+        url = "http://www.komp.org/geneinfo.php?project=#{project}"
       else
-        project = 'CSD' + data[:ikmc_project_id]
+        url = "http://www.komp.org/"
       end
-      return {:url => "http://www.komp.org/geneinfo.php?project=#{project}", :name => 'KOMP'}
+
+      return {:url => url, :name => 'KOMP'}
 
     elsif(['mirKO', 'Sanger MGP'].include?(data[:pipeline]))
       marker_symbol = gene_index_proxy.get_marker_symbol(data[:allele].mgi_accession_id)

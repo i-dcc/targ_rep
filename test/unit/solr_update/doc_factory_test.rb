@@ -41,7 +41,7 @@ class SolrUpdate::DocFactoryTest < ActiveSupport::TestCase
         @docs = SolrUpdate::DocFactory.create_for_allele(@allele)
       end
 
-      should 'set allele_id' do
+      should 'set id' do
         assert_equal [@allele.id, @allele.id], @docs.map {|d| d['id']}
       end
 
@@ -126,6 +126,21 @@ class SolrUpdate::DocFactoryTest < ActiveSupport::TestCase
           setup_fake_unique_public_info [
             {:ikmc_project_id => 'VG10003', :pipeline => 'KOMP-CSD'},
             {:ikmc_project_id => 'VG10003', :pipeline => 'KOMP-Regeneron'}
+          ]
+
+          @docs = SolrUpdate::DocFactory.create_for_allele(@allele)
+
+          assert_equal [expected_url]*2, @docs.map{|d| d['order_from_url']}
+          assert_equal [expected_name]*2, @docs.map{|d| d['order_from_name']}
+        end
+
+        should 'work for one of the KOMP pipelines with NO project id' do
+          expected_url = 'http://www.komp.org/'
+          expected_name = 'KOMP'
+
+          setup_fake_unique_public_info [
+            {:pipeline => 'KOMP-CSD'},
+            {:pipeline => 'KOMP-Regeneron'}
           ]
 
           @docs = SolrUpdate::DocFactory.create_for_allele(@allele)
