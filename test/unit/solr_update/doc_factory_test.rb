@@ -23,7 +23,7 @@ class SolrUpdate::DocFactoryTest < ActiveSupport::TestCase
       assert_equal test_docs, SolrUpdate::DocFactory.create(reference)
     end
 
-    context 'when creating sor docs for allele' do
+    context 'when creating solr docs for allele' do
 
       setup do
         @allele = Factory.create :allele, :design_type => 'Knock Out',
@@ -64,6 +64,10 @@ class SolrUpdate::DocFactoryTest < ActiveSupport::TestCase
         assert_equal ['Targeted Non Conditional', 'Targeted Non Conditional'], @docs.map {|d| d['allele_type']}
       end
 
+      should 'set allele_id' do
+        assert_equal [@allele.id, @allele.id], @docs.map {|d| d['allele_id']}
+      end
+
       should 'set strain' do
         assert_equal ['C57BL/6N', 'C57BL/6N-A<tm1Brd>/a'], @docs.map {|d| d['strain']}
       end
@@ -83,7 +87,7 @@ class SolrUpdate::DocFactoryTest < ActiveSupport::TestCase
         assert_equal [url, url], @docs.map {|d| d['genbank_file_url']}
       end
 
-      context 'order_from_url and order_from_link' do
+      context 'order_from_url and order_from_name' do
         should 'be set for any of the EUCOMM pipelines' do
           expected_url = 'http://www.eummcr.org/order.php'
           expected_name = 'EUMMCR'
@@ -168,6 +172,7 @@ class SolrUpdate::DocFactoryTest < ActiveSupport::TestCase
       should 'set order_from_name' do
         assert_equal ['EUMMCR', 'EUMMCR'], @docs.map {|d| d['order_from_name']}
       end
+
     end
 
   end
