@@ -12,11 +12,23 @@
   </tr>
 </table>
 
+
+
+
+
+
+
+<% f.object.check_dc(current_user.centre) %>
+
+<% @bulk_edit = defined?(@bulk_edit) && @bulk_edit %>
+
+<% if @bulk_edit %>
+
 <% @distribution_qcs = f.object.distribution_qcs || [] %>
 
 <% @distribution_qcs.each do |distribution_qc| %>
   <% fields_for "distribution_qcs[]", distribution_qc do |dqc| %>
-    <% @readonly = dqc.object.centre_id != current_user.centre.id %>
+    <% @readonly = dqc.object.centre != current_user.centre %>
     <% next if @readonly %>
     <%= render :partial => 'alleles/edit_distribution_centre_qc', :locals => { :distribution_qc => dqc } %>
   <% end %>
@@ -24,11 +36,27 @@
 
 <% @distribution_qcs.each do |distribution_qc| %>
   <% fields_for "distribution_qcs[]", distribution_qc do |dqc| %>
-    <% @readonly = dqc.object.centre_id != current_user.centre.id %>
+    <% @readonly = dqc.object.centre != current_user.centre %>
     <% next if ! @readonly %>
     <%= render :partial => 'alleles/show_distribution_centre_qc', :locals => { :distribution_qc => distribution_qc } %>
   <% end %>
 <% end %>
+
+<%else %>
+
+<% f.fields_for :distribution_qcs do |dqc| %>
+    <% @readonly = dqc.object.centre != current_user.centre %>
+    <%= render :partial => 'alleles/edit_distribution_centre_qc', :locals => { :distribution_qc => dqc } %>
+<% end %>
+
+<% end %>
+
+
+
+
+
+
+<% if @original %>
 
 <table class="es_cell_qc_info">
   <caption>Distribution Centre QC <strong>(original)</strong> <em>- please only enter if you are a distribution centre</em></caption>
@@ -71,6 +99,8 @@
   </tr>
 
 </table>
+
+<% end %>
 
 <table class="es_cell_qc_info">
   <caption>User/Mouse Clinic QC</caption>

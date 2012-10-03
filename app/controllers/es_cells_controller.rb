@@ -76,6 +76,8 @@ class EsCellsController < ApplicationController
   # POST /es_cells/bulk_edit
   def bulk_edit
 
+    @bulk_edit = true
+
     #puts "#### bulk_edit es_cell_names:"
     #pp params[:es_cell_names]
 

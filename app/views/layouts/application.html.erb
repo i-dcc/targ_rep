@@ -5,9 +5,9 @@
 <head>
   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
   <title>IKMC Targeting Repository - <%= controller.controller_name.titlecase %>: <%= controller.action_name %></title>
-  
+
   <%= javascript_include_tag :all, :cache => true %>
-  
+
   <%= stylesheet_link_tag 'reset' %>
   <%= stylesheet_link_tag 'typography' %>
   <%= stylesheet_link_tag 'forms' %>
@@ -16,9 +16,11 @@
   <%= stylesheet_link_tag 'sprites' %>
   <%= stylesheet_link_tag 'buttons' %>
   <%= stylesheet_link_tag 'style' %>
-  
+
   <%= yield(:head) %>
 </head>
+
+<% @original = false %>
 
 <body>
 
@@ -29,7 +31,7 @@
     <div id="userbox" class="grid_3 prefix_1">
       <div id="userbox-inner" class="box">
         <% if @current_user %>
-          <%= link_to "profile (#{@current_user.username})", user_path(@current_user), :class => "ss_sprite ss_user" %> | 
+          <%= link_to "profile (#{@current_user.username})", user_path(@current_user), :class => "ss_sprite ss_user" %> |
           <%= link_to "logout", logout_path, :method => :delete, :class => "ss_sprite ss_door_open" %>
         <% else %>
           <%= link_to "login", login_path, :class => "ss_sprite ss_key" %>
@@ -37,7 +39,7 @@
       </div>
     </div>
   </div>
-  
+
   <div class="container_12">
     <div id="navigation" class="grid_12 alpha omega">
       <ul>
@@ -50,7 +52,7 @@
       </ul>
     </div>
   </div>
-  
+
   <div class="container_12">
     <div id="content" class="grid_12">
       <% if ENV['RAILS_ENV'] === 'development' or ENV['RAILS_ENV'] === 'staging' %>
@@ -69,21 +71,21 @@
       <% end %>
     </div>
   </div>
-  
+
   <div class="container_12">
     <%= yield %>
   </div>
-  
+
   <div class="clear"></div>
-  
+
   <div class="container_12">
     <div id="footer" class="grid_12 alpha omega" style="text-align:right;">
-      <a href="http://www.knockoutmouse.org/disclaimer">Warranty Disclaimer and Copyright Notice</a><br /> 
-      This site is maintained by the <a href="http://www.knockoutmouse.org/about">I-DCC and the KOMP-DCC</a><br /> 
-      Supported by the European Union (Project number: 223592)<br /> 
+      <a href="http://www.knockoutmouse.org/disclaimer">Warranty Disclaimer and Copyright Notice</a><br />
+      This site is maintained by the <a href="http://www.knockoutmouse.org/about">I-DCC and the KOMP-DCC</a><br />
+      Supported by the European Union (Project number: 223592)<br />
       and the National Institutes of Health (Grant number: NIH HG004074)
     </div>
   </div>
-      
+
 </body>
 </html>
