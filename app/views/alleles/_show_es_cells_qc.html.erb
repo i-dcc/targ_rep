@@ -1,3 +1,5 @@
+<% @debug = true %>
+
 <table class="es_cell_qc_info">
   <caption>Production Centre Screen</caption>
   <tr>
@@ -16,10 +18,10 @@
     <%= render :partial => 'alleles/show_distribution_centre_qc', :locals => { :distribution_qc => distribution_qc, :readonly => true } %>
 <% end %>
 
-<% if @original %>
+<% if @debug %>
 
 <table class="es_cell_qc_info">
-  <caption>Distribution Centre QC (original)</caption>
+  <caption>Distribution Centre QC <strong>(original)</strong> (<%= es_cell.id %>)</caption>
   <tr>
     <%= render :partial => 'alleles/show_es_cells_qc_title', :locals => { :name => "Karyotype", :symbol => :distribution_qc_karyotype } %>
     <td>
