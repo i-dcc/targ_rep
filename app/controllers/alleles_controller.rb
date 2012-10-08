@@ -1,4 +1,6 @@
 
+#require 'pp'
+
 class AllelesController < ApplicationController
   before_filter :require_user, :only => [:index, :show, :new, :edit, :create, :update, :destroy]
   before_filter :find_allele,
@@ -43,6 +45,9 @@ class AllelesController < ApplicationController
       :include => [ { :targeting_vectors => :pipeline }, { :es_cells => :pipeline } ]
     )
 
+  # raise @alleles.inspect
+   #raise "count = #{@alleles.count}"
+
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml   => @alleles }
@@ -59,7 +64,8 @@ class AllelesController < ApplicationController
       :include => [
         :genbank_file,
         { :targeting_vectors => :pipeline },
-        { :es_cells => [ :pipeline, :es_cell_qc_conflicts ] }
+        { :es_cells => [ :pipeline, :es_cell_qc_conflicts, :distribution_qcs ] }
+        #{ :es_cells => [ :pipeline, :es_cell_qc_conflicts ] }
       ]
     )
     @es_cells = @allele.es_cells.sort{ |a,b| a.name <=> b.name }
@@ -85,7 +91,8 @@ class AllelesController < ApplicationController
       :include => [
         :genbank_file,
         { :targeting_vectors => :pipeline },
-        { :es_cells => [ :pipeline, :es_cell_qc_conflicts ] }
+        { :es_cells => [ :pipeline, :es_cell_qc_conflicts, :distribution_qcs ] }
+        #{ :es_cells => [ :pipeline, :es_cell_qc_conflicts ] }
       ]
     )
     @allele.genbank_file = GenbankFile.new if @allele.genbank_file.nil?
@@ -124,6 +131,10 @@ class AllelesController < ApplicationController
   # PUT /alleles/1
   # PUT /alleles/1.xml
   def update
+
+    #puts "#### alleles_controller.rb: update"
+    #pp params[:allele]
+
     respond_to do |format|
 
       if @allele.update_attributes(params[:allele])

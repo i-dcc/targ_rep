@@ -26,6 +26,9 @@
     </thead>
     <tbody>
       <% @alleles.each do |mol_struct| %>
+
+      <%#= debug mol_struct %>
+
         <tr class="<%= cycle("odd", "even") %>">
           <td><%= mol_struct.pipeline_names %></td>
           <td><%= mol_struct.mgi_accession_id %></td>

@@ -1,7 +1,7 @@
 module AllelesHelper
-  # Following helpers come from: 
+  # Following helpers come from:
   # http://railsforum.com/viewtopic.php?id=28447
-  
+
   # Add a new es cell form
   def add_es_cell_link(form_builder)
     link_to_function( 'Add an ES Cell', { :class => 'ss_sprite ss_add' } ) do |page|
@@ -12,7 +12,7 @@ module AllelesHelper
       end
     end
   end
-  
+
   # Display the remove link for an es cell form
   def remove_es_cell_link(form_builder)
     if form_builder.object.new_record?
@@ -31,21 +31,21 @@ module AllelesHelper
         page << "$(this).up('tr.es_cell').hide();"
         page << "$(this).previous().value = '1';"
       end
-      
+
       return form_elm + link_elm
     end
   end
-  
+
   # Add a new targeting vector form
   def add_targ_vec_link(form_builder)
     link_to_function( 'Add a targeting vector', { :class => 'ss_sprite ss_add' } ) do |page|
       form_builder.fields_for :targeting_vectors, TargetingVector.new, :child_index => 'NEW_RECORD' do |f|
-        html = render :partial => 'targ_vec_form', :locals => { :f => f } 
+        html = render :partial => 'targ_vec_form', :locals => { :f => f }
         page << "$('targeting_vectors').insert({ bottom: '#{escape_javascript(html)}'.replace(/NEW_RECORD/g, new Date().getTime()) });"
       end
     end
   end
-  
+
   # Display the remove link for a targeting vector form
   def remove_targ_vec_link(form_builder)
     if form_builder.object.new_record?
@@ -63,7 +63,7 @@ module AllelesHelper
       end
     end
   end
-  
+
   # Add a new es cell qc conflict form
   def add_es_cell_qc_conflict_link(form_builder)
     link_to_function( 'Add A QC Conflict Report', { :class => 'ss_sprite ss_add' } ) do |page|
@@ -74,7 +74,7 @@ module AllelesHelper
       end
     end
   end
-  
+
   # Display the remove link for an es cell qc conflict form
   def remove_es_cell_qc_conflict_link(form_builder)
     if form_builder.object.new_record?
@@ -91,7 +91,7 @@ module AllelesHelper
         page << "$(this).up('tr').hide();"
         page << "$(this).previous().value = '1';"
       end
-      
+
       return form_elm + link_elm
     end
   end

@@ -179,13 +179,35 @@ class EsCell < ActiveRecord::Base
     public
 
     def build_distribution_qc(centre)
-      self.distribution_qcs.each do |distribution_qc|
-        return if distribution_qc.centre == centre
+
+      return if ! centre  # do nothing if we haven't a centre
+
+      puts "#### build_distribution_qc: centre: #{centre.name}"
+      puts "#### build_distribution_qc: count: #{self.distribution_qcs.size}"
+
+      self.distribution_qcs.each do |dqc|
+        puts "#### build_distribution_qc: found: #{dqc.centre}"
+        return if dqc.centre == centre
       end
+
+      puts "#### build_distribution_qc: adding: #{centre.name}"
 
       self.distribution_qcs.build
       self.distribution_qcs.first.centre = centre
     end
+
+    #def build_distribution_qc(centre)
+    #  found = false
+    #  self.distribution_qcs.each do |dqc|
+    #    found = true if dqc.centre == centre
+    #    break if found
+    #  end
+    #
+    #  return if found
+    #
+    #  self.distribution_qcs.build
+    #  self.distribution_qcs.first.centre = centre
+    #end
 
 end
 

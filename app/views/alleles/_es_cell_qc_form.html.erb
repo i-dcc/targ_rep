@@ -15,38 +15,36 @@
 </table>
 
 
-<% f.object.build_distribution_qc(current_user.centre) %>
-
 <% @bulk_edit = defined?(@bulk_edit) && @bulk_edit %>
 
 <% if @bulk_edit %>
 
+<% f.object.build_distribution_qc(current_user.centre) %>
+<% f.object.reload %>
+
 <% @distribution_qcs = f.object.distribution_qcs || [] %>
 
 <% @distribution_qcs.each do |distribution_qc| %>
+  <% @readonly = distribution_qc.centre.nil? || distribution_qc.centre != current_user.centre %>
+  <% next if @readonly %>
   <% fields_for "distribution_qcs[]", distribution_qc do |dqc| %>
-    <% @readonly = dqc.object.centre != current_user.centre %>
-    <% next if @readonly %>
     <%= render :partial => 'alleles/edit_distribution_centre_qc', :locals => { :distribution_qc => dqc } %>
   <% end %>
 <% end %>
 
-<% @distribution_qcs.each do |distribution_qc| %>
-  <% fields_for "distribution_qcs[]", distribution_qc do |dqc| %>
-    <% @readonly = dqc.object.centre != current_user.centre %>
-    <% next if ! @readonly %>
-    <%= render :partial => 'alleles/show_distribution_centre_qc', :locals => { :distribution_qc => distribution_qc } %>
-  <% end %>
-<% end %>
+<% else %>
 
-<%else %>
+<% f.object.build_distribution_qc(current_user.centre) %>
 
 <% f.fields_for :distribution_qcs do |dqc| %>
-    <% @readonly = dqc.object.centre != current_user.centre %>
-    <%= render :partial => 'alleles/edit_distribution_centre_qc', :locals => { :distribution_qc => dqc } %>
+  <% @readonly = dqc.object.centre != current_user.centre %>
+  <% next if @readonly %>
+  <%= render :partial => 'alleles/edit_distribution_centre_qc', :locals => { :distribution_qc => dqc } %>
 <% end %>
 
 <% end %>
+
+
 
 
 <% if @debug %>
