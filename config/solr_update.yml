@@ -7,7 +7,7 @@ development:
 test:
   index_proxy:
     gene: http://ikmc.vm.bytemark.co.uk:8983/solr/gene
-    allele: http://localhost:8983/solr/allele
+    allele: http://localhost:8984/solr/allele
 
 production: &pro
   index_proxy:

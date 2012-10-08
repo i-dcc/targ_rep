@@ -35,7 +35,7 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
       assert_equal 'C57BL/6N-A<tm1Brd>/a', @allele.es_cells[1].strain
     end
 
-    should 'update the SOLR index when an allele is modified' do
+    should_if_solr 'update the SOLR index when an allele is modified' do
       SolrUpdate::Queue::Item.destroy_all
 
       allele = @allele
@@ -91,7 +91,7 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
       assert_equal docs, fetched_docs
     end
 
-    should 'update the SOLR index for the entire set of allele docs when an one of its ES cells is modified' do
+    should_if_solr 'update the SOLR index for the entire set of allele docs when an one of its ES cells is modified' do
       SolrUpdate::Queue::Item.destroy_all
 
       @es_cell1.allele_symbol_superscript = 'tm1b(EUCOMM)Wtsi'
@@ -112,7 +112,7 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
       assert_equal expected, allele_symbol_superscripts.sort
     end
 
-    should 'update SOLR docs in index for alleles when one of their ES cells are deleted from the DB' do
+    should_if_solr 'update SOLR docs in index for alleles when one of their ES cells are deleted from the DB' do
       SolrUpdate::Queue.run
 
       @es_cell2.destroy
@@ -125,7 +125,7 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
       assert_equal 'Cbx1<sup>tm1a(EUCOMM)Wtsi</sup>', fetched_docs.first['allele_name']
     end
 
-    should 'delete SOLR docs in index for alleles that are deleted from the DB' do
+    should_if_solr 'delete SOLR docs in index for alleles that are deleted from the DB' do
       SolrUpdate::Queue.run
 
       @allele.destroy
