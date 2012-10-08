@@ -33,36 +33,9 @@ namespace :db do
         raise 'Cannot run in live env!' if Rails.env.production?
         config = get_db_config_for_env(envname)
         mysqldump_cmd = "mysqldump " +
-                "--ignore-table=#{config['database']}.genbank_files " +
-                "--ignore-table=#{config['database']}.genbank_files_vw " +
                 get_mysql_connection_options_from_config(config) +
                 "#{config['database']}"
-
-        mysqldump_cmd2 = "mysqldump " +
-                get_mysql_connection_options_from_config(config) +
-                " --no-data #{config['database']} genbank_files "
-
-        mysqldump_cmd3 = "mysqldump " +
-                get_mysql_connection_options_from_config(config) +
-                " --no-data #{config['database']} genbank_files_vw "
-
-        #puts mysqldump_cmd
-        #puts "cd #{Rails.root}; #{mysqldump_cmd} | gzip -c > tmp/dump.#{envname}.sql.gz"
-        #system("cd #{Rails.root}; #{mysqldump_cmd} | gzip -c > tmp/dump.#{envname}.sql.gz") or raise("Failed to dump #{envname} DB")
-
-        puts "cd #{Rails.root}; #{mysqldump_cmd} > tmp/dump.#{envname}.sql"
-        system("cd #{Rails.root}; #{mysqldump_cmd} > tmp/dump.#{envname}.sql") or raise("Failed to dump #{envname} DB")
-
-
-        puts "cd #{Rails.root}; #{mysqldump_cmd2} >> tmp/dump.#{envname}.sql"
-        system("cd #{Rails.root}; #{mysqldump_cmd2} >> tmp/dump.#{envname}.sql") or raise("Failed to dump #{envname} DB")
-
-
-        puts "cd #{Rails.root}; #{mysqldump_cmd3} >> tmp/dump.#{envname}.sql"
-        system("cd #{Rails.root}; #{mysqldump_cmd3} >> tmp/dump.#{envname}.sql") or raise("Failed to dump #{envname} DB")
-
-        puts "cd #{Rails.root}; gzip -f tmp/dump.#{envname}.sql"
-        system("cd #{Rails.root}; gzip -f tmp/dump.#{envname}.sql") or raise("Failed to zip file #{envname} DB")
+        system("cd #{Rails.root}; #{mysqldump_cmd} | gzip -c > tmp/dump.#{envname}.sql.gz") or raise("Failed to dump #{envname} DB")
       end
 
       desc "Load tmp/dump.#{envname}.sql.gz into current environment DB"
@@ -76,12 +49,7 @@ namespace :db do
                 "--no-data --add-drop-table " +
                 mysql_connection_options
         "#{config['database']}"
-
-        puts "cd #{Rails.root}; zcat tmp/dump.#{envname}.sql.gz | mysql #{get_mysql_connection_options_from_config(config)} #{config['database']}"
         system("cd #{Rails.root}; zcat tmp/dump.#{envname}.sql.gz | mysql #{get_mysql_connection_options_from_config(config)} #{config['database']}") or raise("Load failed")
-
-        #puts "cd #{Rails.root}; cat tmp/dump.#{envname}.sql.gz | mysql #{get_mysql_connection_options_from_config(config)} #{config['database']} << tmp/dump.#{envname}.sql"
-        #system("cd #{Rails.root}; cat tmp/dump.#{envname}.sql.gz | mysql #{get_mysql_connection_options_from_config(config)} #{config['database']} << tmp/dump.#{envname}.sql") or raise("Load failed")
       end
 
       desc "Copy the contents of the #{envname} DB into the current environment DB"
