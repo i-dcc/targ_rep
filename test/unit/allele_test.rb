@@ -8,9 +8,9 @@ class AlleleTest < ActiveSupport::TestCase
 
   should have_many(:targeting_vectors)
   should have_many(:es_cells)
-  should belong_to(:mutaion_type)
-  should belong_to(:mutaion_sub_type)
-  should belong_to(:mutaion_method)
+ # should belong_to(:mutaion_type)
+ # should belong_to(:mutaion_sub_type)
+ # should belong_to(:mutaion_method)
 
   should validate_uniqueness_of(:project_design_id).scoped_to([
       :mgi_accession_id, :assembly, :chromosome, :strand,

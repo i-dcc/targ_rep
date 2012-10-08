@@ -9,12 +9,13 @@
     <p><strong>Chromosome:</strong> <%= @allele.chromosome %></p>
     <p><strong>Strand</strong> <%= @allele.strand %></p>
   </fieldset>
-  
+
   <fieldset>
     <legend>Mutation Details</legend>
-    <p><strong>Design type:</strong> <%= @allele.design_type %></p>
+    <p><strong>Mutation method:</strong> <%= @allele.mutation_method %></p>
+    <p><strong>Mutation type:</strong> <%= @allele.mutation_type %></p>
     <p>
-      <strong>Design subtype:</strong> <%= @allele.design_subtype %><br />
+      <strong>Mutation subtype:</strong> <%= @allele.mutation_sub_type %><br />
       <em><%= @allele.subtype_description %></em>
     </p>
     <p><strong>Cassette:</strong> <%= @allele.cassette %></p>
@@ -57,7 +58,7 @@
       </tbody>
     </table>
   </fieldset>
-  
+
   <fieldset id="genbank_files">
     <legend>Genbank Files / Images</legend>
     <% genbank_file = @allele.genbank_file %>

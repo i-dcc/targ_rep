@@ -22,6 +22,15 @@ class AllelesController < ApplicationController
       :vector_image_flp_cre,
       :history
     ]
+    before_filter :mutational_drop_downs,
+    :only => [
+      :index,
+      :update,
+      :create,
+      :destroy,
+      :new,
+      :edit
+      ]
   before_filter :check_for_genbank_file,
     :only => [
       :escell_clone_genbank_file,
@@ -299,6 +308,12 @@ class AllelesController < ApplicationController
   private
     def find_allele
       @allele = Allele.find(params[:id])
+    end
+
+    def mutational_drop_downs
+      @mutation_type = MutationType.all
+      @mutation_sub_type = MutationSubType.all
+      @mutation_method = MutationMethod.all
     end
 
     def setup_allele_search(params)

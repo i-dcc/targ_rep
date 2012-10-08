@@ -5,7 +5,9 @@ class Allele < ActiveRecord::Base
   ##
   ## Associations
   ##
-
+  belongs_to :mutation_method
+  belongs_to :mutation_type
+  belongs_to :mutation_sub_type
   has_one    :genbank_file,      :class_name => "GenbankFile",     :foreign_key => "allele_id",   :dependent => :destroy
   has_many   :targeting_vectors, :class_name => "TargetingVector", :foreign_key => "allele_id",   :dependent => :destroy
   has_many   :es_cells,          :class_name => "EsCell",          :foreign_key => "allele_id",   :dependent => :destroy do
@@ -114,7 +116,7 @@ class Allele < ActiveRecord::Base
   ## Filters
   ##
 
-  before_validation :set_mutation_details_and_clean_blanks
+#  before_validation :set_mutation_details_and_clean_blanks
 
   ##
   ## Methods
@@ -239,28 +241,28 @@ class Allele < ActiveRecord::Base
       end
     end
 
-    def set_mutation_details_and_clean_blanks
+#    def set_mutation_details_and_clean_blanks
       # Set the mutation details
-      self.mutation_type = 'targeted_mutation'
-      self.mutation_subtype = case self.design_type
-        when 'Deletion'   then 'deletion'
-        when 'Insertion'  then 'insertion'
-        when 'Knock Out'  then self.loxp_start.nil? ? 'targeted_non_conditional' : 'conditional_ready'
-      end
+#      self.mutation_type = 'targeted_mutation'
+#      self.mutation_subtype = case self.design_type
+#        when 'Deletion'   then 'deletion'
+#        when 'Insertion'  then 'insertion'
+#        when 'Knock Out'  then self.loxp_start.nil? ? 'targeted_non_conditional' : 'conditional_ready'
+#      end
 
-      if ['conditional_ready', 'insertion', 'deletion'].include? self.mutation_subtype
-        if self.design_subtype and self.design_subtype === 'domain'
-          self.mutation_method = 'domain_disruption'
-        else
-          self.mutation_method = 'frameshift'
-        end
-      end
+#      if ['conditional_ready', 'insertion', 'deletion'].include? self.mutation_subtype
+#        if self.design_subtype and self.design_subtype === 'domain'
+#          self.mutation_method = 'domain_disruption'
+#        else
+#          self.mutation_method = 'frameshift'
+#        end
+#      end
 
       # Convert any blank strings to nil...
-      self.attributes.each do |name,value|
-        self.send("#{name}=".to_sym, nil) if value.is_a?(String) and value.empty?
-      end
-    end
+#      self.attributes.each do |name,value|
+#        self.send("#{name}=".to_sym, nil) if value.is_a?(String) and value.empty?
+#      end
+#    end
 
     def has_correct_cassette_type
       known_cassettes = {
