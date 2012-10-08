@@ -5,11 +5,13 @@ Factory.sequence(:pgdgr_plate_name) { |n| "PGDGR_#{n}" }
 Factory.sequence(:epd_plate_name)   { |n| "EPD_#{n}" }
 Factory.sequence(:pipeline_name)    { |n| "pipeline_name_#{n}" }
 Factory.sequence(:ikmc_project_id)  { |n| "project_000#{n}" }
-Factory.sequence(:mgi_accession_id) { |n| "MGI:#{n}" }
 Factory.sequence(:mgi_allele_id)    { |n| "MGI:#{n}" }
 Factory.sequence(:username)         { |n| "bob#{n}" }
 Factory.sequence(:email)            { |n| "bob#{n}@bobsworld.com" }
 Factory.sequence(:centre_name)   { |n| "Centre_#{n}" }
+
+# 4413674 starts the longest sequence VALID of sequential MGI accession IDs
+Factory.sequence(:mgi_accession_id) { |n| "MGI:#{n + 4413674}" }
 
 ##
 ## User

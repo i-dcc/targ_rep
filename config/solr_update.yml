@@ -1,0 +1,20 @@
+---
+development:
+  index_proxy:
+    gene: http://ikmc.vm.bytemark.co.uk:8983/solr/gene
+    allele: http://localhost:8983/solr/allele
+
+test:
+  index_proxy:
+    gene: http://ikmc.vm.bytemark.co.uk:8983/solr/gene
+    allele: http://localhost:8983/solr/allele
+
+production: &pro
+  index_proxy:
+    gene: http://ikmc.vm.bytemark.co.uk:8983/solr/gene
+    allele: http://ikmc.vm.bytemark.co.uk:8983/solr/allele
+
+staging: *pro
+
+all:
+  targ_rep_url: http://www.knockoutmouse.org/targ_rep

@@ -20,17 +20,18 @@ gem 'httparty'
 gem 'sequel'
 gem 'mysql2', '< 0.3'
 gem 'rdoc'
+gem 'json_pure'
+gem 'mpi2_solr_update', :git => 'git://github.com/mpi2/mpi2_solr_update.git'
 
 # bundler requires these gems in development and while running tests
 group :development, :test do
-  gem 'vlad',                 :require => false
-  gem 'vlad-git',             :require => false
-  gem 'hoe',                  :require => false
-  gem 'shoulda', '> 2.11.0'
-  gem 'factory_girl'
-  gem 'test-unit'
+  gem 'vlad',                  :require => false
+  gem 'vlad-git',              :require => false
+  gem 'hoe',                   :require => false
+  gem 'shoulda',               :require => false
+  gem 'factory_girl', '~>2.6.4'
+  gem 'test-unit',             :require => false
   gem 'annotate'
   gem 'awesome_print'
-  gem 'simplecov', '>= 0.4.0', :require => false
-  gem 'simplecov-rcov',        :require => false
+  gem 'mocha',                 :require => false
 end
