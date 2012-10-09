@@ -1,6 +1,4 @@
 
-#require 'pp'
-
 class AllelesController < ApplicationController
   before_filter :require_user, :only => [:index, :show, :new, :edit, :create, :update, :destroy]
   before_filter :find_allele,
@@ -154,10 +152,6 @@ class AllelesController < ApplicationController
   # PUT /alleles/1
   # PUT /alleles/1.xml
   def update
-
-    #puts "#### alleles_controller.rb: update"
-    #pp params[:allele]
-
     respond_to do |format|
 
       if @allele.update_attributes(params[:allele])

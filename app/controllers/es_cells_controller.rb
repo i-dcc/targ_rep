@@ -1,6 +1,3 @@
-
-require 'pp'
-
 class EsCellsController < ApplicationController
   before_filter :find_escell, :only => [:show, :update, :destroy]
   before_filter :find_escells, :only => :index
@@ -87,9 +84,6 @@ class EsCellsController < ApplicationController
   end
 
   def update_multiple
-    puts "update_multiple:"
-    pp params[:distribution_qcs].values
-
     keys = params[:distribution_qcs].keys
 
     keys.each do |key|

@@ -163,20 +163,9 @@ class EsCell < ActiveRecord::Base
     end
 
     def remove_empty_distribution_qcs
-
-      puts "remove_empty_distribution_qcs: count: #{distribution_qcs.size}"
-
       self.distribution_qcs.each do |distribution_qc|
-
-        puts "remove_empty_distribution_qcs: checking: #{distribution_qc.inspect}"
-
         next if ! distribution_qc.is_empty?
-
-        puts "remove_empty_distribution_qcs: deleting: #{distribution_qc.inspect}"
-
         self.distribution_qcs.delete distribution_qc
-
-        #self.distribution_qcs.reject! {|r| r.id.nil? }
       end
     end
 
@@ -198,42 +187,18 @@ class EsCell < ActiveRecord::Base
     public
 
     def build_distribution_qc(centre)
-
-      puts "#### build_distribution_qc: centre: #{centre.name}"
-
       return if ! centre  # do nothing if we haven't a centre
 
-      puts "#### build_distribution_qc: centre: #{centre.name}"
-      puts "#### build_distribution_qc: count: #{self.distribution_qcs.size}"
-
       self.distribution_qcs.each do |dqc|
-        puts "#### build_distribution_qc: found: #{dqc.centre}"
         return if dqc.centre == centre
       end
-
-      puts "#### build_distribution_qc: adding: #{centre.name}"
 
       if ! self.distribution_qcs || self.distribution_qcs.size == 0
         self.distribution_qcs.build
       end
 
       self.distribution_qcs.push DistributionQc.new(:centre => centre)
-
-      puts self.distribution_qcs.inspect
     end
-
-    #def build_distribution_qc(centre)
-    #  found = false
-    #  self.distribution_qcs.each do |dqc|
-    #    found = true if dqc.centre == centre
-    #    break if found
-    #  end
-    #
-    #  return if found
-    #
-    #  self.distribution_qcs.build
-    #  self.distribution_qcs.first.centre = centre
-    #end
 
 end
 
