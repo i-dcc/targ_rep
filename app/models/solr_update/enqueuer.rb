@@ -1,6 +1,13 @@
 class SolrUpdate::Enqueuer
   def allele_updated(allele)
-    SolrUpdate::Queue.enqueue_for_update({'type' => 'allele', 'id' => allele.id})
+    gene_proxy = SolrUpdate::IndexProxy::Gene.new
+
+    begin
+      gene_proxy.get_marker_symbol
+      SolrUpdate::Queue.enqueue_for_update({'type' => 'allele', 'id' => allele.id})
+    rescue SolrUpdate::IndexProxy::LookupError
+      SolrUpdate::Queue.enqueue_for_delete({'type' => 'allele', 'id' => allele.id})
+    end
   end
 
   def allele_destroyed(allele)
