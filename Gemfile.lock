@@ -45,7 +45,7 @@ GEM
     metaclass (0.0.1)
     mocha (0.12.4)
       metaclass (~> 0.0.1)
-    mpi2_solr_update (1.0.0)
+    mpi2_solr_update (1.0.1)
       activesupport
       json_pure
     mysql2 (0.2.7)
