@@ -4,7 +4,7 @@ class SolrUpdate::EnqueuerTest < ActiveSupport::TestCase
   context 'SolrUpdate::Enqueuer' do
 
     setup do
-      @allele = stub('allele', :id => 44)
+      @allele = stub('allele', :id => 44, :mgi_accession_id => 'MGI:X1')
       @es_cell = stub('es_cell', :id => 642, :allele => @allele)
       @enqueuer = SolrUpdate::Enqueuer.new
 
@@ -33,7 +33,7 @@ class SolrUpdate::EnqueuerTest < ActiveSupport::TestCase
 
     context 'for alleles whose MGI accession ID cannot be found in the gene index' do
       setup do
-        SolrUpdate::IndexProxy::Gene.any_instance.stubs(:get_marker_symbol).raises(SolrUpdate::IndexProxy::LookupError)
+        SolrUpdate::IndexProxy::Gene.any_instance.expects(:get_marker_symbol).with('MGI:X1').raises(SolrUpdate::IndexProxy::LookupError)
 
         SolrUpdate::Queue.expects(:enqueue_for_delete).with({'type' => 'allele', 'id' => 44})
       end

@@ -3,7 +3,7 @@ class SolrUpdate::Enqueuer
     gene_proxy = SolrUpdate::IndexProxy::Gene.new
 
     begin
-      gene_proxy.get_marker_symbol
+      gene_proxy.get_marker_symbol(allele.mgi_accession_id)
       SolrUpdate::Queue.enqueue_for_update({'type' => 'allele', 'id' => allele.id})
     rescue SolrUpdate::IndexProxy::LookupError
       SolrUpdate::Queue.enqueue_for_delete({'type' => 'allele', 'id' => allele.id})

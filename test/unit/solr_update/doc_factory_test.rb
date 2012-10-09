@@ -16,7 +16,7 @@ class SolrUpdate::DocFactoryTest < ActiveSupport::TestCase
     end
 
     should '#create when reference type is allele' do
-      @allele = Factory.create :allele, :id => 55
+      @allele = Factory.create :allele, :id => 55, :mgi_accession_id => 'MGI:9999999991'
       reference = {'type' => 'allele', 'id' => 55}
       test_docs = [{'test' => true}]
       SolrUpdate::DocFactory.expects(:create_for_allele).with(@allele).returns(test_docs)
