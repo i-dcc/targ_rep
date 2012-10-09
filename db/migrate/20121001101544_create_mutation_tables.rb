@@ -1,6 +1,7 @@
 class CreateMutationTables < ActiveRecord::Migration
 
   def self.up
+
     rename_column :alleles, :mutation_method, :mut_method
     rename_column :alleles, :mutation_type, :mut_type
     rename_column :alleles, :mutation_subtype, :mut_subtype
@@ -55,17 +56,22 @@ class CreateMutationTables < ActiveRecord::Migration
       'insertion' => 'Cre knock-in'
       }
 
+    Allele.reset_column_information
+    MutationMethod.reset_column_information
+    MutationType.reset_column_information
+    MutationSubtype.reset_column_information
     Allele.all.each do |allele|
-      if mapping.has_key?(mut_method)
-        allele.mutation_method = Mutation.find_by_name(mapping(allele.mut_method))
+      if mapping.has_key?(allele.mut_method)
+        allele.mutation_method = MutationMethod.find_by_name(mapping[allele.mut_method])
       end
-      if mapping.has_key?(mut_type)
-        allele.mutation_type = Mutation.find_by_name(mapping(allele.mut_type))
+      if mapping.has_key?(allele.mut_type)
+        allele.mutation_type = MutationType.find_by_name(mapping[allele.mut_type])
       end
-      if mapping.has_key?(mut_subtype)
-        allele.mutation_subtype = Mutation.find_by_name(mapping(allele.mut_subtype))
+      if mapping.has_key?(allele.mut_subtype)
+        allele.mutation_subtype = MutationSubtype.find_by_name(mapping[allele.mut_subtype])
       end
       allele.save!
+
     end
 #    remove_column :alleles, :mut_method
 #    remove_column :alleles, :mut_type

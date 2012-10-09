@@ -7,7 +7,7 @@ class Allele < ActiveRecord::Base
   ##
   belongs_to :mutation_method
   belongs_to :mutation_type
-  belongs_to :mutation_sub_type
+  belongs_to :mutation_subtype
   has_one    :genbank_file,      :class_name => "GenbankFile",     :foreign_key => "allele_id",   :dependent => :destroy
   has_many   :targeting_vectors, :class_name => "TargetingVector", :foreign_key => "allele_id",   :dependent => :destroy
   has_many   :es_cells,          :class_name => "EsCell",          :foreign_key => "allele_id",   :dependent => :destroy do
