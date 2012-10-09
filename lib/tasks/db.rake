@@ -34,21 +34,18 @@ namespace :db do
         config = get_db_config_for_env(envname)
         mysqldump_cmd = "mysqldump " +
                 get_mysql_connection_options_from_config(config) +
+                "--ignore-table=#{config['database']}.genbank_files_vw " +
                 "#{config['database']}"
         system("cd #{Rails.root}; #{mysqldump_cmd} | gzip -c > tmp/dump.#{envname}.sql.gz") or raise("Failed to dump #{envname} DB")
       end
 
       desc "Load tmp/dump.#{envname}.sql.gz into current environment DB"
-      task "#{envname}:load" => ['db:drop', 'db:create', :environment] do
-        raise 'Cannot run in live env!' if Rails.env.production?
-        config = get_db_config_for_env(Rails.env)
+      task "#{envname}:load" => ['db:drop', 'db:create'] do
+        raise 'Cannot run in live env!' if RAILS_ENV == 'production'
+        config = get_db_config_for_env(RAILS_ENV)
 
         mysql_connection_options = get_mysql_connection_options_from_config(config)
 
-        mysqldump_cmd = "mysqldump " +
-                "--no-data --add-drop-table " +
-                mysql_connection_options
-        "#{config['database']}"
         system("cd #{Rails.root}; zcat tmp/dump.#{envname}.sql.gz | mysql #{get_mysql_connection_options_from_config(config)} #{config['database']}") or raise("Load failed")
       end
 
