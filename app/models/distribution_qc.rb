@@ -99,6 +99,26 @@ class DistributionQc < ActiveRecord::Base
     qc_metrics.clone
   end
 
+  def is_empty?
+    return false if ! self.five_prime_sr_pcr.blank?
+    return false if ! self.three_prime_sr_pcr.blank?
+    return false if ! self.copy_number.blank?
+    return false if ! self.five_prime_lr_pcr.blank?
+    return false if ! self.three_prime_lr_pcr.blank?
+    return false if ! self.thawing.blank?
+    return false if ! self.loa.blank?
+    return false if ! self.loxp.blank?
+    return false if ! self.lacz.blank?
+    return false if ! self.chr1.blank?
+    return false if ! self.chr8a.blank?
+    return false if ! self.chr8b.blank?
+    return false if ! self.chr11a.blank?
+    return false if ! self.chry.blank?
+    return false if ! self.karyotype_low.blank?
+    return false if ! self.karyotype_high.blank?
+    return true
+  end
+
 end
 
 # == Schema Information

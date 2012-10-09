@@ -1,8 +1,9 @@
 <% @show_hide = false %>
 <% @show_hide_style = "" %>
+<% @debug = true %>
 
 <table>
-  
+
 <% if @show_hide %>
   <% @show_hide_style = "style='display:none;'" %>
   <tr><td><a href="#" class="es_cell_qc_toggle ss_sprite ss_magnifier">show/hide Distribution Centre QC for <%= distribution_qc.object.centre_name %></a></td></tr>
@@ -11,7 +12,13 @@
 <tr class="es_cell_qc" <%= @show_hide_style %>>
   <td>
 <table class="es_cell_qc_info">
-  <caption>Distribution Centre QC <strong>(<%= distribution_qc.object.centre_name %>)</strong></caption>
+  <caption>Distribution Centre QC <strong>(<%= distribution_qc.object.centre_name %>)</strong>
+
+<% if @debug %>
+(<%= distribution_qc.object.id %>)
+<% end %>
+
+  </caption>
   <tr>
     <%= render :partial => 'alleles/show_distribution_centre_qc_title', :locals => { :name => "Karyotype (Low)", :symbol => :karyotype_low, :readonly => @readonly } %>
 

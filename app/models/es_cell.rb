@@ -67,6 +67,7 @@ class EsCell < ActiveRecord::Base
   before_validation :convert_blanks_to_nil
   before_validation :stamp_tv_project_id_on_cell,       :if     => Proc.new { |a| a.ikmc_project_id.nil? }
   before_validation :convert_ikmc_project_id_to_string, :unless => Proc.new { |a| a.ikmc_project_id.is_a?(String) }
+  before_validation :remove_empty_distribution_qcs
 
   ##
   ## Methods
@@ -161,6 +162,24 @@ class EsCell < ActiveRecord::Base
       end
     end
 
+    def remove_empty_distribution_qcs
+
+      puts "remove_empty_distribution_qcs: count: #{distribution_qcs.size}"
+
+      self.distribution_qcs.each do |distribution_qc|
+
+        puts "remove_empty_distribution_qcs: checking: #{distribution_qc.inspect}"
+
+        next if ! distribution_qc.is_empty?
+
+        puts "remove_empty_distribution_qcs: deleting: #{distribution_qc.inspect}"
+
+        self.distribution_qcs.delete distribution_qc
+
+        #self.distribution_qcs.reject! {|r| r.id.nil? }
+      end
+    end
+
     # Set the ES Cell Strain
    def set_and_check_strain
       self.strain = case self.parental_cell_line
@@ -180,6 +199,8 @@ class EsCell < ActiveRecord::Base
 
     def build_distribution_qc(centre)
 
+      puts "#### build_distribution_qc: centre: #{centre.name}"
+
       return if ! centre  # do nothing if we haven't a centre
 
       puts "#### build_distribution_qc: centre: #{centre.name}"
@@ -192,8 +213,13 @@ class EsCell < ActiveRecord::Base
 
       puts "#### build_distribution_qc: adding: #{centre.name}"
 
-      self.distribution_qcs.build
-      self.distribution_qcs.first.centre = centre
+      if ! self.distribution_qcs || self.distribution_qcs.size == 0
+        self.distribution_qcs.build
+      end
+
+      self.distribution_qcs.push DistributionQc.new(:centre => centre)
+
+      puts self.distribution_qcs.inspect
     end
 
     #def build_distribution_qc(centre)
@@ -275,4 +301,3 @@ end
 #  es_cells_allele_id_fk    (allele_id)
 #  es_cells_pipeline_id_fk  (pipeline_id)
 #
-

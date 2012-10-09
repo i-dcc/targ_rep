@@ -282,3 +282,12 @@ div.pagination .disabled {
 table.es_cell_qc_info th {
   text-align: right;
 }
+
+.distribution_centres_warning {
+  font-weight:bold;
+  color: red;
+  font-size:1.1em;
+  line-height:1;
+  margin-top:2em;
+  margin-bottom:2em;
+}

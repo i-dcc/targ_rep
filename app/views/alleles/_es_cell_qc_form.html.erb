@@ -19,13 +19,23 @@
 
 <% if @bulk_edit %>
 
+<% if current_user.centre %>
+
 <% f.object.build_distribution_qc(current_user.centre) %>
 <% f.object.reload %>
 
 <% @distribution_qcs = f.object.distribution_qcs || [] %>
 
+<%#= debug current_user %>
+<%#= debug @distribution_qcs.count %>
+<%#= debug f.object %>
+<%#= debug current_user.centre %>
+
 <% @distribution_qcs.each do |distribution_qc| %>
   <% @readonly = distribution_qc.centre.nil? || distribution_qc.centre != current_user.centre %>
+  <%# @readonly = distribution_qc.centre != current_user.centre %>
+<%#= debug distribution_qc.centre %>
+<%#= debug @readonly %>
   <% next if @readonly %>
   <% fields_for "distribution_qcs[]", distribution_qc do |dqc| %>
     <%= render :partial => 'alleles/edit_distribution_centre_qc', :locals => { :distribution_qc => dqc } %>
@@ -33,13 +43,36 @@
 <% end %>
 
 <% else %>
+  <p class='distribution_centres_warning'>You don't appear to have a Distribution Centre. If you want to add Distribution Centre QC please contact us
+  <a href= "mailto:htgt@sanger.ac.uk?subject=<%= current_user.username %> does not have a Centre in Targ Rep" >here</a>
+  </p>
+<% end %>
+
+
+
+
+
+
+
+
+<% else %>
 
 <% f.object.build_distribution_qc(current_user.centre) %>
+
+<%#= debug current_user %>
+
+<% if current_user.centre %>
 
 <% f.fields_for :distribution_qcs do |dqc| %>
   <% @readonly = dqc.object.centre != current_user.centre %>
   <% next if @readonly %>
   <%= render :partial => 'alleles/edit_distribution_centre_qc', :locals => { :distribution_qc => dqc } %>
+<% end %>
+
+<% else %>
+  <p class='distribution_centres_warning'>You don't appear to have a Distribution Centre. If you want to add Distribution Centre QC please contact us
+  <a href= "mailto:htgt@sanger.ac.uk?subject=<%= current_user.username %> does not have a Centre in Targ Rep" >here</a>
+  </p>
 <% end %>
 
 <% end %>

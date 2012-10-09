@@ -1,4 +1,6 @@
 
+require 'pp'
+
 class EsCellsController < ApplicationController
   before_filter :find_escell, :only => [:show, :update, :destroy]
   before_filter :find_escells, :only => :index
@@ -85,6 +87,32 @@ class EsCellsController < ApplicationController
   end
 
   def update_multiple
+    puts "update_multiple:"
+    pp params[:distribution_qcs].values
+
+    keys = params[:distribution_qcs].keys
+
+    keys.each do |key|
+      value = params[:distribution_qcs][key]
+      next if value['karyotype_low'].to_s.size != 0
+      next if value['karyotype_high'].to_s.size != 0
+      next if value['copy_number'].to_s.size != 0
+      next if value['five_prime_lr_pcr'].to_s.size != 0
+      next if value['three_prime_lr_pcr'].to_s.size != 0
+      next if value['five_prime_sr_pcr'].to_s.size != 0
+      next if value['three_prime_sr_pcr'].to_s.size != 0
+      next if value['thawing'].to_s.size != 0
+      next if value['loa'].to_s.size != 0
+      next if value['loxp'].to_s.size != 0
+      next if value['lacz'].to_s.size != 0
+      next if value['chr1'].to_s.size != 0
+      next if value['chr8a'].to_s.size != 0
+      next if value['chr8b'].to_s.size != 0
+      next if value['chr11a'].to_s.size != 0
+      next if value['chr11b'].to_s.size != 0
+      next if value['chry'].to_s.size != 0
+      params[:distribution_qcs].delete(key)
+    end
 
     EsCell.transaction do
       @es_cells = EsCell.update( params[:es_cells].keys, params[:es_cells].values ).reject { |p| p.errors.empty? }
