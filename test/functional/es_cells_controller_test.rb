@@ -234,10 +234,12 @@ class EsCellsControllerTest < ActionController::TestCase
   end
 
   should "update an es_cell (with new distribution_qc)" do
-    es_cell = Factory.create(:es_cell)
+    #es_cell = Factory.create(:es_cell)
+    #wtsi_distribution_qc = Factory.create(:distribution_qc, { :es_cell => es_cell, :centre => Factory.create( :centre ) } )
+    #id = es_cell.distribution_qcs.first.id
 
-    wtsi_distribution_qc = Factory.create(:distribution_qc, { :es_cell => es_cell, :centre => Factory.create( :centre ) } )
-
+    wtsi_distribution_qc = Factory.create(:distribution_qc, { :centre => Factory.create( :centre ) } )
+    es_cell = wtsi_distribution_qc.es_cell
     id = es_cell.distribution_qcs.first.id
 
     target = {
