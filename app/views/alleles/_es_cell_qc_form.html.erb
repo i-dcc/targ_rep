@@ -35,9 +35,9 @@
 <% end %>
 
 <% else %>
-  <p class='distribution_centres_warning'>You don't appear to have a Distribution Centre. If you want to add Distribution Centre QC please contact us
-  <a href= "mailto:htgt@sanger.ac.uk?subject=<%= current_user.username %> does not have a Centre in Targ Rep" >here</a>
-  </p>
+
+    <%= render :partial => 'alleles/email_centre_request' %>
+
 <% end %>
 
 
@@ -60,9 +60,9 @@
 <% end %>
 
 <% else %>
-  <p class='distribution_centres_warning'>You don't appear to have a Distribution Centre. If you want to add Distribution Centre QC please contact us
-  <a href= "mailto:htgt@sanger.ac.uk?subject=<%= current_user.username %> does not have a Centre in Targ Rep" >here</a>
-  </p>
+
+    <%= render :partial => 'alleles/email_centre_request' %>
+
 <% end %>
 
 <% end %>
