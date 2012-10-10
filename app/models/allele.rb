@@ -108,7 +108,7 @@ class Allele < ActiveRecord::Base
   validates_numericality_of :loxp_end,           :only_integer => true, :greater_than => 0, :allow_nil => true
 
   validate :has_right_features,
-    :unless => "[mgi_accession_id, assembly, chromosome, strand, mutation_method,
+    :unless => "[mgi_accession_id, assembly, chromosome, strand, mutation_type,
     homology_arm_start, homology_arm_end, cassette_start, cassette_end].any?(&:nil?)"
 
   validate :has_correct_cassette_type
@@ -179,6 +179,10 @@ class Allele < ActiveRecord::Base
       pipelines.keys.sort.join(', ')
     end
 
+    def mutation_subtype_name
+      return (self.mutation_subtype ? self.mutation_subtype.name : '')
+    end
+
   protected
     def has_right_features
       error_msg = "cannot be greater than %s position on this strand (#{strand})"
@@ -234,7 +238,7 @@ class Allele < ActiveRecord::Base
         end
       end
 
-      if !mutation_method.knock_out?
+      if !mutation_type.knock_out?
         unless loxp_start.nil? and loxp_end.nil?
           errors.add(:loxp_start, "has to be blank for this mutation method")
           errors.add(:loxp_end,   "has to be blank for this mutation method")

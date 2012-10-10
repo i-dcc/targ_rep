@@ -26,7 +26,7 @@ class SolrUpdate::DocFactoryTest < ActiveSupport::TestCase
     context 'when creating sor docs for allele' do
 
       setup do
-        @allele = Factory.create :allele, :design_type => 'Knock Out',
+        @allele = Factory.create :allele, :mutation_type => MutationType.find_by_code('crd'),
                 :mgi_accession_id => 'MGI:9999999991'
 
         @fake_unique_public_info = [

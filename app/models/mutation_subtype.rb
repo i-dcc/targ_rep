@@ -4,7 +4,10 @@ class MutationSubtype < ActiveRecord::Base
 
   has_many :allele, :class_name => "Allele", :foreign_key => "mutation_sub_type_id"
 
-  validates :name, :presence => true, :uniqueness => true
-  validates :code, :presence => true, :uniqueness => true
+  validates_presence_of :name
+  validates_presence_of :code
+
+  validates_uniqueness_of :name
+  validates_uniqueness_of :code
 
 end

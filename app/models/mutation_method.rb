@@ -4,23 +4,10 @@ class MutationMethod < ActiveRecord::Base
 
   has_many :allele, :class_name => "Allele", :foreign_key => "mutation_method_id"
 
-  validates :name, :presence => true, :uniqueness => true
-  validates :code, :presence => true, :uniqueness => true
+  validates_presence_of :name
+  validates_presence_of :code
 
-  def targeted_non_conditional?
-    if self.code == 'tnc'
-      true
-    else
-      false
-    end
-  end
-
-  def knock_out?
-    if ['crd', 'tnc'].includes?(self.code)
-      true
-    else
-      false
-    end
-  end
+  validates_uniqueness_of :name
+  validates_uniqueness_of :code
 
 end

@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class MutationTypeTest < ActiveSupport::TestCase
+class MutationSubTypeTest < ActiveSupport::TestCase
   should have_many(:allele)
   should validate_uniqueness_of(:name)
   should validate_uniqueness_of(:code)

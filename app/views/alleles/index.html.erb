@@ -15,7 +15,7 @@
       <tr>
         <th>Pipeline(s)</th>
         <th>MGI Accession ID</th>
-        <th>Design Type</th>
+        <th>Mutation Type</th>
         <th>Cassette</th>
         <th>Backbone</th>
         <th>Vectors</th>
@@ -29,7 +29,7 @@
         <tr class="<%= cycle("odd", "even") %>">
           <td><%= mol_struct.pipeline_names %></td>
           <td><%= mol_struct.mgi_accession_id %></td>
-          <td><%= mol_struct.mutation_type %></td>
+          <td><%= mol_struct.mutation_type.name %></td>
           <td><%= mol_struct.cassette %></td>
           <td><%= mol_struct.backbone %></td>
           <td>

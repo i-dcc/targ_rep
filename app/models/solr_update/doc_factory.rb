@@ -20,7 +20,7 @@ class SolrUpdate::DocFactory
         'id' => allele.id,
         'product_type' => 'ES Cell',
         'mgi_accession_id' => allele.mgi_accession_id,
-        'allele_type' => allele.mutation_subtype.titleize,
+        'allele_type' => allele.mutation_type.name.titleize,
         'strain' => es_cell_info[:strain],
         'allele_name' => "#{marker_symbol}<sup>#{es_cell_info[:allele_symbol_superscript]}</sup>",
         'allele_image_url' => allele_image_url(allele.id),

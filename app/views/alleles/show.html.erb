@@ -12,10 +12,10 @@
 
   <fieldset>
     <legend>Mutation Details</legend>
-    <p><strong>Mutation method:</strong> <%= @allele.mutation_method %></p>
-    <p><strong>Mutation type:</strong> <%= @allele.mutation_type %></p>
+    <p><strong>Mutation method:</strong> <%= @allele.mutation_method.name %></p>
+    <p><strong>Mutation type:</strong> <%= @allele.mutation_type.name %></p>
     <p>
-      <strong>Mutation subtype:</strong> <%= @allele.mutation_sub_type %><br />
+      <strong>Mutation subtype:</strong> <%= @allele.mutation_subtype_name %><br />
       <em><%= @allele.subtype_description %></em>
     </p>
     <p><strong>Cassette:</strong> <%= @allele.cassette %></p>

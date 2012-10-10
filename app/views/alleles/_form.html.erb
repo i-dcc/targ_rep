@@ -39,16 +39,12 @@
   <fieldset>
     <legend>Design Details</legend>
     <p>
-      <%= f.label :design_type, "Design Type" %><br />
-      <%= select( :allele, :design_type, ['','Knock Out', 'Deletion','Insertion'] ) %>
-    </p>
-    <p>
       <%= f.label :mutation_method_id, "Mutation Method" %><br />
-      <%= f.collection_select :mutation_method_id, @mutation_method, :id, :name, :include_blank => true %>
+      <%= f.collection_select :mutation_method_id, @mutation_method, :id, :name, :include_blank => true  %>
     </p>
     <p>
       <%= f.label :mutation_type_id, "Mutation Type" %><br />
-      <%= f.collection_select :mutation_type_id, @mutation_type, :id, :name, :include_blank => true %>
+      <%= f.collection_select :mutation_type_id, @mutation_type, :id, :name, :include_blank => true  %>
     </p>
     <p>
       <%= f.label :mutation_subtype_id, "Mutation Subtype" %><br />
