@@ -1,19 +1,2 @@
-
-<% if false %>
-
-<% @readonly = defined?(readonly) && readonly %>
-
-<%= render :partial => 'alleles/show_distribution_centre_qc_title', :locals => { :symbol => symbol } %>
-
-<% if @readonly %>
-  <td><%= print_dash_on_empty(distribution_qc.object[symbol]) %></td>
-<% else %>
-  <td><%= distribution_qc.select( symbol, DISTRIBUTION_CENTRE_QC_OPTIONS[symbol.to_s][:values], { :include_blank => true, :name => 'whatever' } ) %></td>
-<% end %>
-
-<% else %>
-
 <%= render :partial => 'alleles/show_distribution_centre_qc_title', :locals => { :symbol => symbol } %>
 <td><%= distribution_qc.select( symbol, DISTRIBUTION_CENTRE_QC_OPTIONS[symbol.to_s][:values], { :include_blank => true } ) %></td>
-
-<% end %>
