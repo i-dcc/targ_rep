@@ -9,8 +9,6 @@ class CreateCentres < ActiveRecord::Migration
   end
 
   def self.down
-    #execute "update users set centre_id=null"
-    #execute "update distribution_qcs set centre_id=null"
     drop_table :centres
   end
 end
