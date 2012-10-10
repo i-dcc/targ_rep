@@ -1,5 +1,6 @@
 # see http://gembundler.com/rails23.html for details
 source :rubygems
+source 'http://www.i-dcc.org/rubygems/'
 
 # rails requires these gems
 gem 'rails', '~> 2.3.12'
@@ -21,7 +22,7 @@ gem 'sequel'
 gem 'mysql2', '< 0.3'
 gem 'rdoc'
 gem 'json_pure'
-gem 'mpi2_solr_update', :git => 'git://github.com/mpi2/mpi2_solr_update.git'
+gem 'mpi2_solr_update'
 
 # bundler requires these gems in development and while running tests
 group :development, :test do

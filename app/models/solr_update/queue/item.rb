@@ -22,3 +22,19 @@ class SolrUpdate::Queue::Item < ActiveRecord::Base
 
   named_scope :earliest_first, :order => 'solr_update_queue_items.created_at asc'
 end
+
+# == Schema Information
+#
+# Table name: solr_update_queue_items
+#
+#  id         :integer(4)      not null, primary key
+#  created_at :datetime
+#  updated_at :datetime
+#  allele_id  :integer(4)      not null
+#  action     :string(0)
+#
+# Indexes
+#
+#  index_solr_update_queue_items_on_allele_id  (allele_id) UNIQUE
+#
+

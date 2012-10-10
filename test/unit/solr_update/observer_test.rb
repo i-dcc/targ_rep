@@ -3,17 +3,17 @@ require 'test_helper'
 class SolrUpdate::ObserverTest < ActiveSupport::TestCase
   context 'SolrUpdate::Observer::Allele' do
 
-    should 'activate a solr doc update for an allele when it changes' do
-      allele = stub('allele', :id => 55)
-      SolrUpdate::Queue.expects(:enqueue_for_update).with(allele)
+    should 'enqueue a solr update when an allele changes' do
+      allele = stub('allele')
+      SolrUpdate::Enqueuer.any_instance.expects(:allele_updated).with(allele)
 
       o = SolrUpdate::Observer::Allele.new
       o.after_save allele
     end
 
-    should 'activate a solr doc deletion for an allele when it is destroyed' do
-      allele = stub('allele', :id => 55)
-      SolrUpdate::Queue.expects(:enqueue_for_delete).with(allele)
+    should 'enqueue a solr deletion when an allele destroyed' do
+      allele = stub('allele')
+      SolrUpdate::Enqueuer.any_instance.expects(:allele_destroyed).with(allele)
 
       o = SolrUpdate::Observer::Allele.new
       o.after_destroy allele
@@ -21,21 +21,19 @@ class SolrUpdate::ObserverTest < ActiveSupport::TestCase
   end
 
   context 'SolrUpdate::Observer::EsCell' do
-    should 'activate a solr update for it\'s allele when an es_cell changes' do
-      allele = stub('allele', :id => 55)
-      es_cell = stub('es_cell', :allele => allele)
+    should 'enqueue a solr update an es_cell changes' do
+      es_cell = stub('es_cell')
 
-      SolrUpdate::Queue.expects(:enqueue_for_update).with(allele)
+      SolrUpdate::Enqueuer.any_instance.expects(:es_cell_updated).with(es_cell)
 
       o = SolrUpdate::Observer::EsCell.new
       o.after_save es_cell
     end
 
-    should 'activate a solr update for it\'s allele when an es_cell is deleted' do
-      allele = stub('allele', :id => 55)
-      es_cell = stub('es_cell', :allele => allele)
+    should 'enqueue a solr update when es_cell is deleted' do
+      es_cell = stub('es_cell')
 
-      SolrUpdate::Queue.expects(:enqueue_for_update).with(allele)
+      SolrUpdate::Enqueuer.any_instance.expects(:es_cell_destroyed).with(es_cell)
 
       o = SolrUpdate::Observer::EsCell.new
       o.after_destroy es_cell

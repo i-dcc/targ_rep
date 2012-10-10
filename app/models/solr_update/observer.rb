@@ -3,12 +3,17 @@ module SolrUpdate::Observer
   class Allele < ActiveRecord::Observer
     observe ::Allele
 
+    def initialize
+      super
+      @enqueuer = SolrUpdate::Enqueuer.new
+    end
+
     def after_save(allele)
-      SolrUpdate::Queue.enqueue_for_update(allele)
+      @enqueuer.allele_updated(allele)
     end
 
     def after_destroy(allele)
-      SolrUpdate::Queue.enqueue_for_delete(allele)
+      @enqueuer.allele_destroyed(allele)
     end
 
     class << self
@@ -19,12 +24,17 @@ module SolrUpdate::Observer
   class EsCell < ActiveRecord::Observer
     observe ::EsCell
 
+    def initialize
+      super
+      @enqueuer = SolrUpdate::Enqueuer.new
+    end
+
     def after_save(es_cell)
-      SolrUpdate::Queue.enqueue_for_update(es_cell.allele)
+      @enqueuer.es_cell_updated(es_cell)
     end
 
     def after_destroy(es_cell)
-      SolrUpdate::Queue.enqueue_for_update(es_cell.allele)
+      @enqueuer.es_cell_destroyed(es_cell)
     end
 
     class << self
