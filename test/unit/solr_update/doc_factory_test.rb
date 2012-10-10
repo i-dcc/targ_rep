@@ -16,14 +16,14 @@ class SolrUpdate::DocFactoryTest < ActiveSupport::TestCase
     end
 
     should '#create when reference type is allele' do
-      @allele = Factory.create :allele, :id => 55
+      @allele = Factory.create :allele, :id => 55, :mgi_accession_id => 'MGI:9999999991'
       reference = {'type' => 'allele', 'id' => 55}
       test_docs = [{'test' => true}]
       SolrUpdate::DocFactory.expects(:create_for_allele).with(@allele).returns(test_docs)
       assert_equal test_docs, SolrUpdate::DocFactory.create(reference)
     end
 
-    context 'when creating sor docs for allele' do
+    context 'when creating solr docs for allele' do
 
       setup do
         @allele = Factory.create :allele, :mutation_type => MutationType.find_by_code('crd'),
@@ -41,7 +41,7 @@ class SolrUpdate::DocFactoryTest < ActiveSupport::TestCase
         @docs = SolrUpdate::DocFactory.create_for_allele(@allele)
       end
 
-      should 'set allele_id' do
+      should 'set id' do
         assert_equal [@allele.id, @allele.id], @docs.map {|d| d['id']}
       end
 
@@ -64,6 +64,10 @@ class SolrUpdate::DocFactoryTest < ActiveSupport::TestCase
         assert_equal ['Targeted Non Conditional', 'Targeted Non Conditional'], @docs.map {|d| d['allele_type']}
       end
 
+      should 'set allele_id' do
+        assert_equal [@allele.id, @allele.id], @docs.map {|d| d['allele_id']}
+      end
+
       should 'set strain' do
         assert_equal ['C57BL/6N', 'C57BL/6N-A<tm1Brd>/a'], @docs.map {|d| d['strain']}
       end
@@ -83,7 +87,7 @@ class SolrUpdate::DocFactoryTest < ActiveSupport::TestCase
         assert_equal [url, url], @docs.map {|d| d['genbank_file_url']}
       end
 
-      context 'order_from_url and order_from_link' do
+      context 'order_from_url and order_from_name' do
         should 'be set for any of the EUCOMM pipelines' do
           expected_url = 'http://www.eummcr.org/order.php'
           expected_name = 'EUMMCR'
@@ -130,6 +134,21 @@ class SolrUpdate::DocFactoryTest < ActiveSupport::TestCase
           assert_equal [expected_name]*2, @docs.map{|d| d['order_from_name']}
         end
 
+        should 'work for one of the KOMP pipelines with NO project id' do
+          expected_url = 'http://www.komp.org/'
+          expected_name = 'KOMP'
+
+          setup_fake_unique_public_info [
+            {:pipeline => 'KOMP-CSD'},
+            {:pipeline => 'KOMP-Regeneron'}
+          ]
+
+          @docs = SolrUpdate::DocFactory.create_for_allele(@allele)
+
+          assert_equal [expected_url]*2, @docs.map{|d| d['order_from_url']}
+          assert_equal [expected_name]*2, @docs.map{|d| d['order_from_name']}
+        end
+
         should 'work for mirKO or Sanger MGP pipelines' do
           expected_url = 'mailto:mouseinterest@sanger.ac.uk?Subject=Mutant ES Cell line for Test1'
           expected_name = 'Wtsi'
@@ -168,6 +187,7 @@ class SolrUpdate::DocFactoryTest < ActiveSupport::TestCase
       should 'set order_from_name' do
         assert_equal ['EUMMCR', 'EUMMCR'], @docs.map {|d| d['order_from_name']}
       end
+
     end
 
   end

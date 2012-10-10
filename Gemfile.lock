@@ -6,16 +6,9 @@ GIT
       bio
       rmagick
 
-GIT
-  remote: git://github.com/mpi2/mpi2_solr_update.git
-  revision: 07e66b28b23b1eea235a144d5f3f3217b39f698e
-  specs:
-    mpi2_solr_update (1.0.0)
-      activesupport
-      json_pure
-
 GEM
   remote: http://rubygems.org/
+  remote: http://www.i-dcc.org/rubygems/
   specs:
     actionmailer (2.3.14)
       actionpack (= 2.3.14)
@@ -52,6 +45,9 @@ GEM
     metaclass (0.0.1)
     mocha (0.12.4)
       metaclass (~> 0.0.1)
+    mpi2_solr_update (1.0.1)
+      activesupport
+      json_pure
     mysql2 (0.2.7)
     open4 (0.9.6)
     parallel (0.5.5)
@@ -106,7 +102,7 @@ DEPENDENCIES
   httparty
   json_pure
   mocha
-  mpi2_solr_update!
+  mpi2_solr_update
   mysql2 (< 0.3)
   parallel
   rails (~> 2.3.12)

@@ -47,6 +47,10 @@ class ActiveSupport::TestCase
   end
 end
 
+class ActiveSupport::TestCase
+  include SolrUpdate::TestHelp
+end
+
 class ActionController::TestCase
   setup :activate_authlogic
 end
