@@ -21,8 +21,8 @@
 
 <% if current_user.centre %>
 
-<% f.object.build_distribution_qc(current_user.centre) %>
-<% f.object.reload %>
+<%# f.object.build_distribution_qc(current_user.centre) %>
+<%# f.object.reload %>
 
 <% @distribution_qcs = f.object.distribution_qcs || [] %>
 
@@ -49,7 +49,7 @@
 
 <% else %>
 
-<% f.object.build_distribution_qc(current_user.centre) %>
+<%# f.object.build_distribution_qc(current_user.centre) %>
 
 <% if current_user.centre %>
 

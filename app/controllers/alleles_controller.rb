@@ -87,10 +87,6 @@ class AllelesController < ApplicationController
     )
     @es_cells = @allele.es_cells.sort{ |a,b| a.name <=> b.name }
 
-    #@es_cells.each do |es_cell|
-    #  es_cell.build_distribution_qc(current_user.centre)
-    #end
-
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml   => @allele }
@@ -119,6 +115,10 @@ class AllelesController < ApplicationController
     @allele.genbank_file = GenbankFile.new if @allele.genbank_file.nil?
 
     @allele.es_cells.sort!{ |a,b| a.name <=> b.name }
+
+    @allele.es_cells.each do |es_cell|
+      es_cell.build_distribution_qc(current_user.centre)
+    end
   end
 
   # POST /alleles
