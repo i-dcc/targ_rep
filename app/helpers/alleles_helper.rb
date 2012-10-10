@@ -7,6 +7,9 @@ module AllelesHelper
     link_to_function( 'Add an ES Cell', { :class => 'ss_sprite ss_add' } ) do |page|
       form_builder.fields_for :es_cells, EsCell.new, :child_index => 'NEW_RECORD' do |f|
         html = render( :partial => 'es_cell_form', :locals => { :f => f } )
+
+        html = html.gsub(/<a.+?class=.es_cell_qc_toggle ss_sprite ss_magnifier.+?<\/a>/, '')
+
         page << "$('es_cells').insert({ bottom: '#{escape_javascript(html)}'.replace(/NEW_RECORD/g, new Date().getTime()) });"
         page << "setup_qc_metric_toggles();"
       end
@@ -70,7 +73,7 @@ module AllelesHelper
       form_builder.fields_for :es_cell_qc_conflicts, EsCellQcConflict.new, :child_index => 'NEW_RECORD' do |f|
         html = render( :partial => 'alleles/es_cell_qc_conflict_form', :locals => { :f => f } )
         page << "$(this).up('td').down('table.esc_qc_conflicts tbody').insert({ bottom: '#{escape_javascript(html)}'.replace(/NEW_RECORD/g, new Date().getTime()) });"
-        page << "setup_esc_conflict_selects();"
+        #page << "setup_esc_conflict_selects();"
       end
     end
   end
