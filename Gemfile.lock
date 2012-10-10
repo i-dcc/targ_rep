@@ -30,6 +30,7 @@ GEM
     biomart (0.2.2)
       builder
     builder (3.1.2)
+    colorize (0.5.8)
     crack (0.1.8)
     factory_girl (2.6.4)
       activesupport (>= 2.3.9)
@@ -95,6 +96,7 @@ DEPENDENCIES
   authlogic
   awesome_print
   biomart
+  colorize
   factory_girl (~> 2.6.4)
   foreigner
   hoe

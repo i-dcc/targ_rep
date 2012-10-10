@@ -26,6 +26,7 @@ gem 'mpi2_solr_update'
 
 # bundler requires these gems in development and while running tests
 group :development, :test do
+  gem 'colorize'
   gem 'vlad',                  :require => false
   gem 'vlad-git',              :require => false
   gem 'hoe',                   :require => false
