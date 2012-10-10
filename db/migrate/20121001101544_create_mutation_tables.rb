@@ -12,38 +12,41 @@ class CreateMutationTables < ActiveRecord::Migration
 
     create_table :mutation_methods do |t|
       t.string :name, :null => false, :limit => 100
+      t.string :code, :null => false, :limit => 100
       t.timestamps
     end
 
     create_table :mutation_types do |t|
       t.string :name, :null => false, :limit => 100
+      t.string :code, :null => false, :limit => 100
       t.timestamps
     end
 
     create_table :mutation_subtypes do |t|
       t.string :name, :null => false, :limit => 100
+      t.string :code, :null => false, :limit => 100
       t.timestamps
     end
 
     mutation_methods = MutationMethod.create([
-      { :id => 1, :name => 'Targeted mutation' },
-      { :id => 2, :name => 'Recombination mediated cassette exchange' }
+      { :id => 1, :name => 'Targeted mutation', :code => 'tgm' },
+      { :id => 2, :name => 'Recombination mediated cassette exchange', :code=> 'rmce' }
     ])
 
     mutation_types = MutationType.create([
-      { :id => 1, :name => 'Conditional Ready' },
-      { :id => 2, :name => 'Deletion' },
-      { :id => 3, :name => 'Targeted non-conditional' },
-      { :id => 4, :name => 'Cre knock-in' },
-      { :id => 5, :name => 'Cre BAC' }
+      { :id => 1, :name => 'Conditional Ready', :code => 'crd' },
+      { :id => 2, :name => 'Deletion', :code => 'del' },
+      { :id => 3, :name => 'Targeted non-conditional', :code => 'tnc' },
+      { :id => 4, :name => 'Cre knock-in', :code => 'cki' },
+      { :id => 5, :name => 'Cre BAC', :code => 'cbc'}
     ])
 
     mutation_sub_types = MutationSubtype.create([
-      { :id => 1, :name => 'Domain disruption' },
-      { :id => 2, :name => 'Frameshift' },
-      { :id => 3, :name => 'Artificial intron' },
-      { :id => 4, :name => 'Hprt' },
-      { :id => 5, :name => 'Rosa26' }
+      { :id => 1, :name => 'Domain disruption', :code => 'dmd' },
+      { :id => 2, :name => 'Frameshift', :code => 'fms' },
+      { :id => 3, :name => 'Artificial intron', :code => 'afi' },
+      { :id => 4, :name => 'Hprt', :code => 'hpt'},
+      { :id => 5, :name => 'Rosa26', :code => 'rsa' }
     ])
 
     mapping = {
@@ -61,14 +64,14 @@ class CreateMutationTables < ActiveRecord::Migration
     MutationType.reset_column_information
     MutationSubtype.reset_column_information
     Allele.all.each do |allele|
-      if mapping.has_key?(allele.mut_method)
-        allele.mutation_method = MutationMethod.find_by_name(mapping[allele.mut_method])
-      end
       if mapping.has_key?(allele.mut_type)
-        allele.mutation_type = MutationType.find_by_name(mapping[allele.mut_type])
+        allele.mutation_method = MutationMethod.find_by_name(mapping[allele.mut_type])
       end
       if mapping.has_key?(allele.mut_subtype)
-        allele.mutation_subtype = MutationSubtype.find_by_name(mapping[allele.mut_subtype])
+        allele.mutation_type = MutationType.find_by_name(mapping[allele.mut_subtype])
+      end
+      if mapping.has_key?(allele.mut_method)
+        allele.mutation_subtype = MutationSubtype.find_by_name(mapping[allele.mut_method])
       end
       allele.save!
 

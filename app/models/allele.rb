@@ -55,7 +55,8 @@ class Allele < ActiveRecord::Base
     :assembly,
     :chromosome,
     :strand,
-    :design_type,
+    :mutation_method,
+    :mutation_type,
     :homology_arm_start,
     :homology_arm_end,
     :cassette_start,
@@ -76,14 +77,14 @@ class Allele < ActiveRecord::Base
     :in         => ('1'..'19').to_a + ['X', 'Y', 'MT'],
     :message    => "is not a valid mouse chromosome"
 
-  validates_inclusion_of :design_type,
-    :in         => ['Knock Out', 'Deletion', 'Insertion'],
-    :message    => "should be 'Knockout', 'Deletion' or 'Insertion'."
+  validates_associated :mutation_method,
+    :message    => "should be #{MutationMethod.all.map {|a| a.name}.to_sentence}"
 
-  validates_inclusion_of :design_subtype,
-    :in         => ['frameshift', 'domain'],
-    :message    => "should be 'frameshift' or 'domain'.",
-    :allow_nil  => true
+  validates_associated :mutation_type,
+    :message    => "should be #{MutationType.all.map {|a| a.name}.to_sentence}"
+
+  validates_associated :mutation_subtype,
+    :message    => "should be #{MutationSubtype.all.map {|a| a.name}.to_sentence}"
 
   validates_format_of :mgi_accession_id,
     :with       => /^MGI\:\d+$/,
@@ -107,7 +108,7 @@ class Allele < ActiveRecord::Base
   validates_numericality_of :loxp_end,           :only_integer => true, :greater_than => 0, :allow_nil => true
 
   validate :has_right_features,
-    :unless => "[mgi_accession_id, assembly, chromosome, strand, design_type,
+    :unless => "[mgi_accession_id, assembly, chromosome, strand, mutation_method,
     homology_arm_start, homology_arm_end, cassette_start, cassette_end].any?(&:nil?)"
 
   validate :has_correct_cassette_type
@@ -168,7 +169,7 @@ class Allele < ActiveRecord::Base
     end
 
     def targeted_trap?
-      (self.design_type == 'Knock Out' and self.loxp_start.nil?) ? 'Yes' : 'No'
+      (self.mutation_type.targeted_non_conditional?) ? 'Yes' : 'No'
     end
 
     def pipeline_names
@@ -233,10 +234,10 @@ class Allele < ActiveRecord::Base
         end
       end
 
-      if design_type != "Knock Out"
+      if !mutation_method.knock_out?
         unless loxp_start.nil? and loxp_end.nil?
-          errors.add(:loxp_start, "has to be blank for this design type")
-          errors.add(:loxp_end,   "has to be blank for this design type")
+          errors.add(:loxp_start, "has to be blank for this mutation method")
+          errors.add(:loxp_end,   "has to be blank for this mutation method")
         end
       end
     end

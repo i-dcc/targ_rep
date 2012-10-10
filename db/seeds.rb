@@ -45,22 +45,22 @@ qc_field_descriptions = QcFieldDescription.create([
 ])
 
 mutation_methods = MutationMethod.create([
-  { :id => 1, :name => 'Targeted mutation' },
-  { :id => 2, :name => 'Recombination mediated cassette exchange' }
+ { :id => 1, :name => 'Targeted mutation', :code => 'tgm' },
+ { :id => 2, :name => 'Recombination mediated cassette exchange', :code=> 'rmce' }
 ])
 
 mutation_types = MutationType.create([
-  { :id => 1, :name => 'Conditional Ready' },
-  { :id => 2, :name => 'Deletion' },
-  { :id => 3, :name => 'Targeted non-conditional' },
-  { :id => 4, :name => 'Cre knock-in' },
-  { :id => 5, :name => 'Cre BAC' }
+ { :id => 1, :name => 'Conditional Ready', :code => 'crd' },
+ { :id => 2, :name => 'Deletion', :code => 'del' },
+ { :id => 3, :name => 'Targeted non-conditional', :code => 'tnc' },
+ { :id => 4, :name => 'Cre knock-in', :code => 'cki' },
+ { :id => 5, :name => 'Cre BAC', :code => 'cbc'}
 ])
 
-mutation_sub_types = MutationSubType.create([
-  { :id => 1, :name => 'Domain disruption' },
-  { :id => 2, :name => 'Frameshift' },
-  { :id => 3, :name => 'Artificial intron' },
-  { :id => 4, :name => 'Hprt' },
-  { :id => 5, :name => 'Rosa26' }
+mutation_sub_types = MutationSubtype.create([
+ { :id => 1, :name => 'Domain disruption', :code => 'dmd' },
+ { :id => 2, :name => 'Frameshift', :code => 'fms' },
+ { :id => 3, :name => 'Artificial intron', :code => 'afi' },
+ { :id => 4, :name => 'Hprt', :code => 'hpt'},
+ { :id => 5, :name => 'Rosa26', :code => 'rsa' }
 ])

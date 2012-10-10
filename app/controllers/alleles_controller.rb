@@ -312,7 +312,7 @@ class AllelesController < ApplicationController
 
     def mutational_drop_downs
       @mutation_type = MutationType.all
-      @mutation_sub_type = MutationSubType.all
+      @mutation_subtype = MutationSubtype.all
       @mutation_method = MutationMethod.all
     end
 
