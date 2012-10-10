@@ -1,3 +1,5 @@
+require 'colorize'
+
 namespace :db2 do
 
   DEBUG = false
@@ -32,6 +34,21 @@ namespace :db2 do
 
       desc "Dump (part) #{envname} DB into tmp/dump.#{envname}_partial.sql.gz"
       task "#{envname}:dump_partial" do
+
+
+
+        if File.readlines("#{Rails.root}/config/environment.rb").grep(/^\s*config.active_record.observers\s+=/).any?
+          raise "### Comment-out config.active_record.observers in environment.rb! ###".red
+        end
+
+        #/nfs/users/nfs_r/re4/dev/targ_rep/config/environment.rb
+
+        #exit
+
+
+
+        #puts "DEBUG enabled!".green if DEBUG
+
         raise 'Cannot run in live env!' if Rails.env.production?
         config = get_db_config_for_env(envname)
 
