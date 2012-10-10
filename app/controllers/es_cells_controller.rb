@@ -79,6 +79,10 @@ class EsCellsController < ApplicationController
       es_cell_names = params[:es_cell_names].split("\n").map{ |elm| elm.chomp.strip }.compact
       @es_cells = EsCell.all( :conditions => { :name => es_cell_names } )
       @es_cells.sort!{ |a,b| es_cell_names.index(a.name) <=> es_cell_names.index(b.name) }
+
+      #@es_cells.each do |es_cell|
+      #  es_cell.build_distribution_qc(current_user.centre)
+      #end
     end
 
   end
