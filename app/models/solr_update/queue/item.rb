@@ -13,8 +13,9 @@ class SolrUpdate::Queue::Item < ActiveRecord::Base
     self.create!(:allele_id => allele_reference['id'], :action => action)
   end
 
-  def self.process_in_order
-    self.earliest_first.each do |item|
+  def self.process_in_order(args = {})
+    args.symbolize_keys!
+    self.earliest_first.all(:limit => args[:limit]).each do |item|
       yield({'type' => 'allele', 'id' => item.allele_id}, item.action)
       item.destroy
     end
