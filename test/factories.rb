@@ -55,8 +55,8 @@ Factory.define :allele do |f|
   f.chromosome     { [("1".."19").to_a + ['X', 'Y', 'MT']].flatten[rand(22)] }
   f.strand         { ['+', '-'][rand(2)] }
   f.mutation_method { MutationMethod.all[rand(MutationMethod.all.count)] }
-  f.mutation_type    { Mutationtype.all[rand(Mutationtype.all.count)]  }
-  f.mutation_subtype { Mutationsubtype.all[rand(Mutationsubtype.all.count)]  }
+  f.mutation_type    { MutationType.all[rand(MutationType.all.count)]  }
+  f.mutation_subtype { MutationSubtype.all[rand(MutationSubtype.all.count)]  }
   f.cassette_type  { ['Promotorless','Promotor Driven'][rand(2)] }
 
   #     Features positions chose for this factory:

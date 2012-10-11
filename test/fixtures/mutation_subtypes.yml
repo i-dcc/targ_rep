@@ -1,7 +1,7 @@
 ---
 1:
   id: 1
-  name: Domain disruption
+  name: Domain Disruption
   code: dmd
 2:
   id: 2
@@ -9,7 +9,7 @@
   code: fms
 3:
   id: 3
-  name: Artificial intron
+  name: Artificial Intron
   code: afi
 4:
   id: 4
