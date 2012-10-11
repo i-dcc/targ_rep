@@ -21,3 +21,4 @@ production:
 
 all:
   targ_rep_url: http://www.knockoutmouse.org/targ_rep
+  queue_run_limit: 100

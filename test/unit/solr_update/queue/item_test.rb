@@ -65,6 +65,32 @@ class SolrUpdate::Queue::ItemTest < ActiveSupport::TestCase
       assert_nil SolrUpdate::Queue::Item.find_by_id(@item2.id)
     end
 
+    should 'only process a limited number of items per call if told to' do
+      (1..10).each do |i|
+        SolrUpdate::Queue::Item.create!(:action => 'update', :allele_id => i)
+      end
+
+      ids_processed = []
+
+      SolrUpdate::Queue::Item.process_in_order(:limit => 3) do |ref, action|
+        ids_processed.push ref['id']
+      end
+
+      assert_equal 3, ids_processed.size
+
+      SolrUpdate::Queue::Item.process_in_order(:limit => 2) do |ref, action|
+        ids_processed.push ref['id']
+      end
+
+      assert_equal 5, ids_processed.size
+
+      SolrUpdate::Queue::Item.process_in_order do |ref, action|
+        ids_processed.push ref['id']
+      end
+
+      assert_equal 10, ids_processed.size
+    end
+
     should 'not delete queue item if an exception is raised during processing' do
       setup_for_add_and_process
 
