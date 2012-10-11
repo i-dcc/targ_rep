@@ -1,4 +1,4 @@
-class CreateMutationTables < ActiveRecord::Migration
+class PopulateDataAndRemoveColumns < ActiveRecord::Migration
 
   def self.up
 
