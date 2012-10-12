@@ -8,7 +8,7 @@ GIT
 
 GEM
   remote: http://rubygems.org/
-  remote: http://t87-apache.internal.sanger.ac.uk:8000/rubygems/
+  remote: http://www.i-dcc.org/rubygems/
   specs:
     actionmailer (2.3.14)
       actionpack (= 2.3.14)
