@@ -1,6 +1,7 @@
 # see http://gembundler.com/rails23.html for details
 source :rubygems
-source 'http://www.i-dcc.org/rubygems/'
+# source 'http://www.i-dcc.org/rubygems/'
+source 'http://t87-apache.internal.sanger.ac.uk:8000/rubygems/'
 
 # rails requires these gems
 gem 'rails', '~> 2.3.12'
