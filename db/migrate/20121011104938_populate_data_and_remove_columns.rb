@@ -1,5 +1,26 @@
 class PopulateDataAndRemoveColumns < ActiveRecord::Migration
 
+  class allele < ActiveRecord::Base
+    belongs_to :mutation_method
+    belongs_to :mutation_type
+    belongs_to :mutation_subtype
+    has_one    :genbank_file,      :class_name => "GenbankFile",     :foreign_key => "allele_id"
+    has_many   :targeting_vectors, :class_name => "TargetingVector", :foreign_key => "allele_id"
+    has_many   :es_cells,          :class_name => "EsCell",          :foreign_key => "allele_id"
+  end
+
+  class MutationMethod < ActiveRecord::Base
+    has_many :allele, :class_name => "Allele", :foreign_key => "mutation_method_id"
+  end
+
+  class MutationType < ActiveRecord::Base
+    has_many :allele, :class_name => "Allele", :foreign_key => "mutation_type_id"
+  end
+
+  class MutationSubtype < ActiveRecord::Base
+    has_many :allele, :class_name => "Allele", :foreign_key => "mutation_subtype_id"
+  end
+
   def self.up
 
     mutation_methods = MutationMethod.create([

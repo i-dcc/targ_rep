@@ -43,24 +43,3 @@ qc_field_descriptions = QcFieldDescription.create([
   #   :url         => ''
   # }
 ])
-
-mutation_methods = MutationMethod.create([
- { :id => 1, :name => 'Targeted Mutation', :code => 'tgm' },
- { :id => 2, :name => 'Recombination Mediated Cassette Exchange', :code=> 'rmce' }
-])
-
-mutation_types = MutationType.create([
- { :id => 1, :name => 'Conditional Ready', :code => 'crd' },
- { :id => 2, :name => 'Deletion', :code => 'del' },
- { :id => 3, :name => 'Targeted Non Conditional', :code => 'tnc' },
- { :id => 4, :name => 'Cre Knock In', :code => 'cki' },
- { :id => 5, :name => 'Cre BAC', :code => 'cbc'}
-])
-
-mutation_sub_types = MutationSubtype.create([
- { :id => 1, :name => 'Domain Disruption', :code => 'dmd' },
- { :id => 2, :name => 'Frameshift', :code => 'fms' },
- { :id => 3, :name => 'Artificial Intron', :code => 'afi' },
- { :id => 4, :name => 'Hprt', :code => 'hpt'},
- { :id => 5, :name => 'Rosa26', :code => 'rsa' }
-])
