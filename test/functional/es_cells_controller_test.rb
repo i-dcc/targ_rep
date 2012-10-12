@@ -178,7 +178,7 @@ class EsCellsControllerTest < ActionController::TestCase
     get :show, :id => created_es_cell.id, :es_cell => {:id => created_es_cell.id}
     assert_response :success, "Could not read ES Cell"
 
-    created_es_cell = EsCell.find_by_name(es_cell_attrs[:name])
+    created_es_cell = EsCell.find_by_name!(es_cell_attrs[:name])
 
     hash.keys.each { |key| assert_equal hash[key], created_es_cell[key] }
   end

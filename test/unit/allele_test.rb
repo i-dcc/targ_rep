@@ -8,6 +8,9 @@ class AlleleTest < ActiveSupport::TestCase
 
   should have_many(:targeting_vectors)
   should have_many(:es_cells)
+  should belong_to(:mutaion_type)
+  should belong_to(:mutaion_sub_type)
+  should belong_to(:mutaion_method)
 
   should validate_uniqueness_of(:project_design_id).scoped_to([
       :mgi_accession_id, :assembly, :chromosome, :strand,
@@ -19,7 +22,7 @@ class AlleleTest < ActiveSupport::TestCase
 
   [
     :mgi_accession_id, :assembly, :chromosome,
-    :strand, :design_type, :homology_arm_start, :homology_arm_end,
+    :strand, :mutation_type, :mutation_method, :homology_arm_start, :homology_arm_end,
     :cassette, :cassette_type
   ].each do |attribute|
     should validate_presence_of(attribute)
@@ -32,17 +35,9 @@ class AlleleTest < ActiveSupport::TestCase
     should validate_numericality_of(attribute)
   end
 
-  should allow_value('Knock Out').for(:design_type)
-  should allow_value('Deletion').for(:design_type)
-  should allow_value('Insertion').for(:design_type)
-
-  should allow_value('frameshift').for(:design_subtype)
-  should allow_value('domain').for(:design_subtype)
-  should allow_value(nil).for(:design_subtype)
-
-  should_not allow_value(nil).for(:design_type)
-  should_not allow_value('wibble').for(:design_type)
-  should_not allow_value('wibble').for(:design_subtype)
+  should_not allow_value(nil).for(:mutation_method)
+  should_not allow_value(nil).for(:mutation_type)
+  should allow_value(nil).for(:mutation_subtype)
 
   context "An Allele" do
     context "with empty attributes" do
@@ -182,27 +177,27 @@ class AlleleTest < ActiveSupport::TestCase
       end
     end
 
-    context "with design type 'Deletion' and LoxP set" do
+    context "with mutation type 'Deletion' and LoxP set" do
       should "not be saved" do
         allele = Factory.build( :allele, {
-            :design_type        => 'Deletion',
+            :mutation_type        => MutationType.find_by_code!('del'),
             :strand             => '+',
             :loxp_start         => 100,
             :loxp_end           => 130
           })
-        assert( !allele.save, "Allele validates presence of LoxP for design 'Deletion'" )
+        assert( !allele.save, "Allele validates presence of LoxP for mutation_type 'Deletion'" )
       end
     end
 
-    context "with design type 'Insertion' and LoxP set" do
+    context "with mutation type 'Insertion' and LoxP set" do
       should "not be saved" do
         allele = Factory.build( :allele, {
-            :design_type        => 'Insertion',
+            :mutation_type        => MutationType.find_by_code!('cki'),
             :strand             => '+',
             :loxp_start         => 100,
             :loxp_end           => 130
           })
-        assert( !allele.save, "Allele validates presence of LoxP for design 'Insertion'" )
+        assert( !allele.save, "Allele validates presence of LoxP for mutation_type 'cre-knock-in'" )
       end
     end
 

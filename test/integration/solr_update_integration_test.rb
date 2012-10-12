@@ -17,7 +17,7 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
       assert fetched_docs.blank?, 'docs were not destroyed!'
 
       eucomm = Pipeline.find_or_create_by_name('EUCOMM')
-      @allele = Factory.create :allele, :design_type => 'Insertion',
+      @allele = Factory.create :allele, :mutation_type => MutationType.find_by_code!('cki'),
               :mgi_accession_id => 'MGI:105369'
       @es_cell1 = Factory.create(:es_cell,
         :allele => @allele, :parental_cell_line => 'VGB6',
@@ -30,7 +30,7 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
         :allele_symbol_superscript => 'tm2a(EUCOMM)Wtsi')
       @allele.reload
 
-      assert_equal 'insertion', @allele.mutation_subtype
+      assert_equal 'cki', @allele.mutation_type.code
       assert_equal 'C57BL/6N', @allele.es_cells[0].strain
       assert_equal 'C57BL/6N-A<tm1Brd>/a', @allele.es_cells[1].strain
     end
@@ -42,9 +42,9 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
       es_cell1 = @es_cell1
       es_cell2 = @es_cell2
 
-      allele.design_type = 'Knock Out'
+      allele.mutation_type = MutationType.find_by_code!('tnc')
       allele.save!
-      assert_equal 'targeted_non_conditional', allele.mutation_subtype
+      assert_equal 'tnc', allele.mutation_type.code
 
       docs = [
         {

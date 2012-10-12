@@ -55,8 +55,9 @@ Factory.define :allele do |f|
   f.assembly       "NCBIM37"
   f.chromosome     { [("1".."19").to_a + ['X', 'Y', 'MT']].flatten[rand(22)] }
   f.strand         { ['+', '-'][rand(2)] }
-  f.design_type    { ['Knock Out', 'Deletion', 'Insertion'][rand(3)] }
-  f.design_subtype { ['frameshift', 'domain', nil][rand(3)] }
+  f.mutation_method { MutationMethod.all[rand(MutationMethod.all.count)] }
+  f.mutation_type    { MutationType.all[rand(MutationType.all.count)]  }
+  f.mutation_subtype { MutationSubtype.all[rand(MutationSubtype.all.count)]  }
   f.cassette_type  { ['Promotorless','Promotor Driven'][rand(2)] }
 
   #     Features positions chose for this factory:
@@ -108,7 +109,7 @@ Factory.define :allele do |f|
 
   # LoxP
   f.loxp_start do |allele|
-    if allele.design_type == 'Knock Out'
+    if allele.mutation_type.knock_out?
       case allele.strand
         when '+' then 100
         when '-' then 70
@@ -117,7 +118,7 @@ Factory.define :allele do |f|
   end
 
   f.loxp_end do |allele|
-    if allele.design_type == 'Knock Out'
+    if allele.mutation_type.knock_out?
       case allele.strand
         when '+' then 130
         when '-' then 40

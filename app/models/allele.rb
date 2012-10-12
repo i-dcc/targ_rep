@@ -5,7 +5,9 @@ class Allele < ActiveRecord::Base
   ##
   ## Associations
   ##
-
+  belongs_to :mutation_method
+  belongs_to :mutation_type
+  belongs_to :mutation_subtype
   has_one    :genbank_file,      :class_name => "GenbankFile",     :foreign_key => "allele_id",   :dependent => :destroy
   has_many   :targeting_vectors, :class_name => "TargetingVector", :foreign_key => "allele_id",   :dependent => :destroy
   has_many   :es_cells,          :class_name => "EsCell",          :foreign_key => "allele_id",   :dependent => :destroy do
@@ -53,7 +55,8 @@ class Allele < ActiveRecord::Base
     :assembly,
     :chromosome,
     :strand,
-    :design_type,
+    :mutation_method,
+    :mutation_type,
     :homology_arm_start,
     :homology_arm_end,
     :cassette_start,
@@ -74,14 +77,14 @@ class Allele < ActiveRecord::Base
     :in         => ('1'..'19').to_a + ['X', 'Y', 'MT'],
     :message    => "is not a valid mouse chromosome"
 
-  validates_inclusion_of :design_type,
-    :in         => ['Knock Out', 'Deletion', 'Insertion'],
-    :message    => "should be 'Knockout', 'Deletion' or 'Insertion'."
+  validates_associated :mutation_method,
+    :message    => "should be #{MutationMethod.all.map {|a| a.name}.to_sentence}"
 
-  validates_inclusion_of :design_subtype,
-    :in         => ['frameshift', 'domain'],
-    :message    => "should be 'frameshift' or 'domain'.",
-    :allow_nil  => true
+  validates_associated :mutation_type,
+    :message    => "should be #{MutationType.all.map {|a| a.name}.to_sentence}"
+
+  validates_associated :mutation_subtype,
+    :message    => "should be #{MutationSubtype.all.map {|a| a.name}.to_sentence}"
 
   validates_format_of :mgi_accession_id,
     :with       => /^MGI\:\d+$/,
@@ -105,7 +108,7 @@ class Allele < ActiveRecord::Base
   validates_numericality_of :loxp_end,           :only_integer => true, :greater_than => 0, :allow_nil => true
 
   validate :has_right_features,
-    :unless => "[mgi_accession_id, assembly, chromosome, strand, design_type,
+    :unless => "[mgi_accession_id, assembly, chromosome, strand, mutation_type,
     homology_arm_start, homology_arm_end, cassette_start, cassette_end].any?(&:nil?)"
 
   validate :has_correct_cassette_type
@@ -114,7 +117,7 @@ class Allele < ActiveRecord::Base
   ## Filters
   ##
 
-  before_validation :set_mutation_details_and_clean_blanks
+#  before_validation :set_mutation_details_and_clean_blanks
 
   ##
   ## Methods
@@ -166,7 +169,11 @@ class Allele < ActiveRecord::Base
     end
 
     def targeted_trap?
-      (self.design_type == 'Knock Out' and self.loxp_start.nil?) ? 'Yes' : 'No'
+      if self.mutation_type.targeted_non_conditional?
+        return 'Yes'
+      else
+        return 'No'
+      end
     end
 
     def pipeline_names
@@ -174,6 +181,14 @@ class Allele < ActiveRecord::Base
       self.targeting_vectors.each { |tv| pipelines[tv.pipeline.name] = true } if self.targeting_vectors
       self.es_cells.each { |esc| pipelines[esc.pipeline.name] = true } if self.es_cells
       pipelines.keys.sort.join(', ')
+    end
+
+    def mutation_subtype_name
+      if self.mutation_subtype
+        return self.mutation_subtype.name
+      else
+        return ''
+      end
     end
 
   protected
@@ -231,36 +246,36 @@ class Allele < ActiveRecord::Base
         end
       end
 
-      if design_type != "Knock Out"
+      if !mutation_type.knock_out?
         unless loxp_start.nil? and loxp_end.nil?
-          errors.add(:loxp_start, "has to be blank for this design type")
-          errors.add(:loxp_end,   "has to be blank for this design type")
+          errors.add(:loxp_start, "has to be blank for this mutation method")
+          errors.add(:loxp_end,   "has to be blank for this mutation method")
         end
       end
     end
 
-    def set_mutation_details_and_clean_blanks
+#    def set_mutation_details_and_clean_blanks
       # Set the mutation details
-      self.mutation_type = 'targeted_mutation'
-      self.mutation_subtype = case self.design_type
-        when 'Deletion'   then 'deletion'
-        when 'Insertion'  then 'insertion'
-        when 'Knock Out'  then self.loxp_start.nil? ? 'targeted_non_conditional' : 'conditional_ready'
-      end
+#      self.mutation_type = 'targeted_mutation'
+#      self.mutation_subtype = case self.design_type
+#        when 'Deletion'   then 'deletion'
+#        when 'Insertion'  then 'insertion'
+#        when 'Knock Out'  then self.loxp_start.nil? ? 'targeted_non_conditional' : 'conditional_ready'
+#      end
 
-      if ['conditional_ready', 'insertion', 'deletion'].include? self.mutation_subtype
-        if self.design_subtype and self.design_subtype === 'domain'
-          self.mutation_method = 'domain_disruption'
-        else
-          self.mutation_method = 'frameshift'
-        end
-      end
+#      if ['conditional_ready', 'insertion', 'deletion'].include? self.mutation_subtype
+#        if self.design_subtype and self.design_subtype === 'domain'
+#          self.mutation_method = 'domain_disruption'
+#        else
+#          self.mutation_method = 'frameshift'
+#        end
+#      end
 
       # Convert any blank strings to nil...
-      self.attributes.each do |name,value|
-        self.send("#{name}=".to_sym, nil) if value.is_a?(String) and value.empty?
-      end
-    end
+#      self.attributes.each do |name,value|
+#        self.send("#{name}=".to_sym, nil) if value.is_a?(String) and value.empty?
+#      end
+#    end
 
     def has_correct_cassette_type
       known_cassettes = {
