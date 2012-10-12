@@ -6,6 +6,9 @@ class CreateCentres < ActiveRecord::Migration
       t.timestamps
     end
 
+    Centre.create!(:id => 1, :name => "WTSI")
+    Centre.create!(:id => 2, :name => "KOMP")
+    Centre.create!(:id => 3, :name => "EUCOMM")
   end
 
   def self.down
