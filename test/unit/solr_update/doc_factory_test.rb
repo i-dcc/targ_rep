@@ -26,7 +26,7 @@ class SolrUpdate::DocFactoryTest < ActiveSupport::TestCase
     context 'when creating solr docs for allele' do
 
       setup do
-        @allele = Factory.create :allele, :mutation_type => MutationType.find_by_code('crd'),
+        @allele = Factory.create :allele, :mutation_type => MutationType.find_by_code!('crd'),
                 :mgi_accession_id => 'MGI:9999999991'
 
         @fake_unique_public_info = [
@@ -59,7 +59,7 @@ class SolrUpdate::DocFactoryTest < ActiveSupport::TestCase
 
       should 'set allele_type' do
         assert_equal ['Conditional Ready', 'Conditional Ready'], @docs.map {|d| d['allele_type']}
-        @allele.stubs(:mutation_type).returns(MutationType.find_by_code('tnc'))
+        @allele.mutation_type = MutationType.find_by_code!('tnc'))
         @docs = SolrUpdate::DocFactory.create_for_allele(@allele)
         assert_equal ['Targeted Non Conditional', 'Targeted Non Conditional'], @docs.map {|d| d['allele_type']}
       end

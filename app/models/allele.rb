@@ -169,7 +169,10 @@ class Allele < ActiveRecord::Base
     end
 
     def targeted_trap?
-      (self.mutation_type.targeted_non_conditional?) ? 'Yes' : 'No'
+      if self.mutation_type.targeted_non_conditional?
+        return 'Yes'
+      else
+        return 'No'
     end
 
     def pipeline_names
@@ -180,7 +183,10 @@ class Allele < ActiveRecord::Base
     end
 
     def mutation_subtype_name
-      return (self.mutation_subtype ? self.mutation_subtype.name : '')
+      if self.mutation_subtype
+        return self.mutation_subtype.name
+      else
+        return ''
     end
 
   protected

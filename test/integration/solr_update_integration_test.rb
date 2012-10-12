@@ -17,7 +17,7 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
       assert fetched_docs.blank?, 'docs were not destroyed!'
 
       eucomm = Pipeline.find_or_create_by_name('EUCOMM')
-      @allele = Factory.create :allele, :mutation_type => MutationType.find_by_code('cki'),
+      @allele = Factory.create :allele, :mutation_type => MutationType.find_by_code!('cki'),
               :mgi_accession_id => 'MGI:105369'
       @es_cell1 = Factory.create(:es_cell,
         :allele => @allele, :parental_cell_line => 'VGB6',
@@ -42,7 +42,7 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
       es_cell1 = @es_cell1
       es_cell2 = @es_cell2
 
-      allele.mutation_type = MutationType.find_by_code('tnc')
+      allele.mutation_type = MutationType.find_by_code!('tnc')
       allele.save!
       assert_equal 'tnc', allele.mutation_type.code
 

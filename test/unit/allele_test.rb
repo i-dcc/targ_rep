@@ -8,9 +8,9 @@ class AlleleTest < ActiveSupport::TestCase
 
   should have_many(:targeting_vectors)
   should have_many(:es_cells)
- # should belong_to(:mutaion_type)
- # should belong_to(:mutaion_sub_type)
- # should belong_to(:mutaion_method)
+  should belong_to(:mutaion_type)
+  should belong_to(:mutaion_sub_type)
+  should belong_to(:mutaion_method)
 
   should validate_uniqueness_of(:project_design_id).scoped_to([
       :mgi_accession_id, :assembly, :chromosome, :strand,
@@ -180,7 +180,7 @@ class AlleleTest < ActiveSupport::TestCase
     context "with mutation type 'Deletion' and LoxP set" do
       should "not be saved" do
         allele = Factory.build( :allele, {
-            :mutation_type        => MutationType.find_by_code('del'),
+            :mutation_type        => MutationType.find_by_code!('del'),
             :strand             => '+',
             :loxp_start         => 100,
             :loxp_end           => 130
@@ -192,7 +192,7 @@ class AlleleTest < ActiveSupport::TestCase
     context "with mutation type 'Insertion' and LoxP set" do
       should "not be saved" do
         allele = Factory.build( :allele, {
-            :mutation_type        => MutationType.find_by_code('cki'),
+            :mutation_type        => MutationType.find_by_code!('cki'),
             :strand             => '+',
             :loxp_start         => 100,
             :loxp_end           => 130

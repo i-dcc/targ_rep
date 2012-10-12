@@ -8,7 +8,7 @@ class SolrUpdate::Queue::Item < ActiveRecord::Base
       allele_reference = {'type' => 'allele', 'id' => allele_reference.id}
     end
 
-    existing = find_by_allele_id(allele_reference['id'])
+    existing = find_by_allele_id!(allele_reference['id'])
     existing.destroy if existing
     self.create!(:allele_id => allele_reference['id'], :action => action)
   end
