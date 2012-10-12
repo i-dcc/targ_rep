@@ -3,6 +3,8 @@ class SolrUpdate::Queue::Item < ActiveRecord::Base
 
   belongs_to :allele
 
+  def reference; {'type' => 'allele', 'id' => allele_id}; end
+
   def self.add(allele_reference, action)
     if allele_reference.kind_of?(Allele)
       allele_reference = {'type' => 'allele', 'id' => allele_reference.id}
@@ -16,8 +18,7 @@ class SolrUpdate::Queue::Item < ActiveRecord::Base
   def self.process_in_order(args = {})
     args.symbolize_keys!
     self.earliest_first.all(:limit => args[:limit]).each do |item|
-      yield({'type' => 'allele', 'id' => item.allele_id}, item.action)
-      item.destroy
+      yield item
     end
   end
 
