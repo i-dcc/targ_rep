@@ -1,57 +1,11 @@
 class AllelesController < ApplicationController
   before_filter :require_user, :only => [:index, :show, :new, :edit, :create, :update, :destroy]
-  before_filter :find_allele,
-    :only => [
-      :update, :destroy,
-      :escell_clone_genbank_file,
-      :targeting_vector_genbank_file,
-      :escell_clone_cre_genbank_file,
-      :targeting_vector_cre_genbank_file,
-      :escell_clone_flp_genbank_file,
-      :targeting_vector_flp_genbank_file,
-      :escell_clone_flp_cre_genbank_file,
-      :targeting_vector_flp_cre_genbank_file,
-      :allele_image,
-      :cassette_image,
-      :vector_image,
-      :allele_image_cre,
-      :allele_image_flp,
-      :allele_image_flp_cre,
-      :vector_image_cre,
-      :vector_image_flp,
-      :vector_image_flp_cre,
-      :history
-    ]
-  before_filter :check_for_genbank_file,
-    :only => [
-      :escell_clone_genbank_file,
-      :targeting_vector_genbank_file,
-      :escell_clone_cre_genbank_file,
-      :targeting_vector_cre_genbank_file,
-      :escell_clone_flp_genbank_file,
-      :targeting_vector_flp_genbank_file,
-      :escell_clone_flp_cre_genbank_file,
-      :targeting_vector_flp_cre_genbank_file,
-      :allele_image,
-      :vector_image,
-      :allele_image_cre,
-      :allele_image_flp,
-      :allele_image_flp_cre,
-      :vector_image_cre,
-      :vector_image_flp,
-      :vector_image_flp_cre,
-    ]
-  before_filter :check_for_escell_genbank_file, :only => [ :escell_clone_genbank_file, :escell_clone_cre_genbank_file, :escell_clone_flp_genbank_file, :escell_clone_flp_cre_genbank_file, :allele_image, :allele_image_cre, :allele_image_flp, :allele_image_flp_cre ]
-  before_filter :check_for_vector_genbank_file, :only => [ :targeting_vector_genbank_file, :targeting_vector_cre_genbank_file, :targeting_vector_flp_genbank_file, :targeting_vector_flp_cre_genbank_file, :vector_image, :vector_image_cre, :vector_image_flp, :vector_image_flp_cre ]
 
   # Must be after "find_allele" filter (as it requires an object)
   before_filter :ensure_creator_or_admin, :only => [:destroy]
 
   # The following are located in application_controller.rb
   before_filter :get_qc_field_descriptions, :only => [:show, :new, :create, :edit, :update, :destroy]
-
-  # For webservice interface
-  before_filter :format_nested_params, :only => [:create, :update]
 
   # GET /alleles
   # GET /alleles.xml
@@ -64,6 +18,7 @@ class AllelesController < ApplicationController
       :select  => "distinct alleles.*",
       :include => [ { :targeting_vectors => :pipeline }, { :es_cells => :pipeline } ]
     )
+    mutational_drop_downs
 
     respond_to do |format|
       format.html # index.html.erb
@@ -98,6 +53,7 @@ class AllelesController < ApplicationController
     @allele.genbank_file = GenbankFile.new
     @allele.targeting_vectors.build
     @allele.es_cells.build
+    mutational_drop_downs
   end
 
   # GET /alleles/1/edit
@@ -110,6 +66,7 @@ class AllelesController < ApplicationController
         { :es_cells => [ :pipeline, :es_cell_qc_conflicts ] }
       ]
     )
+    mutational_drop_downs
     @allele.genbank_file = GenbankFile.new if @allele.genbank_file.nil?
 
     @allele.es_cells.sort!{ |a,b| a.name <=> b.name }
@@ -120,7 +77,7 @@ class AllelesController < ApplicationController
   # POST /alleles.json
   def create
     @allele = Allele.new( params[:allele] )
-
+    format_nested_params
     respond_to do |format|
       if @allele.save
         # Useful for all formats, not only HTML
@@ -146,6 +103,8 @@ class AllelesController < ApplicationController
   # PUT /alleles/1
   # PUT /alleles/1.xml
   def update
+    find_allele
+    format_nested_params
     respond_to do |format|
       if @allele.update_attributes(params[:allele])
         # Useful for all formats, not only HTML
@@ -173,6 +132,7 @@ class AllelesController < ApplicationController
   # DELETE /alleles/1
   # DELETE /alleles/1.xml
   def destroy
+    find_allele
     @allele.destroy
 
     respond_to do |format|
@@ -188,35 +148,59 @@ class AllelesController < ApplicationController
 
   # GET /alleles/1/escell_clone_genbank_file/
   def escell_clone_genbank_file
+    find_allele
+    check_for_genbank_file
+    check_for_escell_genbank_file
     send_genbank_file(@allele.genbank_file.escell_clone)
   end
 
   # GET /alleles/1/targeting-vector-genbank-file/
   def targeting_vector_genbank_file
+    find_allele
+    check_for_genbank_file
+    check_for_vector_genbank_file
     send_genbank_file(@allele.genbank_file.targeting_vector)
   end
 
   def escell_clone_cre_genbank_file
+    find_allele
+    check_for_genbank_file
+    check_for_escell_genbank_file
     send_genbank_file(@allele.genbank_file.escell_clone_cre)
   end
 
   def targeting_vector_cre_genbank_file
+    find_allele
+    check_for_genbank_file
+    check_for_vector_genbank_file
     send_genbank_file(@allele.genbank_file.targeting_vector_cre)
   end
 
   def escell_clone_flp_genbank_file
+    find_allele
+    check_for_genbank_file
+    check_for_escell_genbank_file
     send_genbank_file(@allele.genbank_file.escell_clone_flp)
   end
 
   def targeting_vector_flp_genbank_file
+    find_allele
+    check_for_genbank_file
+    check_for_vector_genbank_file
     send_genbank_file(@allele.genbank_file.targeting_vector_flp)
   end
 
   def escell_clone_flp_cre_genbank_file
+    find_allele
+    check_for_genbank_file
+    check_for_escell_genbank_file
     send_genbank_file(@allele.genbank_file.escell_clone_flp_cre)
   end
 
   def targeting_vector_flp_cre_genbank_file
+    find_allele
+    check_for_genbank_file
+    check_for_vector_genbank_file
     send_genbank_file(@allele.genbank_file.targeting_vector_flp_cre)
   end
 
@@ -232,46 +216,73 @@ class AllelesController < ApplicationController
 
   # GET /alleles/1/allele-image/
   def allele_image
+    find_allele
+    check_for_genbank_file
+    check_for_escell_genbank_file
     send_allele_image(AlleleImage::Image.new( @allele.genbank_file.escell_clone).render.to_blob { self.format = "PNG" })
   end
 
   # GET /alleles/1/allele-image-cre/
   def allele_image_cre
+    find_allele
+    check_for_genbank_file
+    check_for_escell_genbank_file
     send_allele_image(AlleleImage::Image.new( @allele.genbank_file.escell_clone_cre).render.to_blob { self.format = "PNG" })
   end
 
   # GET /alleles/1/allele-image-flp/
   def allele_image_flp
+    find_allele
+    check_for_genbank_file
+    check_for_escell_genbank_file
     send_allele_image(AlleleImage::Image.new( @allele.genbank_file.escell_clone_flp).render.to_blob { self.format = "PNG" })
   end
 
   # GET /alleles/1/allele-image-flp-cre/
   def allele_image_flp_cre
+    find_allele
+    check_for_genbank_file
+    check_for_escell_genbank_file
     send_allele_image(AlleleImage::Image.new( @allele.genbank_file.escell_clone_flp_cre).render.to_blob { self.format = "PNG" })
   end
 
   # GET /alleles/1/cassette-image/
   def cassette_image
+    find_allele
+    check_for_genbank_file
+    check_for_escell_genbank_file
     send_allele_image(AlleleImage::Image.new( @allele.genbank_file.escell_clone, true).render.to_blob { self.format = "PNG" })
   end
 
   # GET /alleles/1/vector-image/
   def vector_image
+    find_allele
+    check_for_genbank_file
+    check_for_vector_genbank_file
     send_allele_image(AlleleImage::Image.new( @allele.genbank_file.targeting_vector ).render.to_blob { self.format = "PNG" })
   end
 
   # GET /alleles/1/vector-image-cre/
   def vector_image_cre
+    find_allele
+    check_for_genbank_file
+    check_for_vector_genbank_file
     send_allele_image(AlleleImage::Image.new( @allele.genbank_file.targeting_vector_cre ).render.to_blob { self.format = "PNG" })
   end
 
   # GET /alleles/1/vector-image-flp/
   def vector_image_flp
+    find_allele
+    check_for_genbank_file
+    check_for_vector_genbank_file
     send_allele_image(AlleleImage::Image.new( @allele.genbank_file.targeting_vector_flp ).render.to_blob { self.format = "PNG" })
   end
 
   # GET /alleles/1/vector-image-flp-cre/
   def vector_image_flp_cre
+    find_allele
+    check_for_genbank_file
+    check_for_vector_genbank_file
     send_allele_image(AlleleImage::Image.new( @allele.genbank_file.targeting_vector_flp_cre ).render.to_blob { self.format = "PNG" })
   end
 
@@ -294,11 +305,18 @@ class AllelesController < ApplicationController
 
   # GET /alleles/1/history/
   def history
+    find_allele
   end
 
   private
     def find_allele
       @allele = Allele.find(params[:id])
+    end
+
+    def mutational_drop_downs
+      @mutation_type = MutationType.all
+      @mutation_subtype = MutationSubtype.all
+      @mutation_method = MutationMethod.all
     end
 
     def setup_allele_search(params)

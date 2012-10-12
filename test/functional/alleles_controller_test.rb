@@ -5,69 +5,71 @@ class AllelesControllerTest < ActionController::TestCase
   # we need to include the two files below
   include ActionView::Helpers::UrlHelper
   include ActionView::Helpers::TagHelper
-  
+
   setup do
     user = Factory.create( :user )
     UserSession.create user
     Factory.create( :allele )
   end
-  
+
   teardown do
     session = UserSession.find
     session.destroy
   end
-  
+
   should "allow us to GET /index" do
     # html
     get :index, :format => "html"
     assert_response :success
     assert_not_nil assigns(:alleles)
-    
+
     # json
     get :index, :format => "json"
     assert_response :success
-    
+
     # xml
     get :index, :format => "xml"
     assert_response :success
   end
-  
+
   should "allow us to GET /new" do
     get :new
     assert_response :success
   end
-  
+
   should "allow us to GET /edit" do
     get :edit, :id => Allele.find(:first).to_param
     assert_response :success
   end
-  
+
   should "allow us to create allele, targeting vector, es cell and genbank files" do
     mol_struct    = Factory.attributes_for( :allele )
     targ_vec1     = Factory.build( :targeting_vector )
     targ_vec2     = Factory.build( :targeting_vector )
     genbank_file  = Factory.build( :genbank_file )
-    
+
     mol_struct_count  = Allele.all.count
     targ_vec_count    = TargetingVector.all.count
     es_cell_count     = EsCell.all.count
     unlinked_es_cells = EsCell.targeting_vector_id_null.count
     linked_es_cells   = EsCell.targeting_vector_id_not_null.count
-    
+
     allele = {
       :assembly           => mol_struct[:assembly],
       :mgi_accession_id   => mol_struct[:mgi_accession_id],
       :project_design_id  => mol_struct[:project_design_id],
       :chromosome         => mol_struct[:chromosome],
       :strand             => mol_struct[:strand],
-      :design_type        => mol_struct[:design_type],
+      :mutation_method    => mol_struct[:mutation_method],
+      :mutation_type      => mol_struct[:mutation_type],
+      :mutation_subtype   => mol_struct[:mutation_subtype],
       :homology_arm_start => mol_struct[:homology_arm_start],
       :homology_arm_end   => mol_struct[:homology_arm_end],
       :cassette_start     => mol_struct[:cassette_start],
       :cassette_end       => mol_struct[:cassette_end],
       :cassette_type      => mol_struct[:cassette_type],
       :cassette           => mol_struct[:cassette],
-      
+
       :targeting_vectors => [
         # Targeting vector 1 with its ES cells
         {
@@ -81,23 +83,23 @@ class AllelesControllerTest < ActionController::TestCase
             Factory.attributes_for( :es_cell, :ikmc_project_id => targ_vec1[:ikmc_project_id], :pipeline_id => targ_vec1[:pipeline_id] )
           ]
         },
-        
+
         # Targeting vector 2 without ES Cells
         {
           :pipeline_id         => targ_vec2[:pipeline_id],
           :ikmc_project_id     => targ_vec2[:ikmc_project_id],
           :name                => targ_vec2[:name],
-          :intermediate_vector => targ_vec2[:intermediate_vector]     
+          :intermediate_vector => targ_vec2[:intermediate_vector]
         }
       ],
-      
+
       # ES Cells only related to allele
       :es_cells => [
         Factory.attributes_for( :es_cell, :pipeline_id => targ_vec1[:pipeline_id] ),
         Factory.attributes_for( :es_cell, :pipeline_id => targ_vec1[:pipeline_id] ),
         Factory.attributes_for( :es_cell, :pipeline_id => targ_vec1[:pipeline_id] )
       ],
-      
+
       :genbank_file => {
         :escell_clone     => genbank_file[:escell_clone],
         :targeting_vector => genbank_file[:targeting_vector]
@@ -105,7 +107,7 @@ class AllelesControllerTest < ActionController::TestCase
     }
 
     post :create, :allele => allele
-    
+
     assert_equal( mol_struct_count + 1, Allele.all.count, "Controller should have created 1 valid allele." )
     assert_equal( targ_vec_count + 2, TargetingVector.all.count, "Controller should have created 2 valid targeting vectors." )
     assert_equal( es_cell_count + 6, EsCell.all.count, "Controller should have created 6 valid ES cells." )
@@ -115,21 +117,21 @@ class AllelesControllerTest < ActionController::TestCase
 
   should "allow us to create, update and delete a allele we made" do
     allele_attrs = Factory.attributes_for( :allele )
-    
+
     # CREATE
     assert_difference('Allele.count') do
       post :create, :allele => allele_attrs
     end
     assert_redirected_to allele_path(assigns(:allele))
-    
+
     created_allele = Allele.search( :mgi_accession_id => allele_attrs[:mgi_accession_id] ).last
     created_allele.created_by = @request.session["user_credentials_id"]
     created_allele.save
-    
+
     # UPDATE
     put :update, { :id => created_allele.id, :allele => Factory.attributes_for( :allele ) }
     assert_redirected_to allele_path(assigns(:allele))
-    
+
     # DELETE
     back_url = url_for( :controller => 'alleles', :action => 'index' )
     @request.env['HTTP_REFERER'] = back_url
@@ -138,20 +140,22 @@ class AllelesControllerTest < ActionController::TestCase
     end
     assert_redirected_to back_url
   end
-  
+
   should "allow us to create a allele and genbank file" do
     mol_struct    = Factory.attributes_for( :allele )
     genbank_file  = Factory.attributes_for( :genbank_file )
-    
+
     mol_struct_count    = Allele.count
     genbank_file_count  = GenbankFile.count
-    
+
     post :create, :allele => {
       :assembly           => mol_struct[:assembly],
       :mgi_accession_id   => mol_struct[:mgi_accession_id],
       :chromosome         => mol_struct[:chromosome],
       :strand             => mol_struct[:strand],
-      :design_type        => mol_struct[:design_type],
+      :mutation_method    => mol_struct[:mutation_method],
+      :mutation_type      => mol_struct[:mutation_type],
+      :mutation_subtype   => mol_struct[:mutation_subtype],
       :homology_arm_start => mol_struct[:homology_arm_start],
       :homology_arm_end   => mol_struct[:homology_arm_end],
       :cassette_start     => mol_struct[:cassette_start],
@@ -173,16 +177,18 @@ class AllelesControllerTest < ActionController::TestCase
 
   should "not create genbank file database entries if the genbank file arguments are empty" do
     mol_struct = Factory.attributes_for( :allele )
-    
+
     mol_struct_count    = Allele.count
     genbank_file_count  = GenbankFile.count
-    
+
     post :create, :allele => {
       :assembly           => mol_struct[:assembly],
       :mgi_accession_id   => mol_struct[:mgi_accession_id],
       :chromosome         => mol_struct[:chromosome],
       :strand             => mol_struct[:strand],
-      :design_type        => mol_struct[:design_type],
+      :mutation_method    => mol_struct[:mutation_method],
+      :mutation_type      => mol_struct[:mutation_type],
+      :mutation_subtype   => mol_struct[:mutation_subtype],
       :homology_arm_start => mol_struct[:homology_arm_start],
       :homology_arm_end   => mol_struct[:homology_arm_end],
       :cassette_start     => mol_struct[:cassette_start],
@@ -191,7 +197,7 @@ class AllelesControllerTest < ActionController::TestCase
       :cassette           => mol_struct[:cassette],
       :genbank_file       => { :escell_clone => '', :targeting_vector => '' }
     }
-    
+
     assert_equal( mol_struct_count + 1, Allele.count, "Controller should have created 1 valid allele." )
     assert_equal( genbank_file_count, GenbankFile.count, "Controller should not have created any genbank file" )
   end
@@ -207,7 +213,9 @@ class AllelesControllerTest < ActionController::TestCase
       :mgi_accession_id   => mol_struct[:mgi_accession_id],
       :chromosome         => mol_struct[:chromosome],
       :strand             => mol_struct[:strand],
-      :design_type        => mol_struct[:design_type],
+      :mutation_method    => mol_struct[:mutation_method],
+      :mutation_type      => mol_struct[:mutation_type],
+      :mutation_subtype   => mol_struct[:mutation_subtype],
       :homology_arm_start => mol_struct[:homology_arm_start],
       :homology_arm_end   => mol_struct[:homology_arm_end],
       :cassette_start     => mol_struct[:cassette_start],
@@ -216,11 +224,11 @@ class AllelesControllerTest < ActionController::TestCase
       :cassette           => mol_struct[:cassette],
       :genbank_file       => { :escell_clone => nil, :targeting_vector => nil }
     }
-    
+
     assert_equal( mol_struct_count + 1, Allele.count, "Controller should have created 1 valid allele." )
     assert_equal( genbank_file_count, GenbankFile.count, "Controller should not have created any genbank file" )
   end
-  
+
   should "not create an invalid allele" do
     assert_no_difference('Allele.count') do
       post :create,
@@ -231,15 +239,15 @@ class AllelesControllerTest < ActionController::TestCase
 
   should "show an allele" do
     allele_id = Allele.find(:first).id
-    
+
     # html
     get :show, :format => "html", :id => allele_id
     assert_response :success, "should show allele as html"
-    
+
     # json
     get :show, :format => "json", :id => allele_id
     assert_response :success, "should show allele as json"
-    
+
     # xml
     get :show, :format => "xml", :id => allele_id
     assert_response :success, "should show allele as xml"
@@ -247,7 +255,7 @@ class AllelesControllerTest < ActionController::TestCase
 
   should "find and return allele when searching by marker_symbol" do
     mol_struct = Factory.create( :allele, :mgi_accession_id => 'MGI:105369')
-    
+
     get :index, { :marker_symbol => 'cbx1' }
     assert_response :success
     assert_select 'tbody tr', 1, "HTML <table> should only have one row/result."
@@ -256,15 +264,15 @@ class AllelesControllerTest < ActionController::TestCase
 
   should "not allow us to update a allele with invalid parameters" do
     mol_struct_attrs = Factory.attributes_for( :allele )
-    
+
     # CREATE a valid Molecular Structure
     assert_difference('Allele.count') do
       post :create, :allele => mol_struct_attrs
     end
     assert_redirected_to allele_path(assigns(:allele))
-    
+
     created_mol_struct = Allele.search( :mgi_accession_id => mol_struct_attrs[:mgi_accession_id] ).first
-    
+
     # UPDATE - should fail
     put :update, :id => created_mol_struct.id,
       :allele => {
@@ -281,10 +289,10 @@ class AllelesControllerTest < ActionController::TestCase
     end
     assert_response 302
   end
-  
+
   should "return 404 if we try to request something to do with a genbank file that doesn't exist" do
     allele_without_gb = Factory.create( :allele )
-    
+
     [:escell_clone_genbank_file,:targeting_vector_genbank_file,:allele_image,:vector_image].each do |route|
       get route, :id => allele_without_gb.id
       assert_response 404

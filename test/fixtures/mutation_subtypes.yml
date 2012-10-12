@@ -1,0 +1,21 @@
+---
+1:
+  id: 1
+  name: Domain Disruption
+  code: dmd
+2:
+  id: 2
+  name: Frameshift
+  code: fms
+3:
+  id: 3
+  name: Artificial Intron
+  code: afi
+4:
+  id: 4
+  name: Hprt
+  code: hpt
+5:
+  id: 5
+  name: Rosa26
+  code: rsa
