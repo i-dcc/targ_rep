@@ -1,4 +1,4 @@
-require 'colorize'
+#require 'colorize'
 
 namespace :db2 do
 
@@ -38,7 +38,8 @@ namespace :db2 do
 
 
         if File.readlines("#{Rails.root}/config/environment.rb").grep(/^\s*config.active_record.observers\s+=/).any?
-          raise "### Comment-out config.active_record.observers in environment.rb! ###".red
+          #raise "### Comment-out config.active_record.observers in environment.rb! ###".red
+          raise "### Comment-out config.active_record.observers in environment.rb! ###"
         end
 
         #/nfs/users/nfs_r/re4/dev/targ_rep/config/environment.rb
