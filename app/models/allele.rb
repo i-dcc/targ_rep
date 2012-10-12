@@ -173,6 +173,7 @@ class Allele < ActiveRecord::Base
         return 'Yes'
       else
         return 'No'
+      end
     end
 
     def pipeline_names
@@ -187,6 +188,7 @@ class Allele < ActiveRecord::Base
         return self.mutation_subtype.name
       else
         return ''
+      end
     end
 
   protected
