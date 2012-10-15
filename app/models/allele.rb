@@ -78,13 +78,13 @@ class Allele < ActiveRecord::Base
     :message    => "is not a valid mouse chromosome"
 
   validates_associated :mutation_method,
-    :message    => "should be #{MutationMethod.all.map {|a| a.name}.to_sentence}"
+    :message    => "should be a valid mutation method"
 
   validates_associated :mutation_type,
-    :message    => "should be #{MutationType.all.map {|a| a.name}.to_sentence}"
+    :message    => "should be a valid mutation type"
 
   validates_associated :mutation_subtype,
-    :message    => "should be #{MutationSubtype.all.map {|a| a.name}.to_sentence}"
+    :message    => "should be a valid mutation subtype"
 
   validates_format_of :mgi_accession_id,
     :with       => /^MGI\:\d+$/,
