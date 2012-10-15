@@ -28,7 +28,7 @@ class CreateMutationTables < ActiveRecord::Migration
     add_column :alleles,  :mutation_type_id, :integer
     add_column :alleles,  :mutation_subtype_id, :integer
 
-    sql <<-"EOL"
+    sql= <<-"EOL"
     INSERT INTO mutation_methods (id, name, code) VALUES(1,'Targeted Mutation', 'tgm');
     INSERT INTO mutation_methods (id, name, code) VALUES(2,'Recombination Mediated Cassette Exchange', 'rmce');
     INSERT INTO mutation_types (id, name, code) VALUES(1,'Conditional Ready', 'crd');
