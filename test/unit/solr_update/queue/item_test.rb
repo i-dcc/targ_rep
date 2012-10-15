@@ -2,8 +2,6 @@ require 'test_helper'
 
 class SolrUpdate::Queue::ItemTest < ActiveSupport::TestCase
 
-  class MockError < RuntimeError; end
-
   def setup_for_add_and_process
     @allele1_reference = {'type' => 'allele', 'id' => 57}
     @allele2_reference = {'type' => 'allele', 'id' => 92}
@@ -18,6 +16,7 @@ class SolrUpdate::Queue::ItemTest < ActiveSupport::TestCase
 
     should have_db_column(:created_at).of_type(:datetime)
     should have_db_column(:allele_id).of_type(:integer)
+    should have_db_column(:action)
 
     should belong_to(:allele)
 
@@ -28,6 +27,11 @@ class SolrUpdate::Queue::ItemTest < ActiveSupport::TestCase
 
       commands = SolrUpdate::Queue::Item.earliest_first
       assert_equal [1, 2, 3], commands.map(&:allele_id)
+    end
+
+    should 'have #reference' do
+      i = SolrUpdate::Queue::Item.new(:allele_id => 4, :action => 'update')
+      assert_equal({'type' => 'allele', 'id' => 4}, i.reference)
     end
 
     should '#add object reference and command type to the database in order of being added' do
@@ -51,18 +55,16 @@ class SolrUpdate::Queue::ItemTest < ActiveSupport::TestCase
       assert_not_nil SolrUpdate::Queue::Item.find_by_allele_id_and_action!(@allele2_reference['id'], 'delete')
     end
 
-    should 'process objects in the order they were added and deletes them' do
+    should 'process objects in the order they were added' do
       setup_for_add_and_process
 
       things_processed = []
 
-      SolrUpdate::Queue::Item.process_in_order do |allele_reference, action|
-        things_processed.push([allele_reference, action])
+      SolrUpdate::Queue::Item.process_in_order do |item|
+        things_processed.push(item)
       end
 
-      assert_equal [[@allele1_reference, 'delete'], [@allele2_reference, 'update']], things_processed
-      assert_nil SolrUpdate::Queue::Item.find_by_id!(@item1.id)
-      assert_nil SolrUpdate::Queue::Item.find_by_id!(@item2.id)
+      assert_equal [@item1, @item2], things_processed
     end
 
     should 'only process a limited number of items per call if told to' do
@@ -72,25 +74,29 @@ class SolrUpdate::Queue::ItemTest < ActiveSupport::TestCase
 
       ids_processed = []
 
-      SolrUpdate::Queue::Item.process_in_order(:limit => 3) do |ref, action|
-        ids_processed.push ref['id']
+      SolrUpdate::Queue::Item.process_in_order(:limit => 3) do |item|
+        ids_processed.push item.id
+        item.destroy
       end
 
       assert_equal 3, ids_processed.size
 
-      SolrUpdate::Queue::Item.process_in_order(:limit => 2) do |ref, action|
-        ids_processed.push ref['id']
+      SolrUpdate::Queue::Item.process_in_order(:limit => 2) do |item|
+        ids_processed.push item.id
+        item.destroy
       end
 
       assert_equal 5, ids_processed.size
 
-      SolrUpdate::Queue::Item.process_in_order do |ref, action|
-        ids_processed.push ref['id']
+      SolrUpdate::Queue::Item.process_in_order do |item|
+        ids_processed.push item.id
+        item.destroy
       end
 
       assert_equal 10, ids_processed.size
     end
 
+<<<<<<< HEAD
     should 'not delete queue item if an exception is raised during processing' do
       setup_for_add_and_process
 
@@ -104,5 +110,7 @@ class SolrUpdate::Queue::ItemTest < ActiveSupport::TestCase
       assert_not_nil SolrUpdate::Queue::Item.find_by_id!(@item2.id)
     end
 
+=======
+>>>>>>> master
   end
 end
