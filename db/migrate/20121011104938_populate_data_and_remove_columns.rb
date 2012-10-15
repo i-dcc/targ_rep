@@ -1,6 +1,6 @@
 class PopulateDataAndRemoveColumns < ActiveRecord::Migration
 
-  class allele < ActiveRecord::Base
+  class Allele < ActiveRecord::Base
     belongs_to :mutation_method
     belongs_to :mutation_type
     belongs_to :mutation_subtype
