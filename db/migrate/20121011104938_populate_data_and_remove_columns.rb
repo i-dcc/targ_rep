@@ -36,10 +36,10 @@ class PopulateDataAndRemoveColumns < ActiveRecord::Migration
 
   def self.down
 
-    create_column :alleles, :mut_method, :string
-    create_column :alleles, :mut_type, :string
-    create_column :alleles, :mut_subtype, :string
-    create_column :alleles, :design_type, :string
-    create_column :alleles, :design_subtype, :string
+    add_column :alleles, :mut_method, :string
+    add_column :alleles, :mut_type, :string
+    add_column :alleles, :mut_subtype, :string
+    add_column :alleles, :design_type, :string
+    add_column :alleles, :design_subtype, :string
   end
 end
