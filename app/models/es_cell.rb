@@ -78,7 +78,7 @@ class EsCell < ActiveRecord::Base
   end
 
   def targeting_vector_name=(name)
-    self.targeting_vector = TargetingVector.find_by_name!(name) unless name.blank?
+    self.targeting_vector = TargetingVector.find_by_name(name) unless name.blank?
   end
 
   public

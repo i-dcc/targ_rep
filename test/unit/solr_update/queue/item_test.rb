@@ -8,8 +8,8 @@ class SolrUpdate::Queue::ItemTest < ActiveSupport::TestCase
     SolrUpdate::Queue::Item.add(@allele1_reference, 'delete')
     SolrUpdate::Queue::Item.add(@allele2_reference, 'update')
 
-    @item1 = SolrUpdate::Queue::Item.find_by_allele_id_and_action!(@allele1_reference['id'], 'delete')
-    @item2 = SolrUpdate::Queue::Item.find_by_allele_id_and_action!(@allele2_reference['id'], 'update')
+    @item1 = SolrUpdate::Queue::Item.find_by_allele_id_and_action(@allele1_reference['id'], 'delete')
+    @item2 = SolrUpdate::Queue::Item.find_by_allele_id_and_action(@allele2_reference['id'], 'update')
   end
 
   context 'SolrUpdate::Queue::Item' do
@@ -44,15 +44,15 @@ class SolrUpdate::Queue::ItemTest < ActiveSupport::TestCase
     should 'add model object directly instead of it\'s id' do
       allele = Factory.create :allele, :id => 66
       SolrUpdate::Queue::Item.add(allele, 'update')
-      assert_not_nil SolrUpdate::Queue::Item.find_by_allele_id_and_action!(allele.id, 'update')
+      assert_not_nil SolrUpdate::Queue::Item.find_by_allele_id_and_action(allele.id, 'update')
     end
 
     should 'add only one command per item, removing any that are already present' do
       setup_for_add_and_process
       SolrUpdate::Queue::Item.add(@allele2_reference, 'delete')
 
-      assert_nil SolrUpdate::Queue::Item.find_by_id!(@item2.id)
-      assert_not_nil SolrUpdate::Queue::Item.find_by_allele_id_and_action!(@allele2_reference['id'], 'delete')
+      assert_nil SolrUpdate::Queue::Item.find_by_id(@item2.id)
+      assert_not_nil SolrUpdate::Queue::Item.find_by_allele_id_and_action(@allele2_reference['id'], 'delete')
     end
 
     should 'process objects in the order they were added' do
@@ -96,21 +96,5 @@ class SolrUpdate::Queue::ItemTest < ActiveSupport::TestCase
       assert_equal 10, ids_processed.size
     end
 
-<<<<<<< HEAD
-    should 'not delete queue item if an exception is raised during processing' do
-      setup_for_add_and_process
-
-      assert_raise(MockError) do
-        SolrUpdate::Queue::Item.process_in_order do |allele_ref, action|
-          raise MockError if allele_ref == @allele2_reference
-        end
-      end
-
-      assert_nil SolrUpdate::Queue::Item.find_by_id!(@item1.id)
-      assert_not_nil SolrUpdate::Queue::Item.find_by_id!(@item2.id)
-    end
-
-=======
->>>>>>> master
   end
 end

@@ -27,19 +27,19 @@ class PopulateDataAndRemoveColumns < ActiveRecord::Migration
     EOL
 
     sql.strip.split("\n").each {|s| execute s.strip}
-#    remove_column :alleles, :mut_method
-#    remove_column :alleles, :mut_type
-#    remove_column :alleles, :mut_subtype
-#    remove_column :alleles, :design_type
-#    remove_column :alleles, :design_subtype
+    remove_column :alleles, :mut_method
+    remove_column :alleles, :mut_type
+    remove_column :alleles, :mut_subtype
+    remove_column :alleles, :design_type
+    remove_column :alleles, :design_subtype
   end
 
   def self.down
 
-#    create_column :alleles, :mut_method, :string
-#    create_column :alleles, :mut_type, :string
-#    create_column :alleles, :mut_subtype, :string
-#    create_column :alleles, :design_type, :string
-#    create_column :alleles, :design_subtype, :string
+    create_column :alleles, :mut_method, :string
+    create_column :alleles, :mut_type, :string
+    create_column :alleles, :mut_subtype, :string
+    create_column :alleles, :design_type, :string
+    create_column :alleles, :design_subtype, :string
   end
 end
