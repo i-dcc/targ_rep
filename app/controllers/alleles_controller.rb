@@ -1,4 +1,3 @@
-
 class AllelesController < ApplicationController
   before_filter :require_user, :only => [:index, :show, :new, :edit, :create, :update, :destroy]
   before_filter :find_allele,
@@ -44,7 +43,6 @@ class AllelesController < ApplicationController
     ]
   before_filter :check_for_escell_genbank_file, :only => [ :escell_clone_genbank_file, :escell_clone_cre_genbank_file, :escell_clone_flp_genbank_file, :escell_clone_flp_cre_genbank_file, :allele_image, :allele_image_cre, :allele_image_flp, :allele_image_flp_cre ]
   before_filter :check_for_vector_genbank_file, :only => [ :targeting_vector_genbank_file, :targeting_vector_cre_genbank_file, :targeting_vector_flp_genbank_file, :targeting_vector_flp_cre_genbank_file, :vector_image, :vector_image_cre, :vector_image_flp, :vector_image_flp_cre ]
-
   # Must be after "find_allele" filter (as it requires an object)
   before_filter :ensure_creator_or_admin, :only => [:destroy]
 
@@ -65,6 +63,7 @@ class AllelesController < ApplicationController
       :select  => "distinct alleles.*",
       :include => [ { :targeting_vectors => :pipeline }, { :es_cells => :pipeline } ]
     )
+    mutational_drop_downs
 
     respond_to do |format|
       format.html # index.html.erb
@@ -82,11 +81,10 @@ class AllelesController < ApplicationController
       :include => [
         :genbank_file,
         { :targeting_vectors => :pipeline },
-        { :es_cells => [ :pipeline, :es_cell_qc_conflicts, :distribution_qcs ] }
+        { :es_cells => [ :pipeline, :es_cell_qc_conflicts ] }
       ]
     )
     @es_cells = @allele.es_cells.sort{ |a,b| a.name <=> b.name }
-
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml   => @allele }
@@ -97,6 +95,7 @@ class AllelesController < ApplicationController
   # GET /alleles/new
   def new
     @allele = Allele.new
+    mutational_drop_downs
     @allele.genbank_file = GenbankFile.new
     @allele.targeting_vectors.build
     @allele.es_cells.build
@@ -109,16 +108,13 @@ class AllelesController < ApplicationController
       :include => [
         :genbank_file,
         { :targeting_vectors => :pipeline },
-        { :es_cells => [ :pipeline, :es_cell_qc_conflicts, :distribution_qcs ] }
+        { :es_cells => [ :pipeline, :es_cell_qc_conflicts ] }
       ]
     )
+    mutational_drop_downs
     @allele.genbank_file = GenbankFile.new if @allele.genbank_file.nil?
 
     @allele.es_cells.sort!{ |a,b| a.name <=> b.name }
-
-    @allele.es_cells.each do |es_cell|
-      es_cell.build_distribution_qc(current_user.centre)
-    end
   end
 
   # POST /alleles
@@ -126,6 +122,7 @@ class AllelesController < ApplicationController
   # POST /alleles.json
   def create
     @allele = Allele.new( params[:allele] )
+    mutational_drop_downs
 
     respond_to do |format|
       if @allele.save
@@ -152,8 +149,8 @@ class AllelesController < ApplicationController
   # PUT /alleles/1
   # PUT /alleles/1.xml
   def update
+    mutational_drop_downs
     respond_to do |format|
-
       if @allele.update_attributes(params[:allele])
         # Useful for all formats, not only HTML
         update_links_escell_to_targ_vec( @allele.id, params[:allele] )
@@ -181,6 +178,7 @@ class AllelesController < ApplicationController
   # DELETE /alleles/1.xml
   def destroy
     @allele.destroy
+    mutational_drop_downs
 
     respond_to do |format|
       format.html { redirect_to :back }
@@ -308,6 +306,12 @@ class AllelesController < ApplicationController
       @allele = Allele.find(params[:id])
     end
 
+    def mutational_drop_downs
+      @mutation_type = MutationType.all
+      @mutation_subtype = MutationSubtype.all
+      @mutation_method = MutationMethod.all
+    end
+
     def setup_allele_search(params)
       allele_params = params.dup
 
@@ -345,7 +349,6 @@ class AllelesController < ApplicationController
     end
 
     def format_nested_params
-
       # Specific to create/update methods - webservice interface
       params[:allele] = params.delete(:molecular_structure) if params[:molecular_structure]
       allele_params = params[:allele]
@@ -418,7 +421,6 @@ class AllelesController < ApplicationController
           allele_params.delete(:genbank_file_attributes)
         end
       end
-
     end
 
     def four_oh_four
@@ -480,3 +482,4 @@ class AllelesController < ApplicationController
       end
     end
 end
+

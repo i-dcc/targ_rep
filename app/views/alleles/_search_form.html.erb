@@ -2,21 +2,15 @@
   pipeline_array       = Pipeline.all.map { |pipeline| [pipeline.name, pipeline.id.to_s] }
   tv_pipeline_options  = options_for_select( [['All','']] + pipeline_array, params[:targeting_vectors_pipeline_id_is] )
   esc_pipeline_options = options_for_select( [['All','']] + pipeline_array, params[:es_cells_pipeline_id_is] )
-  
-  design_type_array = 
-  Allele.all(:select => 'DISTINCT design_type').map do |allele| 
-    [allele.design_type, allele.design_type]
-  end
-  design_type_options = options_for_select( [['All','']] + design_type_array, params[:design_type] )
-  
-  cassette_array = 
-  Allele.all(:select => 'DISTINCT cassette').map do |allele| 
+
+  cassette_array =
+  Allele.all(:select => 'DISTINCT cassette').map do |allele|
     [allele.cassette, allele.cassette]
   end
   cassette_options = options_for_select( [['All','']] + cassette_array, params[:cassette] )
-  
-  backbone_array = 
-  Allele.all(:select => 'DISTINCT backbone').map do |allele| 
+
+  backbone_array =
+  Allele.all(:select => 'DISTINCT backbone').map do |allele|
     [allele.backbone, allele.backbone] unless allele.backbone.nil? or allele.backbone.empty?
   end
   backbone_options = options_for_select( [['All','']] + backbone_array, params[:backbone] )
@@ -41,23 +35,23 @@
       <td></td>
     </tr>
     <tr>
-      <td><%= label_tag :design_type, "Design Type" %>:</td>
-      <td><%= select_tag :design_type, design_type_options %></td>
+      <td><%= label_tag :mutation_type, "Mutation Type" %>:</td>
+      <td><%= select_tag "mutation_type_id", options_for_select([['All','']] + MutationType.all.collect{ |u| [u.name, u.id]})  %></td>
       <td><%= label_tag :cassette %>:</td>
       <td><%= select_tag :cassette, cassette_options %></td>
       <td><%= label_tag :backbone %>:</td>
       <td><%= select_tag :backbone, backbone_options %></td>
     </tr>
-    
+
     <tr>
       <td colspan="4">
         <button type="submit" class="button">
           <%= image_tag "led-icons/find.png", :alt => "" %> Search
-        </button> 
-        
+        </button>
+
         <button type="reset" class="button negative">
           <%= image_tag "led-icons/cross.png", :alt => "" %> Reset
-        </button> 
+        </button>
       </td>
     </tr>
   </table>
