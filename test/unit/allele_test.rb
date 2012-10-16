@@ -47,6 +47,24 @@ class AlleleTest < ActiveSupport::TestCase
       end
     end
 
+    should 'return mutation_method_name' do
+      allele = Factory.create( :allele )
+      name = allele.mutation_method.name
+      assert_equal name, allele.mutation_method_name
+    end
+
+    should 'return mutation_type_name' do
+      allele = Factory.create( :allele )
+      name = allele.mutation_type.name
+      assert_equal name, allele.mutation_type_name
+    end
+
+    should 'return mutation_subtype_name' do
+      allele = Factory.create( :allele )
+      name = allele.mutation_subtype.name
+      assert_equal name, allele.mutation_subtype_name
+    end
+
     context "with an incorrect MGI Accession ID" do
       should "not be saved" do
         allele = Factory.build( :allele, :mgi_accession_id => 'WRONG MGI' )
@@ -233,7 +251,8 @@ class AlleleTest < ActiveSupport::TestCase
                   :ikmc_project_id => ikmc_project_ids[i],
                   :pipeline => Pipeline.find_by_name!('EUCOMM')
         end
-        allele.reload
+        #allele.reload
+        allele = Allele.find(allele.id)
         unique_es_cells = allele.es_cells.unique_public_info
         assert_equal 3, unique_es_cells.count
         assert unique_es_cells.include?({:strain => strains[0][1], :allele_symbol_superscript => allele_symbol_superscript[0], :pipeline => 'EUCOMM', :ikmc_project_id => '1'})
@@ -253,8 +272,8 @@ class AlleleTest < ActiveSupport::TestCase
                 :allele_symbol_superscript => 'tm1a(EUCOMM)WTSI',
                 :pipeline => Pipeline.find_by_name!('mirKO'),
                 :ikmc_project_id => '1'
-        allele.reload
-
+        #allele.reload
+        allele = Allele.find(allele.id)
         unique_info = allele.es_cells.unique_public_info
         assert_equal 1, unique_info.size
         expected = {
