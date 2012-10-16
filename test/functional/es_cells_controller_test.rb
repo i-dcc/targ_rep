@@ -358,4 +358,137 @@ class EsCellsControllerTest < ActionController::TestCase
 
   end
 
+  should "stop creation of a distribution_qc when es_cell_id and centre_id duplicated" do
+    pipeline      = Factory.create( :pipeline )
+    es_cell_attrs = Factory.attributes_for( :es_cell )
+
+    assert_difference('EsCell.count') do
+      post :create, :es_cell => {
+        :name                => es_cell_attrs[:name],
+        :parental_cell_line  => es_cell_attrs[:parental_cell_line],
+        :targeting_vector_id => EsCell.first.targeting_vector_id,
+        :allele_id           => EsCell.first.allele_id,
+        :mgi_allele_id       => es_cell_attrs[:mgi_allele_id],
+        :pipeline_id         => pipeline.id
+      }
+    end
+
+    es_cell = EsCell.last
+
+    assert_equal es_cell.name, es_cell_attrs[:name]
+    assert_equal es_cell.parental_cell_line, es_cell_attrs[:parental_cell_line]
+    assert_equal es_cell.targeting_vector_id, EsCell.first.targeting_vector_id
+    assert_equal es_cell.allele_id, EsCell.first.allele_id
+    assert_equal es_cell.mgi_allele_id, es_cell_attrs[:mgi_allele_id]
+    assert_equal es_cell.pipeline_id, pipeline.id
+    assert_equal 0, es_cell.distribution_qcs.size
+
+    response = get :show, :format => "json", :id => es_cell.id
+    assert_response :success, "Controller does not allow JSON display"
+
+    target = {
+      :centre_name => 'WTSI',
+      :five_prime_sr_pcr => ['pass', 'fail'].sample,
+      :three_prime_sr_pcr => ['pass', 'fail'].sample,
+      :copy_number => ['pass', 'fail'].sample,
+      :five_prime_lr_pcr => ['pass', 'fail'].sample,
+      :three_prime_lr_pcr => ['pass', 'fail'].sample,
+      :thawing => ['pass', 'fail'].sample,
+      :loa => ['pass', 'fail', 'passb'].sample,
+      :loxp => ['pass', 'fail'].sample,
+      :lacz => ['pass', 'fail'].sample,
+      :chr1 => ['pass', 'fail'].sample,
+      :chr8a => ['pass', 'fail'].sample,
+      :chr8b => ['pass', 'fail'].sample,
+      :chr11a => ['pass', 'fail'].sample,
+      :chr11b => ['pass', 'fail'].sample,
+      :chry => ['pass', 'fail', 'passb'].sample,
+      :karyotype_low => [0.1, 0.2, 0.3, 0.4, 0.5].sample,
+      :karyotype_high => [0.1, 0.2, 0.3, 0.4, 0.5].sample
+    }
+
+    put :update, :id => es_cell.id, :es_cell => { :distribution_qcs_attributes => [target] }
+    assert_response :success
+
+    es_cell.reload
+
+    id = es_cell.distribution_qcs.first.id
+
+    dqc = DistributionQc.find id
+
+    target[:id] = id
+
+    assert_equal 'WTSI', dqc.centre_name
+
+    target.delete(:centre_name)
+
+    target.keys.each do |key|
+      assert_equal target[key], dqc[key], "Expected '#{target[key]}' - found '#{dqc[key]}' for key #{key}"
+    end
+
+    get :show, :format => "json", :id => es_cell.id
+    assert_response :success, "Controller does not allow JSON display"
+
+    #puts "response.body"
+    #puts response.body
+
+  #"distribution_qcs": [{
+  #    "five_prime_sr_pcr": "fail",
+  #    "centre_id": 980190962,
+  #    "three_prime_sr_pcr": "fail",
+  #    "chr11b": "pass",
+  #    "chr11a": "fail",
+  #    "loxp": "fail",
+  #    "three_prime_lr_pcr": "pass",
+  #    "chr8b": "fail",
+  #    "chr8a": "pass",
+  #    "thawing": "pass",
+  #    "karyotype_high": 0.3,
+  #    "karyotype_low": 0.3,
+  #    "five_prime_lr_pcr": "fail",
+  #    "lacz": "fail",
+  #    "chry": "pass",
+  #    "chr1": "pass",
+  #    "copy_number": "pass",
+  #    "loa": "pass",
+  #    "id": 12296
+  #  }],
+
+    target = {
+      :centre_name => 'WTSI',
+      :five_prime_sr_pcr => ['pass', 'fail'].sample,
+      :three_prime_sr_pcr => ['pass', 'fail'].sample,
+      :copy_number => ['pass', 'fail'].sample,
+      :five_prime_lr_pcr => ['pass', 'fail'].sample,
+      :three_prime_lr_pcr => ['pass', 'fail'].sample,
+      :thawing => ['pass', 'fail'].sample,
+      :loa => ['pass', 'fail', 'passb'].sample,
+      :loxp => ['pass', 'fail'].sample,
+      :lacz => ['pass', 'fail'].sample,
+      :chr1 => ['pass', 'fail'].sample,
+      :chr8a => ['pass', 'fail'].sample,
+      :chr8b => ['pass', 'fail'].sample,
+      :chr11a => ['pass', 'fail'].sample,
+      :chr11b => ['pass', 'fail'].sample,
+      :chry => ['pass', 'fail', 'passb'].sample,
+      :karyotype_low => [0.1, 0.2, 0.3, 0.4, 0.5].sample,
+      :karyotype_high => [0.1, 0.2, 0.3, 0.4, 0.5].sample
+    }
+
+    begin
+
+      put :update, :id => es_cell.id, :es_cell => { :distribution_qcs_attributes => [target] }
+
+      assert false
+
+    rescue ActiveRecord::StatementInvalid => e
+      #puts "OK!"
+      #puts "####"
+      #puts e.inspect
+
+      assert_match(/Duplicate entry/, e.to_s)
+    end
+
+  end
+
 end

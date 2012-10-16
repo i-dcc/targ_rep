@@ -2,15 +2,13 @@
 
 require 'test_helper'
 
-class Test::Person < ApplicationModel
-  acts_as_audited
-
+class Test::Person < ActiveRecord::Base
   self.connection.create_table :test_people, :force => true do |t|
     t.string :name
   end
   set_table_name :test_people
 
-  validates :name, :uniqueness => true
+  validates_uniqueness_of :name
 end
 
 class Test::Pet < ActiveRecord::Base
@@ -81,6 +79,7 @@ class AccessAssociationByAttributeTest < ActiveSupport::TestCase
         assert_nothing_raised do
           assert_equal false, @pet.valid?
         end
+
         assert ! @pet.errors[:name].blank?
       end
     end
@@ -90,14 +89,14 @@ class AccessAssociationByAttributeTest < ActiveSupport::TestCase
         Test::Pet.setup_access
       end
 
-      should 'set association by given attribute value' do
+      should_eventually 'set association by given attribute value' do
         @pet.owner_name = 'Ali'
         @pet.save!
         @pet.reload
         assert_equal 'Ali', @pet.owner.name
       end
 
-      should 'set correctly even if association was previously unset' do
+      should_eventually 'set correctly even if association was previously unset' do
         @pet.owner = nil
         @pet.owner_name = 'Ali'
         @pet.save!
@@ -105,14 +104,14 @@ class AccessAssociationByAttributeTest < ActiveSupport::TestCase
         assert_equal 'Ali', @pet.owner.name
       end
 
-      should 'allow unsetting association by passing nil' do
+      should_eventually 'allow unsetting association by passing nil' do
         @pet.owner_name = nil
         @pet.save!
         @pet.reload
         assert_equal nil, @pet.owner
       end
 
-      should 'allow unsetting association by passing anything blank' do
+      should_eventually 'allow unsetting association by passing anything blank' do
         @pet.owner_name = ''
         @pet.save!
         @pet.reload
@@ -162,7 +161,7 @@ class AccessAssociationByAttributeTest < ActiveSupport::TestCase
         assert_equal @person2.name, @pet.owner_full_name
       end
 
-      should 'be used in validation' do
+      should_eventually 'be used in validation' do
         @pet.owner_full_name = 'Nonexistent'
         assert_false @pet.valid?
         assert ! @pet.errors['owner_full_name'].empty?
@@ -182,7 +181,7 @@ class AccessAssociationByAttributeTest < ActiveSupport::TestCase
         assert_equal @person2.name, @pet.master
       end
 
-      should 'be used in validation' do
+      should_eventually 'be used in validation' do
         @pet.master = 'Nonexistent'
         assert_false @pet.valid?
         assert ! @pet.errors['master'].empty?
@@ -190,7 +189,7 @@ class AccessAssociationByAttributeTest < ActiveSupport::TestCase
       end
     end
 
-    should 'reset all AABA attributes on reload' do
+    should_eventually 'reset all AABA attributes on reload' do
       class ::Test::Pet
         access_association_by_attribute :owner, :name
         access_association_by_attribute :owner, :name, :full_alias => :master
