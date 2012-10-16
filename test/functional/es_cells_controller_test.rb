@@ -429,31 +429,6 @@ class EsCellsControllerTest < ActionController::TestCase
     get :show, :format => "json", :id => es_cell.id
     assert_response :success, "Controller does not allow JSON display"
 
-    #puts "response.body"
-    #puts response.body
-
-  #"distribution_qcs": [{
-  #    "five_prime_sr_pcr": "fail",
-  #    "centre_id": 980190962,
-  #    "three_prime_sr_pcr": "fail",
-  #    "chr11b": "pass",
-  #    "chr11a": "fail",
-  #    "loxp": "fail",
-  #    "three_prime_lr_pcr": "pass",
-  #    "chr8b": "fail",
-  #    "chr8a": "pass",
-  #    "thawing": "pass",
-  #    "karyotype_high": 0.3,
-  #    "karyotype_low": 0.3,
-  #    "five_prime_lr_pcr": "fail",
-  #    "lacz": "fail",
-  #    "chry": "pass",
-  #    "chr1": "pass",
-  #    "copy_number": "pass",
-  #    "loa": "pass",
-  #    "id": 12296
-  #  }],
-
     target = {
       :centre_name => 'WTSI',
       :five_prime_sr_pcr => ['pass', 'fail'].sample,
@@ -482,10 +457,6 @@ class EsCellsControllerTest < ActionController::TestCase
       assert false
 
     rescue ActiveRecord::StatementInvalid => e
-      #puts "OK!"
-      #puts "####"
-      #puts e.inspect
-
       assert_match(/Duplicate entry/, e.to_s)
     end
 
