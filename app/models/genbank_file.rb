@@ -49,10 +49,11 @@ private
       Open3.popen3("#{GENBANK_RECOMBINATION_SCRIPT_PATH} --#{flag}") do |std_in, std_out, std_err|
         std_in.write(genbank_file)
         std_in.close_write
-        if !std_err.blank?
-          return std_out.read
+        std_err_out = std_err.read
+        if std_err_out.present?
+          raise "Error during recombination: #{std_err_out}"
         else
-          raise "Error: #{std_err.read}"
+          return std_out.read
         end
       end
     else
