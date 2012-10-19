@@ -114,6 +114,10 @@ class AllelesController < ApplicationController
     mutational_drop_downs
     @allele.genbank_file = GenbankFile.new if @allele.genbank_file.nil?
 
+    @allele.es_cells.each do |es_cell|
+      es_cell.build_distribution_qc(current_user.centre)
+    end
+
     @allele.es_cells.sort!{ |a,b| a.name <=> b.name }
   end
 
@@ -482,4 +486,3 @@ class AllelesController < ApplicationController
       end
     end
 end
-
