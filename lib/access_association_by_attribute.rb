@@ -15,15 +15,15 @@ module AccessAssociationByAttribute
       virtual_attribute = "#{association_name}_#{attribute}"
     end
 
-    if ! instance_methods.include?(:reload_without_aaba)
-      alias_method :reload_without_aaba, :reload
-
-      define_method :reload do |*args|
-        retval = reload_without_aaba(*args)
-        @aaba_what_changed = []
-        return retval
-      end
-    end
+    #if ! instance_methods.include?(:reload_without_aaba)
+    #  alias_method :reload_without_aaba, :reload
+    #
+    #  define_method :reload do |*args|
+    #    retval = reload_without_aaba(*args)
+    #    @aaba_what_changed = []
+    #    return retval
+    #  end
+    #end
 
     define_method virtual_attribute do
       @aaba_what_changed ||= []

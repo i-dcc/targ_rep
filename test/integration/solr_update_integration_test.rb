@@ -28,7 +28,8 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
         :parental_cell_line => 'JM8A3.N1',
         :pipeline => eucomm,
         :allele_symbol_superscript => 'tm2a(EUCOMM)Wtsi')
-      @allele.reload
+      #@allele.reload
+      @allele = Allele.find(@allele.id)
 
       assert_equal 'cki', @allele.mutation_type.code
       assert_equal 'C57BL/6N', @allele.es_cells[0].strain

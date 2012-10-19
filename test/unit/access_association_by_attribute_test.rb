@@ -74,13 +74,13 @@ class AccessAssociationByAttributeTest < ActiveSupport::TestCase
         assert_equal 'A Name', @pet.instance_variable_get('@owner_name')
       end
 
-      should_eventually 'not raise when set value is not compatible type-wise with attribute being searched for' do
+      should 'not raise when set value is not compatible type-wise with attribute being searched for' do
         @pet.owner_name = 1
         assert_nothing_raised do
           assert_equal false, @pet.valid?
         end
 
-        assert ! @pet.errors[:name].blank?
+        assert ! @pet.errors[:owner_name].blank?
       end
     end
 
@@ -89,33 +89,37 @@ class AccessAssociationByAttributeTest < ActiveSupport::TestCase
         Test::Pet.setup_access
       end
 
-      should_eventually 'set association by given attribute value' do
+      should 'set association by given attribute value' do
+        assert_equal 'Fred', @pet.owner.name
         @pet.owner_name = 'Ali'
         @pet.save!
-        @pet.reload
-        assert_equal 'Ali', @pet.owner.name
+        pet = Test::Pet.find @pet.id
+        assert_equal 'Ali', pet.owner.name
       end
 
-      should_eventually 'set correctly even if association was previously unset' do
+      should 'set correctly even if association was previously unset' do
+        assert_equal 'Fred', @pet.owner.name
         @pet.owner = nil
         @pet.owner_name = 'Ali'
         @pet.save!
-        @pet.reload
-        assert_equal 'Ali', @pet.owner.name
+        pet = Test::Pet.find @pet.id
+        assert_equal 'Ali', pet.owner.name
       end
 
-      should_eventually 'allow unsetting association by passing nil' do
+      should 'allow unsetting association by passing nil' do
+        assert_equal 'Fred', @pet.owner.name
         @pet.owner_name = nil
         @pet.save!
-        @pet.reload
-        assert_equal nil, @pet.owner
+        pet = Test::Pet.find @pet.id
+        assert_equal nil, pet.owner
       end
 
-      should_eventually 'allow unsetting association by passing anything blank' do
+      should 'allow unsetting association by passing anything blank' do
+        assert_equal 'Fred', @pet.owner.name
         @pet.owner_name = ''
         @pet.save!
-        @pet.reload
-        assert_equal nil, @pet.owner
+        pet = Test::Pet.find @pet.id
+        assert_equal nil, pet.owner
       end
     end
 
@@ -139,7 +143,7 @@ class AccessAssociationByAttributeTest < ActiveSupport::TestCase
       Test::Pet.setup_access
       @pet.owner_name = 55
       assert_false @pet.save
-      assert_equal "'55' is invalid", @pet.errors[:owner_name].first
+      assert_equal "'55' is invalid", @pet.errors['owner_name'].first
     end
 
     should 'not keep errors hanging around if assigned something invalid then valid again' do
@@ -161,11 +165,11 @@ class AccessAssociationByAttributeTest < ActiveSupport::TestCase
         assert_equal @person2.name, @pet.owner_full_name
       end
 
-      should_eventually 'be used in validation' do
+      should 'be used in validation' do
         @pet.owner_full_name = 'Nonexistent'
         assert_false @pet.valid?
         assert ! @pet.errors['owner_full_name'].empty?
-        assert @pet.errors['owner_name'].empty?
+        assert ! @pet.errors['owner_name'] || @pet.errors['owner_name'].size == 0
       end
     end
 
@@ -181,15 +185,15 @@ class AccessAssociationByAttributeTest < ActiveSupport::TestCase
         assert_equal @person2.name, @pet.master
       end
 
-      should_eventually 'be used in validation' do
+      should 'be used in validation' do
         @pet.master = 'Nonexistent'
         assert_false @pet.valid?
         assert ! @pet.errors['master'].empty?
-        assert @pet.errors['owner_name'].empty?
+        assert !@pet.errors['owner_name'] || @pet.errors['owner_name'].empty?
       end
     end
 
-    should_eventually 'reset all AABA attributes on reload' do
+    should 'reset all AABA attributes on reload' do
       class ::Test::Pet
         access_association_by_attribute :owner, :name
         access_association_by_attribute :owner, :name, :full_alias => :master
@@ -205,11 +209,11 @@ class AccessAssociationByAttributeTest < ActiveSupport::TestCase
 
       assert_false @pet.valid?
 
-      @pet.reload
+      pet = Test::Pet.find @pet.id
 
-      assert_equal @pet.owner.name, @pet.master
-      assert_equal @pet.owner.name, @pet.owner_name
-      assert @pet.valid?, @pet.errors.inspect
+      assert_equal pet.owner.name, pet.master
+      assert_equal pet.owner.name, pet.owner_name
+      assert pet.valid?, pet.errors.inspect
     end
 
     should 'look up classes for associations within the current namespace' do

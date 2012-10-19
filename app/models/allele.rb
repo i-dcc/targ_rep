@@ -1,13 +1,18 @@
 class Allele < ActiveRecord::Base
   acts_as_audited
   stampable
-
+  extend AccessAssociationByAttribute
   ##
   ## Associations
   ##
   belongs_to :mutation_method
   belongs_to :mutation_type
   belongs_to :mutation_subtype
+
+  access_association_by_attribute :mutation_method, :name
+  access_association_by_attribute :mutation_type, :name
+  access_association_by_attribute :mutation_subtype, :name
+
   has_one    :genbank_file,      :class_name => "GenbankFile",     :foreign_key => "allele_id",   :dependent => :destroy
   has_many   :targeting_vectors, :class_name => "TargetingVector", :foreign_key => "allele_id",   :dependent => :destroy
   has_many   :es_cells,          :class_name => "EsCell",          :foreign_key => "allele_id",   :dependent => :destroy do
@@ -181,14 +186,6 @@ class Allele < ActiveRecord::Base
       self.targeting_vectors.each { |tv| pipelines[tv.pipeline.name] = true } if self.targeting_vectors
       self.es_cells.each { |esc| pipelines[esc.pipeline.name] = true } if self.es_cells
       pipelines.keys.sort.join(', ')
-    end
-
-    def mutation_subtype_name
-      if self.mutation_subtype
-        return self.mutation_subtype.name
-      else
-        return ''
-      end
     end
 
   protected
