@@ -19,7 +19,7 @@ class MutationType < ActiveRecord::Base
   end
 
   def knock_out?
-    if ['crd', 'tnc'].include?(self.code)
+    if ['crd', 'tnc', 'cki'].include?(self.code)
       true
     else
       false
