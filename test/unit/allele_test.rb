@@ -210,7 +210,7 @@ class AlleleTest < ActiveSupport::TestCase
     context "with mutation type 'Insertion' and LoxP set" do
       should "not be saved" do
         allele = Factory.build( :allele, {
-            :mutation_type        => MutationType.find_by_code!('cki'),
+            :mutation_type        => MutationType.find_by_code!('ins'),
             :strand             => '+',
             :loxp_start         => 100,
             :loxp_end           => 130

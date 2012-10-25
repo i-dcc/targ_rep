@@ -56,7 +56,7 @@ Factory.define :allele do |f|
   f.chromosome     { [("1".."19").to_a + ['X', 'Y', 'MT']].flatten[rand(22)] }
   f.strand         { ['+', '-'][rand(2)] }
   f.mutation_method { MutationMethod.all[rand(MutationMethod.all.count)] }
-  f.mutation_type    { MutationType.all[rand(MutationType.all.count)]  }
+  f.mutation_type    { MutationType.find_by_code('crd')  }
   f.mutation_subtype { MutationSubtype.all[rand(MutationSubtype.all.count)]  }
   f.cassette_type  { ['Promotorless','Promotor Driven'][rand(2)] }
 
@@ -109,7 +109,7 @@ Factory.define :allele do |f|
 
   # LoxP
   f.loxp_start do |allele|
-    if allele.mutation_type.knock_out?
+    if !allele.mutation_type.no_loxp_site?
       case allele.strand
         when '+' then 100
         when '-' then 70
@@ -118,7 +118,7 @@ Factory.define :allele do |f|
   end
 
   f.loxp_end do |allele|
-    if allele.mutation_type.knock_out?
+    if !allele.mutation_type.no_loxp_site?
       case allele.strand
         when '+' then 130
         when '-' then 40

@@ -44,6 +44,8 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
       es_cell2 = @es_cell2
 
       allele.mutation_type = MutationType.find_by_code!('tnc')
+      allele.loxp_start = nil
+      allele.loxp_end = nil
       allele.save!
       assert_equal 'tnc', allele.mutation_type.code
 
