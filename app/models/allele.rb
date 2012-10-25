@@ -243,7 +243,7 @@ class Allele < ActiveRecord::Base
         end
       end
 
-      if !mutation_type.knock_out?
+      if !mutation_type.no_loxp_site?
         unless loxp_start.nil? and loxp_end.nil?
           errors.add(:loxp_start, "has to be blank for this mutation method")
           errors.add(:loxp_end,   "has to be blank for this mutation method")
