@@ -1,4 +1,4 @@
-class DistributionQcController < ApplicationController
+class DistributionQcsController < ApplicationController
 
   def create
     @distribution_qc = DistributionQc.new(params[:distribution_qc])

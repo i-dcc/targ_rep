@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class DistributionQcControllerTest < ActionController::TestCase
+class DistributionQcsControllerTest < ActionController::TestCase
   setup do
     user = Factory.create( :user )
     UserSession.create user
