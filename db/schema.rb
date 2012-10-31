@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121001090312) do
+ActiveRecord::Schema.define(:version => 20121016110744) do
 
   create_table "alleles", :force => true do |t|
     t.string   "assembly",            :limit => 50,  :default => "NCBIM37", :null => false
@@ -24,8 +24,6 @@ ActiveRecord::Schema.define(:version => 20121001090312) do
     t.integer  "cassette_end"
     t.string   "cassette",            :limit => 100
     t.string   "backbone",            :limit => 100
-    t.string   "design_type",                                               :null => false
-    t.string   "design_subtype"
     t.string   "subtype_description"
     t.integer  "created_by"
     t.integer  "updated_by"
@@ -34,11 +32,11 @@ ActiveRecord::Schema.define(:version => 20121001090312) do
     t.string   "floxed_start_exon"
     t.string   "floxed_end_exon"
     t.integer  "project_design_id"
-    t.string   "mutation_type"
-    t.string   "mutation_subtype"
-    t.string   "mutation_method"
     t.string   "reporter"
     t.string   "cassette_type",       :limit => 50
+    t.integer  "mutation_method_id"
+    t.integer  "mutation_type_id"
+    t.integer  "mutation_subtype_id"
   end
 
   add_index "alleles", ["mgi_accession_id", "project_design_id", "assembly", "chromosome", "strand", "homology_arm_start", "homology_arm_end", "cassette_start", "cassette_end", "loxp_start", "loxp_end", "cassette", "backbone"], :name => "index_mol_struct", :unique => true
@@ -89,6 +87,8 @@ ActiveRecord::Schema.define(:version => 20121001090312) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "distribution_qcs", ["centre_id", "es_cell_id"], :name => "index_distribution_qcs_centre_es_cell", :unique => true
 
   create_table "es_cell_qc_conflicts", :force => true do |t|
     t.integer  "es_cell_id"
@@ -186,6 +186,27 @@ ActiveRecord::Schema.define(:version => 20121001090312) do
     t.string   "allele_gb_file", :limit => 3, :default => "", :null => false
   end
 
+  create_table "mutation_methods", :force => true do |t|
+    t.string   "name",       :limit => 100, :null => false
+    t.string   "code",       :limit => 100, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "mutation_subtypes", :force => true do |t|
+    t.string   "name",       :limit => 100, :null => false
+    t.string   "code",       :limit => 100, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "mutation_types", :force => true do |t|
+    t.string   "name",       :limit => 100, :null => false
+    t.string   "code",       :limit => 100, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "pipelines", :force => true do |t|
     t.string   "name",       :null => false
     t.datetime "created_at"
@@ -203,6 +224,15 @@ ActiveRecord::Schema.define(:version => 20121001090312) do
   end
 
   add_index "qc_field_descriptions", ["qc_field"], :name => "index_qc_field_descriptions_on_qc_field", :unique => true
+
+  create_table "solr_update_queue_items", :force => true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "allele_id",               :null => false
+    t.string   "action",     :limit => 0
+  end
+
+  add_index "solr_update_queue_items", ["allele_id"], :name => "index_solr_update_queue_items_on_allele_id", :unique => true
 
   create_table "targeting_vectors", :force => true do |t|
     t.integer  "allele_id",                             :null => false
