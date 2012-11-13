@@ -27,6 +27,7 @@ biomart_results = DCC_BIOMART.search(
 )
 
 old_to_new_mgi_id_mapping = ActiveSupport::OrderedHash.new
+
 biomart_results.each do |result|
   old_to_new_mgi_id_mapping[result['secondary_mgi_accession_id'].to_s] = result['mgi_accession_id'].to_s
 end
@@ -56,13 +57,18 @@ Allele.transaction do
   end
 
   alleles_without_new_mgi_id.each do |allele|
-    puts "CRITICAL: No new MGI id found for #{allele.mgi_accession_id} (Allele #{allele.id})"
+    puts "NOTICE: No new MGI id found for #{allele.mgi_accession_id} (Allele #{allele.id})"
   end
 
   puts "NOTICE: old -> new MGI id mappings written to file tmp/old_to_new_mgi_accession_id_mapping.#{Rails.env}.yaml"
 
   File.open("tmp/old_to_new_mgi_accession_id_mapping.#{Rails.env}.yaml", 'wb') do |file|
     file.puts old_to_new_mgi_id_mapping.to_yaml
+  end
+
+  puts "NOTICE: IDs of Alleles without new MGI IDs written to file log/alleles_without_new_mgi_id.#{Rails.env}.yaml"
+  File.open("log/alleles_without_new_mgi_id.#{Rails.env}.yaml", 'wb') do |file|
+    file.puts alleles_without_new_mgi_id.map(&:id).to_yaml
   end
 
   raise 'ROLLBACK'
