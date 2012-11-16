@@ -87,10 +87,10 @@ class SolrUpdate::DocFactoryTest < ActiveSupport::TestCase
         assert_equal [url, url], @docs.map {|d| d['genbank_file_url']}
       end
 
-      context 'order_from_url and order_from_name' do
+      context 'order_from_urls and order_from_names' do
         should 'be set for any of the EUCOMM pipelines' do
-          expected_url = 'http://www.eummcr.org/order.php'
-          expected_name = 'EUMMCR'
+          expected_url = ['http://www.eummcr.org/order.php']
+          expected_name = ['EUMMCR']
 
           setup_fake_unique_public_info [
             {:pipeline => 'EUCOMM'},
@@ -100,13 +100,13 @@ class SolrUpdate::DocFactoryTest < ActiveSupport::TestCase
 
           @docs = SolrUpdate::DocFactory.create_for_allele(@allele)
 
-          assert_equal [expected_url]*3, @docs.map {|d| d['order_from_url']}
-          assert_equal [expected_name]*3, @docs.map {|d| d['order_from_name']}
+          assert_equal [expected_url]*3, @docs.map {|d| d['order_from_urls']}
+          assert_equal [expected_name]*3, @docs.map {|d| d['order_from_names']}
         end
 
         should 'work for one of the KOMP pipelines without a valid project id' do
-          expected_url = 'http://www.komp.org/geneinfo.php?project=CSD123'
-          expected_name = 'KOMP'
+          expected_url = ['http://www.komp.org/geneinfo.php?project=CSD123']
+          expected_name = ['KOMP']
 
           setup_fake_unique_public_info [
             {:pipeline => 'KOMP-CSD', :ikmc_project_id => '123'},
@@ -115,13 +115,13 @@ class SolrUpdate::DocFactoryTest < ActiveSupport::TestCase
 
           @docs = SolrUpdate::DocFactory.create_for_allele(@allele)
 
-          assert_equal [expected_url]*2, @docs.map{|d| d['order_from_url']}
-          assert_equal [expected_name]*2, @docs.map{|d| d['order_from_name']}
+          assert_equal [expected_url]*2, @docs.map{|d| d['order_from_urls']}
+          assert_equal [expected_name]*2, @docs.map{|d| d['order_from_names']}
         end
 
         should 'work for one of the KOMP pipelines with a valid project id' do
-          expected_url = 'http://www.komp.org/geneinfo.php?project=VG10003'
-          expected_name = 'KOMP'
+          expected_url = ['http://www.komp.org/geneinfo.php?project=VG10003']
+          expected_name = ['KOMP']
 
           setup_fake_unique_public_info [
             {:ikmc_project_id => 'VG10003', :pipeline => 'KOMP-CSD'},
@@ -130,13 +130,13 @@ class SolrUpdate::DocFactoryTest < ActiveSupport::TestCase
 
           @docs = SolrUpdate::DocFactory.create_for_allele(@allele)
 
-          assert_equal [expected_url]*2, @docs.map{|d| d['order_from_url']}
-          assert_equal [expected_name]*2, @docs.map{|d| d['order_from_name']}
+          assert_equal [expected_url]*2, @docs.map{|d| d['order_from_urls']}
+          assert_equal [expected_name]*2, @docs.map{|d| d['order_from_names']}
         end
 
         should 'work for one of the KOMP pipelines with NO project id' do
-          expected_url = 'http://www.komp.org/'
-          expected_name = 'KOMP'
+          expected_url = ['http://www.komp.org/']
+          expected_name = ['KOMP']
 
           setup_fake_unique_public_info [
             {:pipeline => 'KOMP-CSD'},
@@ -145,13 +145,13 @@ class SolrUpdate::DocFactoryTest < ActiveSupport::TestCase
 
           @docs = SolrUpdate::DocFactory.create_for_allele(@allele)
 
-          assert_equal [expected_url]*2, @docs.map{|d| d['order_from_url']}
-          assert_equal [expected_name]*2, @docs.map{|d| d['order_from_name']}
+          assert_equal [expected_url]*2, @docs.map{|d| d['order_from_urls']}
+          assert_equal [expected_name]*2, @docs.map{|d| d['order_from_names']}
         end
 
         should 'work for mirKO or Sanger MGP pipelines' do
-          expected_url = 'mailto:mouseinterest@sanger.ac.uk?Subject=Mutant ES Cell line for Test1'
-          expected_name = 'Wtsi'
+          expected_url = ['mailto:mouseinterest@sanger.ac.uk?Subject=Mutant ES Cell line for Test1']
+          expected_name = ['Wtsi']
 
           setup_fake_unique_public_info [
             {:pipeline => 'mirKO'},
@@ -160,8 +160,8 @@ class SolrUpdate::DocFactoryTest < ActiveSupport::TestCase
 
           @docs = SolrUpdate::DocFactory.create_for_allele(@allele)
 
-          assert_equal [expected_url]*2, @docs.map{|d| d['order_from_url']}
-          assert_equal [expected_name]*2, @docs.map{|d| d['order_from_name']}
+          assert_equal [expected_url]*2, @docs.map{|d| d['order_from_urls']}
+          assert_equal [expected_name]*2, @docs.map{|d| d['order_from_names']}
         end
 
         should 'work for one of the NorCOMM pipeline' do
@@ -174,18 +174,18 @@ class SolrUpdate::DocFactoryTest < ActiveSupport::TestCase
 
           @docs = SolrUpdate::DocFactory.create_for_allele(@allele)
 
-          assert_equal [expected_url], @docs.map{|d| d['order_from_url']}
-          assert_equal [expected_name], @docs.map{|d| d['order_from_name']}
+          assert_equal [[expected_url]], @docs.map{|d| d['order_from_urls']}
+          assert_equal [[expected_name]], @docs.map{|d| d['order_from_names']}
         end
       end
 
-      should 'set order_from_url' do
-        url = 'http://www.eummcr.org/order.php'
-        assert_equal [url, url], @docs.map {|d| d['order_from_url']}
+      should 'set order_from_urls' do
+        url = ['http://www.eummcr.org/order.php']
+        assert_equal [url, url], @docs.map {|d| d['order_from_urls']}
       end
 
-      should 'set order_from_name' do
-        assert_equal ['EUMMCR', 'EUMMCR'], @docs.map {|d| d['order_from_name']}
+      should 'set order_from_names' do
+        assert_equal [['EUMMCR'], ['EUMMCR']], @docs.map {|d| d['order_from_names']}
       end
 
     end

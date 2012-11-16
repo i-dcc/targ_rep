@@ -26,8 +26,8 @@ class SolrUpdate::DocFactory
         'allele_name' => "#{marker_symbol}<sup>#{es_cell_info[:allele_symbol_superscript]}</sup>",
         'allele_image_url' => allele_image_url(allele.id),
         'genbank_file_url' => genbank_file_url(allele.id),
-        'order_from_url' => order_from_info[:url],
-        'order_from_name' => order_from_info[:name]
+        'order_from_urls' => [order_from_info[:url]],
+        'order_from_names' => [order_from_info[:name]]
       }
     end
 

@@ -61,8 +61,8 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
           'allele_name' => 'Cbx1<sup>tm1a(EUCOMM)Wtsi</sup>',
           'allele_image_url' => "http://www.knockoutmouse.org/targ_rep/alleles/#{allele.id}/allele-image",
           'genbank_file_url' => "http://www.knockoutmouse.org/targ_rep/alleles/#{allele.id}/escell-clone-genbank-file",
-          'order_from_url' => 'http://www.eummcr.org/order.php',
-          'order_from_name' => 'EUMMCR'
+          'order_from_urls' => ['http://www.eummcr.org/order.php'],
+          'order_from_names' => ['EUMMCR']
         },
         {
           'id' => allele.id,
@@ -75,8 +75,8 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
           'allele_name' => 'Cbx1<sup>tm2a(EUCOMM)Wtsi</sup>',
           'allele_image_url' => "http://www.knockoutmouse.org/targ_rep/alleles/#{allele.id}/allele-image",
           'genbank_file_url' => "http://www.knockoutmouse.org/targ_rep/alleles/#{allele.id}/escell-clone-genbank-file",
-          'order_from_url' => 'http://www.eummcr.org/order.php',
-          'order_from_name' => 'EUMMCR'
+          'order_from_urls' => ['http://www.eummcr.org/order.php'],
+          'order_from_names' => ['EUMMCR']
         }
       ]
 
