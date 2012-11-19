@@ -96,18 +96,76 @@ class EsCellTest < ActiveSupport::TestCase
       assert( !es_cell.save, "An ES Cell is saved with an incorrect MGI Allele ID" )
     end
 
-    should "not be saved if it has molecular structure consistency issue" do
-      targ_vec    = Factory.create( :targeting_vector )
-      mol_struct  = Factory.create( :allele )
+    context "allele consistency" do
+      should "prevent saved if there is a molecular structure inconsistency" do
+        targ_vec    = Factory.create( :targeting_vector )
+        mol_struct  = Factory.create( :allele )
 
-      es_cell = EsCell.new({
-        :name                => 'INVALID',
-        :targeting_vector_id => targ_vec.id,
-        :allele_id           => mol_struct.id
-      })
+        es_cell = EsCell.new({
+          :name                => 'INVALID',
+          :targeting_vector_id => targ_vec.id,
+          :allele_id           => mol_struct.id
+        })
+        es_cell = Factory.build :es_cell
+        es_cell.targeting_vector = targ_vec
+        es_cell.allele           = mol_struct
 
-      assert( !es_cell.valid?, "ES Cell validates an invalid entry" )
-      assert( !es_cell.save, "ES Cell validates the creation of an invalid entry" )
+        assert( !es_cell.valid?, "ES Cell validates an invalid entry" )
+        assert_equal( es_cell.errors.full_messages, ["Targeting vector targeting vector's molecular structure differs from ES cell's molecular structure"])
+        assert( !es_cell.save, "ES Cell validates the creation of an invalid entry" )
+      end
+
+      should "prevent save when mutation_type are inconsistant" do
+        targ_vec    = Factory.create( :targeting_vector)
+        mol_struct  = Factory.create :allele,
+               {
+               :mgi_accession_id    => targ_vec.allele.mgi_accession_id,
+               :project_design_id   => targ_vec.allele.project_design_id,
+               :mutation_type       => MutationType.find_by_code('cki'),
+               :cassette            => targ_vec.allele.cassette,
+               :backbone            => targ_vec.allele.backbone,
+               :homology_arm_start  => targ_vec.allele.homology_arm_start,
+               :homology_arm_end    => targ_vec.allele.homology_arm_end,
+               :cassette_start      => targ_vec.allele.cassette_start,
+               :cassette_end        => targ_vec.allele.cassette_end,
+               :strand              => targ_vec.allele.strand
+               }
+
+
+        es_cell = Factory.build :es_cell
+        es_cell.targeting_vector = targ_vec
+        es_cell.allele           = mol_struct
+
+        assert( !es_cell.valid?, "ES Cell validates an invalid entry" )
+        assert_equal( es_cell.errors.full_messages, ["Targeting vector targeting vector's molecular structure differs from ES cell's molecular structure"])
+        assert( !es_cell.save, "ES Cell validates the creation of an invalid entry" )
+      end
+
+
+      should "save when mutation_type are targeted_non_conditional and conditional mismatch" do
+       targ_vec    = Factory.create( :targeting_vector)
+        mol_struct  = Factory.create :allele,
+               {
+               :mgi_accession_id    => targ_vec.allele.mgi_accession_id,
+               :project_design_id   => targ_vec.allele.project_design_id,
+               :mutation_type       => MutationType.find_by_code('tnc'),
+               :cassette            => targ_vec.allele.cassette,
+               :backbone            => targ_vec.allele.backbone,
+               :homology_arm_start  => targ_vec.allele.homology_arm_start,
+               :homology_arm_end    => targ_vec.allele.homology_arm_end,
+               :cassette_start      => targ_vec.allele.cassette_start,
+               :cassette_end        => targ_vec.allele.cassette_end,
+               :strand              => targ_vec.allele.strand
+               }
+
+
+        es_cell = Factory.build :es_cell
+        es_cell.targeting_vector = targ_vec
+        es_cell.allele           = mol_struct
+
+        assert( es_cell.valid?, "ES Cell validates an invalid entry" )
+        assert( es_cell.save, "ES Cell validates the creation of an invalid entry" )
+      end
     end
 
     should "copy the IKMC project id from it's TV if the project id is empty" do
