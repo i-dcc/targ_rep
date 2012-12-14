@@ -20,5 +20,5 @@ production:
     allele: http://ikmc.vm.bytemark.co.uk:8983/solr/allele
 
 all:
-  targ_rep_url: http://www.knockoutmouse.org/targ_rep
+  targ_rep_url: https://www.i-dcc.org/targ_rep
   queue_run_limit: 100
