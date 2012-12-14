@@ -59,8 +59,8 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
           'mgi_accession_id' => 'MGI:105369',
           'strain' => es_cell1.strain,
           'allele_name' => 'Cbx1<sup>tm1a(EUCOMM)Wtsi</sup>',
-          'allele_image_url' => "http://www.knockoutmouse.org/targ_rep/alleles/#{allele.id}/allele-image",
-          'genbank_file_url' => "http://www.knockoutmouse.org/targ_rep/alleles/#{allele.id}/escell-clone-genbank-file",
+          'allele_image_url' => "https://www.i-dcc.org/targ_rep/alleles/#{allele.id}/allele-image",
+          'genbank_file_url' => "https://www.i-dcc.org/targ_rep/alleles/#{allele.id}/escell-clone-genbank-file",
           'order_from_urls' => ['http://www.eummcr.org/order.php'],
           'order_from_names' => ['EUMMCR']
         },
@@ -73,8 +73,8 @@ class SolrUpdateIntegrationTest < ActiveSupport::TestCase
           'allele_id' => allele.id,
           'strain' => es_cell2.strain,
           'allele_name' => 'Cbx1<sup>tm2a(EUCOMM)Wtsi</sup>',
-          'allele_image_url' => "http://www.knockoutmouse.org/targ_rep/alleles/#{allele.id}/allele-image",
-          'genbank_file_url' => "http://www.knockoutmouse.org/targ_rep/alleles/#{allele.id}/escell-clone-genbank-file",
+          'allele_image_url' => "https://www.i-dcc.org/targ_rep/alleles/#{allele.id}/allele-image",
+          'genbank_file_url' => "https://www.i-dcc.org/targ_rep/alleles/#{allele.id}/escell-clone-genbank-file",
           'order_from_urls' => ['http://www.eummcr.org/order.php'],
           'order_from_names' => ['EUMMCR']
         }
