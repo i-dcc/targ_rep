@@ -78,12 +78,12 @@ class SolrUpdate::DocFactoryTest < ActiveSupport::TestCase
       end
 
       should 'set allele_image_url' do
-        url = "http://www.knockoutmouse.org/targ_rep/alleles/#{@allele.id}/allele-image"
+        url = "https://www.i-dcc.org/targ_rep/alleles/#{@allele.id}/allele-image"
         assert_equal [url, url], @docs.map {|d| d['allele_image_url']}
       end
 
       should 'set genbank_file_url' do
-        url = "http://www.knockoutmouse.org/targ_rep/alleles/#{@allele.id}/escell-clone-genbank-file"
+        url = "https://www.i-dcc.org/targ_rep/alleles/#{@allele.id}/escell-clone-genbank-file"
         assert_equal [url, url], @docs.map {|d| d['genbank_file_url']}
       end
 
