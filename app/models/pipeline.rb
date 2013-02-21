@@ -1,5 +1,7 @@
 class Pipeline < ActiveRecord::Base
 
+  NON_REPORTABLE = ['EUCOMM GT']
+
   Pipeline.include_root_in_json = false
 
   ##

@@ -40,6 +40,10 @@ class DistributionQc < ActiveRecord::Base
   validates_inclusion_of :chr11b, :in => LONG_VALUES, :allow_blank => true
   validates_inclusion_of :chry, :in => LONG_VALUES, :allow_blank => true
 
+  validate do |dc|
+    dc.errors.add(:base, "Invalid record") if dc.is_empty?
+  end
+
   def self.get_qc_metrics
     qc_metrics = {
       "copy_number"              => { :name => "Copy Number" },

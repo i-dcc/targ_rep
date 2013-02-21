@@ -20,6 +20,7 @@ class Allele < ActiveRecord::Base
       info_map = ActiveSupport::OrderedHash.new
 
       self.each do |es_cell|
+        next if Pipeline::NON_REPORTABLE.include?(es_cell.pipeline.name)
         key = {
           :strain => es_cell.strain,
           :allele_symbol_superscript => es_cell.allele_symbol_superscript,
